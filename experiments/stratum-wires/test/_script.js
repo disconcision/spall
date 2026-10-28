@@ -4574,6 +4574,7 @@ function startRequest() {
   moveAgent(s.x + 2.4, s.y + 0.5, s.z + 2.2); AGENT.level = s.z; AGENT.looking = false; AGENT.gaze = null;
 }
 function proposeSite(site, kind, pieces, name, note) {
+  if (S.propMute) { AGENT.job = null; setAgentState('idle', 'proposals paused'); return; }   // muted: nothing pops up
   const j = makeJob('claude', kind, pieces, { x: site.x, y: site.y, z: site.z }, name);
   AGENT.job = j; AGENT.last = { site, note, name };
   setAgentState('propose', 'awaiting approval');
@@ -5052,7 +5053,7 @@ const BUILD_TOOLS = ['stack', 'bridge', 'garden', 'well'];
 // MT tone (10 dark, 11 light; the UI light/dark switch flips these) · PX chrome pixel · BV bevel · OL outline ·
 // DT title dither · TX type · WF wordmark · LG logo · TB top bar · KH key hints · FO flyout · LT light popover ·
 // SL slider · SG segmented · BT button · BB status bar · SC sidebar collapse
-const UICFG = { MT: 11, PX: 1, BV: 1, OL: 1, DT: 1, TX: 1, WF: 24, LG: 2, TB: 3, KH: 2, FO: 2, LT: 1, SL: 3, SG: 1, BT: 2, BB: 3, SC: 1 };
+const UICFG = { MT: 10, PX: 1, BV: 1, OL: 1, DT: 1, TX: 1, WF: 24, LG: 2, TB: 3, KH: 2, FO: 2, LT: 1, SL: 3, SG: 1, BT: 2, BB: 3, SC: 1 };
 const UI = { tb: 1, open: new Set(), fo: null, hueOpen: false, hue: [null, null, null, null], sel: { select: 'inspect', build: 'stack', wires: 'cable', units: 'u0' },
   lvx: true, feed: 'all', unread: 0, help: false, helpP: null, helpSig: '', hoverPanel: null, logo: 0, modeFold: false, grabbing: false, lvSeen: false };
 const store = { get(k, d) { try { const v = localStorage.getItem('spall.' + k); return v == null ? d : v; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('spall.' + k, v); } catch (e) { /* storage unavailable */ } } };
@@ -5284,13 +5285,24 @@ function renderToolLayer() {
   if (UI.fo && toolOpts(UI.fo)) h += foHTML(UI.fo) + '<div class="fcon"></div>';
   lay.innerHTML = h;
   const nav = $('tools'), N = vwRel(nav), W_ = $('viewwrap').clientWidth, H_ = $('viewwrap').clientHeight;
-  lay.querySelectorAll('.grow').forEach(row => { const slot = nav.querySelector(`[data-slot="${row.dataset.g}"]`); if (!slot) return; const g = vwRel(slot.closest('.grp')); row.style.left = (N.right + 3) + 'px'; row.style.top = g.top + 'px'; });
+  lay.querySelectorAll('.grow').forEach(row => {
+    const slot = nav.querySelector(`[data-slot="${row.dataset.g}"]`); if (!slot) return; const g = vwRel(slot.closest('.grp')), s = vwRel(slot);
+    row.style.left = (N.right + 4) + 'px'; row.style.top = g.top + 'px';
+    const gc = document.createElement('div'); gc.className = 'gcon'; Object.assign(gc.style, { left: s.right + 'px', top: Math.round(s.cy) + 'px', width: Math.max(2, N.right + 4 - s.right) + 'px' }); lay.appendChild(gc);
+  });
   const fo = $('flyout'); if (!fo) return;
   // where it goes: right of the palette, past the name column (all tools) or the opened rows (groups)
   let a, x0 = N.right, x;
   if (st === 2) { const b = nav.querySelector(`.tool[aria-pressed="true"]`) || nav.querySelector('.tl-thumb'); a = vwRel(b); const lw = Math.max(0, ...[...nav.querySelectorAll('.tool .lb')].map(l => l.offsetWidth)); x = N.right + lw + 18; }
   else if (st === 1) { const rowB = lay.querySelector('.grow .tool[aria-pressed="true"]'), b = rowB || nav.querySelector(`[data-slot="${groupOfTool(S.tool)}"]`) || nav.querySelector('.tl-thumb'); a = vwRel(b); if (rowB) x0 = vwRel(rowB.closest('.grow')).right; x = Math.max(N.right, ...[...lay.querySelectorAll('.grow')].map(r => vwRel(r).right)) + 10; }
   else { a = vwRel(nav.querySelector('.tl-thumb')); x = N.right + 10; }
+  const under = st === 1 && lay.querySelector('.grow .tool[aria-pressed="true"]');
+  if (under) {   // groups: the options hang directly beneath the tool row, tied to the active tool
+    const R = vwRel(under.closest('.grow')), B = vwRel(under), fx = clamp(R.left, 4, W_ - fo.offsetWidth - 4), fy = clamp(R.bottom + 6, 4, H_ - fo.offsetHeight - 34);
+    fo.style.left = fx + 'px'; fo.style.top = fy + 'px';
+    const con = lay.querySelector('.fcon'); con.classList.add('v'); Object.assign(con.style, { left: Math.round(B.cx) + 'px', top: R.bottom + 'px', height: Math.max(2, fy - R.bottom) + 'px', width: '1px' });
+    return;
+  }
   const fx = clamp(x, 4, W_ - fo.offsetWidth - 4), fy = clamp(a.top - 4, 4, H_ - fo.offsetHeight - 34);
   fo.style.left = fx + 'px'; fo.style.top = fy + 'px';
   const con = lay.querySelector('.fcon'), w = fx - x0 - 3;
@@ -5318,7 +5330,13 @@ function closeFlyout() { if (!UI.fo) return false; UI.fo = null; renderToolLayer
 function onToolsClick(e) {
   const t = e.target.closest('button'); if (!t) return;
   if (t.dataset.act === 'tlstate') { setToolsState(tbState() + 1); sfx.click(); return; }
-  if (t.dataset.slot) { const g = t.dataset.slot; UI.open.has(g) ? UI.open.delete(g) : UI.open.add(g); t.classList.toggle('open', UI.open.has(g)); t.setAttribute('aria-expanded', UI.open.has(g)); renderToolLayer(); sfx.click(); return; }
+  if (t.dataset.slot) {   // one open path: a group at a time, and only a flyout that belongs to it
+    const g = t.dataset.slot, opening = !UI.open.has(g);
+    UI.open.clear(); if (opening) UI.open.add(g);
+    if (UI.fo && (!opening || groupOfTool(UI.fo) !== g)) UI.fo = null;
+    document.querySelectorAll('#tools .tool[data-slot]').forEach(b => { const on = UI.open.has(b.dataset.slot); b.classList.toggle('open', on); b.setAttribute('aria-expanded', on); });
+    renderToolLayer(); sfx.click(); return;
+  }
   if (t.dataset.tk) { const it = itemOfTk(t.dataset.tk); if (it) setTool(it.u ? 'unit' : it.id, it.u, 'click'); return; }
   const O = UI.fo && toolOpts(UI.fo); if (!O) return;
   if (t.dataset.act === 'foclose') { closeFlyout(); return; }
@@ -5562,8 +5580,29 @@ function feedAppend(li) {
   if (atEnd || !li.classList.contains('lg')) el.scrollTop = el.scrollHeight;
   if (document.body.classList.contains('sb-off')) { UI.unread++; $('railBadge').textContent = UI.unread > 9 ? '9+' : UI.unread; }
 }
+// consecutive entries of the same kind (same actor, same words once numbers are set aside)
+// fold into one row with a count; click it to see each one
+const logSig = (owner, text) => owner + '|' + text.replace(/\(.*?\)/g, '').replace(/[\d/]+/g, '#').split(/\s+/).slice(0, 3).join(' ');
 function log(owner, text, cls) {
+  const sig = logSig(owner, text), last = $('feed').lastElementChild;
+  if (last && last.dataset.sig === sig) {
+    const sub = last.querySelector('.sub') || (() => {
+      const o = document.createElement('ol'); o.className = 'sub';
+      const first = document.createElement('li'); first.textContent = last.dataset.text; o.appendChild(first);
+      last.classList.add('grp'); last.appendChild(o);
+      last.querySelector('span').addEventListener('click', () => last.classList.toggle('open'));
+      return o;
+    })();
+    const it = document.createElement('li'); it.textContent = fmtTime(S.time) + ' ' + text; sub.appendChild(it);
+    const n = sub.children.length, sp = last.querySelector('span');
+    sp.querySelector('time').textContent = fmtTime(S.time);
+    sp.childNodes[1].textContent = (OWN[owner] ? OWN[owner].name : owner) + ' · ' + text;   // [0] is the time
+    let c = sp.querySelector('.cnt'); if (!c) { c = document.createElement('b'); c.className = 'cnt'; sp.appendChild(c); const ch = document.createElement('i'); ch.className = 'chev'; ch.textContent = '›'; sp.appendChild(ch); }
+    c.textContent = '×' + n;
+    return;
+  }
   const li = document.createElement('li');
+  li.dataset.sig = sig; li.dataset.text = fmtTime(S.time) + ' ' + text;
   li.className = 'lg ' + owner + ' ' + (cls || '') + ' new';
   const tm = document.createElement('time'); tm.textContent = fmtTime(S.time);
   const sp = document.createElement('span'); sp.appendChild(tm); sp.appendChild(document.createTextNode((OWN[owner] ? OWN[owner].name : owner) + ' · ' + text));
@@ -5583,6 +5622,14 @@ function setFeed(f) {
   const fl = $('feedFilter'), i = ['all', 'log', 'chat'].indexOf(f);
   fl.style.setProperty('--i', i); fl.querySelectorAll('button').forEach(b => { const on = b.dataset.feed === f; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
   $('feed').scrollTop = $('feed').scrollHeight;
+}
+// pausing claude's proposals: no new surveys or approve/reject cards until resumed; an open one is withdrawn
+function setProposalsMuted(on, quiet) {
+  S.propMute = on; AGENT.paused = on; store.set('propMute', on ? '1' : '0');
+  const b = $('sbMute'); b.setAttribute('aria-pressed', on); b.dataset.tip = on ? 'Resume claude’s proposals' : 'Pause claude’s proposals'; b.setAttribute('aria-label', b.dataset.tip);
+  if (on && CARDJOB && CARDJOB.status === 'proposed') rejectQuiet(CARDJOB);
+  if (on) setAgentState('idle', 'proposals paused'); else if (AGENT.state === 'idle') setAgentState('idle', 'idle');
+  if (!quiet) { log('you', on ? 'Paused claude’s proposals' : 'Resumed claude’s proposals', 'sys'); sfx.click(); }
 }
 function setSidebar(open) {
   document.body.classList.toggle('sb-off', !open); store.set('side', open ? 'open' : 'rail');
@@ -5731,7 +5778,7 @@ function openKeys() {
 }
 
 function setupUI() {
-  const tone = store.get('tone', 'light'); UICFG.MT = tone === 'dark' ? 10 : 11;
+  const tone = store.get('tone', 'dark'); UICFG.MT = tone === 'dark' ? 10 : 11;
   UI.logo = clamp(+store.get('logo', 0) || 0, 0, LOGOS.length - 1); UICFG.LG = LOGOS[UI.logo];
   UI.tb = clamp(+store.get('tools', 1), 0, 2);
   UI.lvx = store.get('levels', innerWidth < 860 ? 'c' : 'x') === 'x';
@@ -5784,6 +5831,8 @@ function setupUI() {
   $('bApprove').onclick = () => { if (CARDJOB) approveJob(CARDJOB, false); };
   $('bReject').onclick = () => { if (CARDJOB) rejectJob(CARDJOB); };
   $('sbFold').onclick = () => setSidebar(false);
+  $('sbMute').onclick = () => setProposalsMuted(!S.propMute);
+  setProposalsMuted(store.get('propMute', '0') === '1', true);
   document.querySelectorAll('.sb-rail [data-sbopen]').forEach(b => b.onclick = () => { setFeed(b.dataset.sbopen); setSidebar(true); });
   $('feedFilter').addEventListener('click', e => { const b = e.target.closest('[data-feed]'); if (b) setFeed(b.dataset.feed); });
   $('chatf').addEventListener('submit', e => { e.preventDefault(); const i = $('chatIn'); sendChat(i.value); i.value = ''; });
@@ -5867,9 +5916,12 @@ function regenerateWorld() {
   log('sys', `World generated · seed ${S.seed}`, 'sys');
 }
 function resize() {
-  const st = $('stage'), r = st.getBoundingClientRect();
+  const st = $('stage'), r = st.getBoundingClientRect(), bw0 = S.bw, bh0 = S.bh, had = !!VIEW.ctx, sameZoom = resize.zoom === S.zoom;
+  resize.zoom = S.zoom;
   S.cssW = Math.max(1, Math.floor(r.width)); S.cssH = Math.max(1, Math.floor(r.height));
   S.bw = Math.ceil(S.cssW / S.zoom); S.bh = Math.ceil(S.cssH / S.zoom);
+  // keep the view's top-left where it was, so a panel opening or closing beside it doesn't shift the city
+  if (had && sameZoom && bw0 && S.mode !== 'plan' && S.mode !== 'section') { S.cam.x += (S.bw - bw0) / 2; S.cam.y += (S.bh - bh0) / 2; }
   const cv = $('view');
   cv.width = S.bw; cv.height = S.bh;
   cv.style.width = S.bw * S.zoom + 'px'; cv.style.height = S.bh * S.zoom + 'px';
@@ -5879,6 +5931,7 @@ function resize() {
   S.safeL = over ? Math.max(0, tr.right - r.left + 6) : 0; S.safeR = over ? Math.max(0, r.right - sr.left + 6) : 0;
   skyDirty = true;
   sizeLevels();
+  if (had) render();   // redraw at once: a resized canvas is blank until the next frame otherwise
 }
 const VIEW = { ctx: null };
 function pickAt(bx, by) {

@@ -69,9 +69,12 @@ function regenerateWorld() {
   log('sys', `World generated · seed ${S.seed}`, 'sys');
 }
 function resize() {
-  const st = $('stage'), r = st.getBoundingClientRect();
+  const st = $('stage'), r = st.getBoundingClientRect(), bw0 = S.bw, bh0 = S.bh, had = !!VIEW.ctx, sameZoom = resize.zoom === S.zoom;
+  resize.zoom = S.zoom;
   S.cssW = Math.max(1, Math.floor(r.width)); S.cssH = Math.max(1, Math.floor(r.height));
   S.bw = Math.ceil(S.cssW / S.zoom); S.bh = Math.ceil(S.cssH / S.zoom);
+  // keep the view's top-left where it was, so a panel opening or closing beside it doesn't shift the city
+  if (had && sameZoom && bw0 && S.mode !== 'plan' && S.mode !== 'section') { S.cam.x += (S.bw - bw0) / 2; S.cam.y += (S.bh - bh0) / 2; }
   const cv = $('view');
   cv.width = S.bw; cv.height = S.bh;
   cv.style.width = S.bw * S.zoom + 'px'; cv.style.height = S.bh * S.zoom + 'px';
@@ -81,6 +84,7 @@ function resize() {
   S.safeL = over ? Math.max(0, tr.right - r.left + 6) : 0; S.safeR = over ? Math.max(0, r.right - sr.left + 6) : 0;
   skyDirty = true;
   sizeLevels();
+  if (had) render();   // redraw at once: a resized canvas is blank until the next frame otherwise
 }
 const VIEW = { ctx: null };
 function pickAt(bx, by) {

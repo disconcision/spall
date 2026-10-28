@@ -98,6 +98,7 @@ function startRequest() {
   moveAgent(s.x + 2.4, s.y + 0.5, s.z + 2.2); AGENT.level = s.z; AGENT.looking = false; AGENT.gaze = null;
 }
 function proposeSite(site, kind, pieces, name, note) {
+  if (S.propMute) { AGENT.job = null; setAgentState('idle', 'proposals paused'); return; }   // muted: nothing pops up
   const j = makeJob('claude', kind, pieces, { x: site.x, y: site.y, z: site.z }, name);
   AGENT.job = j; AGENT.last = { site, note, name };
   setAgentState('propose', 'awaiting approval');
