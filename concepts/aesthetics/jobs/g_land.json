@@ -1,0 +1,79 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 32
+ },
+ "jobs": [
+  {
+   "spec": "specs/g_land.json",
+   "out": "out/g/g1_landscape.png",
+   "light": "crisp_warm",
+   "res": [
+    2000,
+    1100
+   ],
+   "camera": {
+    "az": 45,
+    "el": 32,
+    "target": [
+     2100.0,
+     1500.0,
+     0
+    ],
+    "ortho_scale": 4500
+   },
+   "frame_bb": [
+    0,
+    0,
+    -100,
+    4200.0,
+    3000.0,
+    400
+   ],
+   "fog": {
+    "h": 0.1,
+    "gamma": 1.6,
+    "d": 0.14,
+    "z_lo": -20,
+    "z_hi": 420
+   },
+   "samples": 40,
+   "max_lights": 60
+  },
+  {
+   "spec": "specs/g_land.json",
+   "out": "out/g/g2_landscape_cores.png",
+   "light": "crisp_warm",
+   "camera": {
+    "az": 45,
+    "el": 34,
+    "target": [
+     2400,
+     1700,
+     60
+    ],
+    "ortho_scale": 2400
+   },
+   "frame_bb": [
+    0,
+    0,
+    -100,
+    4200.0,
+    3000.0,
+    400
+   ],
+   "fog": {
+    "h": 0.1,
+    "gamma": 1.6,
+    "d": 0.12,
+    "z_lo": -20,
+    "z_hi": 420
+   },
+   "samples": 40,
+   "max_lights": 60
+  }
+ ]
+}

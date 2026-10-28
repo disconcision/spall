@@ -1,0 +1,12 @@
+{
+ "M0": [
+  548,
+  870
+ ],
+ "scale": 2,
+ "tile": [
+  32,
+  16
+ ],
+ "note": "page px of the world origin (tile 0,0 corner, z = 0); tile (mx,my) -> M0 + 2*(16(mx+my), 8(mx-my))"
+}

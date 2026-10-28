@@ -1,0 +1,255 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Mod Request</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  body { background: #16171a; }
+  .bgimg { position: absolute; left: 0; top: 0; width: 2560px; height: 1440px; filter: brightness(0.38) saturate(0.6) blur(3px); }
+  img.px { image-rendering: pixelated; }
+  /* build menu */
+  #menu { left: 16px; top: 68px; width: 420px; height: 1356px; }
+  #menu .cats { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px 12px 6px; }
+  #menu .cats span { padding: 3px 8px; border: 1px solid var(--line-2); font-family: var(--f-cond); font-weight: 600; font-size: 12.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); }
+  #menu .cats span.on { background: var(--text); color: var(--ink); border-color: var(--text); }
+  #menu .grp { padding: 6px 12px 4px; }
+  #menu .grp .gh { display: flex; align-items: baseline; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 3px; margin-bottom: 6px;
+    font-family: var(--f-cond); font-weight: 600; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-2); }
+  #menu .grp .gh i { font-style: normal; margin-left: auto; font-family: var(--f-mono); font-size: 11px; color: var(--text-3); letter-spacing: 0; }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .tile { position: relative; border: 1px solid var(--line); background: rgba(255,255,255,0.03); padding: 4px 4px 5px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .tile img { width: 84px; height: 84px; }
+  .tile .n { font-size: 12.5px; text-align: center; line-height: 1.1; color: var(--text); height: 28px; display: flex; align-items: center; }
+  .tile .c { font-family: var(--f-mono); font-size: 11px; color: var(--text-3); }
+  .tile .mod { position: absolute; left: 3px; top: 3px; font-family: var(--f-cond); font-weight: 700; font-size: 10.5px; letter-spacing: .1em; border: 1px solid var(--text-3); color: var(--text-2); padding: 0 3px; background: var(--ink); }
+  .tile.new { border: 2px solid var(--accent); background: rgba(255,225,58,0.08); box-shadow: 0 0 0 3px rgba(255,225,58,0.18); }
+  .tile.new .mod { background: var(--accent); color: var(--ink); border-color: var(--accent); }
+  .tile.lock { opacity: 0.45; }
+  .tile .pbar { width: 100%; height: 5px; background: rgba(255,255,255,0.1); position: relative; }
+  .tile .pbar i { position: absolute; left: 0; top: 0; bottom: 0; width: 80%; background: var(--accent); }
+  /* sheet */
+  #sheet { left: 452px; top: 68px; width: 1532px; height: 1356px; display: grid; grid-template-rows: auto 1fr auto; }
+  .shd { display: grid; grid-template-columns: 1fr 200px 170px; border-bottom: 2px solid var(--paper-ink); }
+  .shd > div { padding: 12px 16px; }
+  .shd > div + div { border-left: 1.5px solid var(--paper-ink); display: flex; flex-direction: column; justify-content: center; }
+  .shd .big { font-family: var(--f-serif); font-size: 50px; line-height: 1; margin-top: 4px; }
+  .shd .sub { font-family: var(--f-cond); font-weight: 600; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--paper-ink-2); }
+  .shd .brief { font-family: var(--f-serif); font-style: italic; font-size: 21px; margin-top: 8px; color: #2c2d30; }
+  .grid { display: grid; grid-template-columns: 560px 470px 1fr; grid-template-rows: 470px 1fr; }
+  .cell { border-right: 1.5px solid var(--paper-ink); border-bottom: 1.5px solid var(--paper-ink); padding: 12px 14px; position: relative; overflow: hidden; }
+  .cell .lab { display: flex; align-items: baseline; gap: 10px; font-family: var(--f-cond); font-weight: 700; font-size: 14px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 8px; }
+  .cell .lab i { font-style: normal; font-weight: 500; letter-spacing: .04em; text-transform: none; font-family: var(--f-ui); font-size: 13.5px; color: var(--paper-ink-2); }
+  .rots { display: flex; gap: 22px; align-items: flex-end; justify-content: center; padding-top: 6px; }
+  .rots figure { margin: 0; text-align: center; }
+  .rots figure img { width: 216px; height: 328px; display: block; background: repeating-conic-gradient(#e2dccf 0% 25%, #ebe8e0 0% 50%) 0 0 / 16px 16px; border: 1px solid rgba(28,29,32,0.3); }
+  .rots figcaption { font-family: var(--f-mono); font-size: 12px; margin-top: 5px; }
+  .concept img { width: 100%; display: block; border: 1px solid var(--paper-ink); }
+  pre.code { margin: 0; font-family: var(--f-mono); font-size: 12.6px; line-height: 1.5; color: #1c1d20; white-space: pre; }
+  pre.code .k { color: #7c522c; } pre.code .s { color: #1e4a4f; } pre.code .n { color: #74302a; } pre.code .c { color: #858a8f; }
+  .vlog { font-family: var(--f-mono); font-size: 12.8px; line-height: 1.5; }
+  .vlog .r { display: grid; grid-template-columns: 44px 58px 1fr; gap: 6px; padding: 3px 0; border-bottom: 1px dotted rgba(28,29,32,0.3); }
+  .vlog .f { color: #9e4a3a; font-weight: 600; } .vlog .p { color: #3d5c29; font-weight: 600; }
+  .ext { margin-top: 12px; border: 1.5px solid var(--paper-ink); }
+  .ext .eh { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1.5px solid var(--paper-ink); background: var(--paper-2);
+    font-family: var(--f-cond); font-weight: 700; font-size: 13.5px; letter-spacing: .1em; text-transform: uppercase; }
+  .ext .eb { padding: 8px 10px; font-size: 14px; line-height: 1.4; }
+  .ext .eb code { font-family: var(--f-mono); font-size: 12.5px; background: var(--paper-2); padding: 0 3px; }
+  table.ab { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.ab th { text-align: right; font-family: var(--f-cond); font-weight: 600; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--paper-ink-2); padding: 4px 6px; border-bottom: 1.5px solid var(--paper-ink); }
+  table.ab th:first-child, table.ab td:first-child { text-align: left; }
+  table.ab td { text-align: right; padding: 5px 6px; border-bottom: 1px solid rgba(28,29,32,0.18); font-family: var(--f-mono); font-size: 13px; white-space: nowrap; }
+  table.ab td:first-child { font-family: var(--f-ui); font-size: 14px; }
+  table.ab td.up { color: #3d5c29; } table.ab td.dn { color: #9e4a3a; }
+  .note { position: absolute; right: 16px; bottom: 14px; width: 250px; background: var(--accent); color: var(--ink); padding: 8px 10px; font-size: 13.5px; line-height: 1.3; transform: rotate(-1.5deg); box-shadow: 2px 3px 0 rgba(0,0,0,0.25); }
+  .note b { font-family: var(--f-cond); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: 12px; display: block; }
+  .foot { display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 14px 16px; gap: 16px; }
+  .foot .adds { font-size: 15px; color: #2c2d30; }
+  .foot .adds b { font-family: var(--f-mono); font-weight: 500; }
+  .foot .acts { display: flex; gap: 10px; }
+  .foot .acts .btn { height: 44px; font-size: 16px; }
+  .foot .acts .btn.pri { border: 2px solid var(--paper-ink); }
+  /* chat */
+  #chat { left: 2000px; top: 52px; width: 560px; height: 1388px; border-top: 0; border-right: 0; border-bottom: 0; }
+  #chat .msgs { padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { font-size: 15.5px; line-height: 1.42; }
+  .msg .who { display: flex; align-items: center; gap: 8px; font-family: var(--f-cond); font-weight: 700; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 3px; }
+  .msg .who .t { font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: 0; color: var(--text-3); }
+  .msg.me .who { color: var(--text-2); } .msg.ai .who { color: var(--accent); }
+  .msg.ai .body { border-left: 2px solid var(--accent); padding-left: 10px; }
+  .msg.me .body { border-left: 2px solid var(--line-2); padding-left: 10px; }
+  .sys { font-family: var(--f-mono); font-size: 12px; color: var(--text-3); border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line); padding: 5px 0; line-height: 1.5; }
+  .sys b { color: var(--accent); font-weight: 500; }
+  .composer { position: absolute; left: 0; right: 0; bottom: 0; border-top: 1px solid var(--line); padding: 12px 14px 14px; background: var(--panel-solid); }
+  .composer .box { border: 1px solid var(--line-2); padding: 10px 12px; min-height: 64px; font-size: 15.5px; color: var(--text-3); }
+  .composer .row { display: flex; gap: 8px; margin-top: 10px; }
+  .composer .row .btn { height: 32px; font-size: 13px; color: var(--text); }
+</style></head>
+<body>
+<script>window.PAGE = { tab: 'MODS', time: '16:17', title: null };</script>
+<img class="bgimg" src="img/m1_bg.png">
+<svg class="ov" id="ov" style="z-index:40"></svg>
+
+<!-- build menu: agent-made types live next to stock ones -->
+<div class="panel" id="menu">
+  <div class="hd">Build <span class="code">B · 212 types · 7 from mods</span></div>
+  <div class="cats"><span>Support</span><span>Infill</span><span>Transit</span><span>Services</span><span class="on">Food</span><span>Commerce</span><span>Parks</span><span>Utilities</span><span>Mods</span></div>
+  <div class="grp"><div class="gh">Food · agriculture <i>3 types</i></div>
+    <div class="tiles">
+      <div class="tile new" id="newtile"><span class="mod">New</span><img class="px" src="img/icons/hydro_stack.png"><span class="n">Hydroponic Capsule Stack</span><span class="c" style="color:var(--accent)">installing 80%</span><span class="pbar"><i></i></span></div>
+      <div class="tile"><span class="mod">stand-in</span><img class="px" src="img/icons/farm.png"><span class="n">Vertical Farm Tower Mk I</span><span class="c">§ 1,800 · 2×2</span></div>
+      <div class="tile lock"><img class="px" src="img/icons/megacolumn.png"><span class="n">Mushroom Cellar</span><span class="c">locked · B2</span></div>
+    </div></div>
+  <div class="grp"><div class="gh">Recently added by Claude <i>mods · Block 07</i></div>
+    <div class="tiles">
+      <div class="tile"><span class="mod">Mod</span><img class="px" src="img/icons/bridge_market.png"><span class="n">Sky-Bridge Market</span><span class="c">§ 1,500 · 4×2</span></div>
+      <div class="tile"><span class="mod">Mod</span><img class="px" src="img/icons/hanging_garden.png"><span class="n">Hanging Garden</span><span class="c">§ 900 · 2×1</span></div>
+      <div class="tile"><span class="mod">Mod</span><img class="px" src="img/icons/solar_chimney.png"><span class="n">Solar Chimney Light Well</span><span class="c">§ 2,600 · 2×2</span></div>
+      <div class="tile"><span class="mod">Mod</span><img class="px" src="img/icons/tube_interchange.png"><span class="n">Tube Interchange</span><span class="c">§ 6,200 · 3×3</span></div>
+      <div class="tile"><span class="mod">Mod</span><img class="px" src="img/icons/rooftop_village.png"><span class="n">Rooftop Squatter Village</span><span class="c">§ 300 · 3×3</span></div>
+    </div></div>
+  <div class="grp"><div class="gh">Infill · stock <i>kit</i></div>
+    <div class="tiles">
+      <div class="tile"><img class="px" src="img/icons/capsule_stack.png"><span class="n">Capsule Stack</span><span class="c">§ 1,420 · 2×1</span></div>
+      <div class="tile"><img class="px" src="img/icons/res_tower.png"><span class="n">Slim Tower</span><span class="c">§ 980 · 1×1</span></div>
+      <div class="tile"><img class="px" src="img/icons/station.png"><span class="n">Tube Station</span><span class="c">§ 3,400 · 2×1</span></div>
+    </div></div>
+</div>
+
+<!-- the mod request, as a drawing sheet -->
+<div class="sheet" id="sheet">
+  <div class="shd">
+    <div><div class="sub">Mod request MR-0031 · new building type · authored by Claude from your brief</div>
+      <div class="big">Hydroponic Capsule Stack</div>
+      <div class="brief">“a hydroponic capsule stack that feeds its stratum — fits in the undercroft and needs water from a riser”</div></div>
+    <div><span class="sub">Status</span><span style="font-family:var(--f-cond);font-weight:700;font-size:24px;letter-spacing:.06em">READY · REV 4</span><span style="font-family:var(--f-mono);font-size:12.5px;margin-top:4px">4 drafts · 36 min authoring</span></div>
+    <div style="align-items:center"><span class="sub">Sheet</span><span style="font-family:var(--f-mono);font-size:28px">MR-0031</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="cell" style="grid-column: 1 / span 2">
+      <div class="lab">4 rotations <i>kit64 palette lock · 32 px/tile · shown 2× nearest · same camera and sun as every stock sprite</i></div>
+      <div class="rots">
+        <figure><img class="px" src="../../agent-buildings/out/sprites/hydro_stack_r0_pal.png"><figcaption>r0 · 30 colours</figcaption></figure>
+        <figure><img class="px" src="../../agent-buildings/out/sprites/hydro_stack_r1_pal.png"><figcaption>r1 · 28</figcaption></figure>
+        <figure><img class="px" src="../../agent-buildings/out/sprites/hydro_stack_r2_pal.png"><figcaption>r2 · 17</figcaption></figure>
+        <figure><img class="px" src="../../agent-buildings/out/sprites/hydro_stack_r3_pal.png"><figcaption>r3 · 26</figcaption></figure>
+      </div>
+    </div>
+    <div class="cell concept" style="border-right:0">
+      <div class="lab">Concept view <i>EEVEE · in its undercroft, deck ghosted</i></div>
+      <img src="../../agent-buildings/out/concept/hydro_stack.png">
+      <div style="font-size:14px;margin-top:8px;color:#2c2d30">Packing hall, slim core, twelve grow pods and three service pods in a pinwheel; the east manifold taps the riser; the header tank stays inside the 5-level envelope (17.5 m under a 20 m soffit).</div>
+    </div>
+
+    <div class="cell">
+      <div class="lab">Spec excerpt <i>specs/hydro_stack.json · 38 parts (11 context)</i></div>
+<pre class="code">{<span class="k">"meta"</span>: {<span class="k">"name"</span>: <span class="s">"hydro_stack"</span>, <span class="k">"kind"</span>: <span class="s">"building-type"</span>,
+  <span class="k">"footprint"</span>: {<span class="k">"w"</span>: <span class="n">2</span>, <span class="k">"d"</span>: <span class="n">2</span>, <span class="k">"max_levels"</span>: <span class="n">5</span>},
+  <span class="k">"sprite"</span>: {<span class="k">"px_per_tile"</span>: <span class="n">32</span>, <span class="k">"rotations"</span>: <span class="n">4</span>, <span class="k">"palette"</span>: <span class="s">"kit64"</span>}},
+ <span class="k">"parts"</span>: [
+  {<span class="k">"type"</span>: <span class="s">"capsule"</span>, <span class="k">"x"</span>: <span class="n">0</span>, <span class="k">"y"</span>: <span class="n">0</span>, <span class="k">"level"</span>: <span class="n">0</span>,
+   <span class="k">"w"</span>: <span class="n">2</span>, <span class="k">"d"</span>: <span class="n">2</span>, <span class="k">"h"</span>: <span class="n">1</span>, <span class="k">"tags"</span>: [<span class="s">"step:base hall"</span>]},
+  {<span class="k">"type"</span>: <span class="s">"core"</span>, <span class="k">"x"</span>: <span class="n">0.75</span>, <span class="k">"y"</span>: <span class="n">0.75</span>, <span class="k">"level"</span>: <span class="n">1</span>, <span class="k">"h"</span>: <span class="n">4</span>,
+   <span class="k">"tags"</span>: [<span class="s">"step:core"</span>]},
+  {<span class="k">"type"</span>: <span class="s">"pipe"</span>, <span class="k">"x"</span>: <span class="n">2.0</span>, <span class="k">"y"</span>: <span class="n">0.85</span>, <span class="k">"level"</span>: <span class="n">0.3</span>, <span class="k">"h"</span>: <span class="n">4.6</span>,
+   <span class="k">"tags"</span>: [<span class="s">"step:riser tap"</span>]},
+  {<span class="k">"type"</span>: <span class="s">"growpod"</span>, <span class="k">"level"</span>: <span class="n">1</span>, <span class="k">"w"</span>: <span class="n">1.25</span>, <span class="k">"d"</span>: <span class="n">0.75</span>,
+   <span class="k">"params"</span>: {<span class="k">"tiers"</span>: <span class="n">2</span>}, <span class="k">"tags"</span>: [<span class="s">"step:grow pods 1-2"</span>]},
+  <span class="c">… 11 more growpods, 3 service pods, header tank</span>
+ ]}
+<span class="c">// logic/hydro_stack.json</span>
+{<span class="k">"needs"</span>: {<span class="k">"power_kw"</span>: <span class="n">165</span>, <span class="k">"water_m3_day"</span>: <span class="n">14</span>, <span class="k">"air_m3_min"</span>: <span class="n">60</span>},
+ <span class="k">"provides"</span>: {<span class="k">"food_units_day"</span>: <span class="n">75</span>, <span class="k">"radius_cells"</span>: <span class="n">10</span>},
+ <span class="k">"placement"</span>: {<span class="k">"stratum"</span>: <span class="s">"undercroft"</span>, <span class="k">"riser_within"</span>: <span class="n">1</span>},
+ <span class="k">"jobs"</span>: <span class="n">10</span>, <span class="k">"build_cost"</span>: <span class="n">2100</span>, <span class="k">"upkeep_day"</span>: <span class="n">28</span>, <span class="k">"build_days"</span>: <span class="n">34</span>}</pre>
+    </div>
+
+    <div class="cell">
+      <div class="lab">Validator <i>host-aware check · logic ↔ geometry cross-check</i></div>
+      <div class="vlog">
+        <div class="r"><span>v1</span><span class="f">FAIL 4</span><span>#32 tank: top at 19.1 m exceeds max_levels (17.5 m)<br>logic: geometry uses 6 levels, footprint says 5<br>#13 #14 pipe: “unsupported” (riser taps)</span></div>
+        <div class="r"><span>v2</span><span class="p">PASS</span><span>header tank moved into the level-4 pod slot; riser taps overruled by the host graph (reported)</span></div>
+        <div class="r"><span>v3</span><span class="p">PASS</span><span>new part growpod replaces see-through greenhouse; core lid</span></div>
+        <div class="r"><span>v4</span><span class="p">PASS</span><span>calibrated growlight_px survives the kit64 lock · accepted</span></div>
+        <div class="r"><span>stock</span><span class="f">18 err</span><span>16 on context parts (no notion of a host), 2 overruled</span></div>
+      </div>
+      <div class="ext">
+        <div class="eh">Needs your review · 1 new part type <span class="pill" style="margin-left:auto;border-color:#1c1d20;color:#1c1d20">sandboxed</span></div>
+        <div class="eb"><code>growpod</code> (infill, solid) · opaque shell with striped rack / crop / grow-light bands, no transparency, so it reads at 32 px. Plus material <code>growlight_px</code> (locks to kit64 f0a5d0, pink). 62-line builder; emits boxes only; no file or network access.</div>
+      </div>
+    </div>
+
+    <div class="cell" style="border-right:0">
+      <div class="lab">Simulation A/B <i>8 seeds × 20 sim-years · stack at B1 by riser R2</i></div>
+      <table class="ab">
+        <tr><th>Tube Quarter</th><th>Baseline</th><th>With stack</th><th>Δ (± sd)</th></tr>
+        <tr><td>Food grown locally</td><td>0 %</td><td>15.4 %</td><td class="up">+15.4 ± 0.6</td></tr>
+        <tr><td>Canal-market imports</td><td>488 /day</td><td>413 /day</td><td class="up">−75</td></tr>
+        <tr><td>Riser R2 water, peak</td><td>89 %</td><td>90 %</td><td class="dn">+0.6 m³/h</td></tr>
+        <tr><td>Riser R2 power, peak</td><td>85 %</td><td>90 %</td><td class="dn">+190 kW</td></tr>
+        <tr><td>Jobs</td><td>—</td><td>10</td><td class="up">+10</td></tr>
+        <tr><td>Land value, 4 cells</td><td>11.5</td><td>12.1</td><td class="up">+6 %</td></tr>
+        <tr><td>Noise, 2 cells</td><td>58 dB</td><td>62 dB</td><td class="dn">+4 dB</td></tr>
+        <tr><td>Happiness</td><td>61.2</td><td>63.0</td><td class="up">+1.8 ± 0.7</td></tr>
+        <tr><td>Budget</td><td>—</td><td>−§ 28/day</td><td class="up">+§ 36/day net</td></tr>
+      </table>
+      <svg id="seeds" width="470" height="104" style="margin-top:8px"></svg>
+      <div class="note"><b>Design note</b>Mock numbers: no simulator yet. Food, water, power, jobs, noise and cost follow logic/hydro_stack.json.</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="adds">Adds <b>1</b> building type · <b>1</b> part type (growpod) · <b>1</b> material · <b>16</b> sprites · <b>6</b> drone steps · build <b>34</b> days · placeable only in the undercroft, within 1 cell of a water riser</div>
+    <div class="acts"><span class="btn pri" id="install">Install · Block 07 <span class="kbd">Enter</span></span><span class="btn ink">Install everywhere</span><span class="btn">Ask for changes</span><span class="btn">Reject</span></div>
+  </div>
+</div>
+
+<!-- the conversation that produced it -->
+<div class="panel" id="chat">
+  <div class="hd">Mods · chat <span class="dim" style="font-weight:500;letter-spacing:.06em">Claude</span><span class="code">MR-0031</span></div>
+  <div class="msgs">
+    <div class="msg me"><div class="who">You <span class="t">15:41</span></div><div class="body">The Tube Quarter imports all its greens through the canal market. Could we grow food down in the undercroft? Something that plugs into <span class="chip"><span class="ix">1</span>Riser R2 <span class="lv">B1</span></span>.</div></div>
+    <div class="msg ai"><div class="who">Claude <span class="t">15:42</span></div><div class="body">There's no building type for that yet, so I'll write one: a hydroponic capsule stack, 2×2 cells and 5 levels so it fits under the 20 m soffit, tapping R2 on its east face.</div></div>
+    <div class="msg ai"><div class="who">Claude <span class="t">15:58</span></div><div class="body">The kit's greenhouse only has see-through glass, which turns to speckle at 32 px. I added one part type, growpod, with striped grow-lights, and a calibrated pink so it survives the palette. Those two need your OK.</div></div>
+    <div class="sys">v1 FAIL · header tank on top of the core → 5.5 levels<br>v2 PASS · v3 PASS · v4 PASS · 16 renders reviewed</div>
+    <div class="msg ai"><div class="who">Claude <span class="t">16:14</span></div><div class="body">Ready. Over 8 seeds it grows 15% of the Tube Quarter's food. It lifts R2's power peak from 85% to 90%, so there's room for one more, not three.</div></div>
+    <div class="msg me"><div class="who">You <span class="t">16:16</span></div><div class="body">Install it for Block 07 only. Keep the pink.</div></div>
+    <div class="sys"><b>installing MR-0031</b> · 16 sprites registered · growpod builder sandboxed · build menu → Food</div>
+  </div>
+  <div class="composer"><div class="box">Ask Claude for a change, or request another building…</div>
+    <div class="row"><span class="btn">Point <span class="kbd">P</span></span><span class="btn">Attach selection</span></div></div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/chrome.js"></script>
+<script>
+(function () {
+  const { el, text } = UI;
+  // seeds strip: happiness delta per seed, with the mean band
+  const S = document.getElementById('seeds');
+  const vals = [1.2, 2.6, 1.9, 0.9, 2.3, 1.6, 2.8, 1.1];
+  const x0 = 96, x1 = 456, y = 58, sc = (v) => x0 + (v + 1) / 5 * (x1 - x0);
+  text(S, 0, 30, 'Happiness Δ', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 13, 'letter-spacing': 1.2, fill: '#1c1d20' });
+  text(S, 0, 46, 'per seed', { 'font-family': 'Barlow Semi Condensed', 'font-size': 12.5, fill: '#5b5d61' });
+  el('line', { x1: x0, y1: y, x2: x1, y2: y, stroke: '#1c1d20', 'stroke-width': 1 }, S);
+  for (let v = -1; v <= 4; v++) { el('line', { x1: sc(v), y1: y - 4, x2: sc(v), y2: y + 4, stroke: '#1c1d20' }, S); text(S, sc(v), y + 20, (v > 0 ? '+' : '') + v, { 'text-anchor': 'middle', 'font-family': 'IBM Plex Mono', 'font-size': 11, fill: '#5b5d61' }); }
+  el('rect', { x: sc(1.1), y: y - 16, width: sc(2.5) - sc(1.1), height: 32, fill: 'rgba(28,29,32,0.08)' }, S);
+  el('line', { x1: sc(1.8), y1: y - 20, x2: sc(1.8), y2: y + 20, stroke: '#1c1d20', 'stroke-width': 2 }, S);
+  vals.forEach((v, i) => el('rect', { x: sc(v) - 5, y: y - 13 + (i % 3) * 8, width: 10, height: 10, fill: '#3d5c29' }, S));
+  el('line', { x1: sc(0), y1: y - 22, x2: sc(0), y2: y + 22, stroke: '#9e4a3a', 'stroke-width': 1.2, 'stroke-dasharray': '3 3' }, S);
+  text(S, sc(1.8) + 6, y - 24, 'mean +1.8', { 'font-family': 'IBM Plex Mono', 'font-size': 11, fill: '#1c1d20' });
+
+  // "arriving in the build menu": dashed flight path from the Install button to the new tile
+  const ov = document.getElementById('ov');
+  const b = document.getElementById('install').getBoundingClientRect();
+  const t = document.getElementById('newtile').getBoundingClientRect();
+  const r0 = document.querySelector('.rots figure img').getBoundingClientRect();
+  const p0 = [r0.left - 6, r0.top + 120], p1 = [t.right + 6, t.top + 40];
+  const c1 = [p0[0] - 150, p0[1] - 120], c2 = [p1[0] + 150, p1[1] - 40];
+  el('path', { d: `M${p0[0]},${p0[1]} C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${p1[0]},${p1[1]}`, fill: 'none', stroke: '#ffe13a', 'stroke-width': 2.2, 'stroke-dasharray': '8 7' }, ov);
+  el('path', { d: `M${p1[0]},${p1[1]} l13,-12 l5,14 z`, fill: '#ffe13a' }, ov);
+  const mid = [0.125 * p0[0] + 0.375 * c1[0] + 0.375 * c2[0] + 0.125 * p1[0], 0.125 * p0[1] + 0.375 * c1[1] + 0.375 * c2[1] + 0.125 * p1[1]];
+  // player cursor on the install button
+  UI.playerCursor(ov, b.left + 70, b.top + 22);
+})();
+</script>
+</body></html>

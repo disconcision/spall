@@ -1,0 +1,197 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 32
+ },
+ "jobs": [
+  {
+   "spec": "scale/specs/p_world.json",
+   "out": "scale/out/powers/p1_10m.png",
+   "light": "powers",
+   "style": "scale",
+   "camera": {
+    "az": 0.0,
+    "el": 38.0,
+    "target": [
+     0.0,
+     0.0,
+     709.6
+    ],
+    "ortho_scale": 10.0
+   },
+   "fog": {
+    "h": 0.0,
+    "gamma": 1.4,
+    "d": 0.0,
+    "z_lo": 0.0,
+    "z_hi": 800,
+    "d_start": 0.0
+   },
+   "name": "p1",
+   "max_lights": 80,
+   "samples": 40,
+   "clip": [
+    0.05,
+    3000000.0
+   ]
+  },
+  {
+   "spec": "scale/specs/p_world.json",
+   "out": "scale/out/powers/p2_100m.png",
+   "light": "powers",
+   "style": "scale",
+   "camera": {
+    "az": 0.0,
+    "el": 38.0,
+    "target": [
+     0.0,
+     -22.0,
+     678.0
+    ],
+    "ortho_scale": 100.0
+   },
+   "fog": {
+    "h": 0.0,
+    "gamma": 1.4,
+    "d": 0.05,
+    "z_lo": 0.0,
+    "z_hi": 800,
+    "d_start": 0.0
+   },
+   "name": "p2",
+   "max_lights": 80,
+   "samples": 40,
+   "clip": [
+    0.05,
+    3000000.0
+   ]
+  },
+  {
+   "spec": "scale/specs/p_world.json",
+   "out": "scale/out/powers/p3_1km.png",
+   "light": "powers",
+   "style": "scale",
+   "camera": {
+    "az": 0.0,
+    "el": 38.0,
+    "target": [
+     0.0,
+     0.0,
+     700.0
+    ],
+    "ortho_scale": 1000.0
+   },
+   "fog": {
+    "h": 0.05,
+    "gamma": 1.4,
+    "d": 0.12,
+    "z_lo": 0.0,
+    "z_hi": 1800,
+    "d_start": 0.0
+   },
+   "name": "p3",
+   "max_lights": 80,
+   "samples": 40,
+   "clip": [
+    0.05,
+    3000000.0
+   ]
+  },
+  {
+   "spec": "scale/specs/p_world.json",
+   "out": "scale/out/powers/p4_10km.png",
+   "light": "powers",
+   "style": "scale",
+   "camera": {
+    "az": 0.0,
+    "el": 38.0,
+    "target": [
+     0.0,
+     0.0,
+     700.0
+    ],
+    "ortho_scale": 10000.0
+   },
+   "fog": {
+    "h": 0.15,
+    "gamma": 1.4,
+    "d": 0.25,
+    "z_lo": 0.0,
+    "z_hi": 3000,
+    "d_start": 0.0
+   },
+   "name": "p4",
+   "max_lights": 80,
+   "samples": 40,
+   "clip": [
+    0.05,
+    3000000.0
+   ]
+  },
+  {
+   "spec": "scale/specs/p_world.json",
+   "out": "scale/out/powers/p5_100km.png",
+   "light": "powers",
+   "style": "scale",
+   "camera": {
+    "az": 0.0,
+    "el": 38.0,
+    "target": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ortho_scale": 100000.0
+   },
+   "fog": {
+    "h": 0.1,
+    "gamma": 1.4,
+    "d": 0.2,
+    "z_lo": 0.0,
+    "z_hi": 9000,
+    "d_start": 0.0
+   },
+   "name": "p5",
+   "max_lights": 80,
+   "samples": 40,
+   "clip": [
+    0.05,
+    3000000.0
+   ]
+  },
+  {
+   "spec": "scale/specs/p_world.json",
+   "out": "scale/out/powers/p6_1000km.png",
+   "light": "powers",
+   "style": "scale",
+   "camera": {
+    "az": 0.0,
+    "el": 38.0,
+    "target": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ortho_scale": 1000000.0
+   },
+   "fog": {
+    "h": 0.12,
+    "gamma": 1.4,
+    "d": 0.25,
+    "z_lo": 0.0,
+    "z_hi": 12000,
+    "d_start": 0.0
+   },
+   "name": "p6",
+   "max_lights": 80,
+   "samples": 40,
+   "clip": [
+    0.05,
+    3000000.0
+   ]
+  }
+ ]
+}

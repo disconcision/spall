@@ -1,0 +1,55 @@
+{
+ "meta": {
+  "name": "ctx_core",
+  "kind": "context-sprite",
+  "style": "sprite",
+  "seed": 7,
+  "grid": {
+   "cell": 4.0,
+   "level": 3.5
+  },
+  "footprint": {
+   "x": 0,
+   "y": 0,
+   "w": 2,
+   "d": 2,
+   "max_levels": 10,
+   "overhang": 0.5
+  },
+  "light": "studio",
+  "description": "Service core, 8 levels, with one bolted-on room"
+ },
+ "parts": [
+  {
+   "type": "core",
+   "x": 0,
+   "y": 0,
+   "level": 0,
+   "w": 2,
+   "d": 2,
+   "h": 8,
+   "material": "concrete",
+   "params": {
+    "cabs": 2,
+    "louvre": 3,
+    "cap": true
+   }
+  },
+  {
+   "type": "capsule",
+   "x": 0.2,
+   "y": -0.4,
+   "level": 2.2,
+   "w": 0.9,
+   "d": 0.4,
+   "h": 0.9,
+   "material": "k_pink",
+   "params": {
+    "win": "grid",
+    "lit": 0.6,
+    "interior": false,
+    "ac": 0.5
+   }
+  }
+ ]
+}

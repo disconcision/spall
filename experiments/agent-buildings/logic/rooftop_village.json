@@ -1,0 +1,54 @@
+{
+  "id": "rooftop_village",
+  "spec": "specs/rooftop_village.json",
+  "title": "Rooftop Squatter Village",
+  "category": "residential",
+  "brief": "a Kowloon-style rooftop squatter village",
+  "footprint": {"cells_w": 3, "cells_d": 3, "levels": 3, "anchor": "roof", "rotations": 4,
+                "note": "grows on the flat roof of any building with a 3x3 roof; level 0 is the host roof"},
+  "placement": {
+    "on": ["roof"],
+    "stratum": "any",
+    "requires": [
+      {"kind": "flat_roof", "cells": [3, 3], "note": "host must be complete and at least 2 levels tall"},
+      {"kind": "stair_core", "within_cells": 2, "note": "reached through the host's stair"}
+    ],
+    "spawns": "self-builds over time when housing demand exceeds supply and a roof sits unused (not placed by the player)",
+    "clear_height_levels": 3
+  },
+  "capacity": {"residents": 28, "households": 8, "shops": 1},
+  "jobs": {"total": 3, "shifts": 1, "roles": [{"role": "shopkeeper", "n": 1}, {"role": "repair", "n": 2}]},
+  "services": {
+    "needs": {
+      "power": {"kw": 22, "note": "tapped from the host, often informally"},
+      "water": {"m3_per_day": 5, "source": "rooftop tanks filled from the host riser"},
+      "air": {"m3_per_min": 0, "note": "open air"},
+      "transit": {"walk_to_stop_cells": 6}
+    },
+    "provides": {
+      "food": {"units_per_day": 3, "note": "roof gardens, minor"},
+      "data": {"antennas": 8, "coverage_radius_cells": 3, "note": "informal wifi/repeaters"}
+    }
+  },
+  "effects": {
+    "light_air": {"radius_cells": 1, "daylight_delta": -0.05, "note": "adds up to 2 levels of clutter above the host roof"},
+    "land_value": {"radius_cells": 3, "delta": -6, "note": "informal housing lowers nearby value..."},
+    "noise": {"radius_cells": 2, "db": 5, "note": "radios, pigeons, generators"},
+    "safety": {"radius_cells": 2, "delta": -4, "note": "fire risk: timber and tin, one stair"},
+    "footfall": {"radius_cells": 3, "delta": 10, "note": "...but raises street life"}
+  },
+  "economy": {"build_cost": 300, "upkeep_per_day": 1, "build_days": 60, "rent_per_day": 12,
+              "note": "residents build it themselves; costs are materials only"},
+  "construction": [
+    {"step": 1, "name": "roof patch", "drones": {"patcher": 1}, "days": 4,
+     "action": "tar and patch the host roof"},
+    {"step": 2, "name": "rooms", "drones": {"lifter": 1, "mason": 2}, "days": 18,
+     "action": "raise two block add-on rooms along the back parapet"},
+    {"step": 3, "name": "shacks", "drones": {"carpenter": 2}, "days": 20,
+     "action": "nail up four tin shacks in front, two more on the room roofs, the plank walkway and the ladder"},
+    {"step": 4, "name": "utilities", "drones": {"lifter": 1, "electrician": 1}, "days": 10,
+     "action": "haul up water tanks, run hoses, raise antennas and dishes"},
+    {"step": 5, "name": "life", "drones": {"resident": 3}, "days": 8,
+     "action": "laundry lines, styrofoam gardens, signs, lanterns - the village fills in"}
+  ]
+}

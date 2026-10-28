@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stratum Fidelity Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#0e0f11;--panel:#141517;--line:#2c2e32;--text:#e6dfcf;--dim:#a39c8e;--faint:#716c62;--accent:#e8a83c;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;--cond:"Barlow Condensed","Arial Narrow",sans-serif}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:13px/1.55 var(--mono)}
+header{padding:22px 16px 14px;border-bottom:1px solid var(--line);max-width:1400px;margin:0 auto}
+h1{font:700 26px/1 var(--cond);letter-spacing:.14em;margin:0 0 6px} header p{margin:0;color:var(--dim);max-width:920px}
+main{max-width:1400px;margin:0 auto;padding:0 16px 48px}
+h2{font:700 13px/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:28px 0 10px}
+.pair{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+figure{margin:0;background:var(--panel);border:1px solid var(--line);padding:10px}
+figure img{display:block;image-rendering:pixelated;image-rendering:crisp-edges;max-width:100%;height:auto}
+figcaption{margin-top:8px;color:var(--dim);font-size:12px} figcaption b{color:var(--text);font-weight:600}
+.tag{display:inline-block;font:700 11px/1 var(--cond);letter-spacing:.12em;background:var(--accent);color:#1b1305;padding:3px 5px 2px;margin-right:6px}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:8px}
+.notes section{background:var(--panel);border:1px solid var(--line);padding:12px 14px}
+.notes h3{font:700 14px/1.1 var(--cond);letter-spacing:.1em;text-transform:uppercase;margin:0 0 8px;color:var(--accent)}
+.notes ul{margin:0;padding-left:18px;color:var(--dim)} .notes li{margin:3px 0} .notes li b{color:var(--text);font-weight:600}
+.crops{display:flex;flex-wrap:wrap;gap:16px}
+</style></head><body>
+<header><h1>FIDELITY · 1× VS 2×</h1>
+<p>One small piece of the city — a stepped back row (old buildings, the core, a capsule stack), a canal gap, a low front deck — drawn twice.
+1× is the game's own render, captured from the running prototype. 2× is the same cells, the same sprite variants, the same palette and face shading,
+but every painter rewritten for a 32-px cell with the detail a doubled grid can hold. Nothing is upscaled or filtered.</p></header>
+<main>
+<h2>Same size on screen, close up</h2>
+<div class="pair" id="close"></div>
+<h2>As it would sit in the game at the default zoom</h2>
+<div class="pair" id="game"></div>
+<h2>Details, 2× at 4 screen px per pixel</h2>
+<div class="crops" id="crops"></div>
+<h2>Native pixels</h2>
+<div class="pair" id="native"></div>
+<h2>Reading it</h2>
+<div class="notes">
+<section><h3>What 2× adds</h3><ul>
+<li><b>Windows become windows:</b> frames between runs, a mullion in each, a bright sill and its shadow, a slant of sky in the glass, blinds; lit ones get a warm top edge.</li>
+<li><b>Material:</b> render grain and weep stains on old walls; board-marked concrete with tie holes on the core; plank joints and a two-tone safety edge on decks.</li>
+<li><b>Railings with rails:</b> top rail, highlight, mid rail, posts — at 1× they are a dotted line.</li>
+<li><b>Roofs carry things:</b> parapets with coping, gravel, an AC unit with a fan, a tank on legs, a vent stack, a hatch.</li>
+<li><b>Capsules read as moulded pods:</b> rounded window with a rim and curtain, louvred vent, service hatch, rivets, bolted cage joints.</li>
+<li><b>Cables become tubes:</b> outline, highlight and a specular glint; the hose shows its ribbing; ties are lit bands that wrap.</li>
+<li><b>Trees:</b> a forked trunk and a lobed crown lit from one side; the conifer gets tiers with ragged hems.</li>
+</ul></section>
+<section><h3>What it costs</h3><ul>
+<li><b>Every painter rewritten,</b> not scaled: ~25 tile types plus facades, ghosts, cut (poché) faces and icons. This page did 6 of them; roughly 3–4× the art effort of the 1× set, and every new piece costs that from now on.</li>
+<li><b>Memory:</b> level caches are 4× bigger (depth, face and colour per pixel): ~5 MB a level now at 64×64 → ~20 MB; with lighting layers, ~0.5 GB for 18 levels. Tiling the caches becomes necessary, not optional.</li>
+<li><b>Frame cost:</b> 4× the pixels to composite and to light; the per-pixel cable drawing would need to move off fillRect.</li>
+<li><b>The world reads smaller:</b> at the same screen size you see a quarter of the area — or you keep the area and every element is half the screen size it is now.</li>
+</ul></section>
+<section><h3>Honest read</h3><ul id="read">
+<li><b>Up close, 2× wins clearly.</b> Windows, railings and roof clutter become legible objects, and the cables gain the most: they read as tubes with weight, the hose has ribbing, ties read as bands that wrap.</li>
+<li><b>At the default zoom it is a change of character more than of legibility.</b> 2× reads as finer, calmer, more illustrated (eBoy / SimCity 3000 density); 1× reads bolder and more graphic, with a toy-like charm that is part of the current look.</li>
+<li><b>The real decision is zoom.</b> A 2× world shows a quarter of the area per screen at the same pixel size; seeing the whole block again means zooming out, which needs either a second (1×) art set or downsampling, and downsampled pixel art goes mushy. If most time is spent close (laying and tying cables), 2× pays for itself; if the overview is the game, 1× is the honest scale.</li>
+</ul></section>
+</div>
+</main>
+<script src="hires/hires.js"></script>
+<script>
+(async () => {
+  const data = await (await fetch('hires/vignette.json')).json();
+  const cv = await renderHires(data);
+  const url2 = cv.toDataURL('image/png'), url1 = 'hires/vignette-1x.png';
+  const [w1, h1] = data.size, w2 = cv.width, h2 = cv.height;
+  const fig = (url, w, h, scale, tag, cap) => `<figure><img src="${url}" width="${w * scale}" height="${h * scale}"><figcaption><span class="tag">${tag}</span>${cap}</figcaption></figure>`;
+  document.getElementById('close').innerHTML = fig(url1, w1, h1, 4, '1×', '<b>The game today</b>, each pixel 4 screen px') + fig(url2, w2, h2, 2, '2×', '<b>Redrawn at 2×</b>, each pixel 2 screen px');
+  document.getElementById('game').innerHTML = fig(url1, w1, h1, 2, '1×', 'zoom 2 (the default)') + fig(url2, w2, h2, 1, '2×', 'the same area at zoom 1 of the 2× grid');
+  document.getElementById('native').innerHTML = fig(url1, w1, h1, 1, '1×', `${w1}×${h1}`) + fig(url2, w2, h2, 1, '2×', `${w2}×${h2}`);
+  // detail crops: windows, the capsule stack, the bundle, the deck railing
+  const crops = [['Ribbon windows, roof, core', 88, 44, 72, 64], ['Capsule stack', 148, 84, 62, 88], ['Bundle and ties', 62, 102, 66, 90], ['Deck, railing, trees', 6, 130, 116, 82]];
+  const host = document.getElementById('crops');
+  for (const [name, x, y, w, h] of crops) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(cv, x, y, w, h, 0, 0, w, h);
+    host.insertAdjacentHTML('beforeend', fig(c.toDataURL(), w, h, 4, '2×', name));
+  }
+  window.__done = true;
+})();
+</script>
+</body></html>

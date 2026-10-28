@@ -1,0 +1,286 @@
+{
+ "defaults": {
+  "spec": "specs/catalog.json",
+  "light": "studio",
+  "res": [
+   420,
+   420
+  ],
+  "samples": 32,
+  "transparent": true,
+  "nofog": true,
+  "bloom": 0
+ },
+ "jobs": [
+  {
+   "out": "out/catalog/00_megacolumn.png",
+   "only_tags": [
+    "cat:0"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/01_core.png",
+   "only_tags": [
+    "cat:1"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/02_elevator.png",
+   "only_tags": [
+    "cat:2"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/03_truss.png",
+   "only_tags": [
+    "cat:3"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/04_deck.png",
+   "only_tags": [
+    "cat:4"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/05_capsule.png",
+   "only_tags": [
+    "cat:5"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/06_capsule.png",
+   "only_tags": [
+    "cat:6"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/07_tube.png",
+   "only_tags": [
+    "cat:7"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/08_viaduct.png",
+   "only_tags": [
+    "cat:8"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/09_bridge.png",
+   "only_tags": [
+    "cat:9"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/10_stairs.png",
+   "only_tags": [
+    "cat:10"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/11_ramp.png",
+   "only_tags": [
+    "cat:11"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/12_lightwell.png",
+   "only_tags": [
+    "cat:12"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/13_terrace.png",
+   "only_tags": [
+    "cat:13"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/14_tree.png",
+   "only_tags": [
+    "cat:14"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/15_pipe.png",
+   "only_tags": [
+    "cat:15"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/16_antenna.png",
+   "only_tags": [
+    "cat:16"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/17_crane.png",
+   "only_tags": [
+    "cat:17"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/18_water.png",
+   "only_tags": [
+    "cat:18"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/19_greenhouse.png",
+   "only_tags": [
+    "cat:19"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/20_solar.png",
+   "only_tags": [
+    "cat:20"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/21_turbine.png",
+   "only_tags": [
+    "cat:21"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/22_sign.png",
+   "only_tags": [
+    "cat:22"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/23_tank.png",
+   "only_tags": [
+    "cat:23"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/24_machine.png",
+   "only_tags": [
+    "cat:24"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/25_shack.png",
+   "only_tags": [
+    "cat:25"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/26_ruin.png",
+   "only_tags": [
+    "cat:26"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/27_builder.png",
+   "only_tags": [
+    "cat:27"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/28_block.png",
+   "only_tags": [
+    "cat:28"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  },
+  {
+   "out": "out/catalog/29_figure.png",
+   "only_tags": [
+    "cat:29"
+   ],
+   "camera": {
+    "margin": 0.1
+   }
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+<script>
+(function(){
+  var p = {};
+  location.hash.slice(1).split('&').forEach(function(kv){ if(!kv) return; var i = kv.indexOf('='); if (i < 0) { p[kv] = '1'; return; } p[decodeURIComponent(kv.slice(0,i))] = decodeURIComponent(kv.slice(i+1)); });
+  function report(){ var d = document.createElement('pre'); d.id = '__report'; d.style.cssText = 'position:absolute;left:-99999px;top:0'; d.textContent = 'ERRS:' + JSON.stringify(window.__errs) + ' STATE:' + JSON.stringify({mode: STRATUM.S.mode, level: STRATUM.S.level, jobs: STRATUM.JOBS().length, agent: STRATUM.AGENT.state, bw: STRATUM.S.bw, bh: STRATUM.S.bh, zoom: STRATUM.S.zoom, perf: window.__perf}); document.body.appendChild(d); }
+  function run(){ try { if (Object.keys(p).length) window.STRATUM.test(p); } catch(e){ window.__errs.push('hook: ' + e.message + ' ' + (e.stack||'')); } setTimeout(report, 400); window.addEventListener('error', function(){ var o=document.getElementById('__report'); if(o) o.remove(); report(); }); }
+  if (document.readyState === 'complete') setTimeout(run, 60); else window.addEventListener('load', function(){ setTimeout(run, 60); });
+})();
+</script>

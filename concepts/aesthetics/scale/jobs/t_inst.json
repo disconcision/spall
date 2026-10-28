@@ -1,0 +1,23 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 32
+ },
+ "jobs": [
+  {
+   "spec": "scale/specs/t_inst.json",
+   "out": "scale/out/test/t_inst.png",
+   "frame_bb": [
+    -200,
+    -200,
+    0,
+    1200,
+    1200,
+    40
+   ]
+  }
+ ]
+}

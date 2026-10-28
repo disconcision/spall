@@ -1,0 +1,275 @@
+{
+ "defaults": {},
+ "jobs": [
+  {
+   "spec": "specs/scene_district.json",
+   "instances": [
+    {
+     "spec": "specs/tube_interchange.json",
+     "at": [
+      0,
+      0,
+      0
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/hydro_stack.json",
+     "at": [
+      9,
+      6,
+      0
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/solar_chimney.json",
+     "at": [
+      15.5,
+      7.5,
+      0
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/bridge_market.json",
+     "at": [
+      10,
+      14,
+      10
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/hanging_garden.json",
+     "at": [
+      -7,
+      11,
+      4
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/rooftop_village.json",
+     "at": [
+      17,
+      15,
+      10
+     ],
+     "rot": 0
+    }
+   ],
+   "res": [
+    1800,
+    1200
+   ],
+   "samples": 64,
+   "style": "arcology",
+   "frame_bb": [
+    -40,
+    -40,
+    -2,
+    96,
+    92,
+    62
+   ],
+   "frame_clip": true,
+   "env": {
+    "lantern": 2.2
+   },
+   "max_lights": 220,
+   "out": "out/scene_golden.png",
+   "light": "golden",
+   "camera": {
+    "target": [
+     28,
+     36,
+     22
+    ],
+    "ortho_scale": 128
+   },
+   "fog": {
+    "h": 0.12,
+    "d": 0.06
+   }
+  },
+  {
+   "spec": "specs/scene_district.json",
+   "instances": [
+    {
+     "spec": "specs/tube_interchange.json",
+     "at": [
+      0,
+      0,
+      0
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/hydro_stack.json",
+     "at": [
+      9,
+      6,
+      0
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/solar_chimney.json",
+     "at": [
+      15.5,
+      7.5,
+      0
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/bridge_market.json",
+     "at": [
+      10,
+      14,
+      10
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/hanging_garden.json",
+     "at": [
+      -7,
+      11,
+      4
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/rooftop_village.json",
+     "at": [
+      17,
+      15,
+      10
+     ],
+     "rot": 0
+    }
+   ],
+   "res": [
+    1800,
+    1200
+   ],
+   "samples": 64,
+   "style": "arcology",
+   "frame_bb": [
+    -40,
+    -40,
+    -2,
+    96,
+    92,
+    62
+   ],
+   "frame_clip": true,
+   "env": {
+    "lantern": 2.2
+   },
+   "max_lights": 220,
+   "out": "out/scene_dusk.png",
+   "light": "dusk",
+   "exposure": 0.35,
+   "camera": {
+    "target": [
+     28,
+     36,
+     22
+    ],
+    "ortho_scale": 128
+   }
+  },
+  {
+   "spec": "specs/scene_district.json",
+   "instances": [
+    {
+     "spec": "specs/tube_interchange.json",
+     "at": [
+      0,
+      0,
+      0
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/hydro_stack.json",
+     "at": [
+      9,
+      6,
+      0
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/solar_chimney.json",
+     "at": [
+      15.5,
+      7.5,
+      0
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/bridge_market.json",
+     "at": [
+      10,
+      14,
+      10
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/hanging_garden.json",
+     "at": [
+      -7,
+      11,
+      4
+     ],
+     "rot": 0
+    },
+    {
+     "spec": "specs/rooftop_village.json",
+     "at": [
+      17,
+      15,
+      10
+     ],
+     "rot": 0
+    }
+   ],
+   "res": [
+    1800,
+    1200
+   ],
+   "samples": 64,
+   "style": "arcology",
+   "frame_bb": [
+    -40,
+    -40,
+    -2,
+    96,
+    92,
+    62
+   ],
+   "frame_clip": true,
+   "env": {
+    "lantern": 2.2
+   },
+   "max_lights": 220,
+   "out": "out/scene_dusk_close.png",
+   "light": "dusk",
+   "exposure": 0.3,
+   "camera": {
+    "target": [
+     49,
+     57,
+     20
+    ],
+    "ortho_scale": 90
+   }
+  }
+ ]
+}

@@ -1,0 +1,492 @@
+{
+ "defaults": {
+  "res": [
+   2560,
+   1440
+  ],
+  "samples": 64
+ },
+ "jobs": [
+  {
+   "name": "m1_beauty",
+   "spec": "/Users/andrewblinn/Dropbox/projects/spall/experiments/concept-renders/specs/arcology.json",
+   "light": "overcast",
+   "out": "out/m1_beauty.png",
+   "camera": {
+    "ortho_scale": 196.92307692307693,
+    "target": [
+     35.20249923976482,
+     44.41249686532108,
+     11.279897357428757
+    ],
+    "az": 45.0,
+    "el": 30.0
+   },
+   "view": {
+    "mode": "cutaway",
+    "level": 8,
+    "cut": 0.5,
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   }
+  },
+  {
+   "name": "m1_zmask",
+   "spec": "/Users/andrewblinn/Dropbox/projects/spall/experiments/concept-renders/specs/arcology.json",
+   "light": "overcast",
+   "out": "out/m1_zmask.png",
+   "camera": {
+    "ortho_scale": 196.92307692307693,
+    "target": [
+     35.20249923976482,
+     44.41249686532108,
+     11.279897357428757
+    ],
+    "az": 45.0,
+    "el": 30.0
+   },
+   "zmask": 8.0,
+   "zmask_fade": 3.0,
+   "samples": 16,
+   "view": {
+    "mode": "cutaway",
+    "level": 8,
+    "cut": 0.5,
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   }
+  },
+  {
+   "name": "m1_ghost",
+   "spec": "/Users/andrewblinn/Dropbox/projects/spall/experiments/concept-renders/specs/arcology.json",
+   "light": "overcast",
+   "out": "out/m1_ghost.png",
+   "camera": {
+    "ortho_scale": 196.92307692307693,
+    "target": [
+     35.20249923976482,
+     44.41249686532108,
+     11.279897357428757
+    ],
+    "az": 45.0,
+    "el": 30.0
+   },
+   "transparent": true,
+   "objects": [
+    "ghost"
+   ],
+   "view": {
+    "mode": "ghost",
+    "level": 8,
+    "cut": 0.5,
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ],
+    "ghost_zmax": 12.3,
+    "ghost_tags": [
+     "support"
+    ]
+   },
+   "env": {
+    "ghost_col": [
+     0.5,
+     0.67,
+     0.91
+    ],
+    "wire_col": [
+     0.11,
+     0.33,
+     0.75
+    ],
+    "ghost_alpha": 0.05,
+    "wire_e": 1.3
+   }
+  },
+  {
+   "name": "m2_section",
+   "spec": "specs/arcology_section.json",
+   "light": "overcast",
+   "out": "out/m2_section.png",
+   "camera": {
+    "ortho_scale": 228.57142857142858,
+    "target": [
+     3.887160152650751e-15,
+     63.48214285714286,
+     48.285714285714285
+    ],
+    "az": 90.0,
+    "el": 0.0
+   },
+   "view": {
+    "mode": "section",
+    "axis": "x",
+    "at": 16.0,
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   },
+   "fog": {
+    "d": 0.28
+   }
+  },
+  {
+   "name": "m7_section_night",
+   "spec": "specs/arcology_section.json",
+   "light": "night",
+   "out": "out/m7_section_night.png",
+   "camera": {
+    "ortho_scale": 228.57142857142858,
+    "target": [
+     3.887160152650751e-15,
+     63.48214285714286,
+     48.285714285714285
+    ],
+    "az": 90.0,
+    "el": 0.0
+   },
+   "view": {
+    "mode": "section",
+    "axis": "x",
+    "at": 16.0,
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   },
+   "fog": {
+    "d": 0.22
+   },
+   "exposure": 1.1
+  },
+  {
+   "name": "m3_stamp",
+   "spec": "specs/arcology_m3.json",
+   "light": "overcast",
+   "out": "out/m3_stamp.png",
+   "camera": {
+    "ortho_scale": 119.06976744186046,
+    "target": [
+     0.41439120708627186,
+     38.59204529605388,
+     46.75788604722522
+    ],
+    "az": 45.0,
+    "el": 30.0
+   },
+   "view": {
+    "mode": "cutaway",
+    "level": 21,
+    "cut": 0.5,
+    "crop": [
+     2.5,
+     3.5,
+     17.2,
+     13.8
+    ],
+    "zmin": 17.7
+   },
+   "env": {
+    "ghost_col": [
+     0.33245,
+     0.55201,
+     1.0
+    ],
+    "wire_col": [
+     0.07819,
+     0.36625,
+     1.0
+    ],
+    "ghost_alpha": 0.12,
+    "wire_e": 2.2
+   }
+  },
+  {
+   "name": "m3_u_stack3",
+   "spec": "specs/u_stack3.json",
+   "light": "studio",
+   "style": "arcology",
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "out": "out/m3_u_stack3.png",
+   "res": [
+    520,
+    520
+   ],
+   "samples": 48,
+   "camera": {
+    "margin": 0.08
+   }
+  },
+  {
+   "name": "m3_u_stack2",
+   "spec": "specs/u_stack2.json",
+   "light": "studio",
+   "style": "arcology",
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "out": "out/m3_u_stack2.png",
+   "res": [
+    520,
+    520
+   ],
+   "samples": 48,
+   "camera": {
+    "margin": 0.08
+   }
+  },
+  {
+   "name": "m3_u_stack5",
+   "spec": "specs/u_stack5.json",
+   "light": "studio",
+   "style": "arcology",
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "out": "out/m3_u_stack5.png",
+   "res": [
+    520,
+    520
+   ],
+   "samples": 48,
+   "camera": {
+    "margin": 0.08
+   }
+  },
+  {
+   "name": "m3_u_captured",
+   "spec": "specs/u_captured.json",
+   "light": "studio",
+   "style": "arcology",
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "out": "out/m3_u_captured.png",
+   "res": [
+    520,
+    520
+   ],
+   "samples": 48,
+   "camera": {
+    "margin": 0.08
+   }
+  },
+  {
+   "name": "m3_u_pat_bridge",
+   "spec": "specs/u_pat_bridge.json",
+   "light": "studio",
+   "style": "arcology",
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "out": "out/m3_u_pat_bridge.png",
+   "res": [
+    520,
+    520
+   ],
+   "samples": 48,
+   "camera": {
+    "margin": 0.08
+   }
+  },
+  {
+   "name": "m3_u_pat_garden",
+   "spec": "specs/u_pat_garden.json",
+   "light": "studio",
+   "style": "arcology",
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "out": "out/m3_u_pat_garden.png",
+   "res": [
+    520,
+    520
+   ],
+   "samples": 48,
+   "camera": {
+    "margin": 0.08
+   }
+  },
+  {
+   "name": "m3_u_pat_lightwell",
+   "spec": "specs/u_pat_lightwell.json",
+   "light": "studio",
+   "style": "arcology",
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "out": "out/m3_u_pat_lightwell.png",
+   "res": [
+    520,
+    520
+   ],
+   "samples": 48,
+   "camera": {
+    "margin": 0.08
+   }
+  },
+  {
+   "name": "m3_u_pat_stair",
+   "spec": "specs/u_pat_stair.json",
+   "light": "studio",
+   "style": "arcology",
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "out": "out/m3_u_pat_stair.png",
+   "res": [
+    520,
+    520
+   ],
+   "samples": 48,
+   "camera": {
+    "margin": 0.08
+   }
+  },
+  {
+   "name": "m4_agent",
+   "spec": "specs/arcology_m4.json",
+   "light": "dusk",
+   "out": "out/m4_agent.png",
+   "camera": {
+    "ortho_scale": 134.73684210526315,
+    "target": [
+     23.112195706910363,
+     70.24020040977409,
+     57.71978205875106
+    ],
+    "az": 45.0,
+    "el": 30.0
+   },
+   "view": {
+    "mode": "full",
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   },
+   "env": {
+    "ghost_col": [
+     0.3,
+     0.55,
+     1.0
+    ],
+    "wire_col": [
+     0.1,
+     0.36,
+     1.0
+    ],
+    "ghost_alpha": 0.16,
+    "wire_e": 1.5
+   },
+   "frame_bb": [
+    -8,
+    -12,
+    -10,
+    95,
+    72,
+    140
+   ],
+   "frame_clip": true
+  },
+  {
+   "name": "m6_phase5",
+   "spec": "/Users/andrewblinn/Dropbox/projects/spall/experiments/concept-renders/specs/arcology.json",
+   "light": "overcast",
+   "out": "out/m6_phase5.png",
+   "camera": {
+    "ortho_scale": 387.8787878787879,
+    "target": [
+     62.44235186781751,
+     67.41183932017276,
+     6.086354270716942
+    ],
+    "az": 45.0,
+    "el": 30.0
+   },
+   "phase": 5,
+   "blueprint": true,
+   "view": {
+    "mode": "full",
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   },
+   "env": {
+    "ghost_col": [
+     0.33245,
+     0.55201,
+     1.0
+    ],
+    "wire_col": [
+     0.07819,
+     0.36625,
+     1.0
+    ],
+    "ghost_alpha": 0.12,
+    "wire_e": 2.2
+   }
+  },
+  {
+   "name": "m8_arc_px",
+   "spec": "/Users/andrewblinn/Dropbox/projects/spall/experiments/concept-renders/specs/arcology.json",
+   "light": "studio",
+   "style": "sprite",
+   "out": "out/m8_arc_px.png",
+   "res": [
+    720,
+    540
+   ],
+   "samples": 16,
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     40.0,
+     32.0,
+     12.0
+    ],
+    "px_per_m": 5.65685424949238,
+    "pan": [
+     0,
+     0
+    ]
+   },
+   "view": {
+    "mode": "cutaway",
+    "level": 8,
+    "cut": 0.5,
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   }
+  }
+ ]
+}

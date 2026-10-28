@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spall · Highlight Styles</title>
+<style>
+:root{--bg:#0e0f11;--panel:#16171a;--line:#2c2e32;--text:#e6dfcf;--dim:#a39c8e;--accent:#e8a83c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:13px/1.45 "IBM Plex Mono",ui-monospace,Menlo,monospace}
+main{max-width:1720px;margin:0 auto;padding:24px 16px 48px}
+h1{font:700 22px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;margin:0 0 8px}
+p{color:var(--dim);max-width:900px;margin:0 0 14px}
+kbd{border:1px solid var(--dim);padding:0 4px;color:var(--text)}
+.grid{display:grid;grid-template-columns:150px repeat(4,minmax(0,1fr));gap:6px;align-items:start;margin-top:18px}
+.head{font-weight:600;color:var(--dim);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:4px 0}
+.row{display:contents}
+.lab{padding:6px 4px 0 0}
+.lab b{display:block;color:var(--accent);font-size:12px}
+.lab span{color:var(--dim);font-size:11px}
+figure{margin:0;border:1px solid var(--line);background:var(--panel)}
+figure img{display:block;width:100%;height:auto;image-rendering:pixelated}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.head{display:none}.lab{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<main>
+<h1>HIGHLIGHT · WHAT'S UNDER THE POINTER</h1>
+<p>Eight ways to show the cable or tie you're pointing at (or holding), rendered in the real game in four real situations from the default scene, at 4× zoom. Everything except H1 is drawn as an overlay of just that one element each frame, so the scene itself never redraws on hover.</p>
+<p>Try them live: in the game press <kbd>Shift</kbd>+<kbd>H</kbd> to cycle the style (it's remembered). H6's pulse is animated in the game; here it's a single frame.</p>
+<div class="grid" id="g">
+  <div class="head"></div><div class="head">loose cable over a void</div><div class="head">a cable in a bundle</div><div class="head">a tie on the trunk</div><div class="head">a cable in the tangle</div>
+</div>
+</main>
+<script>
+const STY = [
+  ['amber', 'H1 · Amber recolour', 'the original: the element turns amber'],
+  ['glow', 'H2 · Glow', 'a soft warm bloom around it'],
+  ['outline', 'H3 · Outline', 'a 1-px cream outline, crisp pixel-art style'],
+  ['outline-amber', 'H4 · Amber outline', 'the same outline in the accent colour'],
+  ['bright', 'H5 · Brighten', 'its own colours, brighter and more saturated'],
+  ['pulse', 'H6 · Pulse', 'the cream outline, breathing'],
+  ['dim', 'H7 · Spotlight', 'everything else dims; a faint glow on it'],
+  ['glow-outline', 'H8 · Glow + dark edge', 'a dark 1-px edge to separate it, then a glow']
+];
+const g = document.getElementById('g');
+for (const [k, name, note] of STY) {
+  g.insertAdjacentHTML('beforeend', `<div class="lab"><b>${name}</b><span>${note}</span></div>` +
+    [1, 2, 3, 4].map(s => `<figure><img src="highlight/s${s}-${k}.png" alt="${name}, situation ${s}" width="400" height="260" loading="lazy"></figure>`).join(''));
+}
+</script>
+</body>
+</html>

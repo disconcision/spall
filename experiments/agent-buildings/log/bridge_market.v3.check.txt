@@ -1,0 +1,5 @@
+validate specs/drafts/bridge_market.v3.json  (revision 3)
+  stock agent_check.py: FAIL (9 errors, 9 of them on context parts, 0 warnings)
+  note   41 parts (5 context), 0 oriented; 0 attach to the host directly
+  note   41 parts (detail 14, infill 12, landscape 5, service 1, support 8, transit 1); height 17.5 m
+  => PASS (0 errors, 0 warnings)

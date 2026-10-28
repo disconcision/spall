@@ -1,0 +1,165 @@
+{
+ "id": "bridge_market",
+ "spec": "specs/bridge_market.json",
+ "title": "Sky-Bridge Market",
+ "category": "commerce",
+ "brief": "a sky-bridge market spanning two cores, with stalls and lanterns",
+ "footprint": {
+  "cells_w": 4,
+  "cells_d": 2,
+  "levels": 2,
+  "anchor": "span",
+  "rotations": 4,
+  "note": "occupies the 4x2 gap between two core faces at any level; the deck top is the anchor level"
+ },
+ "placement": {
+  "on": [
+   "span"
+  ],
+  "stratum": "any",
+  "requires": [
+   {
+    "kind": "core",
+    "count": 2,
+    "gap_cells": 4,
+    "facing": "opposite",
+    "note": "core faces exactly 4 cells apart, both >= 2 cells wide"
+   },
+   {
+    "kind": "core_door",
+    "at": "both ends",
+    "note": "each core must have a landing at the anchor level"
+   }
+  ],
+  "clear_height_levels": 2,
+  "daylight": "prefers open sky or a light well (+20% footfall in daylight)"
+ },
+ "capacity": {
+  "stalls": 10,
+  "visitors_per_hour": 420,
+  "residents": 0,
+  "note": "ten back-to-back stalls on a central spine, five facing each aisle"
+ },
+ "jobs": {
+  "total": 13,
+  "shifts": 2,
+  "roles": [
+   {
+    "role": "stallholder",
+    "n": 10
+   },
+   {
+    "role": "porter",
+    "n": 2
+   },
+   {
+    "role": "warden",
+    "n": 1
+   }
+  ]
+ },
+ "services": {
+  "needs": {
+   "power": {
+    "kw": 18,
+    "note": "lanterns, neon, stall fridges"
+   },
+   "water": {
+    "m3_per_day": 3,
+    "source": "core riser"
+   },
+   "transit": {
+    "pedestrian_link": true,
+    "note": "counts as a walkway between the two cores"
+   }
+  },
+  "provides": {
+   "transit": {
+    "walkway_capacity_per_hour": 1800,
+    "links": "core A <-> core B"
+   },
+   "food": {
+    "units_per_day": 40,
+    "note": "street food; draws on stratum food supply"
+   }
+  }
+ },
+ "effects": {
+  "light_air": {
+   "radius_cells": 1,
+   "daylight_delta": -0.05,
+   "note": "thin deck casts a narrow shadow on the level below"
+  },
+  "land_value": {
+   "radius_cells": 5,
+   "delta": 12,
+   "note": "markets lift both cores"
+  },
+  "noise": {
+   "radius_cells": 3,
+   "db": 8,
+   "note": "crowd noise, evening peak"
+  },
+  "footfall": {
+   "radius_cells": 6,
+   "delta": 25
+  }
+ },
+ "economy": {
+  "build_cost": 1500,
+  "upkeep_per_day": 9,
+  "build_days": 21,
+  "rent_per_day": 30
+ },
+ "construction": [
+  {
+   "step": 1,
+   "name": "trusses",
+   "drones": {
+    "lifter": 2,
+    "welder": 2
+   },
+   "days": 6,
+   "action": "bolt two lattice trusses between the core faces (they carry everything)"
+  },
+  {
+   "step": 2,
+   "name": "deck",
+   "drones": {
+    "lifter": 1,
+    "welder": 1
+   },
+   "days": 4,
+   "action": "lay the timber deck on the trusses; it bears on both cores"
+  },
+  {
+   "step": 3,
+   "name": "gates",
+   "drones": {
+    "lifter": 1,
+    "welder": 1
+   },
+   "days": 3,
+   "action": "raise the gate posts and hang the neon gate signs"
+  },
+  {
+   "step": 4,
+   "name": "stalls",
+   "drones": {
+    "lifter": 2,
+    "carpenter": 2
+   },
+   "days": 6,
+   "action": "set ten back-to-back stalls along the central spine, awnings meeting in a ridge"
+  },
+  {
+   "step": 5,
+   "name": "lanterns",
+   "drones": {
+    "electrician": 1
+   },
+   "days": 2,
+   "action": "hang the lantern strings between the gate posts along both railings and connect the power"
+  }
+ ]
+}

@@ -1,0 +1,50 @@
+{
+ "meta": {
+  "name": "ctx_riser",
+  "kind": "context-sprite",
+  "style": "sprite",
+  "seed": 7,
+  "grid": {
+   "cell": 4.0,
+   "level": 3.5
+  },
+  "footprint": {
+   "x": 0,
+   "y": 0,
+   "w": 1,
+   "d": 1,
+   "max_levels": 6,
+   "overhang": 0.5
+  },
+  "light": "studio",
+  "description": "Stratum water riser"
+ },
+ "parts": [
+  {
+   "type": "pipe",
+   "x": 0.4,
+   "y": 0.8,
+   "level": 0,
+   "w": 0.25,
+   "d": 0.3,
+   "h": 6,
+   "material": "pipe2",
+   "params": {
+    "axis": "z",
+    "n": 2,
+    "r": 0.3,
+    "flange": 3.5
+   }
+  },
+  {
+   "type": "tank",
+   "x": 0.3,
+   "y": 0.2,
+   "level": 0,
+   "w": 0.4,
+   "d": 0.4,
+   "h": 0.4,
+   "material": "steel_light"
+  }
+ ]
+}

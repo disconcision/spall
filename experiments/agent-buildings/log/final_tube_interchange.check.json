@@ -1,0 +1,60 @@
+{
+ "spec": "specs/tube_interchange.json",
+ "revision": 5,
+ "stock": {
+  "errors": [
+   "#0 ground: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#1 ground: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#2 tube: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#3 tube: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#4 pier: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#5 pier: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#6 tube: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#7 tube: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#8 pier: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#9 pier: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#10 capsule: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#11 capsule: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#12 capsule: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#13 capsule: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#14 tree: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#15 tree: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#16 tree: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#17 tree: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#18 tree: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#19 tree: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#40 figure: unsupported - its base is at 5.10 m but the nearest top below is at 0.00 m (gap 5.10 m = 1.46 levels)",
+   "#41 figure: unsupported - its base is at 12.80 m but the nearest top below is at 8.20 m (gap 4.60 m = 1.31 levels)"
+  ],
+  "warnings": [],
+  "notes": [
+   "#30 tube: cantilevered off #2 tube",
+   "#31 tube: cantilevered off #6 tube",
+   "#32 bridge: cantilevered off #30 tube",
+   "#33 bridge: cantilevered off #31 tube",
+   "#39 sign: cantilevered off #36 elevator",
+   "43 parts (detail 5, infill 5, landscape 6, support 10, transit 17); height 17.5 m"
+  ],
+  "pass_": false,
+  "context_errors": 20,
+  "overruled": [
+   "#40 figure: unsupported - its base is at 5.10 m but the nearest top below is at 0.00 m (gap 5.10 m = 1.46 levels)",
+   "#41 figure: unsupported - its base is at 12.80 m but the nearest top below is at 8.20 m (gap 4.60 m = 1.31 levels)"
+  ]
+ },
+ "extended": {
+  "errors": [],
+  "warnings": [],
+  "notes": [
+   "43 parts (20 context), 0 oriented; 14 attach to the host directly"
+  ]
+ },
+ "logic": {
+  "errors": [],
+  "warnings": []
+ },
+ "errors": [],
+ "warnings": [],
+ "pass_": true,
+ "categories": {}
+}

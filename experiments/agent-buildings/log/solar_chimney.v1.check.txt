@@ -1,0 +1,9 @@
+validate specs/drafts/solar_chimney.v1.json  (revision 1)
+  stock agent_check.py: FAIL (42 errors, 42 of them on context parts, 4 warnings)
+  warn   #21 deck and #72 slab interpenetrate (3.1 m3)
+  warn   #22 deck and #72 slab interpenetrate (3.1 m3)
+  warn   #23 deck and #72 slab interpenetrate (1.6 m3)
+  warn   #24 deck and #72 slab interpenetrate (1.6 m3)
+  note   78 parts (58 context), 0 oriented; 9 attach to the host directly
+  note   78 parts (detail 21, infill 10, landscape 7, service 4, support 36); height 23.0 m
+  => PASS (0 errors, 4 warnings)

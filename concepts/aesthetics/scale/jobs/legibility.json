@@ -1,0 +1,193 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 32,
+  "max_lights": 80
+ },
+ "jobs": [
+  {
+   "spec": "scale/specs/n_a_stepped.json",
+   "out": "scale/out/legibility/l1_bare.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "camera": {
+    "az": 24,
+    "el": 28,
+    "target": [
+     0,
+     0,
+     350
+    ],
+    "ortho_scale": 10500
+   },
+   "drop_tags": [
+    "towns",
+    "city",
+    "clouds"
+   ],
+   "nofog": true,
+   "name": "l1"
+  },
+  {
+   "spec": "scale/specs/n_a_stepped.json",
+   "out": "scale/out/legibility/l2_buildings.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "camera": {
+    "az": 24,
+    "el": 28,
+    "target": [
+     0,
+     0,
+     350
+    ],
+    "ortho_scale": 10500
+   },
+   "drop_tags": [
+    "clouds"
+   ],
+   "nofog": true,
+   "name": "l2"
+  },
+  {
+   "spec": "scale/specs/n_a_stepped.json",
+   "out": "scale/out/legibility/l3_aerial.png",
+   "light": "aerial",
+   "style": "scale",
+   "camera": {
+    "az": 24,
+    "el": 28,
+    "target": [
+     0,
+     0,
+     350
+    ],
+    "ortho_scale": 10500
+   },
+   "drop_tags": [
+    "clouds"
+   ],
+   "fog": {
+    "h": 0.1,
+    "gamma": 1.6,
+    "d": 0.5,
+    "z_lo": 0,
+    "z_hi": 1800,
+    "d_start": 0.0
+   },
+   "name": "l3"
+  },
+  {
+   "spec": "scale/specs/n_a_stepped.json",
+   "out": "scale/out/legibility/l4_bands_clouds.png",
+   "light": "aerial",
+   "style": "scale",
+   "camera": {
+    "az": 24,
+    "el": 28,
+    "target": [
+     0,
+     0,
+     350
+    ],
+    "ortho_scale": 10500
+   },
+   "fog": {
+    "h": 0.08,
+    "gamma": 1.6,
+    "d": 0.35,
+    "z_lo": 0,
+    "z_hi": 1800,
+    "d_start": 0.0,
+    "bands": [
+     [
+      240,
+      140,
+      0.35
+     ],
+     [
+      900,
+      120,
+      0.18
+     ]
+    ]
+   },
+   "name": "l4"
+  },
+  {
+   "spec": "scale/specs/n_a_stepped.json",
+   "out": "scale/out/legibility/l5_night.png",
+   "light": "aerial_dusk",
+   "style": "scale",
+   "camera": {
+    "az": 24,
+    "el": 28,
+    "target": [
+     0,
+     0,
+     350
+    ],
+    "ortho_scale": 10500
+   },
+   "drop_tags": [
+    "clouds"
+   ],
+   "fog": {
+    "h": 0.1,
+    "gamma": 1.6,
+    "d": 0.3,
+    "z_lo": 0,
+    "z_hi": 1800,
+    "d_start": 0.0
+   },
+   "env": {
+    "win": 5.0
+   },
+   "max_lights": 120,
+   "name": "l5"
+  },
+  {
+   "spec": "scale/specs/n_a_stepped.json",
+   "out": "scale/out/legibility/l6_street.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "res": [
+    1800,
+    1000
+   ],
+   "drop_tags": [
+    "clouds"
+   ],
+   "camera": {
+    "type": "persp",
+    "loc": [
+     1200.0,
+     -3600.0,
+     8.0
+    ],
+    "target": [
+     600.0,
+     -1500.0,
+     700.0
+    ],
+    "lens": 18
+   },
+   "fog": {
+    "h": 0.06,
+    "gamma": 1.6,
+    "d": 0.45,
+    "z_lo": 0,
+    "z_hi": 1800,
+    "d_start": 0.0
+   },
+   "clip": [
+    0.5,
+    60000.0
+   ],
+   "name": "l6"
+  }
+ ]
+}

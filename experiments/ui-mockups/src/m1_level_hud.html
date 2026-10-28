@@ -1,0 +1,278 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Level Navigation HUD</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  body { background: #a9b0b6; }
+  #strip { left: 16px; top: 68px; width: 404px; height: 1356px; }
+  .readout { padding: 12px 12px 10px; border-bottom: 1px solid var(--line); }
+  .readout .big { display: flex; align-items: center; gap: 12px; }
+  .readout .lv { font-family: var(--f-serif); font-size: 64px; line-height: 0.9; color: var(--accent); }
+  .readout .nm { font-family: var(--f-cond); font-weight: 700; font-size: 22px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .readout .mode { margin-left: auto; align-self: flex-start; }
+  .readout .el { display: flex; gap: 14px; margin-top: 8px; font-family: var(--f-mono); font-size: 13px; color: var(--text-2); }
+  .readout .el b { color: var(--text); font-weight: 500; }
+  .slicebar { margin-top: 10px; display: flex; align-items: stretch; border: 1px solid var(--accent); }
+  .slicebar .cz { width: 38px; background: var(--caution); }
+  .slicebar .tx { padding: 5px 9px; font-family: var(--f-cond); font-weight: 700; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .slicebar .tx span { display: block; font-family: var(--f-ui); font-weight: 400; font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--text-2); }
+  .slicebar .esc { margin-left: auto; display: flex; align-items: center; padding: 0 8px; }
+  .colhd { display: flex; gap: 8px; padding: 8px 8px 5px 36px; font-family: var(--f-cond); font-weight: 600; font-size: 11px; letter-spacing: 0.12em; color: var(--text-3); text-transform: uppercase; }
+  .strip-foot { position: absolute; left: 0; right: 0; bottom: 0; border-top: 1px solid var(--line); padding: 10px 12px; }
+  .strip-foot .hints { flex-wrap: wrap; row-gap: 6px; column-gap: 14px; font-size: 13px; }
+  #banner { left: 436px; top: 66px; display: flex; align-items: stretch; background: var(--panel-solid); border: 1px solid var(--accent); height: 40px; }
+  #banner .cz { width: 46px; background: var(--caution); }
+  #banner .tx { display: flex; align-items: center; gap: 14px; padding: 0 14px; font-family: var(--f-cond); font-weight: 700; font-size: 15px; letter-spacing: 0.1em; text-transform: uppercase; }
+  #banner .tx .s { font-family: var(--f-ui); font-weight: 400; font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--text-2); }
+  #sec { left: 2124px; top: 68px; width: 420px; height: 540px; }
+  #sec img { position: absolute; left: 14px; top: 46px; width: 317px; height: 432px; }
+  #opts { left: 2124px; top: 624px; width: 420px; }
+  #opts .line { display: grid; grid-template-columns: 112px 1fr; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  #opts .line:last-child { border-bottom: 0; }
+  #opts .lab { font-family: var(--f-cond); font-weight: 600; font-size: 12px; letter-spacing: 0.12em; color: var(--text-3); text-transform: uppercase; }
+  #opts .note { font-size: 13px; color: var(--text-2); }
+  .stepper { display: inline-flex; align-items: center; border: 1px solid var(--line-2); }
+  .stepper span { padding: 3px 9px; font-family: var(--f-mono); font-size: 13px; }
+  .stepper span.b { color: var(--text-3); }
+  #stratum { left: 2124px; top: 1036px; width: 420px; }
+  #tip { left: 1528px; top: 66px; width: 566px; }
+  #tip .sh-bd { padding: 10px 14px 8px; }
+  #tip .kv { row-gap: 2px; column-gap: 12px; }
+  #tip .kv .v { font-size: 14.5px; }
+  .meter { display: inline-flex; gap: 2px; vertical-align: 1px; margin-left: 6px; }
+  .meter i { width: 9px; height: 9px; border: 1px solid var(--paper-ink); }
+  .meter i.f { background: var(--paper-ink); }
+  #tip .acts { display: flex; gap: 8px; margin-top: 8px; }
+  #tip .acts .btn { height: 30px; font-size: 13px; padding: 0 12px; }
+  #dock { left: 436px; top: 1364px; display: flex; background: var(--panel-solid); border: 1px solid var(--line); }
+  #dock .t { width: 76px; height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border-right: 1px solid var(--line);
+    font-family: var(--f-cond); font-weight: 600; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); }
+  #dock .t:last-child { border-right: 0; }
+  #dock .t.on { background: var(--text); color: var(--ink); }
+  #dock .t svg { width: 24px; height: 22px; }
+  #dock .t .k { font-family: var(--f-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0; }
+  #dock .t.on .k { color: var(--ink); }
+</style></head>
+<body>
+<script>window.PAGE = { tab: 'VIEW', title: { name: 'Cutaway at L8 — Tube Quarter', sheet: 'A-108', view: 'axo cutaway · slice L8.5' } };</script>
+<img class="bg" src="img/m1_bg.png">
+<svg class="ov" id="ov"></svg>
+
+<!-- persistent slice warning, next to the view -->
+<div class="abs" id="banner"><div class="cz"></div><div class="tx">Slice on · L8 Tube Quarter <span class="s">17 levels hidden above · structure to L12 ghosted · clicks locked to L8</span><span class="kbd">Esc</span></div></div>
+
+<!-- level strip -->
+<div class="panel" id="strip">
+  <div class="hd">Levels <span class="code">PgUp · PgDn</span></div>
+  <div class="readout">
+    <div class="big"><span class="lv">L8</span><div><div class="nm">Tube Quarter</div><div class="dim" style="font-size:14px">Stratum 3 of 7 · deck DK1 at L6</div></div><span class="pill acc mode">Editing</span></div>
+    <div class="el"><span>FFL <b>+28.00 m</b></span><span>cut <b>+29.75</b></span><span><b>8</b> above street · <b>16</b> below canopy</span></div>
+    <div class="slicebar"><div class="cz"></div><div class="tx">Slice active<span>L9–L25 hidden · L9–L12 ghost (structure)</span></div><div class="esc"><span class="kbd">Esc</span></div></div>
+  </div>
+  <div class="colhd"><span style="width:34px">LV</span><span style="width:50px;text-align:right">EL m</span><span style="width:64px">Fill ≤50%</span><span style="width:34px;text-align:right">%</span><span style="width:34px;text-align:right">Light</span><span>Notes</span></div>
+  <div id="rows"></div>
+  <div class="strip-foot"><div class="hints">
+    <span><span class="kbd">Shift</span>+<span class="kbd">Wheel</span> <b>level</b></span><span><span class="kbd">Wheel</span> <b>zoom only</b></span>
+    <span><span class="kbd">Alt</span>+click <b>jump to level under cursor</b></span><span><span class="kbd">Home</span> canopy · <span class="kbd">End</span> street</span></div></div>
+</div>
+
+<!-- section strip (small live section through core B) -->
+<div class="panel" id="sec">
+  <div class="hd">Section A–A <span class="dim" style="font-weight:500;letter-spacing:0.06em">grid line x = 64 m · looking west</span><span class="code">S-01</span></div>
+  <img src="img/sec_thumb.png">
+</div>
+
+<!-- slice options -->
+<div class="panel" id="opts">
+  <div class="hd">Slice &amp; depth cues <span class="code">V-02</span></div>
+  <div class="bd">
+    <div class="line"><span class="lab">Above slice</span><span class="seg"><span>Hide</span><span class="acc-on">Ghost</span><span>Outline</span><span>Solid</span></span></div>
+    <div class="line"><span class="lab">Ghost depth</span><span><span class="stepper"><span class="b">−</span><span>3.8 lv</span><span class="b">+</span></span> <span class="note">&nbsp;up to next deck (DK2, L12)</span></span></div>
+    <div class="line"><span class="lab">Ghost filter</span><span class="seg"><span class="on">Support</span><span>+ Infill</span><span>+ Services</span></span></div>
+    <div class="line"><span class="lab">Below slice</span><span><span class="toggle on"><span class="sw"></span>Fade 3 levels</span> <span class="note">&nbsp;value + saturation only</span></span></div>
+    <div class="line"><span class="lab">Clicks</span><span><span class="toggle on"><span class="sw"></span>Locked to L8</span> <span class="note">&nbsp;ghosts never take clicks</span></span></div>
+    <div class="line"><span class="lab">Overhead</span><span><span class="toggle on"><span class="sw"></span>Cast shadows</span> <span class="note">&nbsp;from hidden levels</span></span></div>
+    <div class="line"><span class="lab">Overlay</span><span class="seg"><span class="on">None</span><span>Light</span><span>Services</span><span>Owners</span></span></div>
+  </div>
+</div>
+
+<!-- stratum summary -->
+<div class="panel" id="stratum">
+  <div class="hd">Tube Quarter · L6–L11 <span class="code">S-3</span></div>
+  <div class="bd"><div class="kv">
+    <span class="k">Residents</span><span class="v"><span class="num">488</span> in 257 capsule cells</span>
+    <span class="k">Fill</span><span class="v">avg <span class="num">21%</span> · worst L6 <span class="num">39%</span> <span class="dim">(cap 50%)</span></span>
+    <span class="k">Light</span><span class="v"><span class="num">30%</span> of dwellings see sky, void or facade</span>
+    <span class="k">Transit</span><span class="v">T1 Loop Line · stop “Tube Quarter” (L7)</span>
+    <span class="k">Support</span><span class="v">DK1 at L6 · 12 megacolumns · cores A, B</span>
+    <span class="k">Risers</span><span class="v">R1 core A · R2 core B · 2 of 6 sockets free</span>
+  </div></div>
+</div>
+
+<!-- picked element: paper tooltip -->
+<div class="sheet" id="tip">
+  <div class="sh-hd"><div class="t"><div class="sh-sub">Picked · infill · dwelling (2P)</div><div class="sh-title">Capsule C-336</div></div>
+    <div class="n"><span style="font-size:10.5px;letter-spacing:.12em;font-family:var(--f-cond);font-weight:600">BAY</span><span style="font-size:20px">F3·L8</span></div></div>
+  <div class="sh-bd"><div class="kv">
+    <span class="k">Tenants</span><span class="v">Okafor-Lind household · 2 residents</span>
+    <span class="k">Built</span><span class="v">Y29 by Crew B · 9 of 40 yr lifespan</span>
+    <span class="k">Carried by</span><span class="v">DK1 (L6) → column C3 · bay load 38%</span>
+    <span class="k">Services</span><span class="v">riser R2, core B · 21 m run</span>
+    <span class="k">Light</span><span class="v">void + 1 facade side <span class="meter"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></span></span>
+    <span class="k">Noise</span><span class="v">58 dB · tube T1 passes every 90 s</span>
+    <span class="k">Rent</span><span class="v">§ 10.3/day · L8 median § 9.9</span>
+  </div>
+  <div class="acts"><span class="btn ink">Inspect <span class="kbd">I</span></span><span class="btn">Replace… </span><span class="btn">Select stack</span><span class="btn">Capture unit</span></div></div>
+</div>
+
+<!-- tool dock -->
+<div class="abs" id="dock">
+  <div class="t on"><svg viewBox="0 0 24 22"><path d="M6 2 L6 18 L10 14.5 L13 20.5 L15.6 19.3 L12.8 13.5 L18 13 Z" fill="currentColor"/></svg>Select<span class="k">V</span></div>
+  <div class="t"><svg viewBox="0 0 24 22"><rect x="4" y="2" width="5" height="18" fill="currentColor"/><rect x="15" y="2" width="5" height="18" fill="currentColor"/><rect x="2" y="8" width="20" height="3" fill="currentColor"/></svg>Support<span class="k">S</span></div>
+  <div class="t"><svg viewBox="0 0 24 22"><rect x="3" y="4" width="8" height="7" fill="none" stroke="currentColor" stroke-width="2"/><rect x="11" y="11" width="10" height="8" fill="currentColor"/><rect x="3" y="11" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2"/></svg>Infill<span class="k">I</span></div>
+  <div class="t"><svg viewBox="0 0 24 22"><circle cx="12" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><rect x="7" y="8" width="10" height="6" fill="currentColor"/></svg>Transit<span class="k">T</span></div>
+  <div class="t"><svg viewBox="0 0 24 22"><path d="M5 2 V20 M12 2 V20 M19 2 V20 M5 14 H19" stroke="currentColor" stroke-width="2" fill="none"/></svg>Services<span class="k">E</span></div>
+  <div class="t"><svg viewBox="0 0 24 22"><rect x="3" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2"/><rect x="14" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2"/><rect x="3" y="13" width="7" height="7" fill="currentColor"/><rect x="14" y="13" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2"/></svg>Patterns<span class="k">P</span></div>
+  <div class="t"><svg viewBox="0 0 24 22"><path d="M4 4 L20 18 M20 4 L4 18" stroke="currentColor" stroke-width="2.4"/></svg>Demolish<span class="k">X</span></div>
+</div>
+
+<svg class="ov" id="top" style="z-index:30"></svg>
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/components.js"></script>
+<script src="js/chrome.js"></script>
+<script>
+(function () {
+  const { Cam, el, text, leader, boxHull, bubble, datum, agentCursor, playerCursor, place } = UI;
+  const ov = document.getElementById('ov');
+  const cam = Cam('m1_beauty');
+  const Y = '#ffe13a', G = '#7fb0ff', INK = '#111214', TXT = '#eeebe4';
+
+  // ---- level strip rows
+  const strip = COMP.levelStrip(document.getElementById('rows'), {
+    active: 8, ghostTo: 12, fadeLevels: 3, rowH: 36,
+    agents: [{ level: 25, label: 'Foreman', kind: '' }, { level: 3, label: 'Surveyor', kind: 'b' }],
+  });
+
+  // ---- column grid: stubs off the building edge on the slice plane, with bubbles
+  const zc = 8.5;
+  const gridX = [['A', 1], ['B', 7], ['C', 13], ['D', 19]];
+  const gridY = [['1', 1], ['2', 8], ['3', 15]];
+  for (const [lab, x] of gridX) {
+    const a = cam.g(x, -0.1, zc), b = cam.g(x, -3.4, zc), c = cam.g(x, -4.25, zc);
+    el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: TXT, 'stroke-width': 1.2, 'stroke-dasharray': '14 4 3 4' }, ov);
+    bubble(ov, c[0], c[1], lab);
+  }
+  for (const [lab, y] of gridY) {
+    const a = cam.g(20.1, y, zc), b = cam.g(22.4, y, zc), c = cam.g(23.25, y, zc);
+    el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: TXT, 'stroke-width': 1.2, 'stroke-dasharray': '14 4 3 4' }, ov);
+    bubble(ov, c[0], c[1], lab);
+  }
+
+  // ---- slice plane corners (L-brackets at the site corners on the cut plane)
+  const corners = [[-1.5, -2], [23, -2], [23, 17], [-1.5, 17]];
+  corners.forEach((p, i) => {
+    const P0 = cam.g(p[0], p[1], zc);
+    const n1 = corners[(i + 1) % 4], n0 = corners[(i + 3) % 4];
+    const A = cam.g(p[0] + (n1[0] - p[0]) * 0.07, p[1] + (n1[1] - p[1]) * 0.07, zc);
+    const B = cam.g(p[0] + (n0[0] - p[0]) * 0.07, p[1] + (n0[1] - p[1]) * 0.07, zc);
+    el('polyline', { points: [A, P0, B].map(q => q.join(',')).join(' '), fill: 'none', stroke: Y, 'stroke-width': 3 }, ov);
+  });
+  // datum flag on the left corner of the slice
+  const dl = cam.g(-1.5, -2, zc);
+  el('line', { x1: dl[0], y1: dl[1], x2: dl[0] + 40, y2: dl[1] - 60, stroke: Y, 'stroke-width': 1.5 }, ov);
+  const dg = el('g', {}, ov);
+  el('rect', { x: dl[0] + 40, y: dl[1] - 92, width: 196, height: 44, fill: INK, stroke: Y, 'stroke-width': 1.5 }, dg);
+  el('path', { d: `M${dl[0] + 52},${dl[1] - 82} l14,0 l-7,11 z`, fill: Y }, dg);
+  text(dg, dl[0] + 74, dl[1] - 72, 'SLICE  L8.5', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 16, 'letter-spacing': 1.2, fill: Y });
+  text(dg, dl[0] + 74, dl[1] - 55, 'FFL +28.00 · cut +29.75', { 'font-family': 'IBM Plex Mono', 'font-size': 11.5, fill: TXT });
+
+  // ---- picked capsule C-336 (x14 y7, L8, 1x1): cut part solid outline, removed half dashed
+  el('path', { d: boxHull(cam, 14, 7, 8, 15, 8, 9), fill: 'none', stroke: Y, 'stroke-width': 1.6, 'stroke-dasharray': '5 4', opacity: 0.9 }, ov);
+  el('path', { d: boxHull(cam, 14, 7, 8, 15, 8, 8.5), fill: 'rgba(255,225,58,0.12)', stroke: Y, 'stroke-width': 3 }, ov);
+  const top = cam.g(14.5, 7.5, 9.0);
+  leader(ov, [top, [1478, 312], [1528, 312]], { stroke: Y, w: 1.8, r: 4.5, dotFill: Y });
+  playerCursor(ov, ...cam.g(14.62, 7.35, 8.5));
+
+  // ---- ghost label (structure above)
+  const gpt = cam.g(9.2, 16, 12.3);
+  const gt = el('g', {}, ov);
+  el('line', { x1: gpt[0], y1: gpt[1], x2: gpt[0] - 70, y2: gpt[1] - 46, stroke: G, 'stroke-width': 1.4 }, gt);
+  el('circle', { cx: gpt[0], cy: gpt[1], r: 4, fill: G }, gt);
+  el('rect', { x: gpt[0] - 390, y: gpt[1] - 70, width: 320, height: 42, fill: 'rgba(17,18,20,0.9)', stroke: G, 'stroke-width': 1.4 }, gt);
+  text(gt, gpt[0] - 378, gpt[1] - 52, 'GHOST · STRUCTURE L9 – L12', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 15, 'letter-spacing': 1.2, fill: G });
+  text(gt, gpt[0] - 378, gpt[1] - 36, 'columns, cores, DK2 · not clickable', { 'font-family': 'Barlow Semi Condensed', 'font-size': 13, fill: TXT });
+
+  // ---- tube label (train seen in section)
+  const tp = cam.g(1.2, 3.0, 8.5);
+  leader(ov, [tp, [tp[0] - 36, tp[1] - 90], [tp[0] - 16, tp[1] - 90]], { stroke: TXT, w: 1.2, r: 3.5 });
+  const tl = el('g', {}, ov);
+  el('rect', { x: tp[0] - 16, y: tp[1] - 110, width: 212, height: 40, fill: 'rgba(17,18,20,0.88)', stroke: '#56595f' }, tl);
+  text(tl, tp[0] - 6, tp[1] - 93, 'T1 LOOP LINE · L7.4', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 14, 'letter-spacing': 1, fill: TXT });
+  text(tl, tp[0] - 6, tp[1] - 77, 'train in section · next 0:42', { 'font-family': 'Barlow Semi Condensed', 'font-size': 12.5, fill: '#b0b1ad' });
+
+  // ---- occluded agent marker (Surveyor on L3, inside the dimmed stilt market)
+  const sv = cam.g(13.2, 5.0, 3.1);
+  const sg = el('g', {}, ov);
+  el('circle', { cx: sv[0], cy: sv[1], r: 20, fill: 'none', stroke: TXT, 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, sg);
+  el('path', { d: `M${sv[0] - 5},${sv[1] - 8} l0,16 l4,-3.5 l3,6 l2.6,-1.2 l-2.8,-5.8 l5.2,-0.5 z`, fill: TXT }, sg);
+  el('line', { x1: sv[0] + 20, y1: sv[1], x2: sv[0] + 60, y2: sv[1], stroke: TXT, 'stroke-width': 1.2, 'stroke-dasharray': '3 3' }, sg);
+  el('rect', { x: sv[0] + 60, y: sv[1] - 20, width: 246, height: 40, fill: 'rgba(17,18,20,0.88)', stroke: '#56595f', 'stroke-dasharray': '4 3' }, sg);
+  text(sg, sv[0] + 70, sv[1] - 3, 'CLAUDE · SURVEYOR · L3', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 14, 'letter-spacing': 1, fill: TXT });
+  text(sg, sv[0] + 70, sv[1] + 13, 'occluded · measuring light, Stilt Market', { 'font-family': 'Barlow Semi Condensed', 'font-size': 12.5, fill: '#b0b1ad' });
+
+  // ---- axonometric scale bar along the grid (20 m on the y-axis) + north arrow, on the ground
+  const s0 = cam.g(24.4, 1.0, 0), s1 = cam.g(24.4, 6.0, 0);
+  const sb = el('g', {}, ov);
+  for (let i = 0; i < 4; i++) {
+    const a = cam.g(24.4, 1.0 + i * 1.25, 0), b = cam.g(24.4, 1.0 + (i + 1) * 1.25, 0);
+    el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: i % 2 ? TXT : INK, 'stroke-width': 7 }, sb);
+  }
+  el('line', { x1: s0[0], y1: s0[1], x2: s1[0], y2: s1[1], stroke: TXT, 'stroke-width': 1, transform: 'translate(0,5)' }, sb);
+  text(sb, s1[0] + 10, s1[1] + 4, '20 m along grid', { 'font-family': 'IBM Plex Mono', 'font-size': 12, fill: INK });
+  const n0 = cam.g(24.4, 7.4, 0), n1 = cam.g(24.4, 9.6, 0);
+  el('line', { x1: n0[0], y1: n0[1], x2: n1[0], y2: n1[1], stroke: INK, 'stroke-width': 2 }, sb);
+  const ang = Math.atan2(n1[1] - n0[1], n1[0] - n0[0]);
+  const ah = (a, r) => [n1[0] - Math.cos(ang + a) * r, n1[1] - Math.sin(ang + a) * r];
+  el('path', { d: `M${n1[0]},${n1[1]} L${ah(0.45, 16).join(',')} L${ah(-0.45, 16).join(',')} Z`, fill: INK }, sb);
+  text(sb, n1[0] + 8, n1[1] - 6, 'N', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 18, fill: INK });
+
+  // ---- section inset overlay (thumb = crop of the M2 section render) - drawn on the top layer
+  const top2 = document.getElementById('top');
+  const T = window.EXTRA.sec_thumb;
+  const ix = 2124 + 14, iy = 68 + 46;
+  const sc = Cam('m2_section', ix - T.box[0] * T.s, iy - T.box[1] * T.s, T.s);
+  const yl = sc.g(0, -2.2, 0)[0], yr = sc.g(0, 17.2, 0)[0];
+  const cut = sc.g(0, 0, 8.5)[1], gtop = sc.g(0, 0, 12.3)[1], topY = iy;
+  el('rect', { x: yl, y: topY, width: yr - yl, height: gtop - topY, fill: 'url(#hatchD)' }, top2);
+  el('rect', { x: yl, y: gtop, width: yr - yl, height: cut - gtop, fill: 'rgba(127,176,255,0.22)', stroke: G, 'stroke-width': 1, 'stroke-dasharray': '3 3' }, top2);
+  el('line', { x1: yl - 12, y1: cut, x2: yr + 12, y2: cut, stroke: Y, 'stroke-width': 3 }, top2);
+  for (const xx of [yl - 12, yr + 12]) el('path', { d: `M${xx - 7},${cut - 12} l14,0 l-7,11 z`, fill: Y }, top2);
+  // level ticks at the right edge of the thumb
+  for (const L of [24, 18, 12, 6, 0, -2]) {
+    const y = sc.g(0, 0, L)[1];
+    el('line', { x1: ix + 317 + 4, y1: y, x2: ix + 317 + 14, y2: y, stroke: TXT, 'stroke-width': 1 }, top2);
+    text(top2, ix + 317 + 18, y + 4, COMP.tag(L), { 'font-family': 'Barlow Condensed', 'font-weight': 600, 'font-size': 13, fill: L === 6 ? TXT : '#b0b1ad' });
+  }
+  text(top2, ix + 317 + 18, cut + 4, 'L8', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 14, fill: Y });
+  // agents in the section
+  const fa = sc.g(0, 10.6, 25.3), sa = sc.g(0, 5.0, 3.1);
+  el('path', { d: `M${fa[0]},${fa[1]} l0,13 l3.5,-3 l2.5,5 l2.2,-1 l-2.4,-4.8 l4.4,-0.4 z`, fill: Y, stroke: INK, 'stroke-width': 1 }, top2);
+  el('path', { d: `M${sa[0]},${sa[1]} l0,13 l3.5,-3 l2.5,5 l2.2,-1 l-2.4,-4.8 l4.4,-0.4 z`, fill: TXT, stroke: INK, 'stroke-width': 1 }, top2);
+  // section marker bubbles (A) at both ends of the cut line of the inset, below the image
+  const sy = iy + 432 + 18;
+  for (const [x, d] of [[ix + 8, 1], [ix + 317 - 8, -1]]) {
+    el('circle', { cx: x, cy: sy, r: 11, fill: INK, stroke: TXT, 'stroke-width': 1.3 }, top2);
+    text(top2, x, sy + 5, 'A', { 'text-anchor': 'middle', 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 14, fill: TXT });
+  }
+  el('line', { x1: ix + 20, y1: sy, x2: ix + 52, y2: sy, stroke: TXT, 'stroke-width': 1, 'stroke-dasharray': '10 3 2 3' }, top2);
+  el('line', { x1: ix + 265, y1: sy, x2: ix + 297, y2: sy, stroke: TXT, 'stroke-width': 1, 'stroke-dasharray': '10 3 2 3' }, top2);
+  text(top2, ix + 158, sy + 4.5, 'whole block · cut at L8.5', { 'text-anchor': 'middle', 'font-family': 'IBM Plex Mono', 'font-size': 11.5, fill: '#b0b1ad' });
+
+  // hatch pattern defs
+  const defs = el('defs', {}, top2);
+  const pat = el('pattern', { id: 'hatchD', width: 7, height: 7, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, defs);
+  el('rect', { width: 7, height: 7, fill: 'rgba(17,18,20,0.55)' }, pat);
+  el('line', { x1: 0, y1: 0, x2: 0, y2: 7, stroke: 'rgba(238,235,228,0.35)', 'stroke-width': 1.5 }, pat);
+})();
+</script>
+</body></html>

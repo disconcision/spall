@@ -1,0 +1,7 @@
+validate specs/drafts/tube_interchange.v5.json  (revision 5)
+  stock agent_check.py: FAIL (22 errors, 20 of them on context parts, 0 warnings)
+  (stock support error overruled - part is attached to host/context structure: #40 figure: unsupported - its base is at 5.10 m but the nearest top below is at 0.00 m (gap 5.10 m = 1.46 levels))
+  (stock support error overruled - part is attached to host/context structure: #41 figure: unsupported - its base is at 12.80 m but the nearest top below is at 8.20 m (gap 4.60 m = 1.31 levels))
+  note   43 parts (20 context), 0 oriented; 14 attach to the host directly
+  note   43 parts (detail 5, infill 5, landscape 6, support 10, transit 17); height 17.5 m
+  => PASS (0 errors, 0 warnings)

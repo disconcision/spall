@@ -1,0 +1,156 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 32
+ },
+ "jobs": [
+  {
+   "spec": "scale/specs/n_a_stepped.json",
+   "out": "scale/out/pixel/raw/s1_landscape.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "res": [
+    576,
+    342
+   ],
+   "camera": {
+    "az": 45,
+    "el": 30,
+    "target": [
+     0.0,
+     -400.0,
+     700.0
+    ],
+    "px_per_m": 0.044194173824159216
+   },
+   "filter_size": 0.0,
+   "samples": 16,
+   "bloom": 0.0,
+   "nofog": true,
+   "drop_tags": [
+    "clouds"
+   ],
+   "max_lights": 40,
+   "name": "s1_landscape"
+  },
+  {
+   "spec": "scale/specs/n_a_stepped.json",
+   "out": "scale/out/pixel/raw/s2_district.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "res": [
+    1100,
+    760
+   ],
+   "camera": {
+    "az": 45,
+    "el": 30,
+    "target": [
+     -1500.0,
+     -2100.0,
+     425.0
+    ],
+    "px_per_m": 0.7071067811865475
+   },
+   "filter_size": 0.0,
+   "samples": 16,
+   "bloom": 0.0,
+   "nofog": true,
+   "drop_tags": [
+    "clouds"
+   ],
+   "max_lights": 40,
+   "name": "s2_district"
+  },
+  {
+   "spec": "scale/specs/n_a_stepped.json",
+   "out": "scale/out/pixel/raw/s3_building.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "res": [
+    882,
+    760
+   ],
+   "camera": {
+    "az": 45,
+    "el": 30,
+    "target": [
+     -1300.0,
+     -1900.0,
+     380.0
+    ],
+    "px_per_m": 2.82842712474619
+   },
+   "filter_size": 0.0,
+   "samples": 16,
+   "bloom": 0.0,
+   "nofog": true,
+   "drop_tags": [
+    "clouds"
+   ],
+   "max_lights": 40,
+   "name": "s3_building"
+  },
+  {
+   "spec": "scale/specs/n_b_framevoid.json",
+   "out": "scale/out/pixel/raw/v1_frames.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "res": [
+    850,
+    710
+   ],
+   "camera": {
+    "az": 45,
+    "el": 30,
+    "target": [
+     0.0,
+     0.0,
+     925.0
+    ],
+    "px_per_m": 0.17677669529663687
+   },
+   "filter_size": 0.0,
+   "samples": 16,
+   "bloom": 0.0,
+   "nofog": true,
+   "drop_tags": [
+    "clouds"
+   ],
+   "max_lights": 40,
+   "name": "v1_frames"
+  },
+  {
+   "spec": "scale/specs/n_b_framevoid.json",
+   "out": "scale/out/pixel/raw/v2_bays.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "res": [
+    602,
+    718
+   ],
+   "camera": {
+    "az": 45,
+    "el": 30,
+    "target": [
+     -675.0,
+     -225.0,
+     675.0
+    ],
+    "px_per_m": 2.82842712474619
+   },
+   "filter_size": 0.0,
+   "samples": 16,
+   "bloom": 0.0,
+   "nofog": true,
+   "drop_tags": [
+    "clouds"
+   ],
+   "max_lights": 40,
+   "name": "v2_bays"
+  }
+ ]
+}

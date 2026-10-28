@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "name": "bridge_market",
+    "kind": "building-type",
+    "title": "Sky-Bridge Market",
+    "author": "Claude (agent-authored in this experiment)",
+    "revision": 1,
+    "style": "sprite",
+    "seed": 202,
+    "grid": {"cell": 4.0, "level": 3.5},
+    "footprint": {"x": 0, "y": 0, "w": 4, "d": 2, "max_levels": 2, "overhang": 0.5, "host": "span"},
+    "light": "studio",
+    "brief": "a sky-bridge market spanning two cores, with stalls and lanterns",
+    "description": "A 16 m timber-decked bridge slung on two lattice trusses between the faces of two cores. A row of six shack stalls with cloth awnings lines the north edge; five open counters with cloth canopies line the south edge; red lantern posts run down the aisle; neon gate signs at both ends.",
+    "sprite": {"px_per_tile": 32, "rotations": 4, "palette": "kit64"}
+  },
+  "parts": [
+    {"type": "core", "x": -2, "y": 0, "level": -6, "w": 2, "d": 2, "h": 11, "material": "concrete", "tags": ["context"], "params": {"cabs": 2, "louvre": 3, "cap": true}},
+    {"type": "core", "x": 4, "y": 0, "level": -6, "w": 2, "d": 2, "h": 11, "material": "concrete", "tags": ["context"], "params": {"cabs": 2, "louvre": 3, "cap": true}},
+
+    {"type": "truss", "x": 0, "y": 0.02, "level": -0.571, "w": 4, "d": 0.08, "h": 0.4, "material": "steel", "tags": ["step:trusses"], "params": {"r": 0.15}},
+    {"type": "truss", "x": 0, "y": 1.9, "level": -0.571, "w": 4, "d": 0.08, "h": 0.4, "material": "steel", "tags": ["step:trusses"], "params": {"r": 0.15}},
+    {"type": "bridge", "x": 0, "y": 0, "level": 0, "w": 4, "d": 2, "h": 0.2, "material": "timber", "tags": ["step:deck"], "params": {"t": 0.6, "keel": false, "rail": false}},
+
+    {"type": "column", "x": 0.02, "y": 0.02, "level": 0, "w": 0.08, "d": 0.08, "h": 1.15, "material": "timber_dark", "tags": ["step:gates"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 0.02, "y": 1.9, "level": 0, "w": 0.08, "d": 0.08, "h": 1.15, "material": "timber_dark", "tags": ["step:gates"], "params": {"capital": false, "plinth": false}},
+    {"type": "sign", "x": 0.02, "y": 0.1, "level": 0.85, "w": 0.08, "d": 1.8, "h": 0.25, "rot": 1, "tags": ["step:gates"], "params": {"color": "red", "blade": false}},
+    {"type": "column", "x": 3.9, "y": 0.02, "level": 0, "w": 0.08, "d": 0.08, "h": 1.15, "material": "timber_dark", "tags": ["step:gates"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 3.9, "y": 1.9, "level": 0, "w": 0.08, "d": 0.08, "h": 1.15, "material": "timber_dark", "tags": ["step:gates"], "params": {"capital": false, "plinth": false}},
+    {"type": "sign", "x": 3.9, "y": 0.1, "level": 0.85, "w": 0.08, "d": 1.8, "h": 0.25, "rot": 1, "tags": ["step:gates"], "params": {"color": "yellow", "blade": false}},
+
+    {"type": "shack", "x": 0.2, "y": 1.5, "level": 0, "w": 0.5, "d": 0.45, "h": 0.75, "material": "timber", "tags": ["step:stalls"], "params": {"roof_mat": "cloth_a", "lit": 0.9}},
+    {"type": "shack", "x": 0.8, "y": 1.5, "level": 0, "w": 0.5, "d": 0.45, "h": 0.75, "material": "corrugated", "tags": ["step:stalls"], "params": {"roof_mat": "cloth_b", "lit": 0.9}},
+    {"type": "shack", "x": 1.4, "y": 1.5, "level": 0, "w": 0.5, "d": 0.45, "h": 0.75, "material": "k_cream", "tags": ["step:stalls"], "params": {"roof_mat": "cloth_d", "lit": 0.9}},
+    {"type": "shack", "x": 2.0, "y": 1.5, "level": 0, "w": 0.5, "d": 0.45, "h": 0.75, "material": "k_blue", "tags": ["step:stalls"], "params": {"roof_mat": "cloth_a", "lit": 0.9}},
+    {"type": "shack", "x": 2.6, "y": 1.5, "level": 0, "w": 0.5, "d": 0.45, "h": 0.75, "material": "rust", "tags": ["step:stalls"], "params": {"roof_mat": "cloth_c", "lit": 0.9}},
+    {"type": "shack", "x": 3.2, "y": 1.5, "level": 0, "w": 0.5, "d": 0.45, "h": 0.75, "material": "k_green", "tags": ["step:stalls"], "params": {"roof_mat": "accent_a", "lit": 0.9}},
+    {"type": "sign", "x": 1.0, "y": 1.5, "level": 0.3, "w": 0.1, "d": 0.1, "h": 0.35, "tags": ["step:stalls"], "params": {"color": "cyan", "blade": true, "proj": 0.6}},
+    {"type": "sign", "x": 2.8, "y": 1.5, "level": 0.3, "w": 0.1, "d": 0.1, "h": 0.35, "tags": ["step:stalls"], "params": {"color": "pink", "blade": true, "proj": 0.6}},
+
+    {"type": "capsule", "x": 0.3, "y": 0.1, "level": 0, "w": 0.45, "d": 0.25, "h": 0.3, "material": "timber", "tags": ["step:stalls"], "params": {"win": "none", "interior": false}},
+    {"type": "slab", "x": 0.25, "y": 0.05, "level": 0.72, "w": 0.55, "d": 0.4, "h": 0.1, "material": "cloth_b", "tags": ["step:stalls"], "params": {"t": 0.12}},
+    {"type": "column", "x": 0.25, "y": 0.38, "level": 0, "w": 0.07, "d": 0.07, "h": 0.69, "material": "timber_dark", "tags": ["step:stalls"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 0.73, "y": 0.38, "level": 0, "w": 0.07, "d": 0.07, "h": 0.69, "material": "timber_dark", "tags": ["step:stalls"], "params": {"capital": false, "plinth": false}},
+
+    {"type": "capsule", "x": 1.05, "y": 0.1, "level": 0, "w": 0.45, "d": 0.25, "h": 0.3, "material": "timber", "tags": ["step:stalls"], "params": {"win": "none", "interior": false}},
+    {"type": "slab", "x": 1.0, "y": 0.05, "level": 0.72, "w": 0.55, "d": 0.4, "h": 0.1, "material": "cloth_a", "tags": ["step:stalls"], "params": {"t": 0.12}},
+    {"type": "column", "x": 1.0, "y": 0.38, "level": 0, "w": 0.07, "d": 0.07, "h": 0.69, "material": "timber_dark", "tags": ["step:stalls"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 1.48, "y": 0.38, "level": 0, "w": 0.07, "d": 0.07, "h": 0.69, "material": "timber_dark", "tags": ["step:stalls"], "params": {"capital": false, "plinth": false}},
+
+    {"type": "capsule", "x": 1.8, "y": 0.1, "level": 0, "w": 0.45, "d": 0.25, "h": 0.3, "material": "timber", "tags": ["step:stalls"], "params": {"win": "none", "interior": false}},
+    {"type": "slab", "x": 1.75, "y": 0.05, "level": 0.72, "w": 0.55, "d": 0.4, "h": 0.1, "material": "cloth_d", "tags": ["step:stalls"], "params": {"t": 0.12}},
+    {"type": "column", "x": 1.75, "y": 0.38, "level": 0, "w": 0.07, "d": 0.07, "h": 0.69, "material": "timber_dark", "tags": ["step:stalls"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 2.23, "y": 0.38, "level": 0, "w": 0.07, "d": 0.07, "h": 0.69, "material": "timber_dark", "tags": ["step:stalls"], "params": {"capital": false, "plinth": false}},
+
+    {"type": "capsule", "x": 2.55, "y": 0.1, "level": 0, "w": 0.45, "d": 0.25, "h": 0.3, "material": "timber", "tags": ["step:stalls"], "params": {"win": "none", "interior": false}},
+    {"type": "slab", "x": 2.5, "y": 0.05, "level": 0.72, "w": 0.55, "d": 0.4, "h": 0.1, "material": "cloth_c", "tags": ["step:stalls"], "params": {"t": 0.12}},
+    {"type": "column", "x": 2.5, "y": 0.38, "level": 0, "w": 0.07, "d": 0.07, "h": 0.69, "material": "timber_dark", "tags": ["step:stalls"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 2.98, "y": 0.38, "level": 0, "w": 0.07, "d": 0.07, "h": 0.69, "material": "timber_dark", "tags": ["step:stalls"], "params": {"capital": false, "plinth": false}},
+
+    {"type": "capsule", "x": 3.3, "y": 0.1, "level": 0, "w": 0.45, "d": 0.25, "h": 0.3, "material": "timber", "tags": ["step:stalls"], "params": {"win": "none", "interior": false}},
+    {"type": "slab", "x": 3.25, "y": 0.05, "level": 0.72, "w": 0.55, "d": 0.4, "h": 0.1, "material": "cloth_a", "tags": ["step:stalls"], "params": {"t": 0.12}},
+    {"type": "column", "x": 3.25, "y": 0.38, "level": 0, "w": 0.07, "d": 0.07, "h": 0.69, "material": "timber_dark", "tags": ["step:stalls"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 3.73, "y": 0.38, "level": 0, "w": 0.07, "d": 0.07, "h": 0.69, "material": "timber_dark", "tags": ["step:stalls"], "params": {"capital": false, "plinth": false}},
+
+    {"type": "antenna", "x": 0.5, "y": 0.95, "level": 0, "w": 0.1, "d": 0.1, "h": 0.85, "material": "timber_dark", "tags": ["step:lanterns"], "params": {"r": 0.04, "bars": 0, "dish": false, "beacon": true, "lightpt": true}},
+    {"type": "antenna", "x": 1.25, "y": 0.95, "level": 0, "w": 0.1, "d": 0.1, "h": 0.85, "material": "timber_dark", "tags": ["step:lanterns"], "params": {"r": 0.04, "bars": 0, "dish": false, "beacon": true, "lightpt": true}},
+    {"type": "antenna", "x": 2.0, "y": 0.95, "level": 0, "w": 0.1, "d": 0.1, "h": 0.85, "material": "timber_dark", "tags": ["step:lanterns"], "params": {"r": 0.04, "bars": 0, "dish": false, "beacon": true, "lightpt": true}},
+    {"type": "antenna", "x": 2.75, "y": 0.95, "level": 0, "w": 0.1, "d": 0.1, "h": 0.85, "material": "timber_dark", "tags": ["step:lanterns"], "params": {"r": 0.04, "bars": 0, "dish": false, "beacon": true, "lightpt": true}},
+    {"type": "antenna", "x": 3.5, "y": 0.95, "level": 0, "w": 0.1, "d": 0.1, "h": 0.85, "material": "timber_dark", "tags": ["step:lanterns"], "params": {"r": 0.04, "bars": 0, "dish": false, "beacon": true, "lightpt": true}},
+
+    {"type": "figure", "x": 0.9, "y": 0.8, "level": 0, "w": 0.1, "d": 0.1, "h": 0.5, "tags": ["ambient"]},
+    {"type": "figure", "x": 1.6, "y": 1.15, "level": 0, "w": 0.1, "d": 0.1, "h": 0.5, "tags": ["ambient"]},
+    {"type": "figure", "x": 2.3, "y": 0.7, "level": 0, "w": 0.1, "d": 0.1, "h": 0.5, "tags": ["ambient"]},
+    {"type": "figure", "x": 3.1, "y": 1.1, "level": 0, "w": 0.1, "d": 0.1, "h": 0.5, "tags": ["ambient"]}
+  ]
+}

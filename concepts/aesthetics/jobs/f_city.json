@@ -1,0 +1,419 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 32
+ },
+ "jobs": [
+  {
+   "spec": "specs/f_city_dys.json",
+   "out": "out/f/f_dys_1_far.png",
+   "light": "br_night",
+   "style": "city",
+   "camera": {
+    "az": 45,
+    "el": 76,
+    "target": [
+     1944.0,
+     1944.0,
+     0
+    ],
+    "ortho_scale": 3300
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "dys_1_far",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.4,
+    "gamma": 1.4,
+    "d": 0.3,
+    "z_lo": 0,
+    "z_hi": 360
+   }
+  },
+  {
+   "spec": "specs/f_city_dys.json",
+   "out": "out/f/f_dys_2_district.png",
+   "light": "br_night",
+   "style": "city",
+   "camera": {
+    "az": 45,
+    "el": 56,
+    "target": [
+     1944.0,
+     1944.0,
+     60
+    ],
+    "ortho_scale": 1100
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "dys_2_district",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.55,
+    "gamma": 1.5,
+    "d": 0.45,
+    "z_lo": 0,
+    "z_hi": 360
+   }
+  },
+  {
+   "spec": "specs/f_city_dys.json",
+   "out": "out/f/f_dys_3_superblock.png",
+   "light": "br_night",
+   "style": "city",
+   "camera": {
+    "az": 45,
+    "el": 40,
+    "target": [
+     1944.0,
+     1944.0,
+     120
+    ],
+    "ortho_scale": 430
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "dys_3_superblock",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.6,
+    "gamma": 1.7,
+    "d": 0.5,
+    "z_lo": 0,
+    "z_hi": 380
+   }
+  },
+  {
+   "spec": "specs/f_city_dys.json",
+   "out": "out/f/f_dys_4_canyon.png",
+   "light": "br_night",
+   "style": "city",
+   "camera": {
+    "type": "persp",
+    "loc": [
+     1798.0,
+     1744.0,
+     95
+    ],
+    "target": [
+     1794.0,
+     2364.0,
+     150
+    ],
+    "lens": 24
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "dys_4_canyon",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.55,
+    "gamma": 1.8,
+    "d": 0.8,
+    "z_lo": 0,
+    "z_hi": 420
+   }
+  },
+  {
+   "spec": "specs/f_city_brut.json",
+   "out": "out/f/f_brut_1_far.png",
+   "light": "green_day",
+   "style": "overgrown",
+   "camera": {
+    "az": 45,
+    "el": 76,
+    "target": [
+     1944.0,
+     1944.0,
+     0
+    ],
+    "ortho_scale": 3300
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "brut_1_far",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.18000000000000002,
+    "gamma": 1.4,
+    "d": 0.135,
+    "z_lo": 0,
+    "z_hi": 360
+   }
+  },
+  {
+   "spec": "specs/f_city_brut.json",
+   "out": "out/f/f_brut_2_district.png",
+   "light": "green_day",
+   "style": "overgrown",
+   "camera": {
+    "az": 45,
+    "el": 56,
+    "target": [
+     1944.0,
+     1944.0,
+     60
+    ],
+    "ortho_scale": 1100
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "brut_2_district",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.24750000000000003,
+    "gamma": 1.5,
+    "d": 0.2025,
+    "z_lo": 0,
+    "z_hi": 360
+   }
+  },
+  {
+   "spec": "specs/f_city_brut.json",
+   "out": "out/f/f_brut_3_superblock.png",
+   "light": "green_day",
+   "style": "overgrown",
+   "camera": {
+    "az": 45,
+    "el": 40,
+    "target": [
+     1944.0,
+     1944.0,
+     120
+    ],
+    "ortho_scale": 430
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "brut_3_superblock",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.27,
+    "gamma": 1.7,
+    "d": 0.225,
+    "z_lo": 0,
+    "z_hi": 380
+   }
+  },
+  {
+   "spec": "specs/f_city_brut.json",
+   "out": "out/f/f_brut_4_canyon.png",
+   "light": "green_day",
+   "style": "overgrown",
+   "camera": {
+    "type": "persp",
+    "loc": [
+     1798.0,
+     1744.0,
+     95
+    ],
+    "target": [
+     1794.0,
+     2364.0,
+     150
+    ],
+    "lens": 24
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "brut_4_canyon",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.24750000000000003,
+    "gamma": 1.8,
+    "d": 0.36000000000000004,
+    "z_lo": 0,
+    "z_hi": 420
+   }
+  },
+  {
+   "spec": "specs/f_city_solar.json",
+   "out": "out/f/f_solar_1_far.png",
+   "light": "solar_day",
+   "style": "city",
+   "camera": {
+    "az": 45,
+    "el": 76,
+    "target": [
+     1944.0,
+     1944.0,
+     0
+    ],
+    "ortho_scale": 3300
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "solar_1_far",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.27999999999999997,
+    "gamma": 1.4,
+    "d": 0.21,
+    "z_lo": 0,
+    "z_hi": 360
+   }
+  },
+  {
+   "spec": "specs/f_city_solar.json",
+   "out": "out/f/f_solar_2_district.png",
+   "light": "solar_day",
+   "style": "city",
+   "camera": {
+    "az": 45,
+    "el": 56,
+    "target": [
+     1944.0,
+     1944.0,
+     60
+    ],
+    "ortho_scale": 1100
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "solar_2_district",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.385,
+    "gamma": 1.5,
+    "d": 0.315,
+    "z_lo": 0,
+    "z_hi": 360
+   }
+  },
+  {
+   "spec": "specs/f_city_solar.json",
+   "out": "out/f/f_solar_3_superblock.png",
+   "light": "solar_day",
+   "style": "city",
+   "camera": {
+    "az": 45,
+    "el": 40,
+    "target": [
+     1944.0,
+     1944.0,
+     120
+    ],
+    "ortho_scale": 430
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "solar_3_superblock",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.42,
+    "gamma": 1.7,
+    "d": 0.35,
+    "z_lo": 0,
+    "z_hi": 380
+   }
+  },
+  {
+   "spec": "specs/f_city_solar.json",
+   "out": "out/f/f_solar_4_canyon.png",
+   "light": "solar_day",
+   "style": "city",
+   "camera": {
+    "type": "persp",
+    "loc": [
+     1798.0,
+     1744.0,
+     95
+    ],
+    "target": [
+     1794.0,
+     2364.0,
+     150
+    ],
+    "lens": 24
+   },
+   "frame_bb": [
+    0,
+    0,
+    0,
+    3952.0,
+    3952.0,
+    300
+   ],
+   "name": "solar_4_canyon",
+   "max_lights": 300,
+   "fog": {
+    "h": 0.385,
+    "gamma": 1.8,
+    "d": 0.5599999999999999,
+    "z_lo": 0,
+    "z_hi": 420
+   }
+  }
+ ]
+}

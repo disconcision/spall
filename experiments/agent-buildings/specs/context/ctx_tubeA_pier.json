@@ -1,0 +1,46 @@
+{
+ "meta": {
+  "name": "ctx_tubeA_pier",
+  "kind": "context-sprite",
+  "style": "sprite",
+  "seed": 7,
+  "grid": {
+   "cell": 4.0,
+   "level": 3.5
+  },
+  "footprint": {
+   "x": 0,
+   "y": 0,
+   "w": 1,
+   "d": 1,
+   "max_levels": 3,
+   "overhang": 0.5
+  },
+  "light": "studio",
+  "description": "Tube line A tile (east-west, level 1.2)"
+ },
+ "parts": [
+  {
+   "type": "tube",
+   "x": 0,
+   "y": 0.0,
+   "level": 1.2,
+   "w": 1.0,
+   "d": 1.0,
+   "h": 1.143,
+   "params": {
+    "train": false
+   }
+  },
+  {
+   "type": "pier",
+   "x": 0.35,
+   "y": 0.25,
+   "level": 0,
+   "w": 0.3,
+   "d": 0.5,
+   "h": 1.2,
+   "material": "concrete"
+  }
+ ]
+}

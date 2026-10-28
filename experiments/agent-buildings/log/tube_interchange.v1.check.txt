@@ -1,0 +1,9 @@
+validate specs/drafts/tube_interchange.v1.json  (revision 1)
+  stock agent_check.py: FAIL (2 errors, 0 warnings)
+  (stock support error overruled - part is attached to host/context structure: #15 figure: unsupported - its base is at 5.10 m but the nearest top below is at 0.00 m (gap 5.10 m = 1.46 levels))
+  ERROR  #16 figure: unsupported - its base is at 12.80 m but the nearest top below is at 8.20 m (gap 4.60 m = 1.31 levels)
+  ERROR  #9 bridge: not attached - its base face (z=12.45 m, orient up) touches no carrying part
+  ERROR  #16 figure: floating cluster - supported only by parts that never reach the host (#9 bridge)
+  note   18 parts (0 context), 0 oriented; 10 attach to the host directly
+  note   18 parts (detail 5, infill 1, support 3, transit 9); height 16.3 m
+  => FAIL (3 errors, 0 warnings)

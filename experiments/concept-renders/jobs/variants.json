@@ -1,0 +1,162 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 64
+ },
+ "jobs": [
+  {
+   "spec": "specs/blame.json",
+   "out": "out/a_blame.png",
+   "light": "blame",
+   "camera": {
+    "target": [
+     150,
+     150,
+     72
+    ],
+    "ortho_scale": 320
+   },
+   "fog": {
+    "z_lo": -90,
+    "z_hi": 330,
+    "h": 1.0,
+    "gamma": 1.0,
+    "d": 0.1
+   }
+  },
+  {
+   "spec": "specs/blame.json",
+   "out": "out/a_blame_close.png",
+   "light": "blame",
+   "camera": {
+    "target": [
+     80,
+     165,
+     110
+    ],
+    "ortho_scale": 76
+   },
+   "fog": {
+    "z_lo": -90,
+    "z_hi": 330,
+    "h": 1.0,
+    "gamma": 1.0,
+    "d": 0.1
+   }
+  },
+  {
+   "spec": "specs/glt.json",
+   "out": "out/b_glt.png",
+   "light": "snow",
+   "camera": {
+    "target": [
+     90,
+     100,
+     128
+    ],
+    "ortho_scale": 280
+   }
+  },
+  {
+   "spec": "specs/glt.json",
+   "out": "out/b_glt_close.png",
+   "light": "snow",
+   "camera": {
+    "target": [
+     62,
+     100,
+     160
+    ],
+    "ortho_scale": 125
+   }
+  },
+  {
+   "spec": "specs/kowloon.json",
+   "out": "out/c_kowloon.png",
+   "light": "dusk",
+   "frame_bb": [
+    -10,
+    -10,
+    0,
+    130,
+    88,
+    50
+   ],
+   "frame_clip": true
+  },
+  {
+   "spec": "specs/kowloon.json",
+   "out": "out/c_kowloon_close.png",
+   "light": "dusk",
+   "camera": {
+    "target": [
+     100,
+     20,
+     18
+    ],
+    "ortho_scale": 80
+   }
+  },
+  {
+   "spec": "specs/solarpunk.json",
+   "out": "out/d_solarpunk.png",
+   "light": "golden",
+   "frame_bb": [
+    -10,
+    -30,
+    0,
+    150,
+    125,
+    160
+   ],
+   "frame_clip": true
+  },
+  {
+   "spec": "specs/solarpunk.json",
+   "out": "out/d_solarpunk_close.png",
+   "light": "golden",
+   "camera": {
+    "target": [
+     70,
+     50,
+     30
+    ],
+    "ortho_scale": 90
+   }
+  },
+  {
+   "spec": "specs/mixed.json",
+   "out": "out/e_mixed.png",
+   "light": "mixed",
+   "camera": {
+    "target": [
+     62,
+     92,
+     70
+    ],
+    "ortho_scale": 262
+   },
+   "fog": {
+    "z_lo": -80,
+    "z_hi": 170
+   }
+  },
+  {
+   "spec": "specs/arcology.json",
+   "out": "out/f_arcology.png",
+   "light": "overcast",
+   "frame_bb": [
+    -8,
+    -12,
+    0,
+    92,
+    72,
+    140
+   ],
+   "frame_clip": true
+  }
+ ]
+}

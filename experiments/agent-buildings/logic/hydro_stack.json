@@ -1,0 +1,184 @@
+{
+ "id": "hydro_stack",
+ "spec": "specs/hydro_stack.json",
+ "title": "Hydroponic Capsule Stack",
+ "category": "agriculture",
+ "brief": "a hydroponic capsule stack that feeds its stratum - fits in the undercroft and needs water from a riser",
+ "footprint": {
+  "cells_w": 2,
+  "cells_d": 2,
+  "levels": 5,
+  "anchor": "floor",
+  "rotations": 4,
+  "strata": [
+   "undercroft",
+   "any stratum with >= 5 levels clear under a deck"
+  ],
+  "note": "5 levels = 17.5 m including the header tank, under a standard deck soffit at 20 m"
+ },
+ "placement": {
+  "on": [
+   "ground",
+   "deck"
+  ],
+  "stratum": "undercroft",
+  "requires": [
+   {
+    "kind": "riser",
+    "service": "water",
+    "within_cells": 1,
+    "note": "the east-face manifold must sit next to a water riser"
+   },
+   {
+    "kind": "walkway",
+    "within_cells": 1,
+    "note": "freight access to the packing hall"
+   }
+  ],
+  "clear_height_levels": 5,
+  "daylight": "not needed (grow-lights); happy in the dark undercroft"
+ },
+ "capacity": {
+  "food_units_per_day": 75,
+  "grow_area_m2": 540,
+  "grow_pods": 12,
+  "service_pods": 3,
+  "residents": 0,
+  "note": "1 food unit = one resident's daily fresh produce; 12 grow pods x 15 m2 x 2 lit rack tiers x 1.5 (stacked trays)"
+ },
+ "jobs": {
+  "total": 10,
+  "shifts": 2,
+  "roles": [
+   {
+    "role": "grower",
+    "n": 6
+   },
+   {
+    "role": "technician",
+    "n": 2
+   },
+   {
+    "role": "packer",
+    "n": 2
+   }
+  ]
+ },
+ "services": {
+  "needs": {
+   "power": {
+    "kw": 165,
+    "peak_kw": 190,
+    "note": "LED grow-lights 16 h/day + pumps + fans"
+   },
+   "water": {
+    "m3_per_day": 14,
+    "source": "riser",
+    "note": "recirculating; make-up water only"
+   },
+   "air": {
+    "m3_per_min": 60,
+    "note": "ventilation and CO2 enrichment from the stratum air loop"
+   },
+   "transit": {
+    "freight_trips_per_day": 6,
+    "mode": "walkway or freight lift"
+   }
+  },
+  "provides": {
+   "food": {
+    "units_per_day": 75,
+    "scope": "stratum",
+    "radius_cells": 10
+   },
+   "air": {
+    "o2_bonus": 0.04,
+    "radius_cells": 2
+   }
+  }
+ },
+ "effects": {
+  "light_air": {
+   "radius_cells": 1,
+   "daylight_delta": 0.0,
+   "air_delta": 0.04,
+   "note": "sits in the undercroft, so it shades nothing; exhaust air is oxygen-rich"
+  },
+  "land_value": {
+   "radius_cells": 4,
+   "delta": 6,
+   "note": "fresh-produce hall"
+  },
+  "noise": {
+   "radius_cells": 2,
+   "db": 4,
+   "note": "pumps and fans"
+  }
+ },
+ "economy": {
+  "build_cost": 2100,
+  "upkeep_per_day": 28,
+  "build_days": 34
+ },
+ "construction": [
+  {
+   "step": 1,
+   "name": "base hall",
+   "drones": {
+    "lifter": 2,
+    "welder": 1
+   },
+   "days": 6,
+   "action": "pour the plinth pad, set the packing-hall capsule, hang the sign"
+  },
+  {
+   "step": 2,
+   "name": "core",
+   "drones": {
+    "lifter": 2,
+    "welder": 2
+   },
+   "days": 8,
+   "action": "raise the service core four levels off the hall roof"
+  },
+  {
+   "step": 3,
+   "name": "riser tap",
+   "drones": {
+    "plumber": 2
+   },
+   "days": 4,
+   "action": "cut into the stratum riser, run the east manifold and the nutrient tank"
+  },
+  {
+   "step": 4,
+   "name": "grow pods 1-2",
+   "drones": {
+    "lifter": 2,
+    "plumber": 1
+   },
+   "days": 6,
+   "action": "plug eight pods onto the core at levels 1-2 and couple them to the manifold"
+  },
+  {
+   "step": 5,
+   "name": "grow pods 3-4",
+   "drones": {
+    "lifter": 2,
+    "plumber": 1
+   },
+   "days": 6,
+   "action": "plug seven pods at levels 3-4 and couple them to the manifold"
+  },
+  {
+   "step": 6,
+   "name": "header tank",
+   "drones": {
+    "lifter": 1,
+    "plumber": 1
+   },
+   "days": 4,
+   "action": "bolt the header tank into the last level-4 slot on the core (keeps the stack under the deck soffit) and commission"
+  }
+ ]
+}

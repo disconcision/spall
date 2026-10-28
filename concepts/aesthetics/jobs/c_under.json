@@ -1,0 +1,128 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 40
+ },
+ "jobs": [
+  {
+   "spec": "specs/c_under.json",
+   "out": "out/c/c1_gritty.png",
+   "style": "ug_grit",
+   "light": "ug_grit",
+   "poche": "poche_dark",
+   "view": {
+    "mode": "full",
+    "crop": [
+     -0.2,
+     3.0,
+     24.05,
+     11.5
+    ]
+   },
+   "frame_bb": [
+    -2,
+    12,
+    -54,
+    98,
+    46,
+    10
+   ],
+   "camera": {
+    "az": 36,
+    "el": 22,
+    "margin": 0.02
+   },
+   "res": [
+    1600,
+    1100
+   ],
+   "fog": {
+    "h": 0.0,
+    "d": 0.0
+   },
+   "max_lights": 300
+  },
+  {
+   "spec": "specs/c_under.json",
+   "out": "out/c/c2_between.png",
+   "style": "ug_mid",
+   "light": "ug_mid",
+   "poche": "poche_dark",
+   "view": {
+    "mode": "full",
+    "crop": [
+     -0.2,
+     3.0,
+     24.05,
+     11.5
+    ]
+   },
+   "frame_bb": [
+    -2,
+    12,
+    -54,
+    98,
+    46,
+    10
+   ],
+   "camera": {
+    "az": 36,
+    "el": 22,
+    "margin": 0.02
+   },
+   "res": [
+    1600,
+    1100
+   ],
+   "fog": {
+    "h": 0.0,
+    "d": 0.0
+   },
+   "max_lights": 300
+  },
+  {
+   "spec": "specs/c_under.json",
+   "out": "out/c/c3_clean.png",
+   "style": "ug_clean",
+   "light": "ug_clean",
+   "poche": "poche_light",
+   "poche_map": {
+    "rock": "poche_light"
+   },
+   "view": {
+    "mode": "full",
+    "crop": [
+     -0.2,
+     3.0,
+     24.05,
+     11.5
+    ]
+   },
+   "frame_bb": [
+    -2,
+    12,
+    -54,
+    98,
+    46,
+    10
+   ],
+   "camera": {
+    "az": 36,
+    "el": 22,
+    "margin": 0.02
+   },
+   "res": [
+    1600,
+    1100
+   ],
+   "fog": {
+    "h": 0.0,
+    "d": 0.0
+   },
+   "max_lights": 300
+  }
+ ]
+}

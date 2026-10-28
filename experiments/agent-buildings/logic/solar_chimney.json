@@ -1,0 +1,140 @@
+{
+ "id": "solar_chimney",
+ "spec": "specs/solar_chimney.json",
+ "title": "Solar Chimney Light Well",
+ "category": "utilities",
+ "brief": "a light well / solar chimney that brings daylight down six levels",
+ "footprint": {
+  "cells_w": 2,
+  "cells_d": 2,
+  "levels": 7,
+  "anchor": "floor",
+  "rotations": 4,
+  "note": "the 1x1-cell light pipe pierces six decks; the 2x2 head sits on the roof at level 6"
+ },
+ "placement": {
+  "on": [
+   "ground",
+   "deck"
+  ],
+  "stratum": "any",
+  "requires": [
+   {
+    "kind": "open_sky",
+    "at": "head",
+    "note": "the heliostat head needs direct sun on the top deck"
+   },
+   {
+    "kind": "deck_hole",
+    "levels": 6,
+    "cells": [
+     1,
+     1
+    ],
+    "note": "drones core a 1x1 hole through each of the six decks"
+   }
+  ],
+  "clear_height_levels": 7
+ },
+ "capacity": {
+  "lit_levels": 6,
+  "daylight_area_m2_per_level": 220,
+  "residents": 0,
+  "note": "~70 klm of daylight per level at noon, falling off over 3 cells"
+ },
+ "jobs": {
+  "total": 2,
+  "shifts": 1,
+  "roles": [
+   {
+    "role": "technician",
+    "n": 2
+   }
+  ]
+ },
+ "services": {
+  "needs": {
+   "power": {
+    "kw": 3,
+    "note": "heliostat tracking motors and dampers"
+   }
+  },
+  "provides": {
+   "light": {
+    "daylight_factor_at_shaft": 0.35,
+    "radius_cells": 3,
+    "levels_below": 6,
+    "falloff": "linear"
+   },
+   "air": {
+    "m3_per_min": 400,
+    "note": "stack-effect ventilation of the six levels it pierces"
+   }
+  }
+ },
+ "effects": {
+  "light_air": {
+   "radius_cells": 3,
+   "daylight_delta": 0.3,
+   "air_delta": 0.1,
+   "levels_below": 6,
+   "note": "daylight on every pierced level: +0.3 next to the shaft, fading to 0 at 3 cells"
+  },
+  "land_value": {
+   "radius_cells": 4,
+   "delta": 18,
+   "note": "daylight is the scarcest amenity in deep strata"
+  },
+  "noise": {
+   "radius_cells": 0,
+   "db": 0
+  }
+ },
+ "economy": {
+  "build_cost": 2600,
+  "upkeep_per_day": 7,
+  "build_days": 26
+ },
+ "construction": [
+  {
+   "step": 1,
+   "name": "light pipe",
+   "drones": {
+    "borer": 2,
+    "lifter": 1
+   },
+   "days": 10,
+   "action": "core a 1x1 hole through six decks and lower the reflective light pipe (sun pipe)"
+  },
+  {
+   "step": 2,
+   "name": "frame",
+   "drones": {
+    "lifter": 2,
+    "welder": 2
+   },
+   "days": 5,
+   "action": "stand the four frame posts that brace the pipe through the voids"
+  },
+  {
+   "step": 3,
+   "name": "light shelves",
+   "drones": {
+    "lifter": 1,
+    "welder": 1
+   },
+   "days": 5,
+   "action": "fit a light shelf and diffuser at every pierced floor"
+  },
+  {
+   "step": 4,
+   "name": "heliostat head",
+   "drones": {
+    "lifter": 2,
+    "electrician": 1
+   },
+   "days": 6,
+   "action": "set the roof collar, the louvred chimney crown and the ring of tracking mirrors; calibrate"
+  }
+ ]
+}

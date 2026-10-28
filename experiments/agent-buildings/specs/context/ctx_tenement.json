@@ -1,0 +1,71 @@
+{
+ "meta": {
+  "name": "ctx_tenement",
+  "kind": "context-sprite",
+  "style": "sprite",
+  "seed": 7,
+  "grid": {
+   "cell": 4.0,
+   "level": 3.5
+  },
+  "footprint": {
+   "x": 0,
+   "y": 0,
+   "w": 3,
+   "d": 3,
+   "max_levels": 4,
+   "overhang": 0.5
+  },
+  "light": "studio",
+  "description": "Kowloon tenement block"
+ },
+ "parts": [
+  {
+   "type": "capsule",
+   "x": 0,
+   "y": 0,
+   "level": 0,
+   "w": 3,
+   "d": 3,
+   "h": 1,
+   "material": "steel_dark",
+   "params": {
+    "win": "band",
+    "lit": 0.8,
+    "interior": false
+   }
+  },
+  {
+   "type": "capsule",
+   "x": 0,
+   "y": 0,
+   "level": 1,
+   "w": 3,
+   "d": 3,
+   "h": 3,
+   "material": "k_grey",
+   "params": {
+    "win": "grid",
+    "module": 1.3,
+    "lit": 0.5,
+    "interior": false,
+    "ac": 0.5,
+    "cage": 0.5
+   }
+  },
+  {
+   "type": "sign",
+   "x": 1.0,
+   "y": 0,
+   "level": 1.2,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.8,
+   "params": {
+    "color": "red",
+    "blade": true,
+    "proj": 1.4
+   }
+  }
+ ]
+}

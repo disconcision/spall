@@ -1,0 +1,151 @@
+sprites    11 specs -> specs/spr_*.json, specs/tile_*.json
+arcology     844 parts -> specs/arcology.json
+   fill per level: {0: 0.406, 1: 0.345, 2: 0.221, 3: 0.096, 4: 0.056, 6: 0.39, 7: 0.277, 8: 0.209, 9: 0.129, 10: 0.028, 12: 0.356, 13: 0.309, 14: 0.219, 15: 0.133, 16: 0.043, 18: 0.346, 19: 0.324, 20: 0.24, 21: 0.056, 22: 0.028}
+blame        439 parts -> specs/blame.json
+glt          404 parts -> specs/glt.json
+kowloon     1997 parts -> specs/kowloon.json
+solarpunk   1191 parts -> specs/solarpunk.json
+mixed        272 parts -> specs/mixed.json
+catalog       30 parts -> specs/catalog.json
+validate specs/agent_vertical_farm.v1.json  (revision 1)
+  ERROR  #1 sign: missing required field "h"
+  ERROR  #4 hydroponic_rack: unknown part type "hydroponic_rack" (did you mean greenhouse?)
+  ERROR  #5 hydroponic_rack: unknown part type "hydroponic_rack" (did you mean greenhouse?)
+  ERROR  #29 tank: material "chrome" is not in the palette (try steel_light)
+  ERROR  #31 turbine: leaves the 2x2 footprint by more than the 0.5-cell overhang allowance
+  ERROR  #6 greenhouse: unsupported - its base is at 10.50 m but the nearest top below is at 3.50 m (gap 7.00 m = 2.00 levels)
+  ERROR  #28 deck: unsupported - its base is at 38.05 m but the nearest top below is at 37.80 m (gap 0.25 m = 0.07 levels)
+  ERROR  #31 turbine: unsupported - its base is at 35.00 m but the nearest top below is at 0.00 m (gap 35.00 m = 10.00 levels)
+  warn   #14 capsule: param "windows" is ignored by the renderer (did you mean "win"?)
+  note   #27 capsule: cantilevered off #22 greenhouse
+  note   #32 pipe: cantilevered off #0 capsule
+  note   33 parts (detail 1, infill 18, landscape 2, service 4, support 6, unknown 2); height 43.4 m
+  => FAIL (8 errors, 1 warnings)
+validate specs/agent_vertical_farm.json  (revision 2)
+  note   #27 capsule: cantilevered off #22 greenhouse
+  note   #32 pipe: cantilevered off #0 capsule
+  note   33 parts (detail 1, infill 20, landscape 2, service 4, support 6); height 43.4 m
+  => PASS (0 errors, 0 warnings)
+validate specs/arcology.json  (revision -)
+  note   200 parts attach laterally or hang (e.g. cantilevered off #32 deck; cantilevered off #32 deck)
+  note   fill cap: worst level covers 32% of its deck (cap 50%)
+  note   844 parts (detail 107, infill 504, landscape 47, service 9, support 102, transit 75); height 114.1 m
+  => PASS (0 errors, 0 warnings)
+jobs/variants.json: 10 jobs
+jobs/lighting.json: 6 jobs
+jobs/levels.json: 7 jobs
+jobs/timelapse.json: 10 jobs
+jobs/sprites.json: 31 jobs
+jobs/catalog.json: 30 jobs
+[kit    2.7s] rendered out/a_blame.png build 0.2s mesh 0.1s render 2.2s  verts 137256 faces 99774
+[kit   11.5s] rendered out/a_blame_close.png build 0.2s mesh 0.1s render 8.5s  verts 137256 faces 99774
+[kit   13.6s] rendered out/b_glt.png build 0.3s mesh 0.2s render 1.6s  verts 231318 faces 200958
+[kit   16.1s] rendered out/b_glt_close.png build 0.3s mesh 0.2s render 2.0s  verts 231318 faces 200958
+[kit   18.4s] rendered out/c_kowloon.png build 0.6s mesh 0.3s render 1.3s  verts 497512 faces 373704
+[kit   21.0s] rendered out/c_kowloon_close.png build 0.6s mesh 0.3s render 1.7s  verts 497512 faces 373704
+[kit   22.4s] rendered out/d_solarpunk.png build 0.2s mesh 0.1s render 1.0s  verts 147974 faces 126747
+[kit   24.4s] rendered out/d_solarpunk_close.png build 0.2s mesh 0.1s render 1.6s  verts 147974 faces 126747
+[kit   26.1s] rendered out/e_mixed.png build 0.1s mesh 0.1s render 1.5s  verts 50532 faces 39539
+[kit   27.7s] rendered out/f_arcology.png build 0.2s mesh 0.1s render 1.3s  verts 164808 faces 121482
+[kit    1.9s] rendered out/l_arcology_overcast.png build 0.2s mesh 0.2s render 1.4s  verts 164808 faces 121482
+[kit    3.4s] rendered out/l_arcology_dusk.png build 0.2s mesh 0.2s render 1.1s  verts 164808 faces 121482
+[kit    5.1s] rendered out/l_arcology_night.png build 0.2s mesh 0.1s render 1.3s  verts 164808 faces 121482
+[kit    7.5s] rendered out/l_kowloon_night.png build 0.6s mesh 0.3s render 1.5s  verts 497512 faces 373704
+[kit    9.7s] rendered out/l_blame_night.png build 0.2s mesh 0.1s render 1.9s  verts 137256 faces 99774
+[kit   11.1s] rendered out/l_solarpunk_dusk.png build 0.2s mesh 0.1s render 1.0s  verts 147974 faces 126747
+[kit    1.9s] rendered out/v1_full.png build 0.3s mesh 0.2s render 1.4s  verts 160677 faces 117891
+[kit    3.6s] rendered out/v2_cutaway_L8.png build 0.3s mesh 0.1s render 1.3s  verts 69926 faces 51213
+[kit    5.1s] rendered out/v2b_cutaway_L14.png build 0.3s mesh 0.1s render 1.1s  verts 115091 faces 84125
+[kit    6.7s] rendered out/v3_ghost_L8.png build 0.3s mesh 0.1s render 1.2s  verts 109030 faces 80541
+[kit    9.1s] rendered out/v4_exploded.png build 0.6s mesh 0.1s render 1.6s  verts 176877 faces 128321
+[kit   10.6s] rendered out/v5_section_x13.png build 0.3s mesh 0.1s render 1.1s  verts 111495 faces 81834
+[kit   12.5s] rendered out/v6_plan_L12.png build 0.3s mesh 0.1s render 1.5s  verts 97788 faces 71892
+[kit    1.1s] rendered out/timelapse/frame_00.png build 0.2s mesh 0.0s render 0.8s  verts 4032 faces 3024
+[kit    2.0s] rendered out/timelapse/frame_01.png build 0.2s mesh 0.0s render 0.7s  verts 17160 faces 12892
+[kit    3.1s] rendered out/timelapse/frame_02.png build 0.2s mesh 0.0s render 0.9s  verts 26208 faces 19678
+[kit    4.1s] rendered out/timelapse/frame_03.png build 0.2s mesh 0.1s render 0.8s  verts 46800 faces 35090
+[kit    5.2s] rendered out/timelapse/frame_04.png build 0.2s mesh 0.1s render 0.8s  verts 75664 faces 55962
+[kit    6.4s] rendered out/timelapse/frame_05.png build 0.2s mesh 0.1s render 0.9s  verts 116000 faces 85246
+[kit    7.6s] rendered out/timelapse/frame_06.png build 0.2s mesh 0.1s render 0.9s  verts 146200 faces 105308
+[kit    8.9s] rendered out/timelapse/frame_07.png build 0.2s mesh 0.1s render 0.9s  verts 160557 faces 117801
+[kit   10.2s] rendered out/timelapse/frame_08.png build 0.2s mesh 0.1s render 0.9s  verts 160677 faces 117891
+[kit   11.5s] rendered out/timelapse/frame_09.png build 0.2s mesh 0.1s render 0.9s  verts 160677 faces 117891
+[kit    0.5s] rendered out/sprites/agent_vertical_farm_r0_lo.png build 0.0s mesh 0.0s render 0.3s  verts 5077 faces 3760
+[kit    1.1s] rendered out/sprites/agent_vertical_farm_r0_hi.png build 0.0s mesh 0.0s render 0.7s  verts 5077 faces 3760
+[kit    1.3s] rendered out/sprites/agent_vertical_farm_r1_lo.png build 0.0s mesh 0.0s render 0.1s  verts 5077 faces 3760
+[kit    2.0s] rendered out/sprites/agent_vertical_farm_r1_hi.png build 0.0s mesh 0.0s render 0.6s  verts 5077 faces 3760
+[kit    2.1s] rendered out/sprites/agent_vertical_farm_r2_lo.png build 0.0s mesh 0.0s render 0.1s  verts 5077 faces 3760
+[kit    2.8s] rendered out/sprites/agent_vertical_farm_r2_hi.png build 0.0s mesh 0.0s render 0.6s  verts 5077 faces 3760
+[kit    2.9s] rendered out/sprites/agent_vertical_farm_r3_lo.png build 0.0s mesh 0.0s render 0.1s  verts 5077 faces 3760
+[kit    3.6s] rendered out/sprites/agent_vertical_farm_r3_hi.png build 0.0s mesh 0.0s render 0.6s  verts 5077 faces 3760
+[kit    3.7s] rendered out/sprites/spr_capsule_stack_r0_lo.png build 0.0s mesh 0.0s render 0.1s  verts 4192 faces 2663
+[kit    4.2s] rendered out/sprites/spr_capsule_stack_r0_hi.png build 0.0s mesh 0.0s render 0.5s  verts 4192 faces 2663
+[kit    4.4s] rendered out/sprites/spr_capsule_stack_r1_lo.png build 0.0s mesh 0.0s render 0.1s  verts 4192 faces 2663
+[kit    4.9s] rendered out/sprites/spr_capsule_stack_r1_hi.png build 0.0s mesh 0.0s render 0.5s  verts 4192 faces 2663
+[kit    5.0s] rendered out/sprites/spr_capsule_stack_r2_lo.png build 0.0s mesh 0.0s render 0.1s  verts 4192 faces 2663
+[kit    5.6s] rendered out/sprites/spr_capsule_stack_r2_hi.png build 0.0s mesh 0.0s render 0.5s  verts 4192 faces 2663
+[kit    5.7s] rendered out/sprites/spr_capsule_stack_r3_lo.png build 0.0s mesh 0.0s render 0.1s  verts 4192 faces 2663
+[kit    6.3s] rendered out/sprites/spr_capsule_stack_r3_hi.png build 0.0s mesh 0.0s render 0.5s  verts 4192 faces 2663
+[kit    6.4s] rendered out/sprites/spr_res_tower_r0_lo.png build 0.0s mesh 0.0s render 0.1s  verts 1105 faces 827
+[kit    6.8s] rendered out/sprites/spr_res_tower_r0_hi.png build 0.0s mesh 0.0s render 0.4s  verts 1105 faces 827
+[kit    6.9s] rendered out/sprites/spr_park_r0_lo.png build 0.0s mesh 0.0s render 0.1s  verts 107 faces 128
+[kit    7.4s] rendered out/sprites/spr_park_r0_hi.png build 0.0s mesh 0.0s render 0.5s  verts 107 faces 128
+[kit    7.5s] rendered out/sprites/spr_plaza_r0_lo.png build 0.0s mesh 0.0s render 0.1s  verts 144 faces 152
+[kit    8.0s] rendered out/sprites/spr_plaza_r0_hi.png build 0.0s mesh 0.0s render 0.5s  verts 144 faces 152
+[kit    8.1s] rendered out/sprites/spr_megacolumn_r0_lo.png build 0.0s mesh 0.0s render 0.1s  verts 720 faces 508
+[kit    8.5s] rendered out/sprites/spr_megacolumn_r0_hi.png build 0.0s mesh 0.0s render 0.4s  verts 720 faces 508
+[kit    8.7s] rendered out/sprites/spr_station_r0_lo.png build 0.0s mesh 0.0s render 0.1s  verts 576 faces 432
+[kit    9.2s] rendered out/sprites/spr_station_r0_hi.png build 0.0s mesh 0.0s render 0.5s  verts 576 faces 432
+[kit    9.3s] rendered out/sprites/tile_grass_r0_lo.png build 0.0s mesh 0.0s render 0.1s  verts 8 faces 6
+[kit    9.5s] rendered out/sprites/tile_paving_r0_lo.png build 0.0s mesh 0.0s render 0.1s  verts 8 faces 6
+[kit    9.6s] rendered out/sprites/tile_road_r0_lo.png build 0.0s mesh 0.0s render 0.2s  verts 16 faces 12
+[kit    9.8s] rendered out/sprites/tile_water_r0_lo.png build 0.0s mesh 0.0s render 0.1s  verts 16 faces 12
+[kit    9.9s] rendered out/sprites/tile_deck_r0_lo.png build 0.0s mesh 0.0s render 0.2s  verts 8 faces 6
+[kit    0.5s] rendered out/catalog/00_megacolumn.png build 0.0s mesh 0.0s render 0.4s  verts 32 faces 24
+[kit    0.6s] rendered out/catalog/01_core.png build 0.0s mesh 0.0s render 0.1s  verts 72 faces 54
+[kit    0.8s] rendered out/catalog/02_elevator.png build 0.0s mesh 0.0s render 0.1s  verts 288 faces 216
+[kit    1.0s] rendered out/catalog/03_truss.png build 0.0s mesh 0.0s render 0.2s  verts 352 faces 264
+[kit    1.2s] rendered out/catalog/04_deck.png build 0.0s mesh 0.0s render 0.1s  verts 160 faces 120
+[kit    1.4s] rendered out/catalog/05_capsule.png build 0.0s mesh 0.0s render 0.2s  verts 256 faces 192
+[kit    1.7s] rendered out/catalog/06_capsule.png build 0.0s mesh 0.0s render 0.3s  verts 264 faces 166
+[kit    1.9s] rendered out/catalog/07_tube.png build 0.0s mesh 0.0s render 0.2s  verts 552 faces 414
+[kit    2.1s] rendered out/catalog/08_viaduct.png build 0.0s mesh 0.0s render 0.2s  verts 120 faces 90
+[kit    2.3s] rendered out/catalog/09_bridge.png build 0.0s mesh 0.0s render 0.2s  verts 160 faces 120
+[kit    2.7s] rendered out/catalog/10_stairs.png build 0.0s mesh 0.0s render 0.3s  verts 320 faces 240
+[kit    2.9s] rendered out/catalog/11_ramp.png build 0.0s mesh 0.0s render 0.2s  verts 136 faces 102
+[kit    3.1s] rendered out/catalog/12_lightwell.png build 0.0s mesh 0.0s render 0.2s  verts 400 faces 300
+[kit    3.3s] rendered out/catalog/13_terrace.png build 0.0s mesh 0.0s render 0.2s  verts 438 faces 588
+[kit    3.5s] rendered out/catalog/14_tree.png build 0.0s mesh 0.0s render 0.2s  verts 46 faces 67
+[kit    3.8s] rendered out/catalog/15_pipe.png build 0.0s mesh 0.0s render 0.3s  verts 192 faces 120
+[kit    4.0s] rendered out/catalog/16_antenna.png build 0.0s mesh 0.0s render 0.2s  verts 68 faces 58
+[kit    4.2s] rendered out/catalog/17_crane.png build 0.0s mesh 0.0s render 0.2s  verts 788 faces 570
+[kit    4.4s] rendered out/catalog/18_water.png build 0.0s mesh 0.0s render 0.1s  verts 40 faces 30
+[kit    4.6s] rendered out/catalog/19_greenhouse.png build 0.0s mesh 0.0s render 0.3s  verts 376 faces 282
+[kit    4.9s] rendered out/catalog/20_solar.png build 0.0s mesh 0.0s render 0.3s  verts 144 faces 108
+[kit    5.1s] rendered out/catalog/21_turbine.png build 0.0s mesh 0.0s render 0.2s  verts 48 faces 34
+[kit    5.3s] rendered out/catalog/22_sign.png build 0.0s mesh 0.0s render 0.2s  verts 16 faces 12
+[kit    5.6s] rendered out/catalog/23_tank.png build 0.0s mesh 0.0s render 0.3s  verts 69 faces 51
+[kit    5.9s] rendered out/catalog/24_machine.png build 0.0s mesh 0.0s render 0.3s  verts 120 faces 80
+[kit    6.2s] rendered out/catalog/25_shack.png build 0.0s mesh 0.0s render 0.3s  verts 32 faces 24
+[kit    6.4s] rendered out/catalog/26_ruin.png build 0.0s mesh 0.0s render 0.2s  verts 496 faces 372
+[kit    6.6s] rendered out/catalog/27_builder.png build 0.0s mesh 0.0s render 0.2s  verts 80 faces 82
+[kit    6.8s] rendered out/catalog/28_block.png build 0.0s mesh 0.0s render 0.2s  verts 208 faces 156
+[kit    7.1s] rendered out/catalog/29_figure.png build 0.0s mesh 0.0s render 0.2s  verts 28 faces 32
+agent_vertical_farm_r0_lo.png            colours 5203 -> 37
+agent_vertical_farm_r1_lo.png            colours 5012 -> 33
+agent_vertical_farm_r2_lo.png            colours 2769 -> 28
+agent_vertical_farm_r3_lo.png            colours 2987 -> 28
+spr_capsule_stack_r0_lo.png              colours 1703 -> 23
+spr_capsule_stack_r1_lo.png              colours 1785 -> 23
+spr_capsule_stack_r2_lo.png              colours 1941 -> 23
+spr_capsule_stack_r3_lo.png              colours 1561 -> 22
+wrote p1..p6 to out/
+time-lapse: 228 frames -> accretion_timelapse.mp4 (1.4 MB), accretion_timelapse.gif (2.4 MB)
+sheet sheet_1_variants.png (2000, 1625)
+sheet sheet_2_levels.png (2000, 1625)
+sheet sheet_3_lighting.png (2000, 1111)
+sheet sheet_4_timelapse.png (2050, 1305)
+sheet sheet_5_sprites.png (2060, 1396)
+sheet sheet_0_overview.png (2050, 1343)
+./run_all.sh  65.92s user 18.40s system 76% cpu 1:49.76 total
+exit 0

@@ -1,0 +1,470 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 32,
+  "max_lights": 80
+ },
+ "jobs": [
+  {
+   "spec": "scale/specs/m_a_massif.json",
+   "out": "scale/out/mega/a1_massif.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "res": [
+    1800,
+    1000
+   ],
+   "camera": {
+    "az": 18,
+    "el": 24,
+    "target": [
+     -500,
+     800,
+     900
+    ],
+    "ortho_scale": 17500
+   },
+   "fog": {
+    "h": 0.25,
+    "gamma": 1.6,
+    "d": 0.35,
+    "z_lo": 0,
+    "z_hi": 2600,
+    "d_start": 0.1
+   }
+  },
+  {
+   "spec": "scale/specs/m_a_massif.json",
+   "out": "scale/out/mega/a2_massif_ledges.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "camera": {
+    "az": 18,
+    "el": 24,
+    "target": [
+     -1500,
+     200,
+     800
+    ],
+    "ortho_scale": 4200
+   },
+   "fog": {
+    "h": 0.15,
+    "gamma": 1.6,
+    "d": 0.2,
+    "z_lo": 0,
+    "z_hi": 2600,
+    "d_start": 0.1
+   }
+  },
+  {
+   "spec": "scale/specs/m_b_caldera.json",
+   "out": "scale/out/mega/b1_caldera.png",
+   "light": "aerial",
+   "style": "scale",
+   "camera": {
+    "az": 30,
+    "el": 38,
+    "target": [
+     0,
+     0,
+     300
+    ],
+    "ortho_scale": 7600
+   },
+   "fog": {
+    "h": 0.08,
+    "gamma": 1.6,
+    "d": 0.18,
+    "z_lo": 0,
+    "z_hi": 1500,
+    "d_start": 0.2
+   }
+  },
+  {
+   "spec": "scale/specs/m_b_caldera.json",
+   "out": "scale/out/mega/b2_caldera_wall.png",
+   "light": "aerial",
+   "style": "scale",
+   "camera": {
+    "az": 30,
+    "el": 24,
+    "target": [
+     -900,
+     1500,
+     420
+    ],
+    "ortho_scale": 1700
+   },
+   "fog": {
+    "h": 0.05,
+    "gamma": 1.6,
+    "d": 0.1,
+    "z_lo": 0,
+    "z_hi": 1500,
+    "d_start": 0.2
+   }
+  },
+  {
+   "spec": "scale/specs/m_c_monument.json",
+   "out": "scale/out/mega/c1_monument.png",
+   "light": "aerial",
+   "style": "scale",
+   "res": [
+    1800,
+    1000
+   ],
+   "camera": {
+    "type": "persp",
+    "loc": [
+     -7000.0,
+     -6500.0,
+     2400.0
+    ],
+    "target": [
+     9000.0,
+     600.0,
+     200.0
+    ],
+    "lens": 30
+   },
+   "fog": {
+    "h": 0.2,
+    "gamma": 1.6,
+    "d": 0.75,
+    "z_lo": -100,
+    "z_hi": 2500,
+    "d_start": 0.0
+   },
+   "clip": [
+    5.0,
+    200000.0
+   ]
+  },
+  {
+   "spec": "scale/specs/m_c_monument.json",
+   "out": "scale/out/mega/c2_monument_roof.png",
+   "light": "aerial",
+   "style": "scale",
+   "camera": {
+    "az": 35,
+    "el": 30,
+    "target": [
+     1500,
+     0,
+     560
+    ],
+    "ortho_scale": 3600
+   },
+   "fog": {
+    "h": 0.08,
+    "gamma": 1.6,
+    "d": 0.15,
+    "z_lo": -100,
+    "z_hi": 2500,
+    "d_start": 0.2
+   }
+  },
+  {
+   "spec": "scale/specs/m_d_void.json",
+   "out": "scale/out/mega/d1_void.png",
+   "light": "void",
+   "style": "scale",
+   "res": [
+    1800,
+    1000
+   ],
+   "drop_tags": [
+    "frontwall"
+   ],
+   "camera": {
+    "type": "persp",
+    "loc": [
+     3600.0,
+     220.0,
+     1050.0
+    ],
+    "target": [
+     3300.0,
+     4600.0,
+     900.0
+    ],
+    "lens": 17
+   },
+   "fog": {
+    "h": 0.1,
+    "gamma": 1.4,
+    "d": 0.55,
+    "z_lo": 0,
+    "z_hi": 2600,
+    "d_start": 0.05,
+    "bands": [
+     [
+      500,
+      320,
+      0.28
+     ],
+     [
+      1250,
+      260,
+      0.2
+     ]
+    ]
+   },
+   "clip": [
+    2.0,
+    30000.0
+   ],
+   "max_lights": 60
+  },
+  {
+   "spec": "scale/specs/m_d_void.json",
+   "out": "scale/out/mega/d2_void_section.png",
+   "light": "void",
+   "style": "scale",
+   "camera": {
+    "az": 0,
+    "el": 18,
+    "target": [
+     3500,
+     2300,
+     1200
+    ],
+    "ortho_scale": 8800
+   },
+   "drop_tags": [
+    "frontwall"
+   ],
+   "fog": {
+    "h": 0.05,
+    "gamma": 1.4,
+    "d": 0.1,
+    "z_lo": 0,
+    "z_hi": 2600,
+    "bands": [
+     [
+      500,
+      320,
+      0.2
+     ],
+     [
+      1250,
+      260,
+      0.15
+     ]
+    ]
+   }
+  },
+  {
+   "spec": "scale/specs/m_e_slab.json",
+   "out": "scale/out/mega/e1_slab.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "res": [
+    1800,
+    1000
+   ],
+   "camera": {
+    "az": -38,
+    "el": 26,
+    "target": [
+     2800,
+     1300,
+     1000
+    ],
+    "ortho_scale": 9800
+   },
+   "fog": {
+    "h": 0.12,
+    "gamma": 1.6,
+    "d": 0.25,
+    "z_lo": 0,
+    "z_hi": 3000,
+    "d_start": 0.1
+   }
+  },
+  {
+   "spec": "scale/specs/m_e_slab.json",
+   "out": "scale/out/mega/e2_slab_terraces.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "camera": {
+    "az": -38,
+    "el": 26,
+    "target": [
+     2400,
+     1000,
+     1100
+    ],
+    "ortho_scale": 2400
+   },
+   "fog": {
+    "h": 0.06,
+    "gamma": 1.6,
+    "d": 0.1,
+    "z_lo": 0,
+    "z_hi": 3000,
+    "d_start": 0.1
+   }
+  },
+  {
+   "spec": "scale/specs/m_f_tetrapods.json",
+   "out": "scale/out/mega/f1_tetrapods.png",
+   "light": "aerial",
+   "style": "scale",
+   "res": [
+    1800,
+    1000
+   ],
+   "camera": {
+    "az": 12,
+    "el": 26,
+    "target": [
+     0,
+     900,
+     400
+    ],
+    "ortho_scale": 21000
+   },
+   "fog": {
+    "h": 0.12,
+    "gamma": 1.6,
+    "d": 0.35,
+    "z_lo": -40,
+    "z_hi": 2500,
+    "d_start": 0.1
+   }
+  },
+  {
+   "spec": "scale/specs/m_f_tetrapods.json",
+   "out": "scale/out/mega/f2_tetrapod_close.png",
+   "light": "aerial",
+   "style": "scale",
+   "camera": {
+    "az": 12,
+    "el": 24,
+    "target": [
+     -3200,
+     200,
+     300
+    ],
+    "ortho_scale": 4200
+   },
+   "fog": {
+    "h": 0.05,
+    "gamma": 1.6,
+    "d": 0.12,
+    "z_lo": -40,
+    "z_hi": 2500,
+    "d_start": 0.1
+   }
+  },
+  {
+   "spec": "scale/specs/m_g_green.json",
+   "out": "scale/out/mega/g1_green_ridge.png",
+   "light": "aerial_warm",
+   "style": "scale_green",
+   "res": [
+    1800,
+    1000
+   ],
+   "camera": {
+    "az": 36,
+    "el": 24,
+    "target": [
+     -1500,
+     800,
+     500
+    ],
+    "ortho_scale": 9500
+   },
+   "fog": {
+    "h": 0.12,
+    "gamma": 1.6,
+    "d": 0.25,
+    "z_lo": 0,
+    "z_hi": 2000,
+    "d_start": 0.1
+   }
+  },
+  {
+   "spec": "scale/specs/m_g_green.json",
+   "out": "scale/out/mega/g2_green_cut.png",
+   "light": "aerial_warm",
+   "style": "scale_green",
+   "camera": {
+    "az": 48,
+    "el": 20,
+    "target": [
+     3300,
+     600,
+     500
+    ],
+    "ortho_scale": 2600
+   },
+   "fog": {
+    "h": 0.06,
+    "gamma": 1.6,
+    "d": 0.1,
+    "z_lo": 0,
+    "z_hi": 2000,
+    "d_start": 0.1
+   }
+  },
+  {
+   "spec": "scale/specs/m_h_conduit.json",
+   "out": "scale/out/mega/h1_conduit.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "res": [
+    1800,
+    1000
+   ],
+   "camera": {
+    "az": 28,
+    "el": 30,
+    "target": [
+     0,
+     0,
+     200
+    ],
+    "ortho_scale": 30000
+   },
+   "fog": {
+    "h": 0.12,
+    "gamma": 1.6,
+    "d": 0.3,
+    "z_lo": 0,
+    "z_hi": 2500,
+    "d_start": 0.1
+   }
+  },
+  {
+   "spec": "scale/specs/m_h_conduit.json",
+   "out": "scale/out/mega/h2_conduit_close.png",
+   "light": "aerial_warm",
+   "style": "scale",
+   "camera": {
+    "az": 28,
+    "el": 26,
+    "target": [
+     5000,
+     800,
+     250
+    ],
+    "ortho_scale": 5200
+   },
+   "fog": {
+    "h": 0.06,
+    "gamma": 1.6,
+    "d": 0.12,
+    "z_lo": 0,
+    "z_hi": 2500,
+    "d_start": 0.1
+   }
+  }
+ ]
+}

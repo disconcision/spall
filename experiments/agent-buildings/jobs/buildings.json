@@ -1,0 +1,2187 @@
+{
+ "defaults": {},
+ "jobs": [
+  {
+   "spec": "specs/hydro_stack.json",
+   "out": "out/concept/hydro_stack.png",
+   "light": "dusk",
+   "style": "arcology",
+   "res": [
+    1400,
+    1050
+   ],
+   "samples": 64,
+   "camera": {
+    "margin": 0.08
+   },
+   "view": {
+    "mode": "ghost",
+    "level": 5.7,
+    "cut": 0.0
+   },
+   "env": {
+    "ghost_col": [
+     0.52,
+     0.66,
+     0.9
+    ],
+    "wire_col": [
+     0.36,
+     0.6,
+     1.0
+    ],
+    "ghost_alpha": 0.06,
+    "wire_e": 1.4
+   }
+  },
+  {
+   "spec": "specs/hydro_stack.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hydro_stack_r0_lo.png",
+   "res": [
+    108,
+    164
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.75,
+     7.25,
+     7.96084
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/hydro_stack_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/hydro_stack.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hydro_stack_r0_hi.png",
+   "res": [
+    648,
+    984
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     0.75,
+     7.25,
+     7.96084
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/hydro_stack.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hydro_stack_r1_lo.png",
+   "res": [
+    108,
+    164
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.75,
+     7.25,
+     7.96084
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/hydro_stack_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/hydro_stack.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hydro_stack_r1_hi.png",
+   "res": [
+    648,
+    984
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     0.75,
+     7.25,
+     7.96084
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/hydro_stack.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hydro_stack_r2_lo.png",
+   "res": [
+    108,
+    164
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.75,
+     7.25,
+     7.96084
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/hydro_stack_r2_lo.cam.json"
+  },
+  {
+   "spec": "specs/hydro_stack.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hydro_stack_r2_hi.png",
+   "res": [
+    648,
+    984
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     0.75,
+     7.25,
+     7.96084
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/hydro_stack.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hydro_stack_r3_lo.png",
+   "res": [
+    108,
+    164
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.75,
+     7.25,
+     7.96084
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/hydro_stack_r3_lo.cam.json"
+  },
+  {
+   "spec": "specs/hydro_stack.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hydro_stack_r3_hi.png",
+   "res": [
+    648,
+    984
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     0.75,
+     7.25,
+     7.96084
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/bridge_market.json",
+   "out": "out/concept/bridge_market.png",
+   "light": "dusk",
+   "style": "kowloon",
+   "res": [
+    1400,
+    1050
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     8.0,
+     4.0,
+     -0.5
+    ],
+    "ortho_scale": 40,
+    "az": 12,
+    "el": 28
+   },
+   "env": {
+    "lantern": 2.6
+   }
+  },
+  {
+   "spec": "specs/bridge_market.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     4,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/bridge_market_r0_lo.png",
+   "res": [
+    116,
+    102
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     7.4375,
+     4.5625,
+     1.37784
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/bridge_market_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/bridge_market.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     4,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/bridge_market_r0_hi.png",
+   "res": [
+    696,
+    612
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     7.4375,
+     4.5625,
+     1.37784
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/bridge_market.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     4,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/bridge_market_r1_lo.png",
+   "res": [
+    116,
+    102
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     3.4375,
+     8.5625,
+     1.37784
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/bridge_market_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/bridge_market.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     4,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/bridge_market_r1_hi.png",
+   "res": [
+    696,
+    612
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     3.4375,
+     8.5625,
+     1.37784
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/bridge_market.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     4,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/bridge_market_r2_lo.png",
+   "res": [
+    116,
+    102
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     7.4375,
+     4.5625,
+     1.37784
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/bridge_market_r2_lo.cam.json"
+  },
+  {
+   "spec": "specs/bridge_market.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     4,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/bridge_market_r2_hi.png",
+   "res": [
+    696,
+    612
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     7.4375,
+     4.5625,
+     1.37784
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/bridge_market.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     4,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/bridge_market_r3_lo.png",
+   "res": [
+    116,
+    102
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     3.4375,
+     8.5625,
+     1.37784
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/bridge_market_r3_lo.cam.json"
+  },
+  {
+   "spec": "specs/bridge_market.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     4,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/bridge_market_r3_hi.png",
+   "res": [
+    696,
+    612
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     3.4375,
+     8.5625,
+     1.37784
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/hanging_garden.json",
+   "out": "out/concept/hanging_garden.png",
+   "light": "golden",
+   "style": "solarpunk",
+   "res": [
+    1400,
+    1050
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     4.0,
+     1.0,
+     9.0
+    ],
+    "ortho_scale": 34
+   },
+   "env": {
+    "sun_az": 300,
+    "sun_el": 34
+   }
+  },
+  {
+   "spec": "specs/hanging_garden.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hanging_garden_r0_lo.png",
+   "res": [
+    70,
+    158
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.25,
+     5.75,
+     9.18559
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/hanging_garden_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/hanging_garden.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hanging_garden_r0_hi.png",
+   "res": [
+    420,
+    948
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     0.25,
+     5.75,
+     9.18559
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/hanging_garden.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hanging_garden_r1_lo.png",
+   "res": [
+    70,
+    158
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -1.75,
+     7.75,
+     9.18559
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/hanging_garden_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/hanging_garden.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hanging_garden_r1_hi.png",
+   "res": [
+    420,
+    948
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     -1.75,
+     7.75,
+     9.18559
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/hanging_garden.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hanging_garden_r2_lo.png",
+   "res": [
+    70,
+    158
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.25,
+     5.75,
+     9.18559
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/hanging_garden_r2_lo.cam.json"
+  },
+  {
+   "spec": "specs/hanging_garden.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hanging_garden_r2_hi.png",
+   "res": [
+    420,
+    948
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     0.25,
+     5.75,
+     9.18559
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/hanging_garden.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hanging_garden_r3_lo.png",
+   "res": [
+    70,
+    158
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -1.75,
+     7.75,
+     9.18559
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/hanging_garden_r3_lo.cam.json"
+  },
+  {
+   "spec": "specs/hanging_garden.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/hanging_garden_r3_hi.png",
+   "res": [
+    420,
+    948
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     -1.75,
+     7.75,
+     9.18559
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/tube_interchange.json",
+   "out": "out/concept/tube_interchange.png",
+   "light": "golden",
+   "style": "arcology",
+   "res": [
+    1400,
+    1050
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     6.0,
+     6.0,
+     6.0
+    ],
+    "ortho_scale": 58
+   }
+  },
+  {
+   "spec": "specs/tube_interchange.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/tube_interchange_r0_lo.png",
+   "res": [
+    148,
+    178
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/tube_interchange_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/tube_interchange.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/tube_interchange_r0_hi.png",
+   "res": [
+    888,
+    1068
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/tube_interchange.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/tube_interchange_r1_lo.png",
+   "res": [
+    148,
+    178
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/tube_interchange_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/tube_interchange.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/tube_interchange_r1_hi.png",
+   "res": [
+    888,
+    1068
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/tube_interchange.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/tube_interchange_r2_lo.png",
+   "res": [
+    148,
+    178
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/tube_interchange_r2_lo.cam.json"
+  },
+  {
+   "spec": "specs/tube_interchange.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/tube_interchange_r2_hi.png",
+   "res": [
+    888,
+    1068
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/tube_interchange.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/tube_interchange_r3_lo.png",
+   "res": [
+    148,
+    178
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/tube_interchange_r3_lo.cam.json"
+  },
+  {
+   "spec": "specs/tube_interchange.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/tube_interchange_r3_hi.png",
+   "res": [
+    888,
+    1068
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/solar_chimney.json",
+   "out": "out/concept/solar_chimney.png",
+   "light": "dusk",
+   "style": "arcology",
+   "res": [
+    1400,
+    1050
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     3.0,
+     5.0,
+     11.5
+    ],
+    "ortho_scale": 44
+   },
+   "view": {
+    "mode": "full",
+    "crop": [
+     -3.0,
+     0.42,
+     1.58,
+     5.0
+    ]
+   },
+   "keep_tags": [
+    "context"
+   ],
+   "instances": [
+    {
+     "spec": "specs/solar_chimney.json",
+     "at": [
+      0,
+      0,
+      0
+     ],
+     "rot": 0,
+     "drop_tags": [
+      "context"
+     ]
+    }
+   ]
+  },
+  {
+   "spec": "specs/solar_chimney.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/solar_chimney_r0_lo.png",
+   "res": [
+    90,
+    174
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.1875,
+     7.8125,
+     9.33868
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/solar_chimney_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/solar_chimney.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/solar_chimney_r0_hi.png",
+   "res": [
+    540,
+    1044
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     0.1875,
+     7.8125,
+     9.33868
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/solar_chimney.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/solar_chimney_r1_lo.png",
+   "res": [
+    90,
+    174
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.1875,
+     7.8125,
+     9.33868
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/solar_chimney_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/solar_chimney.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/solar_chimney_r1_hi.png",
+   "res": [
+    540,
+    1044
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     0.1875,
+     7.8125,
+     9.33868
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/solar_chimney.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/solar_chimney_r2_lo.png",
+   "res": [
+    90,
+    174
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.1875,
+     7.8125,
+     9.33868
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/solar_chimney_r2_lo.cam.json"
+  },
+  {
+   "spec": "specs/solar_chimney.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/solar_chimney_r2_hi.png",
+   "res": [
+    540,
+    1044
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     0.1875,
+     7.8125,
+     9.33868
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/solar_chimney.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/solar_chimney_r3_lo.png",
+   "res": [
+    90,
+    174
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.1875,
+     7.8125,
+     9.33868
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/solar_chimney_r3_lo.cam.json"
+  },
+  {
+   "spec": "specs/solar_chimney.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/solar_chimney_r3_hi.png",
+   "res": [
+    540,
+    1044
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     0.1875,
+     7.8125,
+     9.33868
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/rooftop_village.json",
+   "out": "out/concept/rooftop_village.png",
+   "light": "dusk",
+   "style": "kowloon",
+   "res": [
+    1400,
+    1050
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     5.5,
+     6.5,
+     2.0
+    ],
+    "ortho_scale": 30
+   },
+   "env": {
+    "lantern": 2.6
+   }
+  },
+  {
+   "spec": "specs/rooftop_village.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/rooftop_village_r0_lo.png",
+   "res": [
+    116,
+    108
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/rooftop_village_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/rooftop_village.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/rooftop_village_r0_hi.png",
+   "res": [
+    696,
+    648
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/rooftop_village.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/rooftop_village_r1_lo.png",
+   "res": [
+    116,
+    108
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/rooftop_village_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/rooftop_village.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/rooftop_village_r1_hi.png",
+   "res": [
+    696,
+    648
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/rooftop_village.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/rooftop_village_r2_lo.png",
+   "res": [
+    116,
+    108
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/rooftop_village_r2_lo.cam.json"
+  },
+  {
+   "spec": "specs/rooftop_village.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 2,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/rooftop_village_r2_hi.png",
+   "res": [
+    696,
+    648
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/rooftop_village.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/rooftop_village_r3_lo.png",
+   "res": [
+    116,
+    108
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/rooftop_village_r3_lo.cam.json"
+  },
+  {
+   "spec": "specs/rooftop_village.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 3,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/rooftop_village_r3_hi.png",
+   "res": [
+    696,
+    648
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  }
+ ]
+}

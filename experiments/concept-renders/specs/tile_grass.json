@@ -1,0 +1,1 @@
+{"meta":{"name":"tile_grass","style":"sprite","seed":5,"grid":{"cell":4.0,"level":3.5},"light":"studio","kind":"building-type","footprint":{"x":0,"y":0,"w":1,"d":1},"description":"Ground tile."},"parts":[{"id":0,"type":"ground","x":0,"y":0,"level":0,"w":1,"d":1,"h":0.1,"material":"grass","params":{"t":0.35}}]}

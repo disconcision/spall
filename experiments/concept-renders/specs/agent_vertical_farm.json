@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "name": "agent_vertical_farm",
+    "kind": "building-type",
+    "title": "Vertical Farm Tower, Mk I",
+    "author": "LLM agent 'planner-3' (hand-written stand-in for this demo; revision 2 after validator feedback)",
+    "revision": 2,
+    "style": "sprite",
+    "seed": 42,
+    "grid": {"cell": 4.0, "level": 3.5},
+    "footprint": {"x": 0, "y": 0, "w": 2, "d": 2, "max_levels": 14, "overhang": 0.5},
+    "light": "studio",
+    "description": "A 2x2-tile farm tower that plugs into a deck or the ground. Market hall at the base, eight greenhouse floors with tiered racks and grow-lights, a double-height sky garden with two worker flats, a back strip of worker capsules beside the service core, and a roof plant (water tank, wind turbine, solar). Irrigation risers run up the +x face.",
+    "logic": {
+      "category": "agriculture",
+      "build_cost": 1800,
+      "build_time_days": 90,
+      "inputs": {"power_mw": 1.2, "water_m3_per_day": 45, "workers": 18},
+      "outputs": {"food_units_per_day": 120, "o2_bonus_radius_tiles": 3},
+      "housing": 12,
+      "placement": {"on": ["ground", "deck"], "needs_adjacent": ["walkway"], "transit_within_tiles": 4},
+      "blueprint_steps": ["base hall", "core", "greenhouses 1-4", "sky garden deck", "greenhouses 7-9", "roof plant", "risers"],
+      "fill_cap_note": "counts as infill for its deck's 50% light-and-air cap"
+    },
+    "sprite": {"px_per_tile": 32, "rotations": 4, "palette": "kit64"}
+  },
+  "parts": [
+    {"type": "capsule", "x": 0, "y": 0, "level": 0, "w": 2, "d": 2, "h": 1, "material": "concrete_light", "tags": ["step:base hall"],
+     "params": {"win": "band", "lit": 0.9, "interior": false}},
+    {"type": "sign", "x": 0.3, "y": 0, "level": 0.64, "w": 1.1, "d": 0.2, "h": 0.25, "tags": ["step:base hall"],
+     "params": {"color": "green", "blade": false}},
+    {"type": "planter", "x": 1.45, "y": -0.28, "level": 0, "w": 0.5, "d": 0.24, "h": 0.2, "tags": ["step:base hall"], "params": {"ph": 0.5}},
+
+    {"type": "core", "x": 0.08, "y": 1.4, "level": 1, "w": 0.6, "d": 0.6, "h": 9, "material": "concrete_light", "tags": ["step:core"],
+     "params": {"cabs": 1, "louvre": 0, "cap": true}},
+
+    {"type": "greenhouse", "x": 0, "y": 0, "level": 1, "w": 2, "d": 1.35, "h": 1, "material": "timber", "tags": ["step:greenhouses 1-4"], "params": {"tiers": 3, "roof": false}},
+    {"type": "greenhouse", "x": 0, "y": 0, "level": 2, "w": 2, "d": 1.35, "h": 1, "material": "timber", "tags": ["step:greenhouses 1-4"], "params": {"tiers": 3, "roof": false}},
+    {"type": "greenhouse", "x": 0, "y": 0, "level": 3, "w": 2, "d": 1.35, "h": 1, "material": "timber", "tags": ["step:greenhouses 1-4"], "params": {"tiers": 3, "roof": false}},
+    {"type": "greenhouse", "x": 0, "y": 0, "level": 4, "w": 2, "d": 1.35, "h": 1, "material": "timber", "tags": ["step:greenhouses 1-4"], "params": {"tiers": 3, "roof": false}},
+    {"type": "capsule", "x": 0.72, "y": 1.4, "level": 1, "w": 1.28, "d": 0.6, "h": 1, "material": "panel", "tags": ["step:greenhouses 1-4"], "params": {"win": "grid", "lit": 0.6, "interior": false, "module": 1.4}},
+    {"type": "capsule", "x": 0.72, "y": 1.4, "level": 2, "w": 1.28, "d": 0.6, "h": 1, "material": "panel", "tags": ["step:greenhouses 1-4"], "params": {"win": "grid", "lit": 0.6, "interior": false, "module": 1.4}},
+    {"type": "capsule", "x": 0.72, "y": 1.4, "level": 3, "w": 1.28, "d": 0.6, "h": 1, "material": "panel", "tags": ["step:greenhouses 1-4"], "params": {"win": "grid", "lit": 0.6, "interior": false, "module": 1.4}},
+    {"type": "capsule", "x": 0.72, "y": 1.4, "level": 4, "w": 1.28, "d": 0.6, "h": 1, "material": "panel", "tags": ["step:greenhouses 1-4"], "params": {"win": "grid", "lit": 0.6, "interior": false, "module": 1.4}},
+
+    {"type": "deck", "x": 0, "y": 0, "level": 5, "w": 2, "d": 2, "h": 0.2, "material": "concrete_light", "tags": ["step:sky garden deck"],
+     "params": {"t": 0.45, "fascia": "timber", "rail": "s"}},
+    {"type": "terrace", "x": 0, "y": 0, "level": 5, "w": 1.25, "d": 1.35, "h": 0.2, "tags": ["step:sky garden deck"],
+     "params": {"ntrees": 3, "edge": "", "path": false, "rail": "", "tree_h": [3.2, 5.6]}},
+    {"type": "capsule", "x": 1.25, "y": 0.05, "level": 5, "w": 0.75, "d": 1.3, "h": 0.95, "material": "timber", "tags": ["step:sky garden deck"],
+     "params": {"win": "grid", "lit": 0.8, "interior": false, "module": 1.3}},
+    {"type": "capsule", "x": 1.25, "y": 0.05, "level": 6, "w": 0.75, "d": 1.3, "h": 0.95, "material": "timber", "tags": ["step:sky garden deck"],
+     "params": {"win": "grid", "lit": 0.8, "interior": false, "module": 1.3}},
+    {"type": "capsule", "x": 0.72, "y": 1.4, "level": 5, "w": 1.28, "d": 0.6, "h": 1, "material": "panel", "tags": ["step:sky garden deck"], "params": {"win": "grid", "lit": 0.6, "interior": false, "module": 1.4}},
+    {"type": "capsule", "x": 0.72, "y": 1.4, "level": 6, "w": 1.28, "d": 0.6, "h": 1, "material": "panel", "tags": ["step:sky garden deck"], "params": {"win": "grid", "lit": 0.6, "interior": false, "module": 1.4}},
+    {"type": "column", "x": 0, "y": 0, "level": 5, "w": 0.12, "d": 0.12, "h": 2, "material": "timber_dark", "tags": ["step:sky garden deck"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 1.13, "y": 0, "level": 5, "w": 0.12, "d": 0.12, "h": 2, "material": "timber_dark", "tags": ["step:sky garden deck"], "params": {"capital": false, "plinth": false}},
+
+    {"type": "deck", "x": 0, "y": 0, "level": 7, "w": 2, "d": 2, "h": 0.2, "material": "concrete_light", "tags": ["step:greenhouses 7-9"],
+     "params": {"t": 0.45, "fascia": "timber"}},
+    {"type": "greenhouse", "x": 0, "y": 0, "level": 7, "w": 2, "d": 1.35, "h": 1, "material": "timber", "tags": ["step:greenhouses 7-9"], "params": {"tiers": 3, "roof": false}},
+    {"type": "greenhouse", "x": 0, "y": 0, "level": 8, "w": 2, "d": 1.35, "h": 1, "material": "timber", "tags": ["step:greenhouses 7-9"], "params": {"tiers": 3, "roof": false}},
+    {"type": "greenhouse", "x": 0, "y": 0, "level": 9, "w": 2, "d": 1.35, "h": 1, "material": "timber", "tags": ["step:greenhouses 7-9"], "params": {"tiers": 3, "roof": false}},
+    {"type": "capsule", "x": 0.72, "y": 1.4, "level": 7, "w": 1.28, "d": 0.6, "h": 1, "material": "panel", "tags": ["step:greenhouses 7-9"], "params": {"win": "grid", "lit": 0.6, "interior": false, "module": 1.4}},
+    {"type": "capsule", "x": 0.72, "y": 1.4, "level": 8, "w": 1.28, "d": 0.6, "h": 1, "material": "panel", "tags": ["step:greenhouses 7-9"], "params": {"win": "grid", "lit": 0.6, "interior": false, "module": 1.4}},
+    {"type": "capsule", "x": 0.72, "y": 1.4, "level": 9, "w": 1.28, "d": 0.6, "h": 1, "material": "panel", "tags": ["step:greenhouses 7-9"], "params": {"win": "grid", "lit": 0.6, "interior": false, "module": 1.4}},
+    {"type": "capsule", "x": 2.0, "y": 0.3, "level": 8, "w": 0.45, "d": 0.75, "h": 0.9, "material": "capsule_white", "tags": ["step:greenhouses 7-9", "cantilever"],
+     "params": {"win": "round", "lit": 1.0, "interior": false}},
+
+    {"type": "deck", "x": 0, "y": 0, "level": 10, "w": 2, "d": 2, "h": 0.2, "material": "concrete_light", "tags": ["step:roof plant"],
+     "params": {"t": 0.45, "fascia": "timber", "rail": "se"}},
+    {"type": "tank", "x": 0.15, "y": 1.25, "level": 10, "w": 0.6, "d": 0.6, "h": 0.8, "material": "steel_light", "tags": ["step:roof plant"], "params": {"legs": 1.2}},
+    {"type": "solar", "x": 0.85, "y": 0.05, "level": 10, "w": 1.1, "d": 1.05, "h": 0.3, "tags": ["step:roof plant"]},
+    {"type": "turbine", "x": 1.3, "y": 1.3, "level": 10, "w": 0.5, "d": 0.5, "h": 2.4, "tags": ["step:roof plant"]},
+
+    {"type": "pipe", "x": 2.0, "y": 1.5, "level": 0.2, "w": 0.1, "d": 0.4, "h": 9.8, "material": "pipe2", "tags": ["step:risers"],
+     "params": {"axis": "z", "n": 2, "r": 0.14, "flange": 3.5}}
+  ]
+}

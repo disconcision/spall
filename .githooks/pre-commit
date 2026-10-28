@@ -1,0 +1,11 @@
+#!/bin/sh
+# Refuse files over 20 MB: big artifacts belong in a local/ folder (git-ignored, still in Dropbox).
+limit=$((20 * 1024 * 1024))
+big=$(git diff --cached --name-only --diff-filter=AM | while IFS= read -r f; do
+  [ -f "$f" ] && [ "$(wc -c < "$f")" -gt "$limit" ] && echo "  $f"
+done)
+if [ -n "$big" ]; then
+  echo "These are over 20 MB; move them into a local/ folder (git-ignored, still synced by Dropbox):"
+  echo "$big"
+  exit 1
+fi

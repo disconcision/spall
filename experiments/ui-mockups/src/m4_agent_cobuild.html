@@ -1,0 +1,235 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Agent Co-building</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  body { background: #3a3550; }
+  #strip { left: 16px; top: 68px; width: 214px; height: 1040px; }
+  #strip .readout { padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  #strip .readout .lv { font-family: var(--f-serif); font-size: 46px; line-height: .9; color: var(--accent); }
+  #strip .readout .nm { font-family: var(--f-cond); font-weight: 700; font-size: 15px; letter-spacing: .1em; text-transform: uppercase; }
+  #strip .readout .s { font-size: 12.5px; color: var(--text-2); margin-top: 4px; }
+  #strip .ls-rows .ls-bar { width: 44px; }
+  #agentbar { left: 246px; top: 66px; height: 42px; display: flex; align-items: stretch; background: var(--panel-solid); border: 1px solid var(--accent); }
+  #agentbar .who { display: flex; align-items: center; gap: 8px; padding: 0 12px; background: var(--accent); color: var(--ink); font-family: var(--f-cond); font-weight: 700; font-size: 15px; letter-spacing: .1em; text-transform: uppercase; }
+  #agentbar .what { display: flex; align-items: center; gap: 12px; padding: 0 14px; font-size: 15px; }
+  #agentbar .what .m { font-family: var(--f-mono); font-size: 12.5px; color: var(--text-2); }
+  #agentbar .act { display: flex; align-items: center; gap: 6px; padding: 0 8px; border-left: 1px solid var(--line); }
+  #agentbar .act .btn { height: 28px; font-size: 12.5px; padding: 0 10px; color: var(--text); }
+  #prop { left: 1452px; top: 124px; width: 560px; }
+  #prop .sh-bd { padding: 10px 14px 12px; }
+  #prop .kv { grid-template-columns: 76px 1fr; row-gap: 5px; }
+  #prop .kv .v { font-size: 14.5px; }
+  #prop .kv .v b { font-family: var(--f-mono); font-weight: 500; font-size: 14px; }
+  .lbar { display: inline-block; width: 120px; height: 8px; border: 1px solid var(--paper-ink); position: relative; vertical-align: 0px; margin: 0 6px; }
+  .lbar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--paper-ink); }
+  .steps { display: grid; grid-template-columns: repeat(6, 1fr); border: 1.5px solid var(--paper-ink); margin-top: 8px; }
+  .steps div { padding: 4px 6px 5px; border-left: 1px solid var(--paper-ink); font-size: 12.5px; line-height: 1.15; }
+  .steps div:first-child { border-left: 0; }
+  .steps div b { display: block; font-family: var(--f-mono); font-weight: 500; font-size: 11px; }
+  .steps div.c { background: var(--accent); }
+  .steps div.h { background: var(--paper-2); }
+  #prop .acts { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+  #prop .acts .btn { height: 34px; white-space: nowrap; }
+  #chat { left: 2028px; top: 52px; width: 532px; height: 1388px; border-top: 0; border-right: 0; border-bottom: 0; }
+  #chat .msgs { padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { font-size: 16px; line-height: 1.42; }
+  .msg .who { display: flex; align-items: center; gap: 8px; font-family: var(--f-cond); font-weight: 700; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 3px; }
+  .msg .who .t { font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: 0; color: var(--text-3); }
+  .msg.me .who { color: var(--text-2); }
+  .msg.ai .who { color: var(--accent); }
+  .msg.ai .body { border-left: 2px solid var(--accent); padding-left: 10px; }
+  .msg.me .body { border-left: 2px solid var(--line-2); padding-left: 10px; }
+  .msg .att { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .msg .att .card { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line-2); padding: 6px 10px; background: rgba(255,255,255,0.04); font-size: 14px; }
+  .msg .att .card b { font-family: var(--f-cond); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 13px; }
+  .sys { font-family: var(--f-mono); font-size: 12px; color: var(--text-3); border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line); padding: 5px 0; }
+  .sys b { color: var(--text-2); font-weight: 500; }
+  .trace { font-family: var(--f-mono); font-size: 12px; color: var(--text-2); background: rgba(255,255,255,0.03); border: 1px solid var(--line); padding: 7px 9px; line-height: 1.55; }
+  .trace .ok { color: var(--ok); } .trace .gz { color: var(--accent); }
+  .composer { position: absolute; left: 0; right: 0; bottom: 0; border-top: 1px solid var(--line); padding: 12px 14px 14px; background: var(--panel-solid); }
+  .composer .box { border: 1px solid var(--line-2); padding: 10px 12px; min-height: 76px; font-size: 16px; color: var(--text-3); }
+  .composer .box .chip { margin-right: 6px; }
+  .composer .row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+  .composer .row .btn { height: 32px; font-size: 13px; color: var(--text); }
+  .composer .row .sp { flex: 1; }
+  .composer .row .btn.pri { color: var(--accent-ink); }
+</style></head>
+<body>
+<script>window.PAGE = { tab: 'VIEW', title: { name: 'Co-build — P-0117 sky bridge', sheet: 'A-125', view: 'axo · full · dusk', rev: '13 (draft)', style: 'right:548px' } };</script>
+<img class="bg" src="../render/out/m4_agent.png">
+<svg class="ov" id="ov"></svg>
+
+<div class="panel" id="strip">
+  <div class="hd">Levels <span class="code">no slice</span></div>
+  <div class="readout"><span class="lv">L25</span> <span class="nm">Canopy</span><div class="s">focus follows the proposal · full view, nothing hidden</div></div>
+  <div id="rows" style="padding-top:8px"></div>
+</div>
+
+<div class="abs" id="agentbar">
+  <div class="who"><svg width="14" height="18" viewBox="0 0 14 18"><path d="M0 0 L0 15 L4 11.5 L6.7 17.5 L9.2 16.3 L6.6 10.5 L11.5 10 Z" fill="#111214"/></svg>Claude · Foreman</div>
+  <div class="what">placing ghost B-07 — checking the strut bearing <span class="m">step 7 of 9 · 14 tool calls · 41 s</span></div>
+  <div class="act"><span class="btn">Pause agent <span class="kbd">Space</span></span><span class="btn">Undo agent ×3</span><span class="btn">Follow gaze</span></div>
+</div>
+
+<!-- proposal: a drawing-sheet card -->
+<div class="sheet" id="prop">
+  <div class="sh-hd"><div class="t"><div class="sh-sub">Proposal P-0117 · drafted by Claude · rev A</div><div class="sh-title">Sky bridge B-07, core A ↔ core B at L25</div></div>
+    <div class="n"><svg width="40" height="34"><path d="M20 3 L37 31 L3 31 Z" fill="none" stroke="#1c1d20" stroke-width="2"/><text x="20" y="27" text-anchor="middle" font-family="Barlow Condensed" font-weight="700" font-size="15" fill="#1c1d20">A</text></svg></div></div>
+  <div class="sh-bd">
+    <div class="kv">
+      <span class="k">Cost</span><span class="v"><b>§ 8,640</b> · steel 38 t · glazing 164 m²</span>
+      <span class="k">Build</span><span class="v"><b>3 d 4 h</b> · 4 drones · 6 steps · crane C2 not needed</span>
+      <span class="k">Light</span><span class="v"><b>−2.6%</b> daylight on canopy garden bays C2–C4 · dwellings unaffected</span>
+      <span class="k">Load</span><span class="v">core A bracket <span class="lbar"><i style="width:53%"></i></span><b>212</b>/400 kN<br>
+        core B bracket <span class="lbar"><i style="width:47%"></i></span><b>188</b>/400 kN<br>
+        strut S1 → DK4 <span class="lbar"><i style="width:64%"></i></span><b>96</b>/150 kN</span>
+      <span class="k">Trips</span><span class="v">L25 core A → core B <b>6 min 10 s → 1 min 05 s</b> · lift bank B −14% at peak</span>
+      <span class="k">Removes</span><span class="v">2 trees on terrace T-8 · 1 planter (variant B keeps them, + § 620)</span>
+    </div>
+    <div class="steps">
+      <div class="c"><b>1 · D-07</b>bracket A</div><div class="c"><b>2 · D-11</b>bracket B</div><div class="h"><b>3</b>strut S1</div>
+      <div class="h"><b>4</b>truss 1 · 16.8 m</div><div><b>5</b>truss 2 · 40.0 m</div><div><b>6</b>deck + glazing</div>
+    </div>
+    <div class="acts"><span class="btn pri">Approve <span class="kbd">Enter</span></span><span class="btn">Adjust</span><span class="btn">Variant B</span><span class="btn">Reject</span>
+      <span style="margin-left:auto;font-family:var(--f-mono);font-size:12px;color:#55575b">ghost only</span></div>
+  </div>
+</div>
+
+<!-- chat with the agent -->
+<div class="panel" id="chat">
+  <div class="hd">Co-build chat <span class="dim" style="font-weight:500;letter-spacing:.06em">Claude · Foreman</span><span class="code">you point, Claude drafts, you approve</span></div>
+  <div class="msgs">
+    <div class="msg me"><div class="who">You <span class="t">17:36</span></div><div class="body">The queue at <span class="chip"><span class="ix">3</span>Lift bank B <span class="lv">L12</span></span> is awful at rush hour. Can we link <span class="chip"><span class="ix">1</span>Core A <span class="lv">L25</span></span> to <span class="chip"><span class="ix">2</span>Core B <span class="lv">L25</span></span> up on the canopy?</div></div>
+    <div class="msg ai"><div class="who">Claude <span class="t">17:37</span></div><div class="body">Yes. A straight run crosses the light well and crane C2's swing, so I'd do an L: north off core A along grid 4, then east along grid 10 to core B. It shades part of the canopy garden a little. Drafted as a ghost, have a look on the map.
+      <div class="att"><span class="card"><b>P-0117</b> sky bridge · § 8,640 · 6 steps</span></div></div></div>
+    <div class="msg me"><div class="who">You <span class="t">17:39</span></div><div class="body">Glazed, please. Does it hit the trees on <span class="chip"><span class="ix">4</span>Terrace T-8 <span class="lv">L24</span></span>?</div></div>
+    <div class="msg ai"><div class="who">Claude <span class="t">17:40</span></div><div class="body">Two trees, yes. Moving the landing 1 m east saves them but needs a second strut (+ § 620). I've kept it as variant B. Glazing is in; 18 panels aren't in stock, so D-14 will wait for them rather than skip.
+      <div class="att"><span class="btn" style="height:30px;font-size:12.5px">Show variant B</span><span class="btn" style="height:30px;font-size:12.5px">Keep A</span></div></div></div>
+    <div class="sys">17:41 · <b>D-07</b> claimed step 1 · <b>D-11</b> claimed step 2 · ghosts stay until you approve</div>
+    <div class="trace"><span class="gz">gaze</span> strut S1 foot, terrace T-8 (DK4)<br>
+      check_load(S1) → 96 kN / 150 allowed <span class="ok">ok</span><br>
+      check_clearance(B-07, crane C2 swing) → 3.1 m <span class="ok">ok</span><br>
+      light_delta(DK4 garden) → −2.6%</div>
+  </div>
+  <div class="composer">
+    <div class="box"><span class="chip"><span class="ix">2</span>Core B <span class="lv">L25</span></span> what if the bridge also stopped at L21 on the way?</div>
+    <div class="row"><span class="btn">Point <span class="kbd">P</span></span><span class="btn">Attach selection</span><span class="btn">Request mod…</span><span class="sp"></span><span class="btn pri" style="height:32px">Send</span></div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/components.js"></script>
+<script src="js/chrome.js"></script>
+<script>
+(function () {
+  const { Cam, el, text, leader, boxHull, agentCursor, playerCursor, cloud, grow, hull, boxPts } = UI;
+  const ov = document.getElementById('ov');
+  const cam = Cam('m4_agent');
+  const A = window.ANCHORS.m4;
+  const Y = '#ffe13a', G = '#7fb0ff', INK = '#111214', TXT = '#eeebe4';
+
+  COMP.levelStrip(document.getElementById('rows'), { compact: true, rowH: 32, active: 25,
+    agents: [{ level: 25, label: 'Fore', kind: '' }, { level: 3, label: 'Surv', kind: 'b' }] });
+
+  // ---- revision cloud around the whole ghost (bridge + landing + strut), with the revision triangle
+  const pts = [].concat(boxPts(cam, ...A.seg1), boxPts(cam, A.seg1[0], A.seg1[1], 25, A.seg1[3], A.seg1[4], 25.9),
+    boxPts(cam, ...A.landing), boxPts(cam, ...A.seg2), boxPts(cam, A.seg2[0], A.seg2[1], 25, A.seg2[3], A.seg2[4], 25.9), boxPts(cam, ...A.pier));
+  const H = grow(hull(pts), 34);
+  el('path', { d: cloud(H, 22), fill: 'none', stroke: Y, 'stroke-width': 2.4 }, ov);
+  const rt = cam.g(4.6, 6.0, 26.4);
+  const tri = el('g', {}, ov);
+  el('path', { d: `M${rt[0] - 70},${rt[1] - 96} l17,-29 l17,29 z`, fill: INK, stroke: Y, 'stroke-width': 2 }, tri);
+  text(tri, rt[0] - 53, rt[1] - 101, 'A', { 'text-anchor': 'middle', 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 15, fill: Y });
+  text(tri, rt[0] - 28, rt[1] - 104, 'P-0117 · ghost B-07', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 16, 'letter-spacing': 1, fill: Y, 'paint-order': 'stroke', stroke: INK, 'stroke-width': 4 });
+
+  // ---- dimension lines on the two spans (offset outward, architectural ticks)
+  const dim = (a, b, off, label) => {
+    const pa = cam.g(...a), pb = cam.g(...b), po = cam.g(a[0] + off[0], a[1] + off[1], a[2]), pq = cam.g(b[0] + off[0], b[1] + off[1], b[2]);
+    el('line', { x1: pa[0], y1: pa[1], x2: po[0], y2: po[1], stroke: G, 'stroke-width': 1 }, ov);
+    el('line', { x1: pb[0], y1: pb[1], x2: pq[0], y2: pq[1], stroke: G, 'stroke-width': 1 }, ov);
+    el('line', { x1: po[0], y1: po[1], x2: pq[0], y2: pq[1], stroke: G, 'stroke-width': 1.3 }, ov);
+    for (const p of [po, pq]) el('line', { x1: p[0] - 6, y1: p[1] + 6, x2: p[0] + 6, y2: p[1] - 6, stroke: G, 'stroke-width': 2 }, ov);
+    const m = [(po[0] + pq[0]) / 2, (po[1] + pq[1]) / 2];
+    const ang = Math.atan2(pq[1] - po[1], pq[0] - po[0]) * 180 / Math.PI;
+    text(ov, m[0], m[1] - 7, label, { 'text-anchor': 'middle', 'font-family': 'IBM Plex Mono', 'font-size': 14, fill: G, transform: `rotate(${ang},${m[0]},${m[1]})`, 'paint-order': 'stroke', stroke: INK, 'stroke-width': 4 });
+  };
+  dim([4.2, 6.0, 25.9], [4.2, 10.2, 25.9], [-1.4, 0], '16.8 m');
+  dim([5.0, 11.0, 25.9], [15.0, 11.0, 25.9], [0, 1.6], '40.0 m');
+
+  // ---- player pointing pins (numbered, white = player)
+  const pin = (p, n, lab) => {
+    const g = el('g', {}, ov);
+    el('line', { x1: p[0], y1: p[1], x2: p[0], y2: p[1] - 34, stroke: TXT, 'stroke-width': 2 }, g);
+    el('rect', { x: p[0] - 13, y: p[1] - 60, width: 26, height: 26, fill: TXT, stroke: INK, 'stroke-width': 1.5 }, g);
+    text(g, p[0], p[1] - 41, n, { 'text-anchor': 'middle', 'font-family': 'IBM Plex Mono', 'font-weight': 600, 'font-size': 15, fill: INK });
+    if (lab) { el('rect', { x: p[0] + 16, y: p[1] - 58, width: lab.length * 7.6 + 14, height: 22, fill: 'rgba(17,18,20,0.88)' }, g);
+      text(g, p[0] + 23, p[1] - 42, lab, { 'font-family': 'Barlow Condensed', 'font-weight': 600, 'font-size': 14, 'letter-spacing': 0.8, fill: TXT }); }
+  };
+  pin(cam.g(3.6, 4.2, 26.2), '1', 'CORE A · L25');
+  pin(cam.g(16.4, 10.4, 26.2), '2', 'CORE B · L25');
+  pin(cam.g(1.4, 12.6, 24.3), '4', 'TERRACE T-8');
+  // pin 3 (lift bank B at L0) is off-screen: edge marker at the bottom
+  const lb = cam.g(16, 10, 12);
+  const e3 = [1060, 1400];
+  el('path', { d: `M${e3[0] - 11},${e3[1] - 6} l11,14 l11,-14 z`, fill: TXT }, ov);
+  const e3g = el('g', {}, ov);
+  el('rect', { x: e3[0] + 18, y: e3[1] - 18, width: 26, height: 24, fill: TXT }, e3g);
+  text(e3g, e3[0] + 31, e3[1] - 1, '3', { 'text-anchor': 'middle', 'font-family': 'IBM Plex Mono', 'font-weight': 600, 'font-size': 14, fill: INK });
+  el('rect', { x: e3[0] + 44, y: e3[1] - 18, width: 196, height: 24, fill: 'rgba(17,18,20,0.9)' }, e3g);
+  text(e3g, e3[0] + 52, e3[1] - 1, 'LIFT BANK B · L12 · 46 m below', { 'font-family': 'Barlow Condensed', 'font-weight': 600, 'font-size': 14, fill: TXT });
+
+  // ---- drones and their claims
+  const dcol = { claimed: Y, hauling: Y, waiting: '#b0b1ad' };
+  const dlab = [[-250, -70], [34, 40], [-40, -150], [60, 88]];
+  const claimTo = { 'D-07': [4.6, 6.0, 25.3], 'D-11': [15.0, 10.6, 25.3] };
+  A.drones.forEach((d, i) => {
+    const p = cam.g(d.x, d.y, d.level), c = dcol[d.state];
+    // tracking brackets
+    const r = 16, g = el('g', {}, ov);
+    for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]])
+      el('polyline', { points: `${p[0] + sx * r},${p[1] + sy * (r - 7)} ${p[0] + sx * r},${p[1] + sy * r} ${p[0] + sx * (r - 7)},${p[1] + sy * r}`, fill: 'none', stroke: c, 'stroke-width': 2 }, g);
+    if (claimTo[d.id]) { const q = cam.g(...claimTo[d.id]); el('line', { x1: p[0], y1: p[1], x2: q[0], y2: q[1], stroke: c, 'stroke-width': 1.4, 'stroke-dasharray': '2 4' }, g); el('circle', { cx: q[0], cy: q[1], r: 5, fill: c }, g); }
+    const [dx, dy] = dlab[i];
+    const lx = p[0] + dx, ly = p[1] + dy;
+    el('line', { x1: p[0] + Math.sign(dx) * r, y1: p[1] + Math.sign(dy) * r * 0.5, x2: lx + (dx < 0 ? 228 : 0), y2: ly + 18, stroke: c, 'stroke-width': 1.2 }, g);
+    el('rect', { x: lx, y: ly, width: 228, height: 40, fill: 'rgba(17,18,20,0.9)', stroke: c, 'stroke-width': 1.2 }, g);
+    text(g, lx + 9, ly + 16, `${d.id} · ${d.state.toUpperCase()}`, { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 14, 'letter-spacing': 1, fill: c });
+    text(g, lx + 9, ly + 32, d.task, { 'font-family': 'Barlow Semi Condensed', 'font-size': 13, fill: TXT });
+  });
+
+  // ---- Claude: cursor at the landing (placing), gaze line + saccade trail ending at the strut foot
+  const land = cam.g(10.2, 10.6, 25.3);
+  const gazeT = cam.g(4.7, 10.6, 24.15);
+  const trail = [cam.g(4.6, 6.0, 25.4), cam.g(15.0, 10.6, 25.4), cam.g(9.9, 11.2, 24.2)];
+  let prev = land;
+  trail.forEach((q, i) => { el('circle', { cx: q[0], cy: q[1], r: 5, fill: 'none', stroke: Y, 'stroke-width': 1.5, opacity: 0.35 + i * 0.15 }, ov); });
+  el('polyline', { points: [trail[0], trail[1], trail[2], gazeT].map(q => q.join(',')).join(' '), fill: 'none', stroke: Y, 'stroke-width': 1.2, 'stroke-dasharray': '1 6', 'stroke-linecap': 'round', opacity: 0.8 }, ov);
+  // gaze: from the cursor to the target, reticle at the target
+  el('line', { x1: land[0] + 4, y1: land[1] + 4, x2: gazeT[0], y2: gazeT[1], stroke: Y, 'stroke-width': 2, 'stroke-dasharray': '3 5', 'stroke-linecap': 'round' }, ov);
+  const rg = el('g', {}, ov);
+  el('circle', { cx: gazeT[0], cy: gazeT[1], r: 13, fill: 'none', stroke: Y, 'stroke-width': 2 }, rg);
+  el('circle', { cx: gazeT[0], cy: gazeT[1], r: 3, fill: Y }, rg);
+  for (const a of [0, 90, 180, 270]) { const rd = a * Math.PI / 180; el('line', { x1: gazeT[0] + Math.cos(rd) * 13, y1: gazeT[1] + Math.sin(rd) * 13, x2: gazeT[0] + Math.cos(rd) * 20, y2: gazeT[1] + Math.sin(rd) * 20, stroke: Y, 'stroke-width': 2 }, rg); }
+  const gl = el('g', {}, ov);
+  el('rect', { x: gazeT[0] - 262, y: gazeT[1] + 26, width: 250, height: 40, fill: 'rgba(17,18,20,0.9)', stroke: Y, 'stroke-width': 1.2 }, gl);
+  el('line', { x1: gazeT[0] - 12, y1: gazeT[1] + 46, x2: gazeT[0] - 10, y2: gazeT[1] + 14, stroke: Y, 'stroke-width': 1.2 }, gl);
+  text(gl, gazeT[0] - 252, gazeT[1] + 42, 'GAZE · STRUT S1 BEARING', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 14, 'letter-spacing': 1, fill: Y });
+  text(gl, gazeT[0] - 252, gazeT[1] + 58, 'terrace T-8 on DK4 · 96 / 150 kN', { 'font-family': 'Barlow Semi Condensed', 'font-size': 13, fill: TXT });
+  agentCursor(ov, land[0], land[1], 'CLAUDE', 'dragging span T2 · B-07', { w: 84, sw: 178 });
+
+  // player's own cursor (hovering the proposal)
+  playerCursor(ov, 1760, 640);
+
+  // ---- off-level agent: Surveyor on L3, far below the frame -> bottom-edge indicator
+  const sv = cam.g(13.2, 5.0, 3.1);
+  const ex = 560, ey = 1400;
+  const og = el('g', {}, ov);
+  el('path', { d: `M${ex - 13},${ey - 8} l13,16 l13,-16 z`, fill: TXT, stroke: INK, 'stroke-width': 1 }, og);
+  el('rect', { x: ex + 22, y: ey - 22, width: 420, height: 40, fill: 'rgba(17,18,20,0.92)', stroke: TXT, 'stroke-width': 1.2, 'stroke-dasharray': '5 3' }, og);
+  el('path', { d: `M${ex + 34},${ey - 13} l0,20 l5,-4.5 l3.6,7.8 l3.3,-1.5 l-3.5,-7.4 l6.4,-0.6 z`, fill: TXT }, og);
+  text(og, ex + 58, ey - 5, 'CLAUDE · SURVEYOR · L3 · 77 m below', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 15, 'letter-spacing': 1, fill: TXT });
+  text(og, ex + 58, ey + 11, 'measuring daylight in Stilt Market · 2 findings', { 'font-family': 'Barlow Semi Condensed', 'font-size': 13, fill: '#b0b1ad' });
+})();
+</script>
+</body></html>

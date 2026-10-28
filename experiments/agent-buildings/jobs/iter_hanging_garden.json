@@ -1,0 +1,172 @@
+{
+ "defaults": {},
+ "jobs": [
+  {
+   "spec": "specs/drafts/hanging_garden.v4.json",
+   "out": "out/iter/hanging_garden_v4_concept.png",
+   "light": "golden",
+   "style": "solarpunk",
+   "res": [
+    1000,
+    750
+   ],
+   "samples": 24,
+   "camera": {
+    "target": [
+     2.0,
+     0.5,
+     8.0
+    ],
+    "ortho_scale": 40
+   },
+   "env": {
+    "sun_az": 300,
+    "sun_el": 34
+   }
+  },
+  {
+   "spec": "specs/drafts/hanging_garden.v4.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "out": "out/iter/hanging_garden_v4_r0_lo.png",
+   "res": [
+    70,
+    158
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.25,
+     5.75,
+     9.18559
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/iter/hanging_garden_v4_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/drafts/hanging_garden.v4.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "out": "out/iter/hanging_garden_v4_r0_hi.png",
+   "res": [
+    420,
+    948
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     0.25,
+     5.75,
+     9.18559
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/drafts/hanging_garden.v4.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "out": "out/iter/hanging_garden_v4_r1_lo.png",
+   "res": [
+    70,
+    158
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -1.75,
+     7.75,
+     9.18559
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/iter/hanging_garden_v4_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/drafts/hanging_garden.v4.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     2,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "out": "out/iter/hanging_garden_v4_r1_hi.png",
+   "res": [
+    420,
+    948
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     -1.75,
+     7.75,
+     9.18559
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  }
+ ]
+}

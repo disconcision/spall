@@ -1,0 +1,13 @@
+# What is NOT in git (the README's "Not in git" section says the same).
+# Everything else in this folder is committed, mock-ups and experiments included.
+
+# dependencies and caches: rebuildable
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+
+# big or throwaway artifacts: put them in a folder named local/ anywhere in the tree
+# (long screen recordings, render dumps, scratch exports). Dropbox still syncs them;
+# git doesn't. The pre-commit hook in .githooks/ refuses files over 20 MB and says so.
+local/

@@ -1,0 +1,331 @@
+{
+ "defaults": {
+  "spec": "specs/arcology.json",
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 48,
+  "view": {
+   "mode": "full",
+   "crop": [
+    -1.5,
+    -2.0,
+    23.0,
+    17.0
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "out": "out/timelapse/frame_00.png",
+   "phase": 0,
+   "light": "overcast",
+   "label": "0 site + canal",
+   "frame_all": false,
+   "frame_bb": [
+    -7,
+    -9,
+    -3,
+    93,
+    69,
+    121
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.03
+   },
+   "blueprint": true,
+   "env": {
+    "ghost_col": [
+     0.33245,
+     0.55201,
+     1.0
+    ],
+    "wire_col": [
+     0.07819,
+     0.36625,
+     1.0
+    ],
+    "ghost_alpha": 0.12,
+    "wire_e": 2.2
+   }
+  },
+  {
+   "out": "out/timelapse/frame_01.png",
+   "phase": 1,
+   "light": "overcast",
+   "label": "1 megacolumns, cores, first deck",
+   "frame_all": false,
+   "frame_bb": [
+    -7,
+    -9,
+    -3,
+    93,
+    69,
+    121
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.03
+   },
+   "blueprint": true,
+   "env": {
+    "ghost_col": [
+     0.33245,
+     0.55201,
+     1.0
+    ],
+    "wire_col": [
+     0.07819,
+     0.36625,
+     1.0
+    ],
+    "ghost_alpha": 0.12,
+    "wire_e": 2.2
+   }
+  },
+  {
+   "out": "out/timelapse/frame_02.png",
+   "phase": 2,
+   "light": "overcast",
+   "label": "2 upper decks + trusses",
+   "frame_all": false,
+   "frame_bb": [
+    -7,
+    -9,
+    -3,
+    93,
+    69,
+    121
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.03
+   },
+   "blueprint": true,
+   "env": {
+    "ghost_col": [
+     0.33245,
+     0.55201,
+     1.0
+    ],
+    "wire_col": [
+     0.07819,
+     0.36625,
+     1.0
+    ],
+    "ghost_alpha": 0.12,
+    "wire_e": 2.2
+   }
+  },
+  {
+   "out": "out/timelapse/frame_03.png",
+   "phase": 3,
+   "light": "overcast",
+   "label": "3 transit tube + viaduct",
+   "frame_all": false,
+   "frame_bb": [
+    -7,
+    -9,
+    -3,
+    93,
+    69,
+    121
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.03
+   },
+   "blueprint": true,
+   "env": {
+    "ghost_col": [
+     0.33245,
+     0.55201,
+     1.0
+    ],
+    "wire_col": [
+     0.07819,
+     0.36625,
+     1.0
+    ],
+    "ghost_alpha": 0.12,
+    "wire_e": 2.2
+   }
+  },
+  {
+   "out": "out/timelapse/frame_04.png",
+   "phase": 4,
+   "light": "overcast",
+   "label": "4 infill: ground stratum",
+   "frame_all": false,
+   "frame_bb": [
+    -7,
+    -9,
+    -3,
+    93,
+    69,
+    121
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.03
+   },
+   "blueprint": true,
+   "env": {
+    "ghost_col": [
+     0.33245,
+     0.55201,
+     1.0
+    ],
+    "wire_col": [
+     0.07819,
+     0.36625,
+     1.0
+    ],
+    "ghost_alpha": 0.12,
+    "wire_e": 2.2
+   }
+  },
+  {
+   "out": "out/timelapse/frame_05.png",
+   "phase": 5,
+   "light": "overcast",
+   "label": "5 infill: stratum 1 + bridges",
+   "frame_all": false,
+   "frame_bb": [
+    -7,
+    -9,
+    -3,
+    93,
+    69,
+    121
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.03
+   },
+   "blueprint": true,
+   "env": {
+    "ghost_col": [
+     0.33245,
+     0.55201,
+     1.0
+    ],
+    "wire_col": [
+     0.07819,
+     0.36625,
+     1.0
+    ],
+    "ghost_alpha": 0.12,
+    "wire_e": 2.2
+   }
+  },
+  {
+   "out": "out/timelapse/frame_06.png",
+   "phase": 6,
+   "light": "overcast",
+   "label": "6 infill: upper strata",
+   "frame_all": false,
+   "frame_bb": [
+    -7,
+    -9,
+    -3,
+    93,
+    69,
+    121
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.03
+   },
+   "blueprint": true,
+   "env": {
+    "ghost_col": [
+     0.33245,
+     0.55201,
+     1.0
+    ],
+    "wire_col": [
+     0.07819,
+     0.36625,
+     1.0
+    ],
+    "ghost_alpha": 0.12,
+    "wire_e": 2.2
+   }
+  },
+  {
+   "out": "out/timelapse/frame_07.png",
+   "phase": 7,
+   "light": "overcast",
+   "label": "7 gardens, terraces, roof",
+   "frame_all": false,
+   "frame_bb": [
+    -7,
+    -9,
+    -3,
+    93,
+    69,
+    121
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.03
+   },
+   "blueprint": true,
+   "env": {
+    "ghost_col": [
+     0.33245,
+     0.55201,
+     1.0
+    ],
+    "wire_col": [
+     0.07819,
+     0.36625,
+     1.0
+    ],
+    "ghost_alpha": 0.12,
+    "wire_e": 2.2
+   }
+  },
+  {
+   "out": "out/timelapse/frame_08.png",
+   "phase": 8,
+   "light": "dusk",
+   "label": "8 lights on (dusk)",
+   "frame_all": false,
+   "frame_bb": [
+    -7,
+    -9,
+    -3,
+    93,
+    69,
+    121
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.03
+   }
+  },
+  {
+   "out": "out/timelapse/frame_09.png",
+   "phase": 8,
+   "light": "night",
+   "label": "9 night",
+   "frame_all": false,
+   "frame_bb": [
+    -7,
+    -9,
+    -3,
+    93,
+    69,
+    121
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.03
+   }
+  }
+ ]
+}

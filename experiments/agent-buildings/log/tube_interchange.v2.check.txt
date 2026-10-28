@@ -1,0 +1,9 @@
+validate specs/drafts/tube_interchange.v2.json  (revision 2)
+  stock agent_check.py: FAIL (3 errors, 0 warnings)
+  (stock support error overruled - part is attached to host/context structure: #18 figure: unsupported - its base is at 5.10 m but the nearest top below is at 0.00 m (gap 5.10 m = 1.46 levels))
+  (stock support error overruled - part is attached to host/context structure: #19 figure: unsupported - its base is at 12.80 m but the nearest top below is at 8.20 m (gap 4.60 m = 1.31 levels))
+  ERROR  #12 slab: unsupported - its base is at 4.75 m but the nearest top below is at 0.00 m (gap 4.75 m = 1.36 levels)
+  ERROR  #12 slab: not attached - its base face (z=4.75 m, orient up) touches no carrying part
+  note   21 parts (0 context), 0 oriented; 12 attach to the host directly
+  note   21 parts (detail 5, infill 1, support 6, transit 9); height 16.3 m
+  => FAIL (2 errors, 0 warnings)

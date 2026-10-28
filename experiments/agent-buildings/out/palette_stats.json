@@ -1,0 +1,170 @@
+{
+ "bridge_market_r0_lo.png": {
+  "raw": 1864,
+  "locked": 36
+ },
+ "bridge_market_r1_lo.png": {
+  "raw": 1774,
+  "locked": 34
+ },
+ "bridge_market_r2_lo.png": {
+  "raw": 1847,
+  "locked": 34
+ },
+ "bridge_market_r3_lo.png": {
+  "raw": 1765,
+  "locked": 33
+ },
+ "ctx_core_low_r0_lo.png": {
+  "raw": 1101,
+  "locked": 15
+ },
+ "ctx_core_low_r1_lo.png": {
+  "raw": 980,
+  "locked": 15
+ },
+ "ctx_core_r0_lo.png": {
+  "raw": 785,
+  "locked": 10
+ },
+ "ctx_core_r1_lo.png": {
+  "raw": 762,
+  "locked": 12
+ },
+ "ctx_riser_r0_lo.png": {
+  "raw": 270,
+  "locked": 7
+ },
+ "ctx_riser_r1_lo.png": {
+  "raw": 267,
+  "locked": 8
+ },
+ "ctx_tenement_r0_lo.png": {
+  "raw": 839,
+  "locked": 12
+ },
+ "ctx_tenement_r1_lo.png": {
+  "raw": 805,
+  "locked": 12
+ },
+ "ctx_tubeA_pier_r0_lo.png": {
+  "raw": 361,
+  "locked": 13
+ },
+ "ctx_tubeA_pier_r1_lo.png": {
+  "raw": 399,
+  "locked": 10
+ },
+ "ctx_tubeA_r0_lo.png": {
+  "raw": 279,
+  "locked": 10
+ },
+ "ctx_tubeA_r1_lo.png": {
+  "raw": 311,
+  "locked": 9
+ },
+ "ctx_tubeB_pier_r0_lo.png": {
+  "raw": 467,
+  "locked": 12
+ },
+ "ctx_tubeB_pier_r1_lo.png": {
+  "raw": 413,
+  "locked": 12
+ },
+ "ctx_tubeB_r0_lo.png": {
+  "raw": 301,
+  "locked": 9
+ },
+ "ctx_tubeB_r1_lo.png": {
+  "raw": 290,
+  "locked": 10
+ },
+ "ctx_wallblock_r0_lo.png": {
+  "raw": 517,
+  "locked": 10
+ },
+ "ctx_wallblock_r1_lo.png": {
+  "raw": 518,
+  "locked": 11
+ },
+ "hanging_garden_r0_lo.png": {
+  "raw": 2483,
+  "locked": 22
+ },
+ "hanging_garden_r1_lo.png": {
+  "raw": 2070,
+  "locked": 20
+ },
+ "hanging_garden_r2_lo.png": {
+  "raw": 618,
+  "locked": 13
+ },
+ "hanging_garden_r3_lo.png": {
+  "raw": 562,
+  "locked": 19
+ },
+ "hydro_stack_r0_lo.png": {
+  "raw": 1530,
+  "locked": 30
+ },
+ "hydro_stack_r1_lo.png": {
+  "raw": 1403,
+  "locked": 28
+ },
+ "hydro_stack_r2_lo.png": {
+  "raw": 1502,
+  "locked": 17
+ },
+ "hydro_stack_r3_lo.png": {
+  "raw": 1480,
+  "locked": 26
+ },
+ "rooftop_village_r0_lo.png": {
+  "raw": 2207,
+  "locked": 40
+ },
+ "rooftop_village_r1_lo.png": {
+  "raw": 2140,
+  "locked": 38
+ },
+ "rooftop_village_r2_lo.png": {
+  "raw": 1828,
+  "locked": 35
+ },
+ "rooftop_village_r3_lo.png": {
+  "raw": 1916,
+  "locked": 31
+ },
+ "solar_chimney_r0_lo.png": {
+  "raw": 1086,
+  "locked": 13
+ },
+ "solar_chimney_r1_lo.png": {
+  "raw": 1091,
+  "locked": 13
+ },
+ "solar_chimney_r2_lo.png": {
+  "raw": 1121,
+  "locked": 13
+ },
+ "solar_chimney_r3_lo.png": {
+  "raw": 1107,
+  "locked": 13
+ },
+ "tube_interchange_r0_lo.png": {
+  "raw": 1898,
+  "locked": 18
+ },
+ "tube_interchange_r1_lo.png": {
+  "raw": 1809,
+  "locked": 21
+ },
+ "tube_interchange_r2_lo.png": {
+  "raw": 1710,
+  "locked": 15
+ },
+ "tube_interchange_r3_lo.png": {
+  "raw": 1462,
+  "locked": 15
+ }
+}

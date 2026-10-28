@@ -1,0 +1,320 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Pattern Book</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  body { background: #a9b0b6; }
+  #book { position: absolute; left: 16px; top: 68px; width: 1016px; height: 1356px; background: var(--paper); color: var(--paper-ink);
+    border: 1.5px solid var(--paper-ink); box-shadow: 0 14px 40px rgba(0,0,0,0.35); display: grid; grid-template-columns: 478px 1fr; }
+  #book .pg { position: relative; padding: 18px 20px 16px; }
+  #book .pg + .pg { border-left: 1.5px solid var(--paper-ink); box-shadow: inset 10px 0 18px -14px rgba(0,0,0,0.35); }
+  .bk-title { display: flex; align-items: baseline; gap: 12px; }
+  .bk-title .t { font-family: var(--f-serif); font-size: 40px; line-height: 1; }
+  .bk-title .s { font-family: var(--f-cond); font-weight: 600; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--paper-ink-2); }
+  .filt { display: flex; gap: 0; margin: 12px 0 6px; border: 1.2px solid var(--paper-ink); width: max-content; }
+  .filt span { padding: 4px 10px; font-family: var(--f-cond); font-weight: 600; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; border-left: 1.2px solid var(--paper-ink); }
+  .filt span:first-child { border-left: 0; }
+  .filt span.on { background: var(--paper-ink); color: var(--paper); }
+  .tier { margin-top: 12px; }
+  .tier .th { display: flex; align-items: baseline; gap: 10px; border-bottom: 1.5px solid var(--paper-ink); padding-bottom: 3px; }
+  .tier .th b { font-family: var(--f-cond); font-weight: 700; font-size: 15px; letter-spacing: .14em; text-transform: uppercase; }
+  .tier .th i { font-style: normal; font-size: 13px; color: var(--paper-ink-2); }
+  .tier .th .n { margin-left: auto; font-family: var(--f-mono); font-size: 12px; color: var(--paper-ink-2); }
+  .ent { display: grid; grid-template-columns: 84px 1fr; gap: 12px; padding: 8px 4px; border-bottom: 1px solid rgba(28,29,32,0.2); align-items: center; position: relative; }
+  .ent .im { width: 84px; height: 84px; background: var(--paper-2); border: 1px solid rgba(28,29,32,0.35); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .ent .im img { width: 92px; height: 92px; }
+  .ent .id { font-family: var(--f-mono); font-size: 12px; color: var(--paper-ink-2); }
+  .ent .nm { font-family: var(--f-serif); font-size: 23px; line-height: 1.05; }
+  .ent .mt { font-size: 13.5px; color: #3c3e42; margin-top: 2px; }
+  .ent.sel { background: var(--paper-2); box-shadow: inset 4px 0 0 var(--paper-ink); }
+  .ent.sel::after { content: "SELECTED"; position: absolute; right: 6px; top: 8px; font-family: var(--f-cond); font-weight: 700; font-size: 11px; letter-spacing: .14em; background: var(--accent); color: var(--ink); padding: 1px 6px; }
+  .ent.uses::after { content: "USED BY P-12"; position: absolute; right: 6px; top: 8px; font-family: var(--f-cond); font-weight: 700; font-size: 11px; letter-spacing: .14em; border: 1px solid var(--paper-ink); padding: 0 5px; }
+  .ladder { display: flex; align-items: center; gap: 6px; font-family: var(--f-cond); font-weight: 600; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--paper-ink-2); margin-top: 4px; }
+  .ladder b { color: var(--paper-ink); }
+  /* right page */
+  .p-hd { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: end; border-bottom: 2px solid var(--paper-ink); padding-bottom: 10px; }
+  .p-no { font-family: var(--f-serif); font-size: 84px; line-height: 0.8; }
+  .p-nm { font-family: var(--f-serif); font-size: 38px; line-height: 1; }
+  .p-tags { margin-top: 6px; display: flex; gap: 6px; }
+  .p-tags span { font-family: var(--f-cond); font-weight: 700; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; border: 1.2px solid var(--paper-ink); padding: 1px 6px; }
+  .p-tags span.k { background: var(--paper-ink); color: var(--paper); }
+  .prob { font-family: var(--f-serif); font-style: italic; font-size: 21px; line-height: 1.22; margin: 12px 0 8px; }
+  .sub { font-family: var(--f-cond); font-weight: 700; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; margin-top: 12px; display: flex; gap: 8px; align-items: baseline; }
+  .sub i { font-style: normal; font-weight: 500; letter-spacing: .04em; text-transform: none; font-family: var(--f-ui); font-size: 13px; color: var(--paper-ink-2); }
+  .rule { display: grid; grid-template-columns: 170px 40px 170px; align-items: center; margin-top: 6px; }
+  .cond { margin: 6px 0 0 0; padding: 0; list-style: none; font-size: 14.5px; }
+  .cond li { display: grid; grid-template-columns: 50px 1fr; gap: 6px; padding: 2px 0; border-bottom: 1px dotted rgba(28,29,32,0.3); }
+  .cond li b { font-family: var(--f-mono); font-weight: 500; font-size: 12.5px; }
+  .cond.mr li { grid-template-columns: 50px 1fr; font-size: 14px; }
+  .params { display: grid; grid-template-columns: 96px 1fr; row-gap: 9px; column-gap: 12px; align-items: center; margin-top: 8px; font-size: 14.5px; }
+  .params .k { font-family: var(--f-cond); font-weight: 600; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--paper-ink-2); }
+  .pseg { display: inline-flex; border: 1.2px solid var(--paper-ink); }
+  .pseg span { padding: 3px 10px; font-family: var(--f-cond); font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; border-left: 1.2px solid var(--paper-ink); }
+  .pseg span:first-child { border-left: 0; }
+  .pseg span.on { background: var(--paper-ink); color: var(--paper); }
+  .slider { position: relative; height: 24px; width: 290px; }
+  .slider .tr { position: absolute; left: 0; right: 0; top: 11px; height: 2px; background: var(--paper-ink); }
+  .slider .tk { position: absolute; top: 6px; width: 1.5px; height: 12px; background: var(--paper-ink); }
+  .slider .kn { position: absolute; top: 2px; width: 20px; height: 20px; background: var(--accent); border: 2px solid var(--paper-ink); transform: translateX(-50%); }
+  .slider .lb { position: absolute; top: 24px; font-family: var(--f-mono); font-size: 11px; transform: translateX(-50%); }
+  .vars { display: flex; gap: 10px; margin-top: 18px; }
+  .vars .v { width: 118px; text-align: center; border: 1px solid rgba(28,29,32,0.35); background: var(--paper-2); padding-bottom: 4px; }
+  .vars .v img { width: 118px; height: 118px; display: block; }
+  .vars .v span { font-family: var(--f-mono); font-size: 12px; }
+  .vars .v.on { border: 2px solid var(--paper-ink); box-shadow: 0 0 0 3px var(--accent); }
+  .mix { display: flex; height: 16px; width: 290px; border: 1.2px solid var(--paper-ink); }
+  .mix i { display: block; height: 100%; }
+  .derived { margin-top: 12px; border: 1.5px solid var(--paper-ink); display: grid; grid-template-columns: repeat(4, 1fr); }
+  .derived div { padding: 6px 8px; border-left: 1px solid var(--paper-ink); font-family: var(--f-mono); font-size: 14px; white-space: nowrap; }
+  .derived div:first-child { border-left: 0; }
+  .derived div span { display: block; font-family: var(--f-cond); font-weight: 600; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--paper-ink-2); }
+  .xref { margin-top: 10px; font-size: 14px; }
+  .xref b { font-family: var(--f-cond); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: 12px; margin-right: 6px; }
+  .colophon { position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1.5px solid var(--paper-ink); }
+  .colophon div { padding: 5px 10px; font-family: var(--f-mono); font-size: 12px; border-left: 1px solid var(--paper-ink); }
+  .colophon div:first-child { border-left: 0; }
+  .colophon span { display: block; font-family: var(--f-cond); font-weight: 600; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--paper-ink-2); }
+  /* stamping toolbar */
+  #stampbar { left: 1048px; top: 66px; width: 1496px; height: 56px; display: flex; align-items: center; gap: 16px; padding: 0 14px; background: var(--panel-solid); border: 1px solid var(--line); }
+  #stampbar .md { font-family: var(--f-cond); font-weight: 700; font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink); background: var(--ghost); padding: 5px 10px; }
+  #stampbar .nm { font-family: var(--f-serif); font-size: 26px; white-space: nowrap; }
+  #stampbar > * { white-space: nowrap; flex: none; }
+  #stampbar .btn { white-space: nowrap; }
+  #stampbar .cost { margin-left: auto; font-family: var(--f-mono); font-size: 14px; color: var(--text-2); }
+  /* build queue */
+  #queue { left: 1048px; top: 1128px; width: 912px; height: 296px; }
+  #queue table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  #queue th { text-align: left; font-family: var(--f-cond); font-weight: 600; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); padding: 3px 8px; border-bottom: 1px solid var(--line); }
+  #queue td { padding: 3.5px 8px; border-bottom: 1px solid rgba(255,255,255,0.06); white-space: nowrap; }
+  #queue td.m { font-family: var(--f-mono); font-size: 12.5px; color: var(--text-2); }
+  .st { display: inline-block; min-width: 86px; text-align: center; font-family: var(--f-cond); font-weight: 700; font-size: 12px; letter-spacing: .12em; padding: 1px 6px; }
+  .st.built { background: var(--text); color: var(--ink); }
+  .st.building { background: var(--accent); color: var(--ink); }
+  .st.claimed { border: 1.5px solid var(--accent); color: var(--accent); }
+  .st.queued { border: 1.5px solid var(--ghost); color: var(--ghost); }
+  .st.blocked { border: 1.5px solid var(--warn); color: var(--warn); background-image: repeating-linear-gradient(135deg, rgba(221,148,120,0.25) 0 2px, transparent 2px 6px); }
+  .pb { display: inline-block; width: 90px; height: 7px; background: rgba(255,255,255,0.1); position: relative; vertical-align: 1px; }
+  .pb i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); }
+  .pol { display: flex; gap: 18px; align-items: center; padding: 8px 12px; border-top: 1px solid var(--line); }
+  .pol .l { font-family: var(--f-cond); font-weight: 600; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); margin-right: 6px; }
+</style></head>
+<body>
+<script>window.PAGE = { tab: 'PATTERNS', title: { name: 'Pattern book — P-12 stamping', sheet: 'P-012', view: 'design frame · L18–L21', scale: '1:250 axo' } };</script>
+<img class="bg" src="../render/out/m3_stamp.png">
+<svg class="ov" id="ov"></svg>
+
+<div id="book">
+  <div class="pg">
+    <div class="bk-title"><span class="t">Pattern Book</span><span class="s">Block 07 · 23 entries</span></div>
+    <div class="ladder">capture <b>exact copy</b> → template <b>parameters</b> → pattern <b>grow rule</b></div>
+    <div class="filt"><span class="on">All</span><span>Captured 6</span><span>Templates 9</span><span>Patterns 8</span></div>
+
+    <div class="tier"><div class="th"><b>Captured</b><i>exact copies, lifted from the city</i><span class="n">6</span></div>
+      <div class="ent"><div class="im"><img src="../render/out/m3_u_captured.png"></div><div><div class="id">B-03 · 3×4 cells · L6–L9 · 11 parts</div><div class="nm">Lantern Court</div><div class="mt">captured from Tube Quarter bay F3, Y37</div></div></div>
+      <div class="ent"><div class="im"><img src="../render/out/m3_u_pat_stair.png"></div><div><div class="id">B-05 · 1×2 cells · 2 flights + landing</div><div class="nm">Stair Pair</div><div class="mt">captured from Stilt Market, Y35</div></div></div>
+    </div>
+    <div class="tier"><div class="th"><b>Templates</b><i>copies with parameters</i><span class="n">9</span></div>
+      <div class="ent uses"><div class="im"><img src="../render/out/m3_u_stack3.png"></div><div><div class="id">T-07 · 2×1 cells · n levels</div><div class="nm">Capsule Stack ⟨n, facade, roof⟩</div><div class="mt">from B-01 by parameterising floors + finish</div></div></div>
+      <div class="ent"><div class="im"><img src="../render/out/m3_u_pat_garden.png"></div><div><div class="id">T-02 · 2×2 cells · 2 levels</div><div class="nm">Garden Pod ⟨planting⟩</div><div class="mt">terrace density 0.02–0.08 trees/m²</div></div></div>
+    </div>
+    <div class="tier"><div class="th"><b>Patterns</b><i>context rules the crews apply</i><span class="n">8</span></div>
+      <div class="ent sel"><div class="im" id="p12icon"></div><div><div class="id">P-12 · grows T-07 · 14 matches</div><div class="nm">Riser-side Stack</div><div class="mt">fills bays that sit near a riser and see light</div></div></div>
+      <div class="ent"><div class="im"><img src="../render/out/m3_u_pat_bridge.png"></div><div><div class="id">P-31 · grows T-11 Sky Bridge</div><div class="nm">Bridge Every Third Level</div><div class="mt">void ≥ 3 levels between two support faces</div></div></div>
+      <div class="ent"><div class="im"><img src="../render/out/m3_u_pat_lightwell.png"></div><div><div class="id">P-44 · grows T-07 + lamps</div><div class="nm">Lantern Row</div><div class="mt">capsules face a light well; lamps on its rims</div></div></div>
+    </div>
+    <div class="colophon" style="grid-template-columns:1fr 1fr"><div><span>Book</span>Block 07 · v14</div><div><span>Shared</span>3 cities · 212 stamps</div></div>
+  </div>
+
+  <div class="pg">
+    <div class="p-hd"><div class="p-no">12</div><div><div class="p-nm">Riser-side Stack</div>
+      <div class="p-tags"><span class="k">Pattern</span><span>grows T-07</span><span>scale: bay</span><span>rule v3 · Claude</span></div></div></div>
+    <div class="prob">Bays beside a core stay empty because nobody plans them, while dwellings far from a riser tap in informally and go dark.</div>
+
+    <div class="sub">Rule <i>left-hand condition → right-hand construction</i></div>
+    <div class="rule"><svg id="lhs" width="170" height="120"></svg><svg width="40" height="120"><path d="M6 60 H30 M22 52 L32 60 L22 68" stroke="#1c1d20" stroke-width="2" fill="none"/></svg><svg id="rhs" width="170" height="120"></svg></div>
+    <ul class="cond">
+      <li><b>IF</b>free bay ≥ 2×1 cells, clear for n levels, on a support deck</li>
+      <li><b>AND</b>riser socket ≤ 24 m along the deck (core A or B)</li>
+      <li><b>AND</b>light on ≥ 1 long side: void, facade or sky</li>
+      <li><b>AND</b><span>stratum fill after placement ≤ 45% <span style="color:#5b5d61">(cap 50%)</span></span></li>
+      <li><b>THEN</b>place T-07 with n = min(3, levels to next deck − 3)</li>
+    </ul>
+
+    <div class="sub">Template T-07 <i>parameters · the preview updates live</i></div>
+    <div class="params">
+      <span class="k">Floors n</span><span><div class="slider"><div class="tr"></div>
+        <div class="tk" style="left:0"></div><div class="tk" style="left:96px"></div><div class="tk" style="left:193px"></div><div class="tk" style="left:289px"></div>
+        <div class="kn" style="left:96px"></div>
+        <span class="lb" style="left:0">2</span><span class="lb" style="left:96px">3</span><span class="lb" style="left:193px">4</span><span class="lb" style="left:289px">5</span></div></span>
+      <span class="k" style="margin-top:12px">Facade</span><span style="margin-top:12px"><span class="pseg"><span class="on">Panel</span><span>Corrugated</span><span>Timber</span></span></span>
+      <span class="k">Balcony</span><span><span class="pseg"><span>None</span><span class="on">Every 2nd</span><span>All</span></span></span>
+      <span class="k">Roof</span><span><span class="pseg"><span class="on">Planter</span><span>Solar</span><span>Bare</span></span></span>
+      <span class="k">Tenants</span><span><span class="mix"><i style="width:70%;background:#1c1d20"></i><i style="width:20%;background:#8f8c86"></i><i style="width:10%;background:#ffe13a"></i></span>
+        <span style="font-size:12.5px;color:#3c3e42">dwellings 70 · workshop 20 · shop 10</span></span>
+    </div>
+    <div class="vars">
+      <div class="v"><img src="../render/out/m3_u_stack2.png"><span>n = 2</span></div>
+      <div class="v on"><img src="../render/out/m3_u_stack3.png"><span>n = 3 · current</span></div>
+      <div class="v"><img src="../render/out/m3_u_stack5.png"><span>n = 5 · over cap</span></div>
+    </div>
+    <div class="derived">
+      <div><span>Per copy</span>3 caps, 6 res</div><div><span>Mass</span>6 t</div><div><span>Cost</span>§ 1,420</div><div><span>Riser draw</span>0.8 m³/h</div>
+    </div>
+    <div class="xref"><b>Larger</b>P-5 High Rows Infill &nbsp;·&nbsp; <b>Smaller</b>P-40 Balcony Every Second Floor, P-61 Planter Roof</div>
+    <div class="sub">Match report <i>frame A · 11 candidate bays</i></div>
+    <ul class="cond mr">
+      <li><b>✓ 8</b><span>accepted → S1–S8 (2 at core A, 3 at core B, 3 on the light well)</span></li>
+      <li><b>✗ C2</b><span>fill on L19 would reach 47% — over the 45% guard</span></li>
+      <li><b>✗ F1</b><span>no light on either long side (between two capsules)</span></li>
+      <li><b>✗ E2</b><span>nearest riser socket 31 m along the deck</span></li>
+    </ul>
+    <div class="sub">History <i>capture → template → pattern</i></div>
+    <ul class="cond mr">
+      <li><b>v1</b><span>player captured B-01 “Stack of Three”, L14 bay C4 · Y37 D02</span></li>
+      <li><b>v2</b><span>player parameterised floors, facade, roof → T-07 · Y37 D40</span></li>
+      <li><b>v3</b><span>Claude added the fill guard after L19 reached 49% · Y38 D96</span></li>
+    </ul>
+    <div class="colophon"><div><span>Author</span>player · captured Y37</div><div><span>Rule edits</span>Claude · v3 (fill guard)</div><div><span>Matches</span>8 in frame · 14 in block</div></div>
+  </div>
+</div>
+
+<div class="abs" id="stampbar">
+  <span class="md">Stamping</span><span class="nm">P-12 Riser-side Stack</span>
+  <span class="dim">→ T-07 ⟨n = 3⟩ · <b style="color:var(--text)">8 matches</b> in frame · 3 rejected</span>
+  <span class="hints"><span><span class="kbd">R</span> rotate</span><span><span class="kbd">M</span> mirror</span><span><span class="kbd">Shift</span>+click drop match</span></span>
+  <span class="cost">§ 11,360 · 48 t · 2 d 7 h</span>
+  <span class="btn pri">Commit 8 stamps <span class="kbd">Enter</span></span>
+</div>
+
+<div class="panel" id="queue">
+  <div class="hd">Build queue · stamp P-12/A <span class="dim" style="font-weight:500;letter-spacing:.06em">ghost → claim → fetch → build</span><span class="code">priority 5 · crew C (3 drones)</span></div>
+  <table>
+    <tr><th>#</th><th>Copy</th><th>State</th><th>Crew</th><th>Step</th><th>Materials</th><th>Progress</th></tr>
+    <tr><td class="m">1</td><td>S1 · bay E4</td><td><span class="st built">Built</span></td><td class="m">—</td><td>done Y38 D109</td><td class="m">—</td><td><span class="pb"><i style="width:100%"></i></span></td></tr>
+    <tr><td class="m">2</td><td>S2 · bay E4</td><td><span class="st building">Building</span></td><td class="m">D-04 D-09</td><td>floor 2 of 3 · welding frame</td><td class="m">panels 6/12</td><td><span class="pb"><i style="width:44%"></i></span></td></tr>
+    <tr><td class="m">3</td><td>S3 · bay E3</td><td><span class="st claimed">Claimed</span></td><td class="m">D-12</td><td>fetching from depot DK3</td><td class="m">frame steel 1.4 t</td><td><span class="pb"><i style="width:6%"></i></span></td></tr>
+    <tr><td class="m">4–6</td><td>S4–S6 · bays B2–B4</td><td><span class="st queued">Queued</span></td><td class="m">—</td><td>waiting for crew</td><td class="m">in stock</td><td><span class="pb"></span></td></tr>
+    <tr><td class="m">7</td><td>S7 · bay D4</td><td><span class="st blocked">Blocked</span></td><td class="m">—</td><td>no stair within 30 m → stalled, asks</td><td class="m">—</td><td><span class="pb"></span></td></tr>
+    <tr><td class="m">8</td><td>S8 · bay D3</td><td><span class="st queued">Queued</span></td><td class="m">—</td><td>after S7 (shares landing)</td><td class="m">in stock</td><td><span class="pb"></span></td></tr>
+  </table>
+  <div class="pol">
+    <span><span class="l">Missing materials</span><span class="seg"><span class="on">Stall</span><span>Skip</span></span></span>
+    <span><span class="l">Conflicts</span><span class="seg"><span class="on">Keep</span><span>Replace</span><span>Merge</span></span></span>
+    <span><span class="l">Ghosts</span><span class="seg"><span class="on">Persist</span><span>Expire 7 d</span></span></span>
+    <span class="toggle on"><span class="sw"></span>Auto-rebuild</span>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/chrome.js"></script>
+<script>
+(function () {
+  const { Cam, el, text, leader, boxHull, playerCursor } = UI;
+  const ov = document.getElementById('ov');
+  const cam = Cam('m3_stamp');
+  const Y = '#ffe13a', G = '#7fb0ff', INK = '#111214', TXT = '#eeebe4', WARN = '#dd9478';
+  const F = window.ANCHORS.m3_crop;          // design frame [x0, y0, x1, y1] cells, levels 17.7 .. 21.5
+
+  // ---- design frame: corner brackets top + bottom, label
+  const zTop = 21.5, zBot = 17.7;
+  const cs = [[F[0], F[1]], [F[2], F[1]], [F[2], F[3]], [F[0], F[3]]];
+  for (const z of [zTop, zBot]) cs.forEach((p, i) => {
+    const P0 = cam.g(p[0], p[1], z), n1 = cs[(i + 1) % 4], n0 = cs[(i + 3) % 4];
+    const A = cam.g(p[0] + Math.sign(n1[0] - p[0]) * 0.9, p[1] + Math.sign(n1[1] - p[1]) * 0.9, z);
+    const B = cam.g(p[0] + Math.sign(n0[0] - p[0]) * 0.9, p[1] + Math.sign(n0[1] - p[1]) * 0.9, z);
+    el('polyline', { points: [A, P0, B].map(q => q.join(',')).join(' '), fill: 'none', stroke: Y, 'stroke-width': 3 }, ov);
+  });
+  cs.forEach(p => { const a = cam.g(p[0], p[1], zBot), b = cam.g(p[0], p[1], zBot + 0.9);
+    el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: Y, 'stroke-width': 3 }, ov); });
+  const fl = cam.g(F[0], F[1], zTop);
+  const fg = el('g', {}, ov);
+  const lx = 1060, ly = 176;
+  el('polyline', { points: `${fl[0]},${fl[1]} ${fl[0]},${ly + 44} `, stroke: Y, 'stroke-width': 1.5, fill: 'none' }, fg);
+  el('rect', { x: lx, y: ly, width: 300, height: 44, fill: INK, stroke: Y, 'stroke-width': 1.5 }, fg);
+  text(fg, lx + 10, ly + 18, 'DESIGN FRAME · PATTERN SCOPE', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 15, 'letter-spacing': 1.2, fill: Y });
+  text(fg, lx + 10, ly + 35, '14.7 × 10.3 cells · L18–L21 · DK3', { 'font-family': 'IBM Plex Mono', 'font-size': 12, fill: TXT });
+
+  // ---- service runs from each stamp to its riser (dashed, on the deck plane L18)
+  const runs = [[[12, 12.5], [15, 11.6], '8 m', 'B'], [[12, 11.5], [15, 11.2], null], [[12, 10.5], [15, 10.6], null],
+    [[5, 9.5], [4.2, 6.0], null], [[5, 8.5], [4.4, 6.0], null], [[5, 7.5], [4.6, 6.0], '4 m', 'A'], [[8, 11.5], [5.0, 6.0], '18 m', 'A'], [[8, 10.5], [5.0, 5.8], null]];
+  for (const [a, b] of runs) {
+    const pa = cam.g(a[0], a[1], 18.05), pb = cam.g(b[0], b[1], 18.05);
+    el('line', { x1: pa[0], y1: pa[1], x2: pb[0], y2: pb[1], stroke: '#57b3a8', 'stroke-width': 2, 'stroke-dasharray': '6 4' }, ov);
+  }
+  // riser sockets on the core faces
+  for (const [x, y, lab] of [[15, 11, 'R2'], [4.4, 6, 'R1']]) {
+    const p = cam.g(x, y, 18.3);
+    el('rect', { x: p[0] - 7, y: p[1] - 7, width: 14, height: 14, fill: '#57b3a8', stroke: INK, 'stroke-width': 1.5 }, ov);
+    text(ov, p[0] + 11, p[1] + 5, lab + ' socket', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 14, fill: INK, 'paint-order': 'stroke', stroke: '#c9cfd4', 'stroke-width': 4 });
+  }
+  // light-well void (light on one side): dashed outline at the deck plane
+  el('path', { d: boxHull(cam, 9, 10, 18.02, 11, 13, 18.04), fill: 'rgba(255,225,58,0.10)', stroke: Y, 'stroke-width': 1.6, 'stroke-dasharray': '7 5' }, ov);
+
+  // ---- stamp markers S1..S8 (state-coloured bubbles on top of each copy)
+  const S = window.ANCHORS.m3_stamps;
+  const col = { built: [TXT, INK], building: [Y, INK], claimed: [INK, Y], queued: [INK, G], blocked: [INK, WARN] };
+  S.forEach((s, i) => {
+    const top = cam.g(s.x + 1, s.y + 0.5, s.level + s.h + (s.state === 'built' ? 0.35 : 0.05));
+    const [f, c] = col[s.state];
+    const g = el('g', {}, ov);
+    el('line', { x1: top[0], y1: top[1], x2: top[0], y2: top[1] - 26, stroke: c === INK ? f : c, 'stroke-width': 1.5 }, g);
+    el('circle', { cx: top[0], cy: top[1] - 40, r: 14, fill: f, stroke: c, 'stroke-width': 2 }, g);
+    text(g, top[0], top[1] - 35, 'S' + (i + 1), { 'text-anchor': 'middle', 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 14, fill: c });
+  });
+  // callouts
+  const call = (pt, dx, dy, t1, t2, c) => {
+    const g = el('g', {}, ov);
+    const x = pt[0] + dx, y = pt[1] + dy;
+    el('polyline', { points: `${pt[0]},${pt[1]} ${x},${y}`, stroke: c, 'stroke-width': 1.5, fill: 'none' }, g);
+    const w = Math.max(t1.length * 8.3, t2.length * 7.0) + 22;
+    const bx = dx < 0 ? x - w : x;
+    el('rect', { x: bx, y: y - 22, width: w, height: 44, fill: 'rgba(17,18,20,0.92)', stroke: c, 'stroke-width': 1.5 }, g);
+    text(g, bx + 10, y - 4, t1, { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 14.5, 'letter-spacing': 1, fill: c });
+    text(g, bx + 10, y + 13, t2, { 'font-family': 'Barlow Semi Condensed', 'font-size': 13, fill: TXT });
+  };
+  const s2 = cam.g(12, 11.5, 21.05), s7 = cam.g(8, 11.5, 21.05), s3 = cam.g(12, 10.5, 21.05);
+  call([s2[0] + 16, s2[1] - 40], 150, -120, 'S2 · BUILDING · FLOOR 2 OF 3', 'D-04 hauling panels · D-09 welding', Y);
+  call([s7[0] - 14, s7[1] - 40], -60, -150, 'S7 · BLOCKED', 'no stair within 30 m · add B-05 Stair Pair?', WARN);
+  // drones
+  for (const d of window.ANCHORS.m3_drones) {
+    const p = cam.g(d.x, d.y, d.level);
+    el('circle', { cx: p[0], cy: p[1], r: 17, fill: 'none', stroke: Y, 'stroke-width': 1.6, 'stroke-dasharray': '3 3' }, ov);
+  }
+  const d12 = window.ANCHORS.m3_drones[2], p12 = cam.g(d12.x, d12.y, d12.level);
+  call([p12[0] + 14, p12[1] + 12], 60, 250, 'D-12 · CLAIMED S3', 'fetching frame steel 1.4 t from depot DK3', Y);
+
+  // player cursor over S7 (blocked)
+  playerCursor(ov, s7[0] - 6, s7[1] - 26);
+
+  // ---- rule diagrams on the book page (plan view): LHS condition, RHS result
+  const diag = (id, withStack) => {
+    const s = document.getElementById(id), c = 22;
+    const R = (x, y, w, h, a) => el('rect', Object.assign({ x: 10 + x * c, y: 8 + y * c, width: w * c, height: h * c }, a), s);
+    R(0, 0, 7, 4.6, { fill: 'none', stroke: '#1c1d20', 'stroke-width': 1 , 'stroke-dasharray': '2 3'});
+    R(5, 0.6, 2, 2, { fill: '#1c1d20' });                              // core with riser
+    R(0, 3.1, 2.4, 1.5, { fill: 'none', stroke: '#1c1d20', 'stroke-width': 1.2, 'stroke-dasharray': '4 3' }); // void
+    text(s, 10 + 0.2 * c, 8 + 4.2 * c, 'void', { 'font-family': 'Barlow Condensed', 'font-size': 12, fill: '#5b5d61' });
+    text(s, 10 + 5.15 * c, 8 + 1.9 * c, 'R', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 14, fill: '#ebe8e0' });
+    if (withStack) {
+      R(2.4, 1.6, 2, 1, { fill: '#1c1d20' });
+      R(2.4, 1.6, 2, 1, { fill: 'url(#hx)' });
+      text(s, 10 + 2.55 * c, 8 + 1.4 * c, 'T-07 ×n', { 'font-family': 'IBM Plex Mono', 'font-size': 10.5, fill: '#1c1d20' });
+    } else {
+      R(2.4, 1.6, 2, 1, { fill: 'none', stroke: '#1c1d20', 'stroke-width': 1.5 });
+      text(s, 10 + 2.47 * c, 8 + 2.32 * c, '2×1', { 'font-family': 'IBM Plex Mono', 'font-size': 10.5, fill: '#1c1d20' });
+    }
+    el('path', { d: `M${10 + 4.4 * c},${8 + 2.1 * c} H${10 + 5 * c}`, stroke: '#1c1d20', 'stroke-width': 1.2, 'stroke-dasharray': '2 2' }, s);
+  };
+  const defs = el('defs', {}, document.getElementById('rhs'));
+  const pat = el('pattern', { id: 'hx', width: 5, height: 5, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, defs);
+  el('line', { x1: 0, y1: 0, x2: 0, y2: 5, stroke: '#ebe8e0', 'stroke-width': 1.2 }, pat);
+  diag('lhs', false); diag('rhs', true);
+  // P-12 icon in the library (mini rule diagram)
+  const ic = el('svg', { width: 84, height: 84 }, document.getElementById('p12icon'));
+  el('rect', { x: 50, y: 14, width: 22, height: 22, fill: '#1c1d20' }, ic);
+  el('rect', { x: 12, y: 44, width: 28, height: 22, fill: 'none', stroke: '#1c1d20', 'stroke-dasharray': '4 3', 'stroke-width': 1.3 }, ic);
+  el('rect', { x: 26, y: 24, width: 22, height: 12, fill: '#ffe13a', stroke: '#1c1d20', 'stroke-width': 1.5 }, ic);
+  el('path', { d: 'M48 30 H50', stroke: '#1c1d20' }, ic);
+})();
+</script>
+</body></html>

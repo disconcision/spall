@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "name": "tube_interchange",
+    "kind": "building-type",
+    "title": "Tube Interchange",
+    "author": "Claude (agent-authored in this experiment)",
+    "revision": 4,
+    "style": "sprite",
+    "seed": 404,
+    "grid": {"cell": 4.0, "level": 3.5},
+    "footprint": {"x": 0, "y": 0, "w": 3, "d": 3, "max_levels": 6, "overhang": 0.5},
+    "light": "studio",
+    "brief": "a transit interchange where two elevated tube lines cross at different levels",
+    "description": "Two glazed tube lines cross over one 3x3 lot: line A runs east-west at level 1.2 on two piers, line B runs north-south 3.7 m above it at level 3.4 on two tall piers. Each line has an enclosed glass platform on its sunny side. A stair and landing climb from the ground concourse to platform A; a glazed lift tower on the north-east corner serves platform B; passengers change lines through the concourse.",
+    "sprite": {"px_per_tile": 32, "rotations": 4, "palette": "kit64"}
+  },
+  "parts": [
+    {"type": "pier", "x": 0.2, "y": 1.25, "level": 0, "w": 0.3, "d": 0.5, "h": 1.2, "material": "concrete", "tags": ["step:piers"]},
+    {"type": "pier", "x": 2.5, "y": 1.25, "level": 0, "w": 0.3, "d": 0.5, "h": 1.2, "material": "concrete", "tags": ["step:piers"]},
+    {"type": "pier", "x": 1.25, "y": -0.45, "level": 0, "w": 0.5, "d": 0.3, "h": 3.4, "material": "concrete", "tags": ["step:piers"]},
+    {"type": "pier", "x": 1.25, "y": 2.6, "level": 0, "w": 0.5, "d": 0.3, "h": 3.4, "material": "concrete", "tags": ["step:piers"]},
+    {"type": "column", "x": 0.05, "y": 0.6, "level": 0, "w": 0.1, "d": 0.1, "h": 1.357, "material": "steel", "tags": ["step:piers"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 1.0, "y": 0.6, "level": 0, "w": 0.1, "d": 0.1, "h": 1.357, "material": "steel", "tags": ["step:piers"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 2.85, "y": 0.6, "level": 0, "w": 0.1, "d": 0.1, "h": 1.357, "material": "steel", "tags": ["step:piers"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 2.05, "y": -0.05, "level": 0, "w": 0.1, "d": 0.1, "h": 3.557, "material": "steel", "tags": ["step:piers"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 2.05, "y": 2.85, "level": 0, "w": 0.1, "d": 0.1, "h": 3.557, "material": "steel", "tags": ["step:piers"], "params": {"capital": false, "plinth": false}},
+    {"type": "column", "x": 2.47, "y": 0.27, "level": 0, "w": 0.08, "d": 0.08, "h": 1.357, "material": "steel", "tags": ["step:piers"], "params": {"capital": false, "plinth": false}},
+
+    {"type": "tube", "x": -0.5, "y": 1.0, "level": 1.2, "w": 4.0, "d": 1.0, "h": 1.143, "tags": ["step:tube segments"], "params": {"train": true, "train_len": 11.0}},
+    {"type": "tube", "x": 1.0, "y": -0.5, "level": 3.4, "w": 1.0, "d": 4.0, "h": 1.143, "rot": 1, "tags": ["step:tube segments"], "params": {"train": true, "train_len": 11.0}},
+
+    {"type": "bridge", "x": 0.0, "y": 0.55, "level": 1.457, "w": 3.0, "d": 0.45, "h": 0.2, "material": "steel_dark", "tags": ["step:platforms"], "params": {"t": 0.35, "enclosed": true, "eh": 2.6, "keel": false}},
+    {"type": "bridge", "x": 2.0, "y": 0.0, "level": 3.657, "w": 0.45, "d": 3.0, "h": 0.2, "rot": 1, "material": "steel_dark", "tags": ["step:platforms"], "params": {"t": 0.35, "enclosed": true, "eh": 2.6, "keel": false}},
+
+    {"type": "stairs", "x": 1.05, "y": 0.22, "level": 0, "w": 1.35, "d": 0.3, "h": 1.457, "material": "concrete_light", "tags": ["step:circulation"]},
+    {"type": "slab", "x": 2.4, "y": 0.22, "level": 1.457, "w": 0.55, "d": 0.33, "h": 0.1, "material": "steel_dark", "tags": ["step:circulation"], "params": {"t": 0.35, "rail": "se"}},
+    {"type": "elevator", "x": 2.45, "y": 2.45, "level": 0, "w": 0.5, "d": 0.5, "h": 4.657, "material": "steel", "tags": ["step:circulation"], "params": {"cabs": 2}},
+
+    {"type": "capsule", "x": 0.0, "y": 0.05, "level": 0, "w": 0.95, "d": 0.45, "h": 1.0, "material": "panel", "tags": ["step:concourse"], "params": {"win": "band", "lit": 1.0, "interior": false}},
+    {"type": "sign", "x": 0.15, "y": 0.05, "level": 0.62, "w": 0.6, "d": 0.1, "h": 0.2, "tags": ["step:concourse"], "params": {"color": "cyan", "blade": false}},
+    {"type": "sign", "x": 2.95, "y": 2.6, "level": 2.6, "w": 0.1, "d": 0.1, "h": 0.6, "rot": 1, "tags": ["step:concourse"], "params": {"color": "yellow", "blade": true, "proj": 0.8}},
+    {"type": "figure", "x": 1.4, "y": 0.75, "level": 1.457, "w": 0.1, "d": 0.1, "h": 0.5, "tags": ["ambient"]},
+    {"type": "figure", "x": 2.2, "y": 1.6, "level": 3.657, "w": 0.1, "d": 0.1, "h": 0.5, "tags": ["ambient"]},
+    {"type": "figure", "x": 0.6, "y": -0.25, "level": 0, "w": 0.1, "d": 0.1, "h": 0.5, "tags": ["ambient"]}
+  ]
+}

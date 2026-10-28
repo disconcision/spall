@@ -1,0 +1,22 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 24
+ },
+ "jobs": [
+  {
+   "spec": "specs/t_catalog.json",
+   "out": "out/k/k1_catalog_blocky.png",
+   "light": "crisp"
+  },
+  {
+   "spec": "specs/t_catalog.json",
+   "out": "out/k/k2_catalog_hewn.png",
+   "light": "crisp",
+   "style": "brut_hewn"
+  }
+ ]
+}

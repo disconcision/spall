@@ -1,0 +1,1310 @@
+{
+ "meta": {
+  "name": "solar_chimney",
+  "kind": "building-type",
+  "title": "Solar Chimney Light Well",
+  "author": "Claude (agent-authored in this experiment)",
+  "revision": 4,
+  "style": "sprite",
+  "seed": 505,
+  "grid": {
+   "cell": 4.0,
+   "level": 3.5
+  },
+  "footprint": {
+   "x": 0,
+   "y": 0,
+   "w": 2,
+   "d": 2,
+   "max_levels": 7,
+   "overhang": 0.5
+  },
+  "light": "studio",
+  "style_overrides": {
+   "remap": {
+    "solar": "neon_white"
+   }
+  },
+  "brief": "a light well / solar chimney that brings daylight down six levels",
+  "description": "A heliostat head on the roof - a ring of sun-tracking mirrors around a louvred chimney crown - throws sunlight down a 1.2 m reflective light pipe that runs six levels through the decks inside an open steel frame. A light shelf at every floor spills the light sideways onto the deck; warm air rising in the pipe vents through the crown, pulling fresh air through the floors.",
+  "sprite": {
+   "px_per_tile": 32,
+   "rotations": 4,
+   "palette": "kit64"
+  },
+  "accepted_from": "solar_chimney.v4"
+ },
+ "parts": [
+  {
+   "type": "ground",
+   "x": -3,
+   "y": -3,
+   "level": 0,
+   "w": 8,
+   "d": 8,
+   "h": 1,
+   "material": "concrete_dark",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "grid": [
+     4.0,
+     "concrete"
+    ]
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": -3,
+   "level": 1,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 1.5,
+   "level": 1,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 0.5,
+   "level": 1,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": 1.5,
+   "y": 0.5,
+   "level": 1,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": -3,
+   "level": 2,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 1.5,
+   "level": 2,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 0.5,
+   "level": 2,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": 1.5,
+   "y": 0.5,
+   "level": 2,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": -3,
+   "level": 3,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 1.5,
+   "level": 3,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 0.5,
+   "level": 3,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": 1.5,
+   "y": 0.5,
+   "level": 3,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": -3,
+   "level": 4,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 1.5,
+   "level": 4,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 0.5,
+   "level": 4,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": 1.5,
+   "y": 0.5,
+   "level": 4,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": -3,
+   "level": 5,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 1.5,
+   "level": 5,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 0.5,
+   "level": 5,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": 1.5,
+   "y": 0.5,
+   "level": 5,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": -3,
+   "level": 6,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 1.5,
+   "level": 6,
+   "w": 8,
+   "d": 3.5,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": -3,
+   "y": 0.5,
+   "level": 6,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "deck",
+   "x": 1.5,
+   "y": 0.5,
+   "level": 6,
+   "w": 3.5,
+   "d": 1.0,
+   "h": 0.3,
+   "material": "deck",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "t": 0.6,
+    "fascia": "concrete_dark"
+   }
+  },
+  {
+   "type": "capsule",
+   "x": -2.6,
+   "y": -2.6,
+   "level": 1,
+   "w": 1.6,
+   "d": 1.4,
+   "h": 0.9,
+   "material": "panel",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "win": "grid",
+    "lit": 0.5,
+    "interior": false
+   }
+  },
+  {
+   "type": "capsule",
+   "x": 2.6,
+   "y": -2.4,
+   "level": 1,
+   "w": 1.8,
+   "d": 1.2,
+   "h": 0.9,
+   "material": "accent_a",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "win": "grid",
+    "lit": 0.5,
+    "interior": false
+   }
+  },
+  {
+   "type": "capsule",
+   "x": -2.5,
+   "y": 2.4,
+   "level": 3,
+   "w": 1.4,
+   "d": 1.8,
+   "h": 0.9,
+   "material": "capsule_white",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "win": "grid",
+    "lit": 0.5,
+    "interior": false
+   }
+  },
+  {
+   "type": "capsule",
+   "x": 2.8,
+   "y": 2.2,
+   "level": 2,
+   "w": 1.6,
+   "d": 1.6,
+   "h": 0.9,
+   "material": "accent_b",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "win": "grid",
+    "lit": 0.5,
+    "interior": false
+   }
+  },
+  {
+   "type": "capsule",
+   "x": -2.6,
+   "y": -2.2,
+   "level": 4,
+   "w": 1.4,
+   "d": 1.4,
+   "h": 0.9,
+   "material": "k_cream",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "win": "grid",
+    "lit": 0.5,
+    "interior": false
+   }
+  },
+  {
+   "type": "capsule",
+   "x": 2.5,
+   "y": -2.5,
+   "level": 5,
+   "w": 1.8,
+   "d": 1.4,
+   "h": 0.9,
+   "material": "panel",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "win": "grid",
+    "lit": 0.5,
+    "interior": false
+   }
+  },
+  {
+   "type": "capsule",
+   "x": -2.4,
+   "y": 2.6,
+   "level": 5,
+   "w": 1.6,
+   "d": 1.4,
+   "h": 0.9,
+   "material": "accent_a",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "win": "grid",
+    "lit": 0.5,
+    "interior": false
+   }
+  },
+  {
+   "type": "capsule",
+   "x": 2.7,
+   "y": 2.5,
+   "level": 0,
+   "w": 1.6,
+   "d": 1.6,
+   "h": 0.9,
+   "material": "panel",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "win": "grid",
+    "lit": 0.5,
+    "interior": false
+   }
+  },
+  {
+   "type": "capsule",
+   "x": -2.7,
+   "y": -2.6,
+   "level": 0,
+   "w": 1.6,
+   "d": 1.6,
+   "h": 0.9,
+   "material": "accent_b",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "win": "grid",
+    "lit": 0.5,
+    "interior": false
+   }
+  },
+  {
+   "type": "figure",
+   "x": -0.3,
+   "y": 0.9,
+   "level": 0,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 2.1,
+   "y": 1.2,
+   "level": 0,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 1.1,
+   "y": -0.4,
+   "level": 0,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "planter",
+   "x": -0.6,
+   "y": -0.6,
+   "level": 0,
+   "w": 0.5,
+   "d": 0.2,
+   "h": 0.2,
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "ph": 0.5
+   }
+  },
+  {
+   "type": "figure",
+   "x": -0.19999999999999998,
+   "y": 0.9,
+   "level": 1,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 2.2,
+   "y": 1.2,
+   "level": 1,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 1.2000000000000002,
+   "y": -0.4,
+   "level": 1,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "planter",
+   "x": -0.6,
+   "y": -0.6,
+   "level": 1,
+   "w": 0.5,
+   "d": 0.2,
+   "h": 0.2,
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "ph": 0.5
+   }
+  },
+  {
+   "type": "figure",
+   "x": -0.09999999999999998,
+   "y": 0.9,
+   "level": 2,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 2.3000000000000003,
+   "y": 1.2,
+   "level": 2,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 1.3,
+   "y": -0.4,
+   "level": 2,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "planter",
+   "x": -0.6,
+   "y": -0.6,
+   "level": 2,
+   "w": 0.5,
+   "d": 0.2,
+   "h": 0.2,
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "ph": 0.5
+   }
+  },
+  {
+   "type": "figure",
+   "x": 5.551115123125783e-17,
+   "y": 0.9,
+   "level": 3,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 2.4000000000000004,
+   "y": 1.2,
+   "level": 3,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 1.4000000000000001,
+   "y": -0.4,
+   "level": 3,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "planter",
+   "x": -0.6,
+   "y": -0.6,
+   "level": 3,
+   "w": 0.5,
+   "d": 0.2,
+   "h": 0.2,
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "ph": 0.5
+   }
+  },
+  {
+   "type": "figure",
+   "x": 0.10000000000000003,
+   "y": 0.9,
+   "level": 4,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 2.5,
+   "y": 1.2,
+   "level": 4,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 1.5,
+   "y": -0.4,
+   "level": 4,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "planter",
+   "x": -0.6,
+   "y": -0.6,
+   "level": 4,
+   "w": 0.5,
+   "d": 0.2,
+   "h": 0.2,
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "ph": 0.5
+   }
+  },
+  {
+   "type": "figure",
+   "x": 0.2,
+   "y": 0.9,
+   "level": 5,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 2.6,
+   "y": 1.2,
+   "level": 5,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "figure",
+   "x": 1.6,
+   "y": -0.4,
+   "level": 5,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.5,
+   "tags": [
+    "context"
+   ]
+  },
+  {
+   "type": "planter",
+   "x": -0.6,
+   "y": -0.6,
+   "level": 5,
+   "w": 0.5,
+   "d": 0.2,
+   "h": 0.2,
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "ph": 0.5
+   }
+  },
+  {
+   "type": "column",
+   "x": 0.85,
+   "y": 0.85,
+   "level": 0,
+   "w": 0.3,
+   "d": 0.3,
+   "h": 6,
+   "material": "sunpipe_px",
+   "tags": [
+    "step:light pipe"
+   ],
+   "params": {
+    "capital": false,
+    "plinth": false
+   }
+  },
+  {
+   "type": "column",
+   "x": 0.55,
+   "y": 0.55,
+   "level": 0,
+   "w": 0.07,
+   "d": 0.07,
+   "h": 6,
+   "material": "steel_dark",
+   "tags": [
+    "step:frame"
+   ],
+   "params": {
+    "capital": false,
+    "plinth": false
+   }
+  },
+  {
+   "type": "column",
+   "x": 1.38,
+   "y": 0.55,
+   "level": 0,
+   "w": 0.07,
+   "d": 0.07,
+   "h": 6,
+   "material": "steel_dark",
+   "tags": [
+    "step:frame"
+   ],
+   "params": {
+    "capital": false,
+    "plinth": false
+   }
+  },
+  {
+   "type": "column",
+   "x": 0.55,
+   "y": 1.38,
+   "level": 0,
+   "w": 0.07,
+   "d": 0.07,
+   "h": 6,
+   "material": "steel_dark",
+   "tags": [
+    "step:frame"
+   ],
+   "params": {
+    "capital": false,
+    "plinth": false
+   }
+  },
+  {
+   "type": "column",
+   "x": 1.38,
+   "y": 1.38,
+   "level": 0,
+   "w": 0.07,
+   "d": 0.07,
+   "h": 6,
+   "material": "steel_dark",
+   "tags": [
+    "step:frame"
+   ],
+   "params": {
+    "capital": false,
+    "plinth": false
+   }
+  },
+  {
+   "type": "slab",
+   "x": 0.55,
+   "y": 0.55,
+   "level": 1.05,
+   "w": 0.9,
+   "d": 0.9,
+   "h": 0.1,
+   "material": "capsule_white",
+   "tags": [
+    "step:light shelves"
+   ],
+   "params": {
+    "t": 0.2
+   }
+  },
+  {
+   "type": "light",
+   "x": 0.25,
+   "y": 1.75,
+   "level": 1.35,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.1,
+   "tags": [
+    "step:light shelves"
+   ],
+   "params": {
+    "color": [
+     1.0,
+     0.86,
+     0.6
+    ],
+    "power": 500,
+    "radius": 1.0
+   }
+  },
+  {
+   "type": "slab",
+   "x": 0.55,
+   "y": 0.55,
+   "level": 2.05,
+   "w": 0.9,
+   "d": 0.9,
+   "h": 0.1,
+   "material": "capsule_white",
+   "tags": [
+    "step:light shelves"
+   ],
+   "params": {
+    "t": 0.2
+   }
+  },
+  {
+   "type": "light",
+   "x": 1.75,
+   "y": 0.25,
+   "level": 2.35,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.1,
+   "tags": [
+    "step:light shelves"
+   ],
+   "params": {
+    "color": [
+     1.0,
+     0.86,
+     0.6
+    ],
+    "power": 500,
+    "radius": 1.0
+   }
+  },
+  {
+   "type": "slab",
+   "x": 0.55,
+   "y": 0.55,
+   "level": 3.05,
+   "w": 0.9,
+   "d": 0.9,
+   "h": 0.1,
+   "material": "capsule_white",
+   "tags": [
+    "step:light shelves"
+   ],
+   "params": {
+    "t": 0.2
+   }
+  },
+  {
+   "type": "light",
+   "x": 0.25,
+   "y": 1.75,
+   "level": 3.35,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.1,
+   "tags": [
+    "step:light shelves"
+   ],
+   "params": {
+    "color": [
+     1.0,
+     0.86,
+     0.6
+    ],
+    "power": 500,
+    "radius": 1.0
+   }
+  },
+  {
+   "type": "slab",
+   "x": 0.55,
+   "y": 0.55,
+   "level": 4.05,
+   "w": 0.9,
+   "d": 0.9,
+   "h": 0.1,
+   "material": "capsule_white",
+   "tags": [
+    "step:light shelves"
+   ],
+   "params": {
+    "t": 0.2
+   }
+  },
+  {
+   "type": "light",
+   "x": 1.75,
+   "y": 0.25,
+   "level": 4.35,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.1,
+   "tags": [
+    "step:light shelves"
+   ],
+   "params": {
+    "color": [
+     1.0,
+     0.86,
+     0.6
+    ],
+    "power": 500,
+    "radius": 1.0
+   }
+  },
+  {
+   "type": "slab",
+   "x": 0.55,
+   "y": 0.55,
+   "level": 5.05,
+   "w": 0.9,
+   "d": 0.9,
+   "h": 0.1,
+   "material": "capsule_white",
+   "tags": [
+    "step:light shelves"
+   ],
+   "params": {
+    "t": 0.2
+   }
+  },
+  {
+   "type": "light",
+   "x": 0.25,
+   "y": 1.75,
+   "level": 5.35,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.1,
+   "tags": [
+    "step:light shelves"
+   ],
+   "params": {
+    "color": [
+     1.0,
+     0.86,
+     0.6
+    ],
+    "power": 500,
+    "radius": 1.0
+   }
+  },
+  {
+   "type": "light",
+   "x": 1.0,
+   "y": -0.2,
+   "level": 0.4,
+   "w": 0.1,
+   "d": 0.1,
+   "h": 0.1,
+   "tags": [
+    "step:light shelves"
+   ],
+   "params": {
+    "color": [
+     1.0,
+     0.86,
+     0.6
+    ],
+    "power": 500,
+    "radius": 1.0
+   }
+  },
+  {
+   "type": "slab",
+   "x": 0,
+   "y": 0,
+   "level": 6.086,
+   "w": 2,
+   "d": 2,
+   "h": 0.1,
+   "material": "concrete_light",
+   "tags": [
+    "step:heliostat head"
+   ],
+   "params": {
+    "t": 0.3,
+    "rail": "snwe"
+   }
+  },
+  {
+   "type": "pipe",
+   "x": 0.78,
+   "y": 0.78,
+   "level": 6.086,
+   "w": 0.44,
+   "d": 0.44,
+   "h": 0.85,
+   "material": "steel_light",
+   "tags": [
+    "step:heliostat head"
+   ],
+   "params": {
+    "axis": "z",
+    "n": 1,
+    "r": 0.8,
+    "flange": 0.9
+   }
+  },
+  {
+   "type": "solar",
+   "x": 0.05,
+   "y": 0.05,
+   "level": 6.086,
+   "w": 1.9,
+   "d": 0.6,
+   "h": 0.4,
+   "tags": [
+    "step:heliostat head"
+   ]
+  },
+  {
+   "type": "solar",
+   "x": 0.05,
+   "y": 1.35,
+   "level": 6.086,
+   "w": 1.9,
+   "d": 0.6,
+   "h": 0.4,
+   "tags": [
+    "step:heliostat head"
+   ]
+  },
+  {
+   "type": "solar",
+   "x": 0.05,
+   "y": 0.7,
+   "level": 6.086,
+   "w": 0.6,
+   "d": 0.6,
+   "h": 0.4,
+   "tags": [
+    "step:heliostat head"
+   ]
+  },
+  {
+   "type": "solar",
+   "x": 1.35,
+   "y": 0.7,
+   "level": 6.086,
+   "w": 0.6,
+   "d": 0.6,
+   "h": 0.4,
+   "tags": [
+    "step:heliostat head"
+   ]
+  }
+ ]
+}

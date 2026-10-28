@@ -1,0 +1,213 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Pixel Mode</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  /* The same UI language, snapped to the kit64 palette and a 2-px pixel grid (every UI pixel = 2x2 screen px). */
+  :root { --k-ink: #0d0e11; --k-panel: #1f2126; --k-panel2: #33363c; --k-line: #4b4e55; --k-mid: #858a8f; --k-hi: #d2d5d6;
+    --k-paper: #efe7d6; --k-paper2: #d4c9b4; --k-acc: #ffe13a; --k-ghost: #8aa9c4; --k-ghost2: #44678a; --k-warn: #dd9478; --k-ok: #98c15d; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { width: 2560px; height: 1440px; overflow: hidden; position: relative; background: #0d0e11; color: var(--k-hi);
+    font-family: "Silkscreen", monospace; font-size: 16px; text-transform: uppercase; font-variant-ligatures: none; -webkit-font-smoothing: none; font-smooth: never; image-rendering: pixelated; }
+  .px { font-family: "Silkscreen", monospace; font-size: 16px; letter-spacing: 0; text-transform: uppercase; line-height: 1; }
+  img.map { position: absolute; left: 0; top: 0; width: 2560px; height: 1440px; image-rendering: pixelated; }
+  svg { shape-rendering: crispEdges; }
+  svg.ov { position: absolute; left: 0; top: 0; width: 2560px; height: 1440px; overflow: visible; }
+  .pn { position: absolute; background: var(--k-panel); border: 2px solid var(--k-line); box-shadow: 4px 4px 0 0 #000; }
+  .pn > .hd { height: 32px; display: flex; align-items: center; gap: 10px; padding: 0 10px; background: var(--k-panel2); border-bottom: 2px solid var(--k-line); }
+  .pn > .hd .c { margin-left: auto; color: var(--k-mid); font-size: 14px; }
+  .dither { background-image: linear-gradient(45deg, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 25%); background: repeating-conic-gradient(#33363c 0% 25%, #1f2126 0% 50%) 0 0 / 4px 4px; }
+  .caution { background: repeating-linear-gradient(135deg, var(--k-acc) 0 8px, var(--k-ink) 8px 16px); }
+  /* top bar */
+  .top { position: absolute; left: 0; top: 0; width: 2560px; height: 50px; background: var(--k-panel); border-bottom: 2px solid var(--k-line); display: flex; align-items: stretch; }
+  .top > div { display: flex; align-items: center; gap: 12px; padding: 0 16px; border-right: 2px solid var(--k-line); }
+  .tabs span { padding: 7px 10px; }
+  .tabs span.on { background: var(--k-acc); color: var(--k-ink); }
+  .kv2 { display: flex; flex-direction: column; gap: 2px; }
+  .kv2 .l { font-family: "Pixelify Sans"; font-size: 21px; text-transform: none; color: var(--k-mid); line-height: 1; }
+  .kv2 .v { font-family: "Silkscreen"; font-size: 16px; }
+  .agent { display: flex; align-items: center; gap: 8px; border: 2px solid var(--k-line); padding: 4px 8px; }
+  /* tools */
+  #tools { left: 16px; top: 68px; width: 116px; }
+  #tools .grid { display: grid; grid-template-columns: 48px 48px; gap: 4px; padding: 6px; }
+  #tools .b { width: 48px; height: 48px; background: var(--k-panel2); border: 2px solid var(--k-line); display: flex; align-items: center; justify-content: center; }
+  #tools .b.on { background: var(--k-acc); border-color: var(--k-acc); }
+  #tools .lbl { padding: 4px 8px 8px; font-size: 16px; color: var(--k-mid); }
+  /* level strip */
+  #lv { left: 2236px; top: 68px; width: 308px; }
+  #lv .ro { padding: 10px; border-bottom: 2px solid var(--k-line); }
+  #lv .ro .big { font-family: "Silkscreen"; font-size: 48px; color: var(--k-acc); line-height: 1; }
+  .row { display: flex; align-items: center; gap: 8px; height: 26px; padding: 0 8px; font-family: "Silkscreen"; font-size: 16px; }
+  .row .t { width: 44px; }
+  .row .bar { width: 80px; height: 8px; background: var(--k-panel2); position: relative; }
+  .row .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--k-mid); }
+  .row .bar b { position: absolute; left: 40px; top: -4px; width: 2px; height: 16px; background: var(--k-hi); }
+  .row .v { width: 50px; text-align: right; }
+  .row.on { background: var(--k-acc); color: var(--k-ink); }
+  .row.on .bar { background: #b06c1c; } .row.on .bar i { background: var(--k-ink); } .row.on .bar b { background: var(--k-ink); }
+  .row.gh { color: var(--k-ghost); } .row.gh .bar i { background: var(--k-ghost2); }
+  .row.hid { color: var(--k-line); background: repeating-conic-gradient(#26282d 0% 25%, #1f2126 0% 50%) 0 0 / 4px 4px; }
+  .row.dk { border-top: 4px solid var(--k-mid); }
+  .row .ag { font-size: 16px; background: var(--k-acc); color: var(--k-ink); padding: 2px 4px; }
+  .row .ag.w { background: var(--k-hi); }
+  /* banner */
+  #slice { left: 150px; top: 68px; height: 40px; display: flex; align-items: stretch; background: var(--k-panel); border: 2px solid var(--k-acc); box-shadow: 4px 4px 0 0 #000; }
+  #slice .cz { width: 40px; }
+  #slice .tx { display: flex; align-items: center; gap: 14px; padding: 0 12px; }
+  /* paper tooltip */
+  .paper { position: absolute; background: var(--k-paper); color: var(--k-ink); border: 2px solid var(--k-ink); box-shadow: 4px 4px 0 0 #000; }
+  .paper .h { display: flex; align-items: stretch; border-bottom: 2px solid var(--k-ink); }
+  .paper .h .t { flex: 1; padding: 8px 10px; }
+  .paper .h .n { border-left: 2px solid var(--k-ink); padding: 8px 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; }
+  .paper .b { padding: 10px 12px; display: grid; grid-template-columns: 130px 1fr; row-gap: 8px; column-gap: 10px; font-size: 16px; align-items: center; }
+  .paper .b .k { font-family: "Pixelify Sans"; font-size: 21px; text-transform: none; color: #7c522c; line-height: 1; }
+  .paper .acts { display: flex; gap: 8px; padding: 0 10px 10px; }
+  .pbtn { font-family: "Silkscreen"; font-size: 16px; padding: 6px 10px; border: 2px solid var(--k-ink); background: var(--k-paper2); box-shadow: 2px 2px 0 0 var(--k-ink); }
+  .pbtn.ink { background: var(--k-ink); color: var(--k-paper); }
+  #tip { left: 1360px; top: 70px; width: 700px; }
+  #mini { left: 2104px; top: 1060px; width: 440px; }
+  #mini img { display: block; width: 400px; height: 200px; image-rendering: pixelated; margin: 8px 18px; }
+  #tb { right: 16px; bottom: 16px; width: 700px; display: grid; grid-template-columns: 1fr auto; }
+  #tb .m { padding: 8px 10px; border-right: 2px solid var(--k-ink); }
+  #tb .s { padding: 8px 14px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; }
+  #tb .r { grid-column: 1 / span 2; display: flex; border-top: 2px solid var(--k-ink); }
+  #tb .r div { padding: 6px 10px; border-left: 2px solid var(--k-ink); font-size: 16px; }
+  #tb .r div:first-child { border-left: 0; }
+  #ticker { left: 150px; bottom: 16px; width: 1678px; height: 44px; display: flex; align-items: center; }
+  #ticker .lab { background: var(--k-acc); color: var(--k-ink); height: 100%; display: flex; align-items: center; padding: 0 12px; }
+  #ticker .run { padding: 0 16px; white-space: nowrap; overflow: hidden; font-size: 16px; }
+  #ticker .run span { color: var(--k-mid); margin: 0 12px; }
+  #laf { left: 16px; top: 1120px; width: 116px; }
+  #laf .bars { display: flex; gap: 10px; justify-content: center; align-items: flex-end; height: 120px; padding: 8px; }
+  #laf .bars div { width: 18px; background: var(--k-panel2); position: relative; height: 100px; }
+  #laf .bars div i { position: absolute; left: 0; right: 0; bottom: 0; }
+  #laf .names { display: flex; gap: 10px; justify-content: center; padding-bottom: 8px; }
+  #laf .names span { width: 18px; text-align: center; }
+</style></head>
+<body>
+<img class="map" src="../pixel/out/m8_map_2x.png">
+<svg class="ov" id="ov"></svg>
+
+<div class="top">
+  <div><svg width="28" height="28" viewBox="0 0 14 14"><rect x="3" y="0" width="7" height="1" fill="#d2d5d6"/><rect x="1" y="1" width="2" height="2" fill="#d2d5d6"/><rect x="10" y="1" width="2" height="2" fill="#d2d5d6"/><rect x="0" y="3" width="1" height="7" fill="#d2d5d6"/><rect x="0" y="6" width="13" height="1" fill="#d2d5d6"/><rect x="7" y="1" width="3" height="5" fill="#d2d5d6"/><rect x="12" y="3" width="1" height="3" fill="#d2d5d6"/><rect x="12" y="5" width="2" height="3" fill="#ffe13a"/><rect x="1" y="10" width="2" height="2" fill="#d2d5d6"/><rect x="3" y="12" width="7" height="1" fill="#d2d5d6"/><rect x="10" y="10" width="2" height="2" fill="#d2d5d6"/><rect x="12" y="7" width="1" height="3" fill="#d2d5d6"/></svg>
+    <span class="px" style="font-size:24px">Tessera</span><span class="px" style="color:#858a8f">Block 07</span></div>
+  <div class="tabs px" style="padding:0 8px"><span class="on">View</span><span>Section</span><span>Patterns</span><span>Timeline</span><span>Sound</span><span>Mods</span></div>
+  <div style="flex:1"></div>
+  <div class="kv2"><span class="l">Funds</span><span class="v">§128,430</span></div>
+  <div class="kv2"><span class="l">Residents</span><span class="v">1,829</span></div>
+  <div><span class="agent px"><svg width="14" height="20" viewBox="0 0 7 10"><path d="M0 0h1v1h1v1h1v1h1v1h1v1h1v1H4v1h1v2H4V8H3V7H2v1H1v1H0z" fill="#ffe13a"/></svg>Claude L25</span>
+       <span class="agent px"><svg width="14" height="20" viewBox="0 0 7 10"><path d="M0 0h1v1h1v1h1v1h1v1h1v1h1v1H4v1h1v2H4V8H3V7H2v1H1v1H0z" fill="#d2d5d6"/></svg>Surveyor L3</span></div>
+  <div class="px"><span style="background:#d2d5d6;color:#0d0e11;padding:6px 8px">1x</span><span style="padding:6px 8px;color:#858a8f">2x</span><span style="padding:6px 8px;color:#858a8f">3x</span></div>
+  <div class="kv2" style="min-width:210px"><span class="l">Y38 Autumn D112</span><span class="v">17:42</span></div>
+</div>
+
+<div class="pn" id="tools"><div class="grid" id="toolgrid"></div><div class="lbl">Select <span style="color:#d2d5d6">V</span></div></div>
+
+<div class="abs" id="slice" style="position:absolute"><div class="cz caution"></div><div class="tx px">Slice on <span style="color:#ffe13a">L8 Tube Quarter</span><span style="color:#858a8f">17 hidden · ghost to L12 · clicks locked</span></div></div>
+
+<div class="pn" id="lv"><div class="hd px">Levels<span class="c">PgUp PgDn</span></div>
+  <div class="ro"><div style="display:flex;align-items:flex-end;gap:10px"><span class="big">L8</span><span class="px" style="padding-bottom:4px">Tube Qtr</span></div>
+    <div style="margin-top:8px;color:#858a8f">FFL +28.00 cut +29.75</div>
+    <div style="display:flex;margin-top:8px;border:2px solid #ffe13a"><div class="caution" style="width:24px"></div><div class="px" style="padding:6px 8px;color:#ffe13a">Slice active</div></div></div>
+  <div id="rows" style="padding:6px 0"></div></div>
+
+<div class="paper" id="tip">
+  <div class="h"><div class="t"><div style="font-family:'Pixelify Sans';font-size:21px;text-transform:none;color:#7c522c">Picked · infill · dwelling</div><div class="px" style="font-size:24px;margin-top:6px">Capsule C-336</div></div>
+    <div class="n"><span>Bay</span><span class="px">F3.L8</span></div></div>
+  <div class="b">
+    <span class="k">Tenants</span><span>Okafor-Lind · 2 res</span>
+    <span class="k">Carried by</span><span>DK1 · col C3 · load 38%</span>
+    <span class="k">Services</span><span>riser R2 · core B · 21 m</span>
+    <span class="k">Light</span><span><svg width="90" height="12"><rect x="0" y="0" width="16" height="12" fill="#0d0e11"/><rect x="18" y="0" width="16" height="12" fill="#0d0e11"/><rect x="36" y="0" width="16" height="12" fill="#0d0e11"/><rect x="54" y="0" width="16" height="12" fill="none" stroke="#0d0e11" stroke-width="2"/><rect x="72" y="0" width="16" height="12" fill="none" stroke="#0d0e11" stroke-width="2"/></svg> void + facade</span>
+    <span class="k">Rent</span><span>§10.3/day · median §9.9</span>
+  </div>
+  <div class="acts"><span class="pbtn ink">Inspect I</span><span class="pbtn">Replace</span><span class="pbtn">Select stack</span><span class="pbtn">Capture</span></div>
+</div>
+
+<div class="pn" id="laf"><div class="hd px">L·A·F</div>
+  <div class="bars"><div><i style="height:31%;background:#f2b447"></i></div><div><i style="height:52%;background:#8cbab5"></i></div><div><i style="height:42%;background:#d2d5d6"></i><b style="position:absolute;left:-4px;right:-4px;bottom:50px;height:2px;background:#ffe13a"></b></div></div>
+  <div class="names px"><span>L</span><span>A</span><span>F</span></div></div>
+
+<div class="pn" id="mini"><div class="hd px">District map<span class="c">Kessler Stack</span></div><img src="../pixel/out/m8_minimap.png"></div>
+
+<div class="paper" id="tb">
+  <div class="m"><div style="font-family:'Pixelify Sans';font-size:21px;text-transform:none;color:#7c522c">Tessera Arcology, Block 07</div><div class="px" style="font-size:24px;margin-top:6px">Classic view · L8</div></div>
+  <div class="s"><span>Sheet</span><span class="px" style="font-size:24px">A-108/px</span></div>
+  <div class="r"><div>kit64</div><div>32 px tile</div><div>2x nearest</div><div>same data as A-108</div></div>
+</div>
+
+<div class="pn" id="ticker"><div class="lab px">News</div><div class="run">Surveyor: Stilt Market daylight down to 38%<span>·</span>Lift bank B queue 23 at 17:40<span>·</span>P-0117 sky bridge awaits approval<span>·</span>Crew C stamps S3 of 8</div></div>
+
+<script src="js/data.js"></script>
+<script>
+(function () {
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (t, a, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const ov = document.getElementById('ov');
+  // map lattice (compose.py): world origin at (548, 870) on the page, 2x pixels; z in metres * 0.866 * 5.657 * 2
+  const M0 = [548, 870];
+  const P = (x, y, lv) => [M0[0] + 32 * (x + y), M0[1] + 16 * (x - y) - lv * 3.5 * 0.8660254 * 5.656854 * 2];
+  const snap = (v) => Math.round(v / 2) * 2;
+  // ---- level strip rows
+  const rows = document.getElementById('rows');
+  const L = window.LEVELS.levels;
+  for (let lv = 25; lv >= -2; lv--) {
+    const d = lv >= 0 ? L[lv] : {};
+    let c = 'row';
+    if (lv === 8) c += ' on'; else if (lv > 8 && lv <= 12) c += ' gh'; else if (lv > 12) c += ' hid';
+    if ([6, 12, 18, 24].includes(lv)) c += ' dk';
+    const f = d.fill ?? null;
+    const ag = lv === 25 ? '<span class="ag">Claude</span>' : lv === 3 ? '<span class="ag w">Surv</span>' : '';
+    rows.insertAdjacentHTML('beforeend', `<div class="${c}"><span class="t">${lv < 0 ? 'B' + (-lv) : 'L' + lv}</span><span class="bar">${f != null ? `<i style="width:${snap(f * 192)}px"></i>` : ''}<b></b></span><span class="v">${f != null ? Math.round(f * 100) + '%' : '--'}</span>${ag}</div>`);
+  }
+  // ---- tool icons (12x12 bitmaps, 3x)
+  const icons = {
+    select: ['1...........', '11..........', '1.1.........', '1..1........', '1...1.......', '1....1......', '1.....1.....', '1..1111.....', '1.1..1......', '11...11.....', '1.....1.....', '......11....'],
+    support: ['11......11..', '11......11..', '11......11..', '1111111111..', '1111111111..', '11......11..', '11......11..', '11......11..', '11......11..', '11......11..', '11......11..', '11......11..'],
+    infill: ['............', '.111111.....', '.1....1.....', '.1....1.....', '.111111111..', '.1....1111..', '.1....1111..', '.111111111..', '......1111..', '......1111..', '............', '............'],
+    transit: ['...1111.....', '..1....1....', '.1......1...', '1.111111.1..', '1.1....1.1..', '1.111111.1..', '1........1..', '.1......1...', '..1....1....', '...1111.....', '..1....1....', '.1......1...'],
+    services: ['1...1...1...', '1...1...1...', '1...1...1...', '1...1...1...', '111111111...', '1...1...1...', '1...1...1...', '1...1...1...', '1...1...1...', '1...1...1...', '1...1...1...', '1...1...1...'],
+    patterns: ['111.1.111...', '1...1...1...', '1.......1...', '............', '111.1.111...', '1111111111..', '1111111111..', '1111111111..', '............', '111.1.111...', '1.......1...', '111.1.111...'],
+    level: ['.....1......', '....111.....', '...11111....', '.....1......', '.....1......', '111111111...', '............', '111111111...', '.....1......', '...11111....', '....111.....', '.....1......'],
+    slice: ['............', '1.1.1.1.1...', '............', '111111111...', '1.......1...', '1.......1...', '111111111...', '1.......1...', '1.......1...', '111111111...', '............', '............'],
+    ghost: ['1.1.1.1.1...', '.........1..', '1.........1.', '..........1.', '1.........1.', '..........1.', '1.........1.', '..........1.', '1.1.1.1.1.1.', '............', '............', '............'],
+    demolish: ['11......11..', '.11....11...', '..11..11....', '...1111.....', '....11......', '...1111.....', '..11..11....', '.11....11...', '11......11..', '............', '............', '............'],
+    agent: ['1...........', '11..........', '111.........', '1111........', '11111.......', '111111......', '1111111.....', '1111........', '11.11.......', '1...11......', '.....11.....', '............'],
+    mods: ['..111111....', '.1......1...', '1..1..1..1..', '1........1..', '1.111111.1..', '1........1..', '.1......1...', '..111111....', '....11......', '...1111.....', '............', '............'],
+  };
+  const tg = document.getElementById('toolgrid');
+  Object.entries(icons).forEach(([n, bm], i) => {
+    const b = document.createElement('div'); b.className = 'b' + (n === 'select' ? ' on' : '');
+    const s = el('svg', { width: 36, height: 36, viewBox: '0 0 12 12' }, b);
+    bm.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === '1') el('rect', { x, y, width: 1, height: 1, fill: n === 'select' ? '#0d0e11' : (n === 'ghost' ? '#8aa9c4' : n === 'agent' ? '#ffe13a' : '#d2d5d6') }, s); }));
+    tg.appendChild(b);
+  });
+  // ---- picked capsule C-336 (x14 y7, L8): pixel outline of its cut top + leader to the paper tooltip
+  const q = [P(14, 7, 8.5), P(15, 7, 8.5), P(15, 8, 8.5), P(14, 8, 8.5)].map(p => [snap(p[0]), snap(p[1])]);
+  el('polygon', { points: q.map(p => p.join(',')).join(' '), fill: 'none', stroke: '#ffe13a', 'stroke-width': 4 }, ov);
+  const lo = [P(14, 7, 8), P(15, 7, 8), P(15, 8, 8)].map(p => [snap(p[0]), snap(p[1])]);
+  el('polyline', { points: [q[0], lo[0], lo[1], lo[2], q[2]].map(p => p.join(',')).join(' '), fill: 'none', stroke: '#ffe13a', 'stroke-width': 4 }, ov);
+  el('line', { x1: lo[1][0], y1: lo[1][1], x2: q[1][0], y2: q[1][1], stroke: '#ffe13a', 'stroke-width': 4 }, ov);
+  const tipL = [1392, 300];
+  el('polyline', { points: `${q[2][0]},${q[2][1]} ${q[2][0]},${tipL[1]} ${tipL[0]},${tipL[1]}`, fill: 'none', stroke: '#ffe13a', 'stroke-width': 4 }, ov);
+  el('rect', { x: q[2][0] - 6, y: q[2][1] - 6, width: 12, height: 12, fill: '#ffe13a' }, ov);
+  // player cursor (pixel arrow, white) on the capsule
+  const cur = (x, y, col, s) => { const g = el('g', { transform: `translate(${x},${y}) scale(${s})` }, ov);
+    el('path', { d: 'M0 0h1v1h1v1h1v1h1v1h1v1h1v1h1v1H5v1h1v2H5v-1H4V9H3v1H2v1H1v1H0z', fill: '#0d0e11', transform: 'translate(-0.5,-0.5) scale(1.12)' }, g);
+    el('path', { d: 'M0 0h1v1h1v1h1v1h1v1h1v1h1v1h1v1H5v1h1v2H5v-1H4V9H3v1H2v1H1v1H0z', fill: col }, g); return g; };
+  cur(q[1][0] + 6, q[1][1] + 6, '#ffffff', 3);
+  // ---- Claude placing the queued stamp (pixel ghost across the canal, tiles 12-13, y -12)
+  const gp = P(13, -11.5, 5.2);
+  cur(snap(gp[0]) + 10, snap(gp[1]), '#ffe13a', 3);
+  const fx = snap(gp[0]) + 40, fy = snap(gp[1]) + 30;
+  el('rect', { x: fx, y: fy, width: 212, height: 26, fill: '#ffe13a' }, ov);
+  const t1 = el('text', { x: fx + 8, y: fy + 19, 'font-family': 'Silkscreen', 'font-size': 16, fill: '#0d0e11' }, ov); t1.textContent = 'CLAUDE';
+  el('rect', { x: fx, y: fy + 26, width: 330, height: 26, fill: '#1f2126', stroke: '#ffe13a', 'stroke-width': 2 }, ov);
+  const t2 = el('text', { x: fx + 8, y: fy + 45, 'font-family': 'Silkscreen', 'font-size': 16, fill: '#d2d5d6' }, ov); t2.textContent = 'PLACING P-12 STAMP';
+  // ghost tag
+  const gt = P(12.2, -12.8, 0.3);
+  el('rect', { x: snap(gt[0]) - 250, y: snap(gt[1]) + 16, width: 300, height: 30, fill: '#1f2126', stroke: '#8aa9c4', 'stroke-width': 2 }, ov);
+  const t3 = el('text', { x: snap(gt[0]) - 240, y: snap(gt[1]) + 38, 'font-family': 'Silkscreen', 'font-size': 16, fill: '#8aa9c4' }, ov); t3.textContent = 'GHOST - QUEUED S9';
+})();
+</script>
+</body></html>

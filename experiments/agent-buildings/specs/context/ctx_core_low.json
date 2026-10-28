@@ -1,0 +1,84 @@
+{
+ "meta": {
+  "name": "ctx_core_low",
+  "kind": "context-sprite",
+  "style": "sprite",
+  "seed": 8,
+  "grid": {
+   "cell": 4.0,
+   "level": 3.5
+  },
+  "footprint": {
+   "x": 0,
+   "y": 0,
+   "w": 2,
+   "d": 2,
+   "max_levels": 6,
+   "overhang": 0.5
+  },
+  "light": "studio",
+  "description": "Low service core whose roof is the bridge landing (level 5)"
+ },
+ "parts": [
+  {
+   "type": "core",
+   "x": 0,
+   "y": 0,
+   "level": 0,
+   "w": 2,
+   "d": 2,
+   "h": 5,
+   "material": "concrete",
+   "params": {
+    "cabs": 1,
+    "louvre": 3,
+    "cap": false
+   }
+  },
+  {
+   "type": "slab",
+   "x": 0,
+   "y": 0,
+   "level": 5,
+   "w": 2,
+   "d": 2,
+   "h": 0.1,
+   "material": "concrete_light",
+   "params": {
+    "t": 0.25,
+    "rail": "sne"
+   }
+  },
+  {
+   "type": "capsule",
+   "x": 1.2,
+   "y": 1.2,
+   "level": 5,
+   "w": 0.7,
+   "d": 0.7,
+   "h": 0.8,
+   "material": "concrete",
+   "params": {
+    "win": "grid",
+    "lit": 0.6,
+    "interior": false
+   }
+  },
+  {
+   "type": "capsule",
+   "x": 0.3,
+   "y": -0.4,
+   "level": 1.5,
+   "w": 1.0,
+   "d": 0.4,
+   "h": 1.8,
+   "material": "k_cream",
+   "params": {
+    "win": "grid",
+    "lit": 0.6,
+    "interior": false,
+    "ac": 0.5
+   }
+  }
+ ]
+}

@@ -1,0 +1,422 @@
+{
+ "bridge_market_r0": {
+  "origin": [
+   10.0,
+   52.0
+  ],
+  "size": [
+   116,
+   102
+  ]
+ },
+ "bridge_market_r1": {
+  "origin": [
+   10.0,
+   68.0
+  ],
+  "size": [
+   116,
+   102
+  ]
+ },
+ "bridge_market_r2": {
+  "origin": [
+   10.0,
+   52.0
+  ],
+  "size": [
+   116,
+   102
+  ]
+ },
+ "bridge_market_r3": {
+  "origin": [
+   10.0,
+   68.0
+  ],
+  "size": [
+   116,
+   102
+  ]
+ },
+ "ctx_core_low_r0": {
+  "origin": [
+   16.0,
+   133.0
+  ],
+  "size": [
+   96,
+   160
+  ]
+ },
+ "ctx_core_low_r1": {
+  "origin": [
+   16.0,
+   133.0
+  ],
+  "size": [
+   96,
+   160
+  ]
+ },
+ "ctx_core_r0": {
+  "origin": [
+   16.0,
+   182.0
+  ],
+  "size": [
+   96,
+   210
+  ]
+ },
+ "ctx_core_r1": {
+  "origin": [
+   16.0,
+   182.0
+  ],
+  "size": [
+   96,
+   210
+  ]
+ },
+ "ctx_riser_r0": {
+  "origin": [
+   7.0,
+   120.0
+  ],
+  "size": [
+   46,
+   134
+  ]
+ },
+ "ctx_riser_r1": {
+  "origin": [
+   7.0,
+   120.0
+  ],
+  "size": [
+   46,
+   134
+  ]
+ },
+ "ctx_tenement_r0": {
+  "origin": [
+   10.0,
+   107.0
+  ],
+  "size": [
+   116,
+   140
+  ]
+ },
+ "ctx_tenement_r1": {
+  "origin": [
+   10.0,
+   107.0
+  ],
+  "size": [
+   116,
+   140
+  ]
+ },
+ "ctx_tubeA_pier_r0": {
+  "origin": [
+   10.0,
+   59.0
+  ],
+  "size": [
+   52,
+   76
+  ]
+ },
+ "ctx_tubeA_pier_r1": {
+  "origin": [
+   10.0,
+   59.0
+  ],
+  "size": [
+   52,
+   76
+  ]
+ },
+ "ctx_tubeA_r0": {
+  "origin": [
+   10.0,
+   59.0
+  ],
+  "size": [
+   52,
+   56
+  ]
+ },
+ "ctx_tubeA_r1": {
+  "origin": [
+   10.0,
+   59.0
+  ],
+  "size": [
+   52,
+   56
+  ]
+ },
+ "ctx_tubeB_pier_r0": {
+  "origin": [
+   10.0,
+   97.0
+  ],
+  "size": [
+   52,
+   114
+  ]
+ },
+ "ctx_tubeB_pier_r1": {
+  "origin": [
+   10.0,
+   97.0
+  ],
+  "size": [
+   52,
+   114
+  ]
+ },
+ "ctx_tubeB_r0": {
+  "origin": [
+   10.0,
+   97.0
+  ],
+  "size": [
+   52,
+   56
+  ]
+ },
+ "ctx_tubeB_r1": {
+  "origin": [
+   10.0,
+   97.0
+  ],
+  "size": [
+   52,
+   56
+  ]
+ },
+ "ctx_wallblock_r0": {
+  "origin": [
+   10.0,
+   181.0
+  ],
+  "size": [
+   100,
+   214
+  ]
+ },
+ "ctx_wallblock_r1": {
+  "origin": [
+   10.0,
+   189.0
+  ],
+  "size": [
+   100,
+   214
+  ]
+ },
+ "hanging_garden_r0": {
+  "origin": [
+   11.0,
+   135.0
+  ],
+  "size": [
+   70,
+   158
+  ]
+ },
+ "hanging_garden_r1": {
+  "origin": [
+   11.0,
+   143.0
+  ],
+  "size": [
+   70,
+   158
+  ]
+ },
+ "hanging_garden_r2": {
+  "origin": [
+   11.0,
+   135.0
+  ],
+  "size": [
+   70,
+   158
+  ]
+ },
+ "hanging_garden_r3": {
+  "origin": [
+   11.0,
+   143.0
+  ],
+  "size": [
+   70,
+   158
+  ]
+ },
+ "hydro_stack_r0": {
+  "origin": [
+   22.0,
+   134.0
+  ],
+  "size": [
+   108,
+   164
+  ]
+ },
+ "hydro_stack_r1": {
+  "origin": [
+   22.0,
+   134.0
+  ],
+  "size": [
+   108,
+   164
+  ]
+ },
+ "hydro_stack_r2": {
+  "origin": [
+   22.0,
+   134.0
+  ],
+  "size": [
+   108,
+   164
+  ]
+ },
+ "hydro_stack_r3": {
+  "origin": [
+   22.0,
+   134.0
+  ],
+  "size": [
+   108,
+   164
+  ]
+ },
+ "rooftop_village_r0": {
+  "origin": [
+   10.0,
+   75.0
+  ],
+  "size": [
+   116,
+   108
+  ]
+ },
+ "rooftop_village_r1": {
+  "origin": [
+   10.0,
+   75.0
+  ],
+  "size": [
+   116,
+   108
+  ]
+ },
+ "rooftop_village_r2": {
+  "origin": [
+   10.0,
+   75.0
+  ],
+  "size": [
+   116,
+   108
+  ]
+ },
+ "rooftop_village_r3": {
+  "origin": [
+   10.0,
+   75.0
+  ],
+  "size": [
+   116,
+   108
+  ]
+ },
+ "solar_chimney_r0": {
+  "origin": [
+   13.0,
+   148.0
+  ],
+  "size": [
+   90,
+   174
+  ]
+ },
+ "solar_chimney_r1": {
+  "origin": [
+   13.0,
+   148.0
+  ],
+  "size": [
+   90,
+   174
+  ]
+ },
+ "solar_chimney_r2": {
+  "origin": [
+   13.0,
+   148.0
+  ],
+  "size": [
+   90,
+   174
+  ]
+ },
+ "solar_chimney_r3": {
+  "origin": [
+   13.0,
+   148.0
+  ],
+  "size": [
+   90,
+   174
+  ]
+ },
+ "tube_interchange_r0": {
+  "origin": [
+   26.0,
+   138.0
+  ],
+  "size": [
+   148,
+   178
+  ]
+ },
+ "tube_interchange_r1": {
+  "origin": [
+   26.0,
+   138.0
+  ],
+  "size": [
+   148,
+   178
+  ]
+ },
+ "tube_interchange_r2": {
+  "origin": [
+   26.0,
+   138.0
+  ],
+  "size": [
+   148,
+   178
+  ]
+ },
+ "tube_interchange_r3": {
+  "origin": [
+   26.0,
+   138.0
+  ],
+  "size": [
+   148,
+   178
+  ]
+ }
+}

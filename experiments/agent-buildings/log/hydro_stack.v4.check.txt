@@ -1,0 +1,7 @@
+validate specs/drafts/hydro_stack.v4.json  (revision 4)
+  stock agent_check.py: FAIL (18 errors, 16 of them on context parts, 0 warnings)
+  (stock support error overruled - part is attached to host/context structure: #19 pipe: unsupported - its base is at 1.75 m but the nearest top below is at 0.00 m (gap 1.75 m = 0.50 levels))
+  (stock support error overruled - part is attached to host/context structure: #20 pipe: unsupported - its base is at 8.75 m but the nearest top below is at 2.10 m (gap 6.65 m = 1.90 levels))
+  note   38 parts (11 context), 0 oriented; 5 attach to the host directly
+  note   38 parts (detail 6, infill 18, service 6, support 8); height 21.0 m
+  => PASS (0 errors, 0 warnings)

@@ -1,0 +1,192 @@
+{
+ "defaults": {},
+ "jobs": [
+  {
+   "spec": "specs/drafts/tube_interchange.v5.json",
+   "out": "out/iter/tube_interchange_v5_concept.png",
+   "light": "golden",
+   "style": "arcology",
+   "res": [
+    1000,
+    750
+   ],
+   "samples": 24,
+   "camera": {
+    "target": [
+     6.0,
+     6.0,
+     6.0
+    ],
+    "ortho_scale": 58
+   }
+  },
+  {
+   "spec": "specs/drafts/tube_interchange.v5.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/iter/tube_interchange_v5_r0_lo.png",
+   "res": [
+    148,
+    178
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/iter/tube_interchange_v5_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/drafts/tube_interchange.v5.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/iter/tube_interchange_v5_r0_hi.png",
+   "res": [
+    888,
+    1068
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/drafts/tube_interchange.v5.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/iter/tube_interchange_v5_r1_lo.png",
+   "res": [
+    148,
+    178
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/iter/tube_interchange_v5_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/drafts/tube_interchange.v5.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/iter/tube_interchange_v5_r1_hi.png",
+   "res": [
+    888,
+    1068
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     2.9375,
+     9.0625,
+     7.50156
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  }
+ ]
+}

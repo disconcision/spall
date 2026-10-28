@@ -1,0 +1,290 @@
+{
+ "totals": {
+  "buildings": 6,
+  "drafts": 22,
+  "validator_runs": 23,
+  "render_rounds": 15,
+  "visual_reviews": 16,
+  "first_run_extended_pass": 4,
+  "first_run_stock_pass": 0,
+  "mistakes": 13,
+  "mistakes_by_class": {
+   "height": 2,
+   "scale": 2,
+   "orientation": 3,
+   "floating": 3,
+   "overlap": 2,
+   "circulation": 1
+  },
+  "mistakes_caught_by": {
+   "validator": 6,
+   "looking at renders": 5,
+   "own review": 2
+  },
+  "parts_total": 177
+ },
+ "per_building": {
+  "hydro_stack": {
+   "drafts": 4,
+   "final": "v4",
+   "validator_runs": 5,
+   "render_rounds": 3,
+   "visual_reviews": 3,
+   "first_run_extended_pass": false,
+   "first_run_stock_pass": false,
+   "first_run_stock_errors": 14,
+   "first_run_stock_context_errors": 11,
+   "extended_errors_total": 6,
+   "parts": 27,
+   "context_parts": 11,
+   "extensions": [
+    "growpod"
+   ],
+   "mistakes": [
+    {
+     "draft": "v1",
+     "cls": "height",
+     "what": "header tank on top of the core: stack needs 5.5 levels, declared 5 (would not fit the undercroft)",
+     "caught_by": "validator (+logic cross-check)"
+    }
+   ]
+  },
+  "bridge_market": {
+   "drafts": 3,
+   "final": "v3",
+   "validator_runs": 3,
+   "render_rounds": 3,
+   "visual_reviews": 3,
+   "first_run_extended_pass": true,
+   "first_run_stock_pass": false,
+   "first_run_stock_errors": 4,
+   "first_run_stock_context_errors": 4,
+   "extended_errors_total": 0,
+   "parts": 36,
+   "context_parts": 5,
+   "extensions": [
+    "lantern"
+   ],
+   "mistakes": [
+    {
+     "draft": "v1",
+     "cls": "scale",
+     "what": "counters + slab canopies on 0.28 m posts read as floating tables over crates",
+     "caught_by": "looking"
+    },
+    {
+     "draft": "v1",
+     "cls": "orientation",
+     "what": "front stall row turned its backs to the r0 camera and hid the aisle",
+     "caught_by": "looking"
+    }
+   ]
+  },
+  "hanging_garden": {
+   "drafts": 4,
+   "final": "v4",
+   "validator_runs": 4,
+   "render_rounds": 2,
+   "visual_reviews": 3,
+   "first_run_extended_pass": true,
+   "first_run_stock_pass": false,
+   "first_run_stock_errors": 4,
+   "first_run_stock_context_errors": 2,
+   "extended_errors_total": 1,
+   "parts": 33,
+   "context_parts": 6,
+   "extensions": [
+    "vines"
+   ],
+   "mistakes": [
+    {
+     "draft": "v1",
+     "cls": "orientation",
+     "what": "garden grew off the +x face, which every light preset leaves in shadow",
+     "caught_by": "looking"
+    },
+    {
+     "draft": "v2",
+     "cls": "floating",
+     "what": "irrigation riser placed just past the trellis end, touching it only along an edge",
+     "caught_by": "validator (build-order check)"
+    }
+   ]
+  },
+  "tube_interchange": {
+   "drafts": 5,
+   "final": "v5",
+   "validator_runs": 5,
+   "render_rounds": 3,
+   "visual_reviews": 3,
+   "first_run_extended_pass": false,
+   "first_run_stock_pass": false,
+   "first_run_stock_errors": 2,
+   "first_run_stock_context_errors": 0,
+   "extended_errors_total": 5,
+   "parts": 23,
+   "context_parts": 20,
+   "extensions": [
+    "sprite glass remap"
+   ],
+   "mistakes": [
+    {
+     "draft": "v1",
+     "cls": "floating",
+     "what": "upper platform 12.5 m up had no supports of its own",
+     "caught_by": "validator"
+    },
+    {
+     "draft": "v1",
+     "cls": "overlap",
+     "what": "stair flight ran straight through the concourse hall",
+     "caught_by": "my own review (validator blind: stairs are non-solid)"
+    },
+    {
+     "draft": "v1",
+     "cls": "circulation",
+     "what": "stair top landed 0.6 m short of platform A, in mid-air",
+     "caught_by": "my own review (not checkable yet)"
+    },
+    {
+     "draft": "v2",
+     "cls": "floating",
+     "what": "the landing slab I added was itself unsupported",
+     "caught_by": "validator"
+    },
+    {
+     "draft": "v3",
+     "cls": "orientation",
+     "what": "lift tower on the SE corner sat on the r0 sight-line and hid the crossing",
+     "caught_by": "looking"
+    },
+    {
+     "draft": "v3",
+     "cls": "scale",
+     "what": "concourse kiosk toy-sized next to 4 m tubes",
+     "caught_by": "looking"
+    }
+   ]
+  },
+  "solar_chimney": {
+   "drafts": 4,
+   "final": "v4",
+   "validator_runs": 4,
+   "render_rounds": 3,
+   "visual_reviews": 2,
+   "first_run_extended_pass": true,
+   "first_run_stock_pass": false,
+   "first_run_stock_errors": 42,
+   "first_run_stock_context_errors": 42,
+   "extended_errors_total": 2,
+   "parts": 22,
+   "context_parts": 58,
+   "extensions": [
+    "sunpipe_px"
+   ],
+   "mistakes": [
+    {
+     "draft": "v1",
+     "cls": "overlap",
+     "what": "roof collar at level 6.03 sank 0.2 m into the host roof deck",
+     "caught_by": "validator (stock overlap warning)"
+    },
+    {
+     "draft": "v3",
+     "cls": "height",
+     "what": "new chimney stack topped out at 25.2 m over a 24.5 m (7-level) declaration",
+     "caught_by": "validator (+logic cross-check)"
+    }
+   ]
+  },
+  "rooftop_village": {
+   "drafts": 2,
+   "final": "v2",
+   "validator_runs": 2,
+   "render_rounds": 1,
+   "visual_reviews": 2,
+   "first_run_extended_pass": true,
+   "first_run_stock_pass": false,
+   "first_run_stock_errors": 2,
+   "first_run_stock_context_errors": 0,
+   "extended_errors_total": 0,
+   "parts": 36,
+   "context_parts": 21,
+   "extensions": [
+    "lantern",
+    "vines"
+   ],
+   "mistakes": []
+  }
+ },
+ "other_problems": [
+  {
+   "kind": "validator blind spot",
+   "what": "stock checker has no host/context notion: 11-42 errors per spec on host parts (cores, walls, decks, roofs)"
+  },
+  {
+   "kind": "validator blind spot",
+   "what": "stock checker cannot see bridges/walkways bearing between two parts (bridge not a flat type, 0.5 m lateral rule)"
+  },
+  {
+   "kind": "validator blind spot",
+   "what": "stock checker measures sideways/hanging parts with the upright box (false height errors; blind to their support)"
+  },
+  {
+   "kind": "validator blind spot",
+   "what": "stock schema bug: \"wall\" uses the block builder but rejects its rib_w/rib_d params"
+  },
+  {
+   "kind": "validator blind spot",
+   "what": "non-solid parts (stairs, bridges, greenhouses, lift frames) are never overlap-checked"
+  },
+  {
+   "kind": "kit limit",
+   "what": "no sprite-safe glazing: greenhouse glass + grow-lights vanish/speckle at 32 px -> growpod part"
+  },
+  {
+   "kind": "kit limit",
+   "what": "no lantern or string-light part (antenna beacons = 2 px dots) -> lantern part"
+  },
+  {
+   "kind": "kit limit",
+   "what": "vines only as lightwell rims, random 2-9 m, pole-like -> vines part (climbing / trailing)"
+  },
+  {
+   "kind": "kit limit",
+   "what": "no mirror/heliostat: solar panels recoloured via an undocumented meta.style_overrides remap"
+  },
+  {
+   "kind": "kit limit",
+   "what": "no market stall/awning, bracket, ladder, landing or door parts (composed from shacks, ramps, stairs, slabs)"
+  },
+  {
+   "kind": "kit limit",
+   "what": "stock lightwell glow is BLENDED transparency: invisible or hazy in 32 px sprites"
+  },
+  {
+   "kind": "renderer/palette",
+   "what": "stock growlight renders (238,209,230) under AgX and locks to white -> calibrated growlight_px"
+  },
+  {
+   "kind": "renderer/palette",
+   "what": "dithered-alpha glass becomes kit64 noise -> sprite jobs remap to opaque calibrated glass_px (then re-tuned to lock blue)"
+  },
+  {
+   "kind": "renderer/palette",
+   "what": "emissives shared the \"lamp\" strength (x5 at dusk) and bleached -> own \"lantern\" emission key"
+  },
+  {
+   "kind": "renderer/palette",
+   "what": "\"lamp\" core washed to white -> calibrated sunpipe_px warm yellow"
+  },
+  {
+   "kind": "renderer/palette",
+   "what": "nearest-colour kit64 lock speckles mottled greys/whites (stock farm too) - not fixed"
+  },
+  {
+   "kind": "camera/framing",
+   "what": "fixed 2:1 camera: a core taller than a bridge always hides its near end (concept: frontal camera; mock: low east core)"
+  }
+ ]
+}

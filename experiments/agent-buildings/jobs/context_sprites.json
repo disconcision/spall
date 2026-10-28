@@ -1,0 +1,779 @@
+{
+ "defaults": {},
+ "jobs": [
+  {
+   "spec": "specs/context/ctx_core.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_core_r0_lo.png",
+   "res": [
+    96,
+    210
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -0.8125,
+     8.8125,
+     11.78817
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_core_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_core.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_core_r1_lo.png",
+   "res": [
+    96,
+    210
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -0.8125,
+     8.8125,
+     11.78817
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_core_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_core_low.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_core_low_r0_lo.png",
+   "res": [
+    96,
+    160
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.6875,
+     7.3125,
+     8.11394
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_core_low_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_core_low.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     2,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_core_low_r1_lo.png",
+   "res": [
+    96,
+    160
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.6875,
+     7.3125,
+     8.11394
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_core_low_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_riser.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_riser_r0_lo.png",
+   "res": [
+    46,
+    134
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -1.3125,
+     5.3125,
+     8.11394
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_riser_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_riser.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_riser_r1_lo.png",
+   "res": [
+    46,
+    134
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -1.3125,
+     5.3125,
+     8.11394
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_riser_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_tenement.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_tenement_r0_lo.png",
+   "res": [
+    116,
+    140
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     3.6875,
+     8.3125,
+     5.66445
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_tenement_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_tenement.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_tenement_r1_lo.png",
+   "res": [
+    116,
+    140
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     3.6875,
+     8.3125,
+     5.66445
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_tenement_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_tubeA.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_tubeA_r0_lo.png",
+   "res": [
+    52,
+    56
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.0625,
+     3.9375,
+     4.74589
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_tubeA_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_tubeA.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_tubeA_r1_lo.png",
+   "res": [
+    52,
+    56
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.0625,
+     3.9375,
+     4.74589
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_tubeA_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_tubeA_pier.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_tubeA_pier_r0_lo.png",
+   "res": [
+    52,
+    76
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.6875,
+     3.3125,
+     3.21496
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_tubeA_pier_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_tubeA_pier.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_tubeA_pier_r1_lo.png",
+   "res": [
+    52,
+    76
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     0.6875,
+     3.3125,
+     3.21496
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_tubeA_pier_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_tubeB.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_tubeB_r0_lo.png",
+   "res": [
+    52,
+    56
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -2.3125,
+     6.3125,
+     10.56343
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_tubeB_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_tubeB.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_tubeB_r1_lo.png",
+   "res": [
+    52,
+    56
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -2.3125,
+     6.3125,
+     10.56343
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_tubeB_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_tubeB_pier.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_tubeB_pier_r0_lo.png",
+   "res": [
+    52,
+    114
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -0.5,
+     4.5,
+     6.12372
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_tubeB_pier_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_tubeB_pier.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     1,
+     1
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_tubeB_pier_r1_lo.png",
+   "res": [
+    52,
+    114
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -0.5,
+     4.5,
+     6.12372
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_tubeB_pier_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_wallblock.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     3,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_wallblock_r0_lo.png",
+   "res": [
+    100,
+    214
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     1.125,
+     8.875,
+     11.94126
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_wallblock_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/context/ctx_wallblock.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     3,
+     2
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/sprites/ctx_wallblock_r1_lo.png",
+   "res": [
+    100,
+    214
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     -0.875,
+     10.875,
+     11.94126
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/sprites/ctx_wallblock_r1_lo.cam.json"
+  }
+ ]
+}

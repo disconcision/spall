@@ -1,0 +1,101 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 32
+ },
+ "jobs": [
+  {
+   "spec": "specs/a_block.json",
+   "out": "out/a/a1_blocky.png",
+   "style": "brut",
+   "light": "crisp",
+   "samples": 40,
+   "frame_bb": [
+    -8,
+    -10,
+    0,
+    106,
+    62,
+    58
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.0,
+    "zoom": 0.86
+   }
+  },
+  {
+   "spec": "specs/a_block.json",
+   "out": "out/a/a2_chamfered.png",
+   "style": "brut_hewn",
+   "light": "crisp",
+   "samples": 40,
+   "frame_bb": [
+    -8,
+    -10,
+    0,
+    106,
+    62,
+    58
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.0,
+    "zoom": 0.86
+   }
+  },
+  {
+   "spec": "specs/a_block_tetra.json",
+   "out": "out/a/a3_tetrapod.png",
+   "style": "brut_hewn",
+   "light": "crisp",
+   "samples": 40,
+   "frame_bb": [
+    -8,
+    -10,
+    0,
+    106,
+    62,
+    58
+   ],
+   "frame_clip": false,
+   "camera": {
+    "margin": 0.0,
+    "zoom": 0.86
+   }
+  },
+  {
+   "spec": "specs/a_block.json",
+   "out": "out/a/a2b_chamfered_close.png",
+   "style": "brut_hewn",
+   "light": "crisp_warm",
+   "samples": 40,
+   "camera": {
+    "target": [
+     40,
+     20,
+     30
+    ],
+    "ortho_scale": 62
+   }
+  },
+  {
+   "spec": "specs/a_block_tetra.json",
+   "out": "out/a/a3b_tetrapod_close.png",
+   "style": "brut_hewn",
+   "light": "crisp_warm",
+   "samples": 40,
+   "camera": {
+    "target": [
+     30,
+     8,
+     12
+    ],
+    "ortho_scale": 58
+   }
+  }
+ ]
+}

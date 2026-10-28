@@ -1,0 +1,55 @@
+{
+ "spec": "specs/rooftop_village.json",
+ "revision": 2,
+ "stock": {
+  "errors": [
+   "#1 capsule: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#2 capsule: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#3 capsule: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#4 capsule: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#5 capsule: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#6 capsule: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#7 antenna: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#8 antenna: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#9 antenna: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#10 antenna: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#11 antenna: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#12 antenna: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#13 antenna: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#14 tank: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#15 tank: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#15 tank: top at 12.2 m exceeds max_levels (10.5 m)",
+   "#16 tank: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#17 shack: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#18 shack: leaves the 3x3 footprint by more than the 0.5-cell overhang allowance",
+   "#18 shack: top at 12.9 m exceeds max_levels (10.5 m)",
+   "#30 bridge: unsupported - its base is at 2.98 m but the nearest top below is at 0.00 m (gap 2.98 m = 0.85 levels)",
+   "#55 figure: unsupported - its base is at 2.98 m but the nearest top below is at 0.00 m (gap 2.98 m = 0.85 levels)"
+  ],
+  "warnings": [],
+  "notes": [
+   "57 parts (detail 26, infill 17, landscape 5, service 6, support 1, transit 2); height 14.4 m"
+  ],
+  "pass_": false,
+  "context_errors": 20,
+  "overruled": [
+   "#30 bridge: unsupported - its base is at 2.98 m but the nearest top below is at 0.00 m (gap 2.98 m = 0.85 levels)",
+   "#55 figure: unsupported - its base is at 2.98 m but the nearest top below is at 0.00 m (gap 2.98 m = 0.85 levels)"
+  ]
+ },
+ "extended": {
+  "errors": [],
+  "warnings": [],
+  "notes": [
+   "57 parts (21 context), 0 oriented; 21 attach to the host directly"
+  ]
+ },
+ "logic": {
+  "errors": [],
+  "warnings": []
+ },
+ "errors": [],
+ "warnings": [],
+ "pass_": true,
+ "categories": {}
+}

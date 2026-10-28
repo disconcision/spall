@@ -1,0 +1,7 @@
+validate specs/drafts/rooftop_village.v1.json  (revision 1)
+  stock agent_check.py: FAIL (2 errors, 0 warnings)
+  (stock support error overruled - part is attached to host/context structure: #10 bridge: unsupported - its base is at 2.98 m but the nearest top below is at 0.00 m (gap 2.98 m = 0.85 levels))
+  (stock support error overruled - part is attached to host/context structure: #35 figure: unsupported - its base is at 2.98 m but the nearest top below is at 0.00 m (gap 2.98 m = 0.85 levels))
+  note   37 parts (1 context), 0 oriented; 20 attach to the host directly
+  note   37 parts (detail 17, infill 9, landscape 5, service 3, support 1, transit 2); height 6.8 m
+  => PASS (0 errors, 0 warnings)

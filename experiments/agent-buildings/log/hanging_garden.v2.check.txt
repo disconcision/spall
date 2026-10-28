@@ -1,0 +1,9 @@
+validate specs/drafts/hanging_garden.v2.json  (revision 2)
+  stock agent_check.py: FAIL (9 errors, 2 of them on context parts, 2 warnings)
+  (stock support error overruled - part is attached to host/context structure: #8 pipe: unsupported - its base is at 1.05 m but the nearest top below is at 0.00 m (gap 1.05 m = 0.30 levels))
+  ERROR  #8 pipe (step "anchors") would be built before its support #27 terrace (step "wall growth")
+  warn   #1 wall: param "rib_w" is ignored by the renderer (did you mean "ribs"?)
+  warn   #1 wall: param "rib_d" is ignored by the renderer (did you mean "ribs"?)
+  note   34 parts (1 context), 13 oriented; 0 attach to the host directly
+  note   34 parts (landscape 22, service 1, support 5, transit 6); height 28.0 m
+  => FAIL (1 errors, 2 warnings)

@@ -1,0 +1,187 @@
+{
+ "levels": [
+  {
+   "level": 0,
+   "fill": 0.406,
+   "cells": 101,
+   "residents": 192,
+   "light": 31
+  },
+  {
+   "level": 1,
+   "fill": 0.345,
+   "cells": 86,
+   "residents": 163,
+   "light": 28
+  },
+  {
+   "level": 2,
+   "fill": 0.221,
+   "cells": 55,
+   "residents": 104,
+   "light": 31
+  },
+  {
+   "level": 3,
+   "fill": 0.096,
+   "cells": 24,
+   "residents": 46,
+   "light": 38
+  },
+  {
+   "level": 4,
+   "fill": 0.056,
+   "cells": 14,
+   "residents": 27,
+   "light": 29
+  },
+  {
+   "level": 5,
+   "fill": 0.0,
+   "cells": 0,
+   "residents": 0,
+   "light": null
+  },
+  {
+   "level": 6,
+   "fill": 0.39,
+   "cells": 97,
+   "residents": 184,
+   "light": 30
+  },
+  {
+   "level": 7,
+   "fill": 0.277,
+   "cells": 69,
+   "residents": 131,
+   "light": 29
+  },
+  {
+   "level": 8,
+   "fill": 0.209,
+   "cells": 52,
+   "residents": 99,
+   "light": 31
+  },
+  {
+   "level": 9,
+   "fill": 0.129,
+   "cells": 32,
+   "residents": 61,
+   "light": 31
+  },
+  {
+   "level": 10,
+   "fill": 0.028,
+   "cells": 7,
+   "residents": 13,
+   "light": 29
+  },
+  {
+   "level": 11,
+   "fill": 0.0,
+   "cells": 0,
+   "residents": 0,
+   "light": null
+  },
+  {
+   "level": 12,
+   "fill": 0.356,
+   "cells": 83,
+   "residents": 158,
+   "light": 17
+  },
+  {
+   "level": 13,
+   "fill": 0.309,
+   "cells": 72,
+   "residents": 137,
+   "light": 19
+  },
+  {
+   "level": 14,
+   "fill": 0.219,
+   "cells": 51,
+   "residents": 97,
+   "light": 20
+  },
+  {
+   "level": 15,
+   "fill": 0.133,
+   "cells": 31,
+   "residents": 59,
+   "light": 48
+  },
+  {
+   "level": 16,
+   "fill": 0.043,
+   "cells": 10,
+   "residents": 19,
+   "light": 30
+  },
+  {
+   "level": 17,
+   "fill": 0.0,
+   "cells": 0,
+   "residents": 0,
+   "light": null
+  },
+  {
+   "level": 18,
+   "fill": 0.346,
+   "cells": 62,
+   "residents": 118,
+   "light": 23
+  },
+  {
+   "level": 19,
+   "fill": 0.324,
+   "cells": 58,
+   "residents": 110,
+   "light": 33
+  },
+  {
+   "level": 20,
+   "fill": 0.24,
+   "cells": 43,
+   "residents": 82,
+   "light": 47
+  },
+  {
+   "level": 21,
+   "fill": 0.056,
+   "cells": 10,
+   "residents": 19,
+   "light": 20
+  },
+  {
+   "level": 22,
+   "fill": 0.028,
+   "cells": 5,
+   "residents": 10,
+   "light": 60
+  },
+  {
+   "level": 23,
+   "fill": 0.0,
+   "cells": 0,
+   "residents": 0,
+   "light": null
+  },
+  {
+   "level": 24,
+   "fill": 0.0,
+   "cells": 0,
+   "residents": 0,
+   "light": null
+  },
+  {
+   "level": 25,
+   "fill": 0.0,
+   "cells": 0,
+   "residents": 0,
+   "light": null
+  }
+ ],
+ "residents": 1829
+}

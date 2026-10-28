@@ -1,0 +1,91 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 40
+ },
+ "jobs": [
+  {
+   "spec": "specs/b_complex.json",
+   "out": "out/b/b1_spartan.png",
+   "style": "brut_hewn",
+   "light": "crisp",
+   "drop_tags": [
+    "green"
+   ],
+   "frame_bb": [
+    -30,
+    -40,
+    0,
+    180,
+    80,
+    90
+   ],
+   "camera": {
+    "margin": 0.0,
+    "zoom": 0.8,
+    "target": [
+     76,
+     30,
+     30
+    ]
+   }
+  },
+  {
+   "spec": "specs/b_complex.json",
+   "out": "out/b/b2_overgrown.png",
+   "style": "overgrown",
+   "light": "crisp",
+   "frame_bb": [
+    -30,
+    -40,
+    0,
+    180,
+    80,
+    90
+   ],
+   "camera": {
+    "margin": 0.0,
+    "zoom": 0.8,
+    "target": [
+     76,
+     30,
+     30
+    ]
+   }
+  },
+  {
+   "spec": "specs/b_complex.json",
+   "out": "out/b/b3_overgrown_close.png",
+   "style": "overgrown",
+   "light": "crisp",
+   "camera": {
+    "target": [
+     135,
+     35,
+     40
+    ],
+    "ortho_scale": 78
+   }
+  },
+  {
+   "spec": "specs/b_complex.json",
+   "out": "out/b/b4_spartan_close.png",
+   "style": "brut_hewn",
+   "light": "crisp",
+   "drop_tags": [
+    "green"
+   ],
+   "camera": {
+    "target": [
+     135,
+     35,
+     40
+    ],
+    "ortho_scale": 78
+   }
+  }
+ ]
+}

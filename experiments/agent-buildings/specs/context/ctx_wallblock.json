@@ -1,0 +1,40 @@
+{
+ "meta": {
+  "name": "ctx_wallblock",
+  "kind": "context-sprite",
+  "style": "sprite",
+  "seed": 7,
+  "grid": {
+   "cell": 4.0,
+   "level": 3.5
+  },
+  "footprint": {
+   "x": 0,
+   "y": 0,
+   "w": 3,
+   "d": 2,
+   "max_levels": 10,
+   "overhang": 0.5
+  },
+  "light": "studio",
+  "description": "Shaft-wall megablock"
+ },
+ "parts": [
+  {
+   "type": "block",
+   "x": 0,
+   "y": 0,
+   "level": 0,
+   "w": 3,
+   "d": 2,
+   "h": 9,
+   "material": "concrete",
+   "params": {
+    "dots": 0.004,
+    "dots_lit": 0.5,
+    "slots": 4,
+    "parapet": true
+   }
+  }
+ ]
+}

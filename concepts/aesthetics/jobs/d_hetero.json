@@ -1,0 +1,123 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 32
+ },
+ "jobs": [
+  {
+   "spec": "specs/d_hetero.json",
+   "out": "out/dd/dd1_section.png",
+   "style": "brut_hewn",
+   "light": "section",
+   "res": [
+    1300,
+    1800
+   ],
+   "view": {
+    "mode": "full",
+    "crop": [
+     -0.1,
+     4.5,
+     37.6,
+     12.1
+    ]
+   },
+   "frame_bb": [
+    -2,
+    18,
+    -192,
+    152,
+    48,
+    60
+   ],
+   "camera": {
+    "az": 30,
+    "el": 14,
+    "margin": 0.015
+   },
+   "poche": "poche_dark",
+   "fog": {
+    "h": 0.75,
+    "gamma": 3.2,
+    "d": 0.0,
+    "z_lo": -200,
+    "z_hi": 60
+   },
+   "max_lights": 320,
+   "samples": 40
+  },
+  {
+   "spec": "specs/d_hetero.json",
+   "out": "out/dd/dd2_void_close.png",
+   "style": "brut_hewn",
+   "light": "section",
+   "view": {
+    "mode": "full",
+    "crop": [
+     -0.1,
+     4.5,
+     37.6,
+     12.1
+    ]
+   },
+   "camera": {
+    "az": 30,
+    "el": 14,
+    "target": [
+     62,
+     30,
+     -76
+    ],
+    "ortho_scale": 100
+   },
+   "poche": "poche_dark",
+   "fog": {
+    "h": 0.5,
+    "gamma": 3.2,
+    "d": 0.0,
+    "z_lo": -200,
+    "z_hi": 60
+   },
+   "max_lights": 320,
+   "samples": 40
+  },
+  {
+   "spec": "specs/d_hetero.json",
+   "out": "out/dd/dd3_hangar_close.png",
+   "style": "brut_hewn",
+   "light": "section",
+   "view": {
+    "mode": "full",
+    "crop": [
+     -0.1,
+     4.5,
+     37.6,
+     12.1
+    ]
+   },
+   "camera": {
+    "az": 30,
+    "el": 14,
+    "target": [
+     80,
+     30,
+     -136
+    ],
+    "ortho_scale": 120
+   },
+   "poche": "poche_dark",
+   "fog": {
+    "h": 0.5,
+    "gamma": 3.2,
+    "d": 0.0,
+    "z_lo": -200,
+    "z_hi": 60
+   },
+   "max_lights": 320,
+   "samples": 40
+  }
+ ]
+}

@@ -1,0 +1,68 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 40,
+  "max_lights": 150
+ },
+ "jobs": [
+  {
+   "spec": "specs/e_infra.json",
+   "out": "out/e/e1_district.png",
+   "light": "crisp_warm",
+   "frame_bb": [
+    -50,
+    -70,
+    0,
+    270,
+    240,
+    60
+   ],
+   "camera": {
+    "margin": 0.0,
+    "zoom": 0.86
+   }
+  },
+  {
+   "spec": "specs/e_infra.json",
+   "out": "out/e/e2_interchange.png",
+   "light": "crisp_warm",
+   "camera": {
+    "target": [
+     90,
+     36,
+     14
+    ],
+    "ortho_scale": 200
+   }
+  },
+  {
+   "spec": "specs/e_infra.json",
+   "out": "out/e/e3_conduits.png",
+   "light": "crisp_warm",
+   "camera": {
+    "target": [
+     160,
+     180,
+     32
+    ],
+    "ortho_scale": 110
+   }
+  },
+  {
+   "spec": "specs/e_infra.json",
+   "out": "out/e/e4_slides.png",
+   "light": "crisp_warm",
+   "camera": {
+    "target": [
+     40,
+     160,
+     30
+    ],
+    "ortho_scale": 90
+   }
+  }
+ ]
+}

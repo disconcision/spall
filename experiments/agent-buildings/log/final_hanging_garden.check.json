@@ -1,0 +1,62 @@
+{
+ "spec": "specs/hanging_garden.json",
+ "revision": 4,
+ "stock": {
+  "errors": [
+   "#0 block: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance",
+   "#0 block: top at 35.0 m exceeds max_levels (21.0 m)",
+   "#1 block: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance",
+   "#1 block: top at 35.0 m exceeds max_levels (21.0 m)",
+   "#2 bridge: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance",
+   "#3 figure: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance",
+   "#4 figure: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance",
+   "#5 pipe: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance",
+   "#5 pipe: top at 35.0 m exceeds max_levels (21.0 m)",
+   "#27 tree: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance",
+   "#28 tree: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance",
+   "#29 tree: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance",
+   "#30 terrace: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance",
+   "#31 terrace: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance",
+   "#32 terrace: leaves the 2x1 footprint by more than the 0.5-cell overhang allowance"
+  ],
+  "warnings": [
+   "#6 wall: param \"rib_w\" is ignored by the renderer (did you mean \"ribs\"?)",
+   "#6 wall: param \"rib_d\" is ignored by the renderer (did you mean \"ribs\"?)"
+  ],
+  "notes": [
+   "#6 wall: cantilevered off #0 block",
+   "#7 ramp: cantilevered off #6 wall",
+   "#8 ramp: cantilevered off #6 wall",
+   "#9 ramp: cantilevered off #6 wall",
+   "#10 ramp: cantilevered off #6 wall",
+   "#11 ramp: cantilevered off #6 wall",
+   "#12 ramp: cantilevered off #6 wall",
+   "#13 pipe: cantilevered off #6 wall",
+   "#22 vines: cantilevered off #6 wall",
+   "#23 vines: cantilevered off #6 wall",
+   "#38 waterfall: hangs from #16 slab",
+   "39 parts (detail 2, landscape 22, service 2, support 6, transit 7); height 35.0 m"
+  ],
+  "pass_": false,
+  "context_errors": 9,
+  "overruled": []
+ },
+ "extended": {
+  "errors": [],
+  "warnings": [],
+  "notes": [
+   "39 parts (6 context), 13 oriented; 0 attach to the host directly"
+  ]
+ },
+ "logic": {
+  "errors": [],
+  "warnings": []
+ },
+ "errors": [],
+ "warnings": [
+  "#6 wall: param \"rib_w\" is ignored by the renderer (did you mean \"ribs\"?)",
+  "#6 wall: param \"rib_d\" is ignored by the renderer (did you mean \"ribs\"?)"
+ ],
+ "pass_": true,
+ "categories": {}
+}

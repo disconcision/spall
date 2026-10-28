@@ -1,0 +1,189 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Accretion Timeline</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  body { background: #a9b0b6; }
+  #tl { left: 16px; top: 996px; width: 2528px; height: 428px; }
+  #tl .hd .ctl { display: flex; gap: 4px; margin-left: 18px; }
+  #tl .hd .ctl span { border: 1px solid var(--line-2); padding: 0 8px; font-family: var(--f-mono); font-size: 12px; letter-spacing: 0; color: var(--text-2); height: 22px; display: flex; align-items: center; }
+  #tl .hd .ctl span.on { background: var(--text); color: var(--ink); }
+  .thumb { position: absolute; width: 160px; height: 100px; border: 1px solid var(--line-2); overflow: hidden; background: #111; }
+  .thumb img { width: 160px; height: 100px; display: block; }
+  .thumb .c { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(17,18,20,0.82); font-family: var(--f-cond); font-weight: 600; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; padding: 1px 5px; white-space: nowrap; }
+  .thumb.on { border: 2px solid var(--accent); box-shadow: 0 0 0 2px var(--ink); }
+  .thumb.on .c { background: var(--accent); color: var(--ink); }
+  .lane-l { position: absolute; left: 12px; width: 178px; font-family: var(--f-cond); font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+  .lane-l i { width: 10px; height: 10px; display: inline-block; flex: none; }
+  #phase { left: 1500px; top: 68px; width: 520px; }
+  #phase .big { font-family: var(--f-serif); font-size: 44px; line-height: 1; }
+  #runaway { left: 2036px; top: 68px; width: 508px; }
+  #runaway .cz { height: 12px; background: var(--caution); }
+  .armed { display: flex; align-items: center; gap: 14px; margin-top: 10px; padding: 10px; border: 1.5px solid var(--accent); }
+  .bigsw { width: 76px; height: 38px; border: 2px solid var(--accent); position: relative; background: repeating-linear-gradient(135deg, rgba(255,225,58,0.25) 0 6px, transparent 6px 12px); flex: none; }
+  .bigsw::after { content: ""; position: absolute; left: 4px; top: 4px; width: 26px; height: 26px; background: var(--text-2); }
+  .armed .t { font-family: var(--f-cond); font-weight: 700; font-size: 16px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+  .armed .s { font-size: 13.5px; color: var(--text-2); }
+  #blame { position: relative; margin-top: 12px; border: 1px solid var(--line-2); height: 250px; overflow: hidden; }
+  #blame img { position: absolute; left: -70px; top: -30px; width: 620px; }
+  #blame .bcap { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(10,11,12,0.85); padding: 6px 10px; font-size: 13px; color: var(--text-2); }
+  #blame .bcap b { font-family: var(--f-cond); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--warn); font-size: 13px; }
+  #blame .tag { position: absolute; left: 8px; top: 8px; }
+  .proj { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); margin-top: 10px; }
+  .proj div { padding: 6px 8px; border-left: 1px solid var(--line); font-family: var(--f-mono); font-size: 14px; }
+  .proj div:first-child { border-left: 0; }
+  .proj div span { display: block; font-family: var(--f-cond); font-weight: 600; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+  .proj .w { color: var(--warn); }
+</style></head>
+<body>
+<script>window.PAGE = { tab: 'TIMELINE', speed: 3, date: 'Replay · Year 21 · Day 140', time: '09:10', title: { name: 'Accretion replay — phase 5', sheet: 'T-005', view: 'axo · replay Y21', style: 'bottom:444px' } };</script>
+<img class="bg" src="../render/out/m6_phase5.png">
+<svg class="ov" id="ov"></svg>
+
+<div class="panel" id="phase">
+  <div class="hd">Replay cursor <span class="code">Y21 · D140 · phase 5 of 9</span></div>
+  <div class="bd">
+    <div class="big">Tube Quarter infill, L6–L10</div>
+    <div class="kv" style="margin-top:10px">
+      <span class="k">Placed</span><span class="v"><span class="num">139</span> parts · 125 capsules · 8 stairs · 2 service pipes</span>
+      <span class="k">Crews</span><span class="v">A (support, 6 drones) idle · B (infill, 4 drones) + 4 Builders at DK2</span>
+      <span class="k">Fill</span><span class="v">L6 <span class="num">39%</span> · L7 <span class="num">28%</span> · L8 <span class="num">21%</span> · avg <span class="num">21%</span></span>
+      <span class="k">Plan</span><span class="v gh">phase 6 blueprint · 232 capsules, L12–L22 (blue)</span>
+      <span class="k">Approved</span><span class="v">by player Y18 D22 · drafted by Claude (P-0061)</span>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="runaway">
+  <div class="cz"></div>
+  <div class="hd">Runaway Builders <span class="code">homage: Nihei, BLAME!</span></div>
+  <div class="bd">
+    <div style="font-size:15px;line-height:1.4">Cut the crews off from the Netsphere and they keep building: wherever a pattern matches, ignoring light budgets, approvals and you. You can prune, redirect or reconnect them later.</div>
+    <div class="armed"><div class="bigsw"></div><div><div class="t">Off · linked 13 of 13</div><div class="s">hold <span class="kbd">R</span> for 2 s to cut the link · last handshake 4 s ago</div></div></div>
+    <div id="blame"><img src="../../concept-renders/out/a_blame.png"><span class="tag pill warn" style="background:rgba(10,11,12,0.8)">Projection · Y238 if unchecked</span>
+      <div class="bcap"><b>Feral accretion</b> · settlements cling to 80-level walls; light shafts are the only daylight left.</div></div>
+    <div class="proj"><div><span>Growth</span><span class="w" style="display:inline;font-family:inherit;letter-spacing:0;text-transform:none;font-size:14px">+3.1 lv / yr</span></div><div><span>Light</span><span class="w" style="display:inline;font-family:inherit;letter-spacing:0;text-transform:none;font-size:14px">−1.2 % / yr</span></div><div><span>Reach Y+50</span>3 blocks</div></div>
+  </div>
+</div>
+
+<div class="panel" id="tl">
+  <div class="hd">Accretion timeline · Block 07 · Y0 – Y38
+    <span class="ctl"><span>|&lt;</span><span>&lt;</span><span class="on">Play</span><span>&gt;</span><span>&gt;|</span><span>1 yr / s</span></span>
+    <span class="code">scrub to replay · drag lanes to filter · click a bar to jump to its ghost</span></div>
+  <div id="tlbody" style="position:absolute;left:0;top:35px;right:0;bottom:0"></div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/chrome.js"></script>
+<script>
+(function () {
+  const { Cam, el, text, leader } = UI;
+  const ov = document.getElementById('ov');
+  const cam = Cam('m6_phase5');
+  const Y = '#ffe13a', G = '#7fb0ff', INK = '#111214', TXT = '#eeebe4', WARN = '#dd9478';
+
+  // ---------------- world labels on the replay frame
+  const lab = (pt, dx, dy, t1, t2, c, w) => {
+    const g = el('g', {}, ov); const x = pt[0] + dx, y = pt[1] + dy;
+    el('polyline', { points: `${pt[0]},${pt[1]} ${x},${y}`, stroke: c, 'stroke-width': 1.4, fill: 'none' }, g);
+    el('circle', { cx: pt[0], cy: pt[1], r: 4, fill: c }, g);
+    const bx = dx < 0 ? x - w : x;
+    el('rect', { x: bx, y: y - 21, width: w, height: 42, fill: 'rgba(17,18,20,0.9)', stroke: c, 'stroke-width': 1.3 }, g);
+    text(g, bx + 10, y - 3, t1, { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 14.5, 'letter-spacing': 1, fill: c });
+    text(g, bx + 10, y + 14, t2, { 'font-family': 'Barlow Semi Condensed', 'font-size': 13, fill: TXT });
+  };
+  lab(cam.g(3.5, 6.5, 20.2), -330, -190, 'PHASE 6 PLAN · BLUEPRINT', '232 capsules + 21 stairs, L12–L22', G, 300);
+  lab(cam.g(9.5, 7.5, 12.6), -420, 80, '4 BUILDERS · WORKING FROM DK2', 'finishing L6–L10 infill · 81% of phase 5', Y, 316);
+  lab(cam.g(12.5, 7, 31.5), 250, -40, 'CRANE C1 · CAPSULE 8 × 4 m', 'lowering to DK4 · removed in phase 7', TXT, 276);
+  lab(cam.g(22, 3, 7.4), 330, 60, 'T1 LOOP LINE · OPENED Y12', 'first trains before any infill above L12', TXT, 290);
+
+  // ---------------- timeline geometry
+  const body = document.getElementById('tlbody');
+  const B = el('svg', { width: 2528, height: 393, style: 'position:absolute;left:0;top:0' }, body);
+  const X0 = 208, X1 = 2000, YMAX = 38, FUT = 48;
+  const yx = (yr) => X0 + (X1 - X0) * yr / YMAX;
+  const axisY = 150;
+  // future zone (beyond now)
+  el('rect', { x: yx(38), y: 118, width: yx(FUT) - yx(38) + 20, height: 275, fill: 'rgba(127,176,255,0.05)' }, B);
+  text(B, yx(38) + 10, 123, 'PLANNED · PROJECTED →', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 12.5, 'letter-spacing': 1.2, fill: G });
+  // axis
+  el('line', { x1: X0, y1: axisY, x2: yx(FUT), y2: axisY, stroke: '#56595f', 'stroke-width': 1 }, B);
+  for (let yr = 0; yr <= FUT; yr++) {
+    const x = yx(yr), major = yr % 5 === 0;
+    el('line', { x1: x, y1: axisY - (major ? 8 : 4), x2: x, y2: axisY, stroke: yr > 38 ? G : '#7c7f81', 'stroke-width': 1 }, B);
+    if (major) text(B, x, axisY - 12, 'Y' + yr, { 'text-anchor': 'middle', 'font-family': 'IBM Plex Mono', 'font-size': 11.5, fill: yr > 38 ? G : '#b0b1ad' });
+  }
+  // now marker
+  el('line', { x1: yx(38), y1: 118, x2: yx(38), y2: 393, stroke: TXT, 'stroke-width': 1.2, 'stroke-dasharray': '4 3' }, B);
+  text(B, yx(38) - 6, 136, 'NOW Y38', { 'text-anchor': 'end', 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 12.5, 'letter-spacing': 1.2, fill: TXT });
+
+  // ---------------- film strip: the 10 accretion frames, joined to their year on the axis
+  const phases = [[1, '0 site + canal'], [4, '1 columns, cores'], [8, '2 upper decks'], [11.5, '3 tube + viaduct'], [15.5, '4 ground infill'],
+    [21, '5 stratum 1 infill'], [27.5, '6 upper strata'], [33.5, '7 gardens, roof'], [36.8, '8 lights on'], [38, '9 night']];
+  phases.forEach(([yr, label], i) => {
+    const tx = 212 + i * 178, ty = 6;
+    const d = document.createElement('div');
+    d.className = 'thumb' + (i === 5 ? ' on' : '');
+    d.style.left = tx + 'px'; d.style.top = ty + 'px';
+    d.innerHTML = `<img src="../../concept-renders/out/timelapse/frame_0${i}.png"><div class="c">${label}</div>`;
+    body.appendChild(d);
+    el('polyline', { points: `${tx + 80},${ty + 101} ${tx + 80},${ty + 112} ${yx(yr)},${axisY - 22} ${yx(yr)},${axisY}`, fill: 'none', stroke: i === 5 ? Y : '#56595f', 'stroke-width': i === 5 ? 1.6 : 1 }, B);
+  });
+
+  // ---------------- lanes
+  const lanes = [
+    ['Player', TXT], ['Claude · Foreman', Y], ['Claude · Surveyor', '#d8d5cc'], ['Crew A · support', '#b0b1ad'],
+    ['Crew B · infill', '#b0b1ad'], ['Crew C · infill', '#b0b1ad'], ['Cranes C1 · C2', '#d69a2b'], ['Residents · informal', '#8f8c86'], ['Builders · autonomous', WARN]];
+  const L0 = 160, LH = 25.5;
+  const ly = (i) => L0 + i * LH;
+  lanes.forEach(([n, c], i) => {
+    const d = document.createElement('div');
+    d.className = 'lane-l'; d.style.top = (ly(i) + 35 - 1) + 'px'; d.style.height = LH + 'px';
+    d.innerHTML = `<i style="background:${c}"></i>${n}`;
+    document.getElementById('tl').appendChild(d);
+    el('line', { x1: X0, y1: ly(i) + LH, x2: yx(FUT) + 20, y2: ly(i) + LH, stroke: 'rgba(255,255,255,0.05)' }, B);
+  });
+  const bar = (lane, a, b, o = {}) => {
+    const x = yx(a), w = Math.max(3, yx(b) - yx(a)), y = ly(lane) + 6, h = LH - 12;
+    const r = el('rect', { x, y, width: w, height: h, fill: o.fill || '#8f8c86', stroke: o.stroke || 'none', 'stroke-width': 1.2 }, B);
+    if (o.label) text(B, x + 5, y + h - 3, o.label, { 'font-family': 'Barlow Condensed', 'font-weight': 600, 'font-size': 11.5, 'letter-spacing': .6, fill: o.lc || INK });
+    return r;
+  };
+  const dia = (lane, yr, c, hollow) => { const x = yx(yr), y = ly(lane) + LH / 2; el('path', { d: `M${x},${y - 7} L${x + 7},${y} L${x},${y + 7} L${x - 7},${y} Z`, fill: hollow ? 'none' : c, stroke: c, 'stroke-width': 1.5 }, B); };
+  // player approvals
+  [2, 6, 10, 13, 18, 24, 31, 37].forEach(y => dia(0, y, TXT));
+  dia(0, 38.4, Y, true);
+  // Claude foreman proposals
+  [[12.6, 13.4, 'P-0019'], [17.2, 18, 'P-0061'], [23.2, 24, 'P-0078'], [30.2, 31, 'P-0093'], [36.6, 37.2, 'P-12 v3']].forEach(([a, b, l]) => bar(1, a, b, { fill: Y }));
+  text(B, yx(17.2), ly(1) + 4, '', {});
+  bar(1, 38, 38.6, { fill: 'none', stroke: Y }); text(B, yx(38.7), ly(1) + 17, 'P-0117 awaiting approval', { 'font-family': 'Barlow Condensed', 'font-weight': 600, 'font-size': 12, fill: Y });
+  // surveyor audits
+  [12, 17, 23, 29, 35, 38].forEach(y => bar(2, y - 0.3, y + 0.3, { fill: '#d8d5cc' }));
+  // crews
+  bar(3, 2, 10, { fill: '#b0b1ad', label: 'columns · cores · decks DK1–DK4' }); bar(3, 10, 13, { fill: '#8f8c86', label: 'tube · viaduct' }); bar(3, 38.2, 41, { fill: 'none', stroke: G, label: 'B-07 bridge', lc: G });
+  bar(4, 13, 18, { fill: '#b0b1ad', label: 'ground infill' }); bar(4, 18, 21, { fill: '#b0b1ad', label: 'stratum 1' }); bar(4, 21, 24, { fill: Y, label: 'L6–L10 (now)' }); bar(4, 24, 31, { fill: '#8f8c86', label: 'upper strata' });
+  bar(5, 24, 31, { fill: '#8f8c86', label: 'upper strata' }); bar(5, 31, 36, { fill: '#8f8c86', label: 'gardens · roof' }); bar(5, 37.5, 38, { fill: '#8f8c86' }); bar(5, 38.1, 40.4, { fill: 'none', stroke: G, label: 'P-12 × 8', lc: G });
+  bar(6, 2, 24, { fill: '#d69a2b', label: 'C1 + C2 · ground cranes → roof cranes Y10' }); bar(6, 24, 38, { fill: '#a87a28', label: 'C2 roof crane' });
+  // informal accretion ticks
+  let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  for (let i = 0; i < 70; i++) { const yr = 14 + Math.pow(rnd(), 0.7) * 24; bar(7, yr, yr + 0.12, { fill: '#8f8c86' }); }
+  // builders: linked, then the runaway projection
+  el('line', { x1: yx(4), y1: ly(8) + LH / 2, x2: yx(38), y2: ly(8) + LH / 2, stroke: WARN, 'stroke-width': 2, 'stroke-dasharray': '1 4', 'stroke-linecap': 'round' }, B);
+  text(B, yx(4) + 6, ly(8) + 9, 'linked to Netsphere · 13 units', { 'font-family': 'Barlow Condensed', 'font-weight': 600, 'font-size': 11.5, fill: WARN });
+  const rp = el('rect', { x: yx(38.2), y: ly(8) + 5, width: yx(FUT) - yx(38.2) + 20, height: LH - 10, fill: 'url(#feral)', stroke: WARN, 'stroke-width': 1.2, 'stroke-dasharray': '4 3' }, B);
+  text(B, yx(38.6), ly(8) + 17, 'if cut off: feral accretion', { 'font-family': 'Barlow Condensed', 'font-weight': 700, 'font-size': 12, fill: WARN, 'paint-order': 'stroke', stroke: INK, 'stroke-width': 3 });
+  const defs = el('defs', {}, B);
+  const pat = el('pattern', { id: 'feral', width: 8, height: 8, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, defs);
+  el('rect', { width: 8, height: 8, fill: 'rgba(221,148,120,0.15)' }, pat);
+  el('line', { x1: 0, y1: 0, x2: 0, y2: 8, stroke: 'rgba(221,148,120,0.6)', 'stroke-width': 2 }, pat);
+
+  // playhead at Y21 through everything
+  const px = yx(21);
+  el('line', { x1: px, y1: 112, x2: px, y2: 393, stroke: Y, 'stroke-width': 2.5 }, B);
+  el('path', { d: `M${px - 9},${axisY + 2} l18,0 l-9,12 z`, fill: Y }, B);
+  el('rect', { x: px + 6, y: axisY - 30, width: 96, height: 20, fill: Y }, B);
+  text(B, px + 12, axisY - 15, 'Y21 · D140', { 'font-family': 'IBM Plex Mono', 'font-weight': 600, 'font-size': 12.5, fill: INK });
+
+})();
+</script>
+</body></html>

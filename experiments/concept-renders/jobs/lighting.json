@@ -1,0 +1,101 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 64
+ },
+ "jobs": [
+  {
+   "spec": "specs/arcology.json",
+   "out": "out/l_arcology_overcast.png",
+   "light": "overcast",
+   "frame_bb": [
+    -8,
+    -12,
+    0,
+    92,
+    72,
+    140
+   ],
+   "frame_clip": true
+  },
+  {
+   "spec": "specs/arcology.json",
+   "out": "out/l_arcology_dusk.png",
+   "light": "dusk",
+   "frame_bb": [
+    -8,
+    -12,
+    0,
+    92,
+    72,
+    140
+   ],
+   "frame_clip": true
+  },
+  {
+   "spec": "specs/arcology.json",
+   "out": "out/l_arcology_night.png",
+   "light": "night",
+   "frame_bb": [
+    -8,
+    -12,
+    0,
+    92,
+    72,
+    140
+   ],
+   "frame_clip": true
+  },
+  {
+   "spec": "specs/kowloon.json",
+   "out": "out/l_kowloon_night.png",
+   "light": "night",
+   "frame_bb": [
+    -10,
+    -10,
+    0,
+    130,
+    88,
+    50
+   ],
+   "frame_clip": true
+  },
+  {
+   "spec": "specs/blame.json",
+   "out": "out/l_blame_night.png",
+   "light": "night",
+   "camera": {
+    "target": [
+     150,
+     150,
+     72
+    ],
+    "ortho_scale": 320
+   },
+   "fog": {
+    "z_lo": -90,
+    "z_hi": 330,
+    "h": 1.0,
+    "gamma": 1.0,
+    "d": 0.1
+   }
+  },
+  {
+   "spec": "specs/solarpunk.json",
+   "out": "out/l_solarpunk_dusk.png",
+   "light": "dusk",
+   "frame_bb": [
+    -10,
+    -30,
+    0,
+    150,
+    125,
+    160
+   ],
+   "frame_clip": true
+  }
+ ]
+}

@@ -1,0 +1,152 @@
+{
+ "id": "hanging_garden",
+ "spec": "specs/hanging_garden.json",
+ "title": "Hanging Garden",
+ "category": "parks",
+ "brief": "a hanging garden that grows off a shaft wall (mixed directions)",
+ "footprint": {
+  "cells_w": 2,
+  "cells_d": 1,
+  "levels": 6,
+  "anchor": "wall",
+  "rotations": 4,
+  "note": "occupies the 2x1-cell strip of void in front of a shaft wall for 6 levels; the wall face is the footprint's north edge (y = 1)"
+ },
+ "placement": {
+  "on": [
+   "wall"
+  ],
+  "stratum": "any",
+  "requires": [
+   {
+    "kind": "wall",
+    "facing": "void",
+    "min_height_levels": 6,
+    "note": "a solid shaft or core wall with open void in front"
+   },
+   {
+    "kind": "water_riser",
+    "within_cells": 2,
+    "note": "irrigation"
+   }
+  ],
+  "clear_void_cells": 1,
+  "daylight": "grows in shade; +30% growth with a light well or daylight"
+ },
+ "capacity": {
+  "visitors_per_hour": 60,
+  "planted_area_m2": 90,
+  "trees": 8,
+  "residents": 0
+ },
+ "jobs": {
+  "total": 3,
+  "shifts": 1,
+  "roles": [
+   {
+    "role": "gardener",
+    "n": 3
+   }
+  ]
+ },
+ "services": {
+  "needs": {
+   "water": {
+    "m3_per_day": 6,
+    "source": "riser"
+   },
+   "power": {
+    "kw": 2,
+    "note": "pumps for the cascade"
+   },
+   "light": {
+    "min_daylight": 0.1,
+    "note": "any daylight or grow-light spill"
+   }
+  },
+  "provides": {
+   "air": {
+    "o2_bonus": 0.08,
+    "radius_cells": 4,
+    "note": "plants + the cascade's evaporative cooling"
+   },
+   "food": {
+    "units_per_day": 4,
+    "note": "fruit and herbs, minor"
+   }
+  }
+ },
+ "effects": {
+  "light_air": {
+   "radius_cells": 4,
+   "air_delta": 0.08,
+   "daylight_delta": -0.02,
+   "note": "cleans shaft air; trays barely shade"
+  },
+  "land_value": {
+   "radius_cells": 6,
+   "delta": 15,
+   "note": "views of greenery raise value across the shaft"
+  },
+  "noise": {
+   "radius_cells": 2,
+   "db": -3,
+   "note": "foliage and falling water mask shaft noise"
+  }
+ },
+ "economy": {
+  "build_cost": 900,
+  "upkeep_per_day": 6,
+  "build_days": 18
+ },
+ "construction": [
+  {
+   "step": 1,
+   "name": "anchors",
+   "drones": {
+    "climber": 2,
+    "welder": 1
+   },
+   "days": 4,
+   "action": "bolt the timber trellis to the wall, then the knee-brace brackets and the irrigation riser"
+  },
+  {
+   "step": 2,
+   "name": "trays",
+   "drones": {
+    "lifter": 2,
+    "welder": 1
+   },
+   "days": 4,
+   "action": "lift the three planting trays onto the brackets"
+  },
+  {
+   "step": 3,
+   "name": "planting",
+   "drones": {
+    "gardener": 2
+   },
+   "days": 4,
+   "action": "soil, grass and trees on the trays; rail the outer edges; plant climbing vines on the trellis"
+  },
+  {
+   "step": 4,
+   "name": "wall growth",
+   "drones": {
+    "climber": 2,
+    "gardener": 1
+   },
+   "days": 4,
+   "action": "trailing vines under every tray, sideways trees and moss panels out of the trellis, baskets hung under the trays"
+  },
+  {
+   "step": 5,
+   "name": "cascade",
+   "drones": {
+    "plumber": 1
+   },
+   "days": 2,
+   "action": "set the basin on the lowest tray and open the spout under the top tray"
+  }
+ ]
+}

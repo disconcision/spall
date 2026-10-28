@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Chatter Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0e0f11; --stage:#0a0b0c; --panel:#141517; --panel2:#1b1c1f; --raise:#24252a;
+  --line:#2c2e32; --line2:#44474c; --text:#e6dfcf; --dim:#a39c8e; --faint:#716c62;
+  --accent:#e8a83c; --accent-ink:#1b1305; --agent:#ff7a52; --you:#5fd3f2; --ok:#a3c46c; --bad:#e2573f;
+  --plan:#9b87e8;
+  --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --cond:"Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text)}
+body{font:12px/1.45 var(--mono)}
+a{color:var(--text);text-decoration-color:var(--accent);text-underline-offset:2px}
+a:hover{color:var(--accent)}
+canvas.px{image-rendering:pixelated;image-rendering:crisp-edges;display:block}
+button{font:inherit;color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 16px 64px}
+
+/* ---------- page head ---------- */
+header.top{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:16px}
+.top h1{margin:0;font:700 34px/0.95 var(--cond);letter-spacing:.16em;text-transform:uppercase}
+.top h1 small{display:block;font:500 11px/1.4 var(--mono);letter-spacing:.02em;text-transform:none;color:var(--dim);margin-top:6px}
+.top .how{flex:1;min-width:260px;color:var(--dim);font-size:11px;max-width:520px}
+.top .how b{color:var(--text);font-weight:600}
+.pitch{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:18px 0 6px}
+.pitch div{background:var(--panel);padding:10px 12px;font-size:11px;color:var(--dim)}
+.pitch b{display:block;font:700 13px/1.1 var(--cond);letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:4px}
+.pitch a{font-size:10px;color:var(--dim)}
+h2.sec{font:700 15px/1 var(--cond);letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:40px 0 16px;display:flex;align-items:center;gap:10px}
+h2.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ---------- panel cards ---------- */
+#panels{display:grid;grid-template-columns:repeat(auto-fill,312px);gap:40px 28px;justify-content:center}
+.pcard{margin:0;width:312px}
+.plabel{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.plabel .code{font:700 13px/1 var(--cond);letter-spacing:.06em;background:var(--accent);color:var(--accent-ink);padding:3px 5px 2px}
+.plabel .pname{font:700 14px/1 var(--cond);letter-spacing:.12em;text-transform:uppercase}
+.plabel .prefs{margin-left:auto;display:flex;gap:3px}
+.plabel .prefs a{font:500 9.5px/1 var(--mono);color:var(--faint);text-decoration:none;border:1px solid var(--line2);padding:2px 2px}
+.plabel .prefs a:hover{color:var(--accent);border-color:var(--accent)}
+.cap{font-size:10.5px;line-height:1.5;color:var(--dim);margin:9px 0 0}
+
+/* ---------- the mock sidebar column ---------- */
+.side{width:312px;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;position:relative}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:6px;font:700 12px/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:7px 10px 6px;border-bottom:1px solid var(--line);background:var(--panel2);min-height:27px;flex:none}
+.ph > span:not(.pt){font:500 10px/1 var(--mono);letter-spacing:0;text-transform:none;color:var(--faint)}
+.ph .num{color:var(--text);font-weight:600}
+.ph u{text-decoration:none;color:var(--dim);border-bottom:1px dotted var(--faint)}
+.seg{display:flex;border-bottom:1px solid var(--line);flex:none}
+.seg button{flex:1 1 auto;background:var(--panel);border:0;border-right:1px solid var(--line);padding:5px 4px;font:600 11px/1 var(--cond);letter-spacing:.08em;text-transform:uppercase;color:var(--dim);cursor:pointer;white-space:nowrap}
+.seg button:last-child{border-right:0}
+.seg button i{font:500 9.5px/1 var(--mono);font-style:normal;color:var(--faint);letter-spacing:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.ph .seg{border:0;margin:-7px -10px -6px 0}
+.ph .seg button{padding:7px 8px 6px;border-left:1px solid var(--line);border-right:0;background:transparent}
+.ph .seg button[aria-pressed="true"]{background:var(--accent)}
+.badtx{color:var(--bad)}
+.cl{color:var(--agent)} .yo{color:var(--you)} .bt{color:#b9b2a3} .sy{color:var(--faint)}
+.hole{color:var(--plan)}
+.pid{color:#c9bff2;background:#231f33;padding:0 2px}
+.faintx{color:var(--faint)}
+
+/* messages */
+.msgs,.thread{flex:1;min-height:0;overflow:hidden;padding:5px 0 4px;display:flex;flex-direction:column}
+.msgs.end{justify-content:flex-end;position:relative}
+.msgs.end::before{content:"";position:absolute;left:0;right:0;top:0;height:46px;background:linear-gradient(var(--panel),rgba(20,21,23,0));z-index:1;pointer-events:none}
+.m{display:grid;grid-template-columns:18px minmax(0,1fr);column-gap:7px;padding:3px 10px 4px}
+.m > .av{width:18px;height:18px;margin-top:1px}
+.mc{min-width:0}
+.mh{display:flex;align-items:center;gap:6px;font-size:10.5px;line-height:14px;min-height:14px}
+.mh b{font-weight:600}
+.mh .meta{font-style:normal;font-size:9.5px;color:var(--faint);border:1px solid var(--line2);padding:0 3px;line-height:12px}
+.mh time{margin-left:auto;font-size:9.5px;color:#5c5850}
+.mt{font-size:10.5px;line-height:1.4;color:#d9d2c2}
+.mt canvas{margin-top:3px}
+.mt .gl{margin-top:4px}
+.wide{grid-column:1 / -1;margin-top:5px;min-width:0}
+.m.me .mt{color:#cfeef6}
+.m.sysm{padding-top:1px;padding-bottom:2px}
+.m.sysm .mt{color:var(--faint);font-size:10px}
+.m.sysm .mh{display:none}
+.m.sysm > .av{width:18px;height:18px;opacity:.55}
+.mc.mbh{display:flex;align-items:flex-start;gap:7px;min-height:18px;padding-top:1px}
+.mc.mbh .plate{flex:none}
+.mc.mbh .gl{margin-top:2px}
+.mc.mbh time{margin-left:auto;font-size:9.5px;color:#5c5850;line-height:14px}
+.comp{display:flex;gap:4px;padding:6px 10px 9px;border-top:1px solid var(--line);flex:none;background:var(--panel)}
+.comp .in{flex:1;background:#0f1012;border:1px solid var(--line2);padding:5px 7px;color:#5c5850;font-size:11px;white-space:nowrap;overflow:hidden}
+.comp button{background:var(--panel2);border:1px solid var(--line2);padding:4px 8px;font:700 12px/1 var(--cond);letter-spacing:.1em;text-transform:uppercase}
+.comp .mic{width:30px;display:flex;align-items:center;justify-content:center}
+.comp .mic i{display:block;width:6px;height:10px;border-radius:3px;background:var(--you);box-shadow:0 3px 0 -1px var(--panel2),0 4px 0 0 var(--you)}
+.gnote{font-size:9.5px;line-height:1.35;color:var(--faint)}
+.rowwide{display:flex;gap:8px;align-items:center}
+.stackline{display:flex;gap:6px;align-items:center;font-size:9.5px;color:var(--faint)}
+
+/* P1 */
+.fh{position:relative;flex:none;border-bottom:1px solid var(--line)}
+.surf{position:absolute;left:8px;right:16px;font-size:10px;line-height:1.3;padding:3px 6px;background:rgba(20,21,23,.94);border:1px solid var(--line2);border-left:2px solid var(--line2);box-shadow:0 2px 8px rgba(0,0,0,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.surf b{font-weight:600}
+.surf.bad{border-left-color:var(--bad)} .surf.yo{border-left-color:var(--you)} .surf.cl{border-left-color:var(--agent)}
+.hot{padding:6px 10px 8px;flex:1}
+.hot .sub,.band .bh,.kh{font:700 11px/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:5px;display:flex;gap:8px;align-items:baseline}
+.hot .sub span{font:500 9.5px/1 var(--mono);letter-spacing:0;text-transform:none;color:var(--faint)}
+.hrow{display:grid;grid-template-columns:34px 1fr auto;gap:7px;align-items:center;font-size:10.5px;padding:2px 0;color:#cfc7b6}
+.hrow .hv{color:var(--faint);font-size:10px}
+
+/* P2 */
+.crumbs{font:500 10px/1 var(--mono);letter-spacing:0;text-transform:none;color:var(--faint);justify-content:flex-start}
+.crumbs > span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumbs b{color:var(--text);font-weight:600}
+.crumbs .back{color:var(--accent);margin-right:3px}
+.stat{display:flex;gap:10px;font-size:9.5px;color:var(--faint)}
+.stat b{color:var(--dim);font-weight:600}
+.stat b.hole{color:var(--plan)}
+.kids{margin-left:18px;position:relative}
+.kids::before{content:"";position:absolute;left:0;top:0;bottom:12px;width:1px;background:#34363b}
+.kids > .m{padding-left:12px}
+.kids > .m::before{content:"";position:absolute;margin-left:-12px;margin-top:9px;width:9px;height:1px;background:#34363b}
+.kids.k2{margin-left:37px}
+.digest{display:flex;align-items:center;gap:6px;margin:1px 10px 4px 12px;background:#18191c;border:1px solid var(--line);padding:3px 6px;width:calc(100% - 22px);cursor:pointer;position:relative}
+.digest::before{content:"";position:absolute;left:-13px;top:50%;width:12px;height:1px;background:#34363b}
+.digest .tri{width:0;height:0;border-left:4px solid var(--dim);border-top:3px solid transparent;border-bottom:3px solid transparent}
+.digest .avs{display:flex;gap:1px}
+.digest .avs canvas{width:9px;height:9px}
+.digest .dn{margin-left:auto;font-size:9.5px;color:var(--faint);white-space:nowrap}
+.px-inline{margin-top:2px}
+
+/* P3 */
+.outline{flex:1;padding:5px 0;overflow:hidden;font-size:10.5px}
+.or{display:flex;align-items:center;gap:5px;height:17px;padding-right:10px;color:#cfc7b6;white-space:nowrap}
+.or:hover{background:var(--raise)}
+.or .tg{width:7px;height:7px;flex:none;position:relative}
+.or .tg.open::before{content:"";position:absolute;left:0;top:2px;border-top:4px solid var(--dim);border-left:3.5px solid transparent;border-right:3.5px solid transparent}
+.or .tg.shut::before{content:"";position:absolute;left:2px;top:0;border-left:4px solid var(--faint);border-top:3.5px solid transparent;border-bottom:3.5px solid transparent}
+.or .tg.leaf::before{content:"";position:absolute;left:3px;top:3px;width:1px;height:1px;background:var(--faint)}
+.or canvas.av{width:9px;height:9px;flex:none}
+.or .on b{font-weight:600;color:var(--text)}
+.or.th .on{color:var(--dim)}
+.or q{font-style:italic;quotes:"“" "”"}
+.or .orr{margin-left:auto;font-size:9.5px;color:var(--faint);display:flex;align-items:center}
+.or .orr i{font-style:normal;color:#4a4741}
+.or .spark{margin-left:2px}
+.or .fold{font-size:9.5px;background:#2b2645;color:#c9bff2;padding:0 4px;line-height:13px}
+.or .stk{margin-left:3px}
+.crumbbar{border-top:1px solid var(--line);padding:6px 10px 8px;font-size:9.5px;line-height:1.45;color:var(--faint);background:var(--panel2)}
+.crumbbar b{color:var(--text);font-weight:600}
+
+/* P4 */
+.tgl{display:flex;align-items:center;gap:5px;font:600 11px/1 var(--cond);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.sw{width:18px;height:10px;background:#2a2b30;border:1px solid var(--line2);position:relative;display:inline-block}
+.sw.on{background:var(--accent);border-color:var(--accent)}
+.sw.on::after{content:"";position:absolute;right:1px;top:1px;width:6px;height:6px;background:var(--accent-ink)}
+.gridmsg{display:flex;gap:9px;align-items:flex-start}
+.legend{display:flex;gap:9px;padding:6px 10px 8px;border-top:1px solid var(--line);font-size:9.5px;color:var(--faint);flex:none}
+.legend span{display:flex;align-items:center;gap:4px}
+.legend i{width:6px;height:6px;display:block}
+
+/* P5 */
+.ask{margin:3px 10px 4px 35px;border:1px solid #4a4270;background:#1a1726}
+.ask .ah{display:flex;gap:7px;align-items:center;padding:4px 6px;font-size:10px;color:var(--dim);border-bottom:1px solid #2f2a45}
+.ask .hl{color:#c9bff2;background:#2f2a45;padding:0 4px;font-weight:600;white-space:nowrap}
+.ask .ah > span:last-child{white-space:nowrap}
+.okx{color:var(--ok);font-weight:600}
+.m.tight{padding-top:1px;padding-bottom:2px}
+.ab{display:flex;gap:0;padding:0}
+.ab button{flex:1;background:transparent;border:0;border-right:1px solid #2f2a45;padding:5px 4px;font:600 11px/1 var(--cond);letter-spacing:.08em;text-transform:uppercase;color:var(--text);cursor:pointer}
+.ab button:last-child{border-right:0}
+.ab button.ghost{color:var(--you)}
+.ab button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.wide > .ab{border:1px solid var(--line2);display:inline-flex;align-items:stretch}
+.wide > .ab button{flex:none;padding:5px 10px;border-right:1px solid var(--line2)}
+.wide > .ab .auto{font-size:9.5px;color:var(--faint);padding:0 8px;display:flex;align-items:center}
+
+/* P7 */
+.vn{display:flex;align-items:center;gap:6px;margin-top:2px;background:#132026;border:1px solid #23414a;padding:3px 3px 3px 6px;min-width:0}
+.play{width:0;height:0;border-left:6px solid var(--you);border-top:4px solid transparent;border-bottom:4px solid transparent;flex:none}
+.dur{font-size:9.5px;color:var(--you);flex:none}
+.vn .wave{flex:none}
+.vn .q{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;color:#a9cdd6}
+.vn .sketch{flex:none;border:1px solid #3a3630}
+.xlabel{font:600 10px/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;color:#5c5850;padding:5px 10px 0 35px;display:flex;align-items:center;gap:6px}
+.xlabel::after{content:"";flex:1;border-top:1px dashed #34363b}
+.vcard{border:1px solid #23414a;background:#111b1f}
+.vtop{display:flex;align-items:center;gap:7px;padding:5px 7px;border-bottom:1px solid #1d3339}
+.vbody{display:flex;gap:8px;padding:6px 7px;align-items:flex-start}
+.vbody .sketch{flex:none;border:1px solid #3a3630}
+.vbody p{margin:0;font-size:10.5px;line-height:1.4;color:#cfeef6}
+.vfoot{display:flex;justify-content:space-between;gap:6px;padding:4px 7px 5px;border-top:1px solid #1d3339;font-size:9.5px;color:var(--faint)}
+.vfoot span{white-space:nowrap}
+.vfoot b{font-weight:600;color:var(--dim)}
+.vfoot b.cl{color:var(--agent)}
+
+/* P9 */
+.band{padding:7px 10px 8px;border-bottom:1px solid var(--line)}
+.band:last-child{border-bottom:0;padding-left:0;padding-right:0}
+.band:last-child .bh{padding-left:10px}
+.band .bh{font-size:10.5px;color:var(--faint);letter-spacing:.1em}
+.band .bh b{color:var(--accent);font-weight:700}
+.z2r{display:flex;align-items:center;gap:5px;height:16px}
+.z2r canvas.av{width:9px;height:9px}
+
+/* P10: a full-width sheet */
+.pcard.wide{grid-column:1 / -1;width:auto}
+.pcard.wide .side{width:auto}
+.pcard.wide .cap{max-width:640px}
+.sheet{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.key{padding:6px 14px 10px;border-right:1px solid var(--line)}
+.krow{display:grid;grid-template-columns:128px 1fr;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #1e1f22}
+.krow:last-child{border-bottom:0}
+.kh{font:700 11px/1.1 var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:flex;flex-wrap:wrap;align-items:center;gap:3px 6px}
+.kh i{width:7px;height:7px;display:block}
+.kh small{flex-basis:100%;font:500 9.5px/1.2 var(--mono);letter-spacing:0;text-transform:none;color:var(--faint);padding-left:13px}
+.kright .kh small{flex-basis:auto;padding-left:4px}
+.kg{display:flex;flex-wrap:wrap;gap:6px 4px}
+.kc{width:44px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9.5px;color:var(--faint)}
+.kright{padding:10px 14px 12px;display:flex;flex-direction:column;gap:8px}
+.ros{display:grid;grid-template-columns:repeat(5,1fr);gap:8px 4px;margin-bottom:6px}
+.rc{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9.5px;color:var(--faint)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line)}
+.step{display:flex;flex-direction:column;gap:6px;padding:8px 8px 7px;border-right:1px solid var(--line);min-width:0}
+.step:last-child{border-right:0}
+.stok{height:20px;display:flex;align-items:center}
+.sst{display:flex;flex-direction:column;gap:4px;min-height:22px}
+.sst .empty{font-size:9.5px;color:#4a4741;line-height:22px}
+.scap{font-size:9.5px;line-height:1.3;color:var(--faint)}
+@media (max-width:760px){ .sheet{grid-template-columns:1fr} .key{border-right:0;border-bottom:1px solid var(--line)} .steps{grid-template-columns:repeat(2,1fr)} }
+
+/* ---------- reference cards ---------- */
+.refs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.ref{background:var(--panel);padding:10px 12px 11px;scroll-margin-top:16px}
+.ref:target{outline:1px solid var(--accent);outline-offset:-1px}
+.ref .rh{display:flex;align-items:baseline;gap:8px;margin-bottom:5px}
+.ref .rc0{font:700 12px/1 var(--cond);letter-spacing:.06em;border:1px solid var(--accent);color:var(--accent);padding:2px 4px 1px}
+.ref h3{margin:0;font:700 15px/1.05 var(--cond);letter-spacing:.08em;text-transform:uppercase}
+.ref .links{font-size:10px;margin-bottom:6px;display:flex;flex-wrap:wrap;gap:2px 10px}
+.ref p{margin:0 0 4px;font-size:10.5px;line-height:1.45;color:var(--dim)}
+.ref p b{color:var(--text);font-weight:600;font-family:var(--cond);letter-spacing:.1em;text-transform:uppercase;font-size:11px;margin-right:4px}
+.ref .used{display:flex;gap:4px;margin-top:6px}
+.ref .used a{font-size:9.5px;color:var(--accent-ink);background:var(--accent);text-decoration:none;padding:1px 4px}
+.ref .used span{font-size:9.5px;color:var(--faint)}
+.note{font-size:10.5px;color:var(--faint);margin-top:12px}
+footer.end{margin-top:36px;border-top:1px solid var(--line);padding-top:10px;font-size:10px;color:var(--faint)}
+@media (max-width:700px){ .top h1{font-size:28px} }
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <h1>Agent chatter<small>Stratum · reference board for a sidebar where many agents and robot workers talk at once · 27 Oct 2026</small></h1>
+  <div class="how">Panels <b>P1–P10</b> are original mock-ups at real sidebar width (312 px), drawn in the game’s palette and 3×5 font. References <b>R1–R22</b> are what each one borrows from, with links. Point at favourites by code (“P4 gloss + P5 holes, less of P6”).</div>
+</header>
+
+<div class="pitch">
+  <div><b>Chat zoom = city zoom</b>The creative brief says coarse-graining is delegation. The sidebar should follow suit: far out, talk is texture; up close, it’s words. <a href="#P1">P1</a> <a href="#P9">P9</a></div>
+  <div><b>One colour grammar</b>Bot talk is coloured by role, using the game’s data-wire strand colours. The same colours run through glyph strings, blocks, nested plans and patches. <a href="#P10">P10</a></div>
+  <div><b>Plans are violet holes</b>A sub-agent is a filled hole. A hole no bot can fill climbs up to you as a question: Hazel’s typed holes as the delegation protocol. <a href="#P5">P5</a></div>
+  <div><b>Gloss, don’t translate</b>Bots never speak English. An aligned gloss row is their subtitle, and higher-order talk is drawn in the game’s own cables and ties. <a href="#P4">P4</a> <a href="#P6">P6</a></div>
+</div>
+
+<h2 class="sec">Panels</h2>
+<div id="panels"></div>
+
+<h2 class="sec">References</h2>
+<div class="refs">
+
+<article class="ref" id="R1"><div class="rh"><span class="rc0">R1</span><h3>Uiua</h3></div>
+<div class="links"><a href="https://www.uiua.org">uiua.org</a><a href="https://www.uiua.org/pad">pad</a><a href="https://www.uiua.org/docs">primitives</a><a href="https://github.com/uiua-lang/uiua">repo</a></div>
+<p><b>Looks</b>A stack-based array language written in single Unicode glyphs (⊂ ⇌ ≡ ⊞). The site colours each glyph by how many arguments it takes: green for one (#95d16a), blue for two (#54b0fc), yellow and purple for modifiers (#f0c36f, #cc6be9), pale grey for stack shuffles.</p>
+<p><b>Borrow</b>Colour by role, so a glyph string reads at a glance, even blurred. One glyph means one thing. Recoloured here with Stratum’s strand palette, not copied.</p>
+<div class="used"><span>in</span><a href="#P1">P1</a><a href="#P4">P4</a><a href="#P8">P8</a><a href="#P10">P10</a></div></article>
+
+<article class="ref" id="R2"><div class="rh"><span class="rc0">R2</span><h3>APL and BQN</h3></div>
+<div class="links"><a href="https://en.wikipedia.org/wiki/APL_(programming_language)">APL</a><a href="https://mlochbaum.github.io/BQN/">BQN</a><a href="https://mlochbaum.github.io/BQN/doc/primitive.html">BQN primitives</a></div>
+<p><b>Looks</b>Dense one-character primitives with shapes that hint at their meaning. BQN’s docs colour by syntactic role: functions green, 1-modifiers plum, 2-modifiers olive-gold, values grey.</p>
+<p><b>Borrow</b>A small, closed alphabet where shape carries meaning (⊓ lift / ⊔ drop, ⟦ ⟧ quote). Role, not word, decides the colour.</p>
+<div class="used"><span>in</span><a href="#P4">P4</a><a href="#P10">P10</a></div></article>
+
+<article class="ref" id="R3"><div class="rh"><span class="rc0">R3</span><h3>colorForth</h3></div>
+<div class="links"><a href="https://colorforth.github.io/">colorforth.github.io</a><a href="https://colorforth.github.io/primer.htm">primer</a></div>
+<p><b>Looks</b>Chuck Moore’s Forth, where a word’s colour replaces punctuation: red defines, green compiles, yellow executes, white is a comment.</p>
+<p><b>Borrow</b>Colour is the syntax. That’s why the firehose still carries information when no text is readable, and why Z0/Z1 zooms work.</p>
+<div class="used"><span>in</span><a href="#P1">P1</a><a href="#P4">P4</a><a href="#P9">P9</a><a href="#P10">P10</a></div></article>
+
+<article class="ref" id="R4"><div class="rh"><span class="rc0">R4</span><h3>Ragged Blocks</h3></div>
+<div class="links"><a href="https://arxiv.org/abs/2507.06460">Cohen &amp; Chugh, UIST ’25 (arXiv)</a></div>
+<p><b>Looks</b>Nested code drawn as “rocks”: rectilinear polygons with irregular borders that hug each line of text. Every syntax node gets a border and padding, but the layout stays close to plain text, unlike nested rectangles.</p>
+<p><b>Borrow</b>The violet plan blocks in P5 use a tiny pixel version: each node’s rock is a dilated row-hull of its children, with a 1 px emboss and a depth tint.</p>
+<div class="used"><span>in</span><a href="#P5">P5</a></div></article>
+
+<article class="ref" id="R5"><div class="rh"><span class="rc0">R5</span><h3>Hazel: holes, livelits, projectors</h3></div>
+<div class="links"><a href="https://hazel.org">hazel.org</a><a href="https://hazel.org/build/dev/">live editor</a><a href="https://github.com/hazelgrove/hazel/blob/dev/hazel-programs/docs/reference/projectors.hz">projectors reference</a><a href="https://doi.org/10.1145/3453483.3454059">livelits, PLDI ’21</a></div>
+<p><b>Looks</b>A structure editor in which incomplete programs have typed holes and still run. Livelits fill holes with live GUIs. Projectors swap a term for a view: fold to “…”, checkbox, slider, text area, type, card, colour, table.</p>
+<p><b>Borrow</b>Holes as the unit of delegation, with open-hole counts on threads. Projectors (slider, checkbox, fold) inside plans. The voice note as a projection of its transcript.</p>
+<div class="used"><span>in</span><a href="#P2">P2</a><a href="#P3">P3</a><a href="#P5">P5</a><a href="#P7">P7</a></div></article>
+
+<article class="ref" id="R6"><div class="rh"><span class="rc0">R6</span><h3>tylr</h3></div>
+<div class="links"><a href="https://github.com/hazelgrove/tylr">repo</a><a href="https://conf.researchr.org/details/vlhcc-2023/vlhcc-2023-research-papers/8/Gradual-Structure-Editing-with-Obligations">Gradual Structure Editing with Obligations, VL/HCC ’23</a><a href="https://arxiv.org/abs/2508.16848">Syntactic Completions with Material Obligations, OOPSLA ’25</a></div>
+<p><b>Looks</b>Tile-based structure editing: you type text, but tokens behave as tiles, and missing pieces are shown as explicit obligations instead of errors.</p>
+<p><b>Borrow</b>An unfinished plan isn’t broken. It shows what it still owes, and the “▢ 2 open holes” counters come from this.</p>
+<div class="used"><span>in</span><a href="#P2">P2</a><a href="#P5">P5</a></div></article>
+
+<article class="ref" id="R7"><div class="rh"><span class="rc0">R7</span><h3>Typed holes as LLM context</h3></div>
+<div class="links"><a href="https://arxiv.org/abs/2409.00921">Blinn, Li, Kim, Omar, OOPSLA ’24 (arXiv)</a></div>
+<p><b>Looks</b>Not a visual reference. The paper uses a hole’s expected type and typing context to tell a language model what code is needed.</p>
+<p><b>Borrow</b>A hole is a complete brief for a sub-agent: its type is the task, and its context is what the agent gets told. So handing F-2 a hole is enough, and a hole is what you see when an agent spawns.</p>
+<div class="used"><span>in</span><a href="#P5">P5</a></div></article>
+
+<article class="ref" id="R8"><div class="rh"><span class="rc0">R8</span><h3>Lamdu</h3></div>
+<div class="links"><a href="https://www.lamdu.org/">lamdu.org</a><a href="https://github.com/lamdu/lamdu">repo</a><a href="https://futureofcoding.org/catalog/lamdu.html">FoC catalog</a></div>
+<p><b>Looks</b>A projectional editor for a Haskell-like language. Live evaluation results and type errors are annotated right under each subexpression.</p>
+<p><b>Borrow</b>Put the state under or beside the thing, not in a separate pane: the right column of the roster and the gloss row.</p>
+<div class="used"><span>in</span><a href="#P3">P3</a><a href="#P4">P4</a></div></article>
+
+<article class="ref" id="R9"><div class="rh"><span class="rc0">R9</span><h3>Scratch blocks</h3></div>
+<div class="links"><a href="https://en.scratch-wiki.info/wiki/Block_Shapes">Block Shapes (wiki)</a><a href="https://en.scratch-wiki.info/wiki/Blocks">Blocks</a></div>
+<p><b>Looks</b>Hat blocks with a rounded top, stack blocks with a notch and a bump, C blocks that wrap others, round reporters, hexagonal booleans, coloured by category.</p>
+<p><b>Borrow</b>Shape is grammar, so even a pixel-scale block stack reads as a program. Here the categories are the glyph roles.</p>
+<div class="used"><span>in</span><a href="#P6">P6</a></div></article>
+
+<article class="ref" id="R10"><div class="rh"><span class="rc0">R10</span><h3>Snap!</h3></div>
+<div class="links"><a href="https://snap.berkeley.edu">snap.berkeley.edu</a><a href="https://forum.snap.berkeley.edu/t/how-do-you-ringify-a-block-with-javascript/5226">rings</a><a href="https://forum.snap.berkeley.edu/t/zebra-colouring-for-ringed-block/15757">zebra colouring</a></div>
+<p><b>Looks</b>Scratch-style blocks, but a grey ring around a block makes it a value (lambda). Nested blocks of the same category alternate light and dark (zebra).</p>
+<p><b>Borrow</b>The ringed block T-tie hands over, a program passed as a thing. Zebra lightening for nested violet C blocks.</p>
+<div class="used"><span>in</span><a href="#P6">P6</a></div></article>
+
+<article class="ref" id="R11"><div class="rh"><span class="rc0">R11</span><h3>Max / MSP</h3></div>
+<div class="links"><a href="https://docs.cycling74.com/legacy/max5/tutorials/msp-tut/mspchapter04.html">MSP tutorial 4</a><a href="https://docs.cycling74.com/legacy/max5/vignettes/core/patch_cords.html">patch cords</a></div>
+<p><b>Looks</b>Object boxes joined by patch cords. Audio signal cords have a yellow-and-black striped look, distinct from Max message cords.</p>
+<p><b>Borrow</b>Cord look = data type. The striped data strand in P6 is a stream; the solid orange one is power.</p>
+<div class="used"><span>in</span><a href="#P6">P6</a></div></article>
+
+<article class="ref" id="R12"><div class="rh"><span class="rc0">R12</span><h3>Pure Data</h3></div>
+<div class="links"><a href="https://puredata.info">puredata.info</a><a href="https://msp.ucsd.edu/techniques/latest/book-html/node49.html">Puckette, Theory &amp; Technique</a><a href="https://en.wikipedia.org/wiki/Pure_Data">Wikipedia</a></div>
+<p><b>Looks</b>Monochrome boxes and lines. Thin connections carry control streams, thick ones carry audio.</p>
+<p><b>Borrow</b>Line weight by gauge, which matches Stratum’s 1 px data wire and 2 px power cable.</p>
+<div class="used"><span>in</span><a href="#P6">P6</a></div></article>
+
+<article class="ref" id="R13"><div class="rh"><span class="rc0">R13</span><h3>Blender nodes</h3></div>
+<div class="links"><a href="https://docs.blender.org/manual/en/latest/interface/controls/nodes/index.html">manual: nodes</a></div>
+<p><b>Looks</b>Rounded nodes with coloured header strips. Sockets on the sides are coloured by data type, joined by smooth curves. (Socket colours from memory; the docs block scripted fetches.)</p>
+<p><b>Borrow</b>Side ports instead of Max’s top and bottom ports, so wires can hang and droop between nodes the way Stratum cables do.</p>
+<div class="used"><span>in</span><a href="#P6">P6</a></div></article>
+
+<article class="ref" id="R14"><div class="rh"><span class="rc0">R14</span><h3>Orca</h3></div>
+<div class="links"><a href="https://github.com/hundredrabbits/Orca">hundredrabbits/Orca</a><a href="https://esolangs.org/wiki/Orca">esolangs</a></div>
+<p><b>Looks</b>A black grid of dots in which every letter is an operator. Operators sit on teal blocks (#72dec2), the cursor is an amber block (#ffb545), and the whole program runs every frame.</p>
+<p><b>Borrow</b>Operators as inverted blocks and an amber “now” cell in the drone’s route grid. A whole crew’s schedule could be one live grid.</p>
+<div class="used"><span>in</span><a href="#P4">P4</a></div></article>
+
+<article class="ref" id="R15"><div class="rh"><span class="rc0">R15</span><h3>Befunge</h3></div>
+<div class="links"><a href="https://esolangs.org/wiki/Befunge">esolangs.org</a></div>
+<p><b>Looks</b>A 2D ASCII program; the instruction pointer travels the grid, steered by &gt; &lt; ^ v.</p>
+<p><b>Borrow</b>Drone routes as arrow programs. A route is literally code the drone walks.</p>
+<div class="used"><span>in</span><a href="#P4">P4</a></div></article>
+
+<article class="ref" id="R16"><div class="rh"><span class="rc0">R16</span><h3>Hexagony</h3></div>
+<div class="links"><a href="https://esolangs.org/wiki/Hexagony">esolangs.org</a></div>
+<p><b>Looks</b>Source code wrapped onto a hexagonal grid, run by several instruction pointers at once.</p>
+<p><b>Borrow</b>Not drawn yet: an iso-diamond version of the route grid that matches Stratum’s floor plan, with several bots as pointers.</p>
+<div class="used"><span>idea only</span></div></article>
+
+<article class="ref" id="R17"><div class="rh"><span class="rc0">R17</span><h3>Piet</h3></div>
+<div class="links"><a href="https://www.dangermouse.net/esoteric/piet.html">dangermouse.net</a><a href="https://esolangs.org/wiki/Piet">esolangs</a></div>
+<p><b>Looks</b>Programs are abstract bitmaps that look like Mondrian paintings: 20 colours, with instructions encoded as changes in hue and lightness between colour blocks.</p>
+<p><b>Borrow</b>The drone’s “photo”: a message that is only colour blocks, which a bot finds perfectly clear.</p>
+<div class="used"><span>in</span><a href="#P8">P8</a></div></article>
+
+<article class="ref" id="R18"><div class="rh"><span class="rc0">R18</span><h3>ToonTalk</h3></div>
+<div class="links"><a href="https://www.toontalk.com/">toontalk.com</a><a href="https://en.wikipedia.org/wiki/ToonTalk">Wikipedia</a></div>
+<p><b>Looks</b>Ken Kahn’s animated programming world: robots are trained by example, a program is a team of robots, and a bird carries whatever you hand her to her nest.</p>
+<p><b>Borrow</b>The swarm-as-program framing, and birds as messengers: Stratum’s ambient birds could literally carry messages between crews.</p>
+<div class="used"><span>in</span><a href="#P6">P6</a><a href="#P8">P8</a></div></article>
+
+<article class="ref" id="R19"><div class="rh"><span class="rc0">R19</span><h3>Pictorial Janus</h3></div>
+<div class="links"><a href="https://en.wikipedia.org/wiki/Janus_(concurrent_constraint_programming_language)">Janus (Wikipedia)</a><span class="faintx">Kahn &amp; Saraswat, “Complete Visualizations of Concurrent Programs and Their Executions”, 1990</span></div>
+<p><b>Looks</b>A visual form of a concurrent constraint language: agents and messages are drawn as nested closed contours and links, and running the program animates the picture.</p>
+<p><b>Borrow</b>Agents as shapes that pass messages. The longer-term direction: higher-order exchanges as small animated pictures, not text.</p>
+<div class="used"><span>in</span><a href="#P10">P10</a><span>and future work</span></div></article>
+
+<article class="ref" id="R20"><div class="rh"><span class="rc0">R20</span><h3>Opus Magnum · 7 Billion Humans</h3></div>
+<div class="links"><a href="https://www.zachtronics.com/opus-magnum/">Opus Magnum</a><a href="https://tomorrowcorporation.com/7billionhumans">7 Billion Humans</a></div>
+<p><b>Looks</b>Opus Magnum gives each arm its own timeline row of instruction symbols. 7 Billion Humans has a crowd of identical workers running one visual program, often chaotically.</p>
+<p><b>Borrow</b>A crew is one program run by many bodies, so its chatter collapses to a one-line digest of glyphs.</p>
+<div class="used"><span>in</span><a href="#P2">P2</a></div></article>
+
+<article class="ref" id="R21"><div class="rh"><span class="rc0">R21</span><h3>Nested (Orteil)</h3></div>
+<div class="links"><a href="https://orteil.dashnet.org/nested">orteil.dashnet.org/nested</a></div>
+<p><b>Looks</b>A plain, endless outline of the universe: every item expands into generated children, down to absurdly small things like thoughts. (The page sits behind a bot check; this is from memory.)</p>
+<p><b>Borrow</b>The roster goes all the way down, from the city to an agent’s worries to a bird’s single thought.</p>
+<div class="used"><span>in</span><a href="#P3">P3</a><a href="#P9">P9</a></div></article>
+
+<article class="ref" id="R22"><div class="rh"><span class="rc0">R22</span><h3>Interlinear gloss</h3></div>
+<div class="links"><a href="https://www.eva.mpg.de/lingua/resources/glossing-rules.php">Leipzig Glossing Rules</a></div>
+<p><b>Looks</b>The linguistics convention: the original line, then a word-by-word aligned gloss in small capitals, then a free translation.</p>
+<p><b>Borrow</b>Bot speech gets glossed, never translated: an aligned 3×5 caption under each glyph, toggled from the header.</p>
+<div class="used"><span>in</span><a href="#P4">P4</a><a href="#P8">P8</a></div></article>
+
+</div>
+<p class="note">No reference images are embedded: every pixel on this page is original and drawn in code (pixel.js, pieces.js, panels.js). Colours and the 3×5 font come from experiments/stratum-wires.</p>
+<footer class="end">experiments/agent-chat-reference · add <code>?still</code> to the URL to freeze the firehose</footer>
+</div>
+<script src="pixel.js"></script>
+<script src="pieces.js"></script>
+<script src="panels.js"></script>
+</body>
+</html>

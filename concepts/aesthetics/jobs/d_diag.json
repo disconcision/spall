@@ -1,0 +1,85 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 40
+ },
+ "jobs": [
+  {
+   "spec": "specs/d_wall.json",
+   "out": "out/d/d1_battered_wall.png",
+   "light": "crisp_warm",
+   "frame_bb": [
+    -50,
+    -40,
+    0,
+    225,
+    85,
+    70
+   ],
+   "camera": {
+    "margin": 0.0,
+    "zoom": 0.82
+   }
+  },
+  {
+   "spec": "specs/d_steps.json",
+   "out": "out/d/d2_stepped_vs_smooth.png",
+   "light": "crisp",
+   "frame_bb": [
+    -6,
+    -6,
+    0,
+    270,
+    40,
+    42
+   ],
+   "camera": {
+    "margin": 0.02
+   }
+  },
+  {
+   "spec": "specs/d_shafts.json",
+   "out": "out/d/d3_inclined_shafts.png",
+   "light": "section",
+   "res": [
+    1600,
+    1150
+   ],
+   "view": {
+    "mode": "full",
+    "crop": [
+     -2.5,
+     5.0,
+     42.5,
+     10.0
+    ]
+   },
+   "frame_bb": [
+    -8,
+    20,
+    -120,
+    172,
+    40,
+    26
+   ],
+   "camera": {
+    "az": 28,
+    "el": 16,
+    "margin": 0.01
+   },
+   "poche": "poche_dark",
+   "nofog": false,
+   "fog": {
+    "h": 0.55,
+    "gamma": 2.2,
+    "d": 0.0,
+    "z_lo": -125,
+    "z_hi": 30
+   },
+   "max_lights": 260
+  }
+ ]
+}

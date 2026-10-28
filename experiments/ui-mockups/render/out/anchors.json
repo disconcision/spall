@@ -1,0 +1,189 @@
+{
+ "m3_stamps": [
+  {
+   "x": 11,
+   "y": 12,
+   "w": 2,
+   "d": 1,
+   "level": 18,
+   "h": 3,
+   "state": "built"
+  },
+  {
+   "x": 11,
+   "y": 11,
+   "w": 2,
+   "d": 1,
+   "level": 18,
+   "h": 3,
+   "state": "building"
+  },
+  {
+   "x": 11,
+   "y": 10,
+   "w": 2,
+   "d": 1,
+   "level": 18,
+   "h": 3,
+   "state": "claimed"
+  },
+  {
+   "x": 4,
+   "y": 9,
+   "w": 2,
+   "d": 1,
+   "level": 18,
+   "h": 3,
+   "state": "queued"
+  },
+  {
+   "x": 4,
+   "y": 8,
+   "w": 2,
+   "d": 1,
+   "level": 18,
+   "h": 3,
+   "state": "queued"
+  },
+  {
+   "x": 4,
+   "y": 7,
+   "w": 2,
+   "d": 1,
+   "level": 18,
+   "h": 3,
+   "state": "queued"
+  },
+  {
+   "x": 7,
+   "y": 11,
+   "w": 2,
+   "d": 1,
+   "level": 18,
+   "h": 3,
+   "state": "blocked"
+  },
+  {
+   "x": 7,
+   "y": 10,
+   "w": 2,
+   "d": 1,
+   "level": 18,
+   "h": 3,
+   "state": "queued"
+  }
+ ],
+ "m3_drones": [
+  {
+   "id": "D-04",
+   "x": 13.3,
+   "y": 11.4,
+   "level": 19.75,
+   "task": "hauling floor 2 panels"
+  },
+  {
+   "id": "D-09",
+   "x": 10.5,
+   "y": 11.5,
+   "level": 20.3,
+   "task": "welding floor 2 frame"
+  },
+  {
+   "id": "D-12",
+   "x": 12.9,
+   "y": 9.65,
+   "level": 19.5,
+   "task": "claimed stack #3"
+  }
+ ],
+ "m3_crop": [
+  2.5,
+  3.5,
+  17.2,
+  13.8
+ ],
+ "m4": {
+  "seg1": [
+   4.2,
+   6.0,
+   25,
+   5.0,
+   10.2,
+   25
+  ],
+  "landing": [
+   4.1,
+   10.1,
+   25,
+   5.1,
+   11.1,
+   25
+  ],
+  "seg2": [
+   5.0,
+   10.2,
+   25,
+   15.0,
+   11.0,
+   25
+  ],
+  "pier": [
+   4.45,
+   10.35,
+   24.1,
+   4.95,
+   10.85,
+   24.72
+  ],
+  "coreA": [
+   3,
+   4,
+   12,
+   5,
+   6,
+   26
+  ],
+  "coreB": [
+   15,
+   10,
+   12,
+   17,
+   12,
+   26
+  ],
+  "drones": [
+   {
+    "id": "D-07",
+    "x": 5.5,
+    "y": 6.65,
+    "level": 25.9,
+    "task": "step 1 - bracket on core A",
+    "state": "claimed"
+   },
+   {
+    "id": "D-11",
+    "x": 14.2,
+    "y": 11.45,
+    "level": 25.75,
+    "task": "step 2 - bracket on core B",
+    "state": "claimed"
+   },
+   {
+    "id": "D-03",
+    "x": 9.3,
+    "y": 9.3,
+    "level": 26.8,
+    "task": "hauling truss T2 from depot L18",
+    "state": "hauling"
+   },
+   {
+    "id": "D-14",
+    "x": 17.65,
+    "y": 9.2,
+    "level": 26.5,
+    "task": "waiting: glazing x18 (stall)",
+    "state": "waiting"
+   }
+  ]
+ }
+}

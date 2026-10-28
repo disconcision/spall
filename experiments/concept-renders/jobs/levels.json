@@ -1,0 +1,230 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 64
+ },
+ "jobs": [
+  {
+   "spec": "specs/arcology.json",
+   "light": "overcast",
+   "frame_bb": [
+    -8,
+    -12,
+    -10,
+    95,
+    72,
+    140
+   ],
+   "frame_clip": true,
+   "out": "out/v1_full.png",
+   "view": {
+    "mode": "full",
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   }
+  },
+  {
+   "spec": "specs/arcology.json",
+   "light": "overcast",
+   "frame_bb": [
+    -8,
+    -12,
+    -10,
+    95,
+    72,
+    140
+   ],
+   "frame_clip": true,
+   "out": "out/v2_cutaway_L8.png",
+   "view": {
+    "mode": "cutaway",
+    "level": 8,
+    "cut": 0.5,
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   }
+  },
+  {
+   "spec": "specs/arcology.json",
+   "light": "overcast",
+   "frame_bb": [
+    -8,
+    -12,
+    -10,
+    95,
+    72,
+    140
+   ],
+   "frame_clip": true,
+   "out": "out/v2b_cutaway_L14.png",
+   "view": {
+    "mode": "cutaway",
+    "level": 14,
+    "cut": 0.55,
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   }
+  },
+  {
+   "spec": "specs/arcology.json",
+   "light": "overcast",
+   "frame_bb": [
+    -8,
+    -12,
+    -10,
+    95,
+    72,
+    140
+   ],
+   "frame_clip": true,
+   "out": "out/v3_ghost_L8.png",
+   "view": {
+    "mode": "ghost",
+    "level": 8,
+    "cut": 0.5,
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   },
+   "env": {
+    "ghost_col": [
+     0.50289,
+     0.67244,
+     0.9131
+    ],
+    "wire_col": [
+     0.10946,
+     0.32778,
+     0.7454
+    ],
+    "ghost_alpha": 0.08,
+    "wire_e": 1.6
+   }
+  },
+  {
+   "spec": "specs/arcology.json",
+   "light": "overcast",
+   "frame_bb": false,
+   "frame_clip": true,
+   "out": "out/v4_exploded.png",
+   "view": {
+    "mode": "exploded",
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ],
+    "bands": [
+     0,
+     5.7,
+     11.7,
+     17.7,
+     23.7,
+     40
+    ],
+    "gap": 7,
+    "guides": [
+     [
+      0.2,
+      0.2
+     ],
+     [
+      19.8,
+      0.2
+     ],
+     [
+      19.8,
+      15.8
+     ],
+     [
+      0.2,
+      15.8
+     ]
+    ]
+   },
+   "res": [
+    1400,
+    1600
+   ]
+  },
+  {
+   "spec": "specs/arcology.json",
+   "light": "overcast",
+   "frame_bb": [
+    -8,
+    -12,
+    -10,
+    95,
+    72,
+    140
+   ],
+   "frame_clip": true,
+   "out": "out/v5_section_x13.png",
+   "view": {
+    "mode": "section",
+    "axis": "x",
+    "at": 13,
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   }
+  },
+  {
+   "spec": "specs/arcology.json",
+   "light": "plan",
+   "frame_bb": [
+    -6,
+    -10,
+    0,
+    92,
+    68,
+    60
+   ],
+   "frame_clip": true,
+   "out": "out/v6_plan_L12.png",
+   "view": {
+    "mode": "plan",
+    "level": 12,
+    "cut": 0.5,
+    "crop": [
+     -1.5,
+     -2.0,
+     23.0,
+     17.0
+    ]
+   },
+   "fog": {
+    "d": 0.8,
+    "plan_d0": 2.0,
+    "plan_d1": 45.0
+   },
+   "style_overrides": {
+    "flat": 0.35,
+    "panel": null
+   },
+   "camera_out": "out/v6_plan_L12.cam.json"
+  }
+ ]
+}

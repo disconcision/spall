@@ -1,0 +1,9 @@
+validate specs/drafts/hydro_stack.v1.json  (revision 1)
+  stock agent_check.py: FAIL (14 errors, 11 of them on context parts, 0 warnings)
+  ERROR  #32 tank: top at 19.1 m exceeds max_levels (17.5 m)
+  ERROR  #13 pipe: unsupported - its base is at 1.75 m but the nearest top below is at 0.00 m (gap 1.75 m = 0.50 levels)
+  ERROR  #14 pipe: unsupported - its base is at 8.75 m but the nearest top below is at 2.10 m (gap 6.65 m = 1.90 levels)
+  ERROR  logic: geometry uses 6 levels but footprint declares 5
+  note   33 parts (6 context), 0 oriented; 5 attach to the host directly
+  note   33 parts (detail 2, infill 19, service 6, support 6); height 21.0 m
+  => FAIL (4 errors, 0 warnings)

@@ -1,0 +1,5 @@
+validate specs/drafts/solar_chimney.v4.json  (revision 4)
+  stock agent_check.py: FAIL (42 errors, 42 of them on context parts, 0 warnings)
+  note   80 parts (58 context), 0 oriented; 11 attach to the host directly
+  note   80 parts (detail 24, infill 9, landscape 6, service 5, support 36); height 24.3 m
+  => PASS (0 errors, 0 warnings)

@@ -1,0 +1,170 @@
+{
+ "id": "tube_interchange",
+ "spec": "specs/tube_interchange.json",
+ "title": "Tube Interchange",
+ "category": "transit",
+ "brief": "a transit interchange where two elevated tube lines cross at different levels",
+ "footprint": {
+  "cells_w": 3,
+  "cells_d": 3,
+  "levels": 6,
+  "anchor": "floor",
+  "rotations": 4,
+  "note": "line A (east-west) at level 1.2, line B (north-south) at level 3.4; both continue as network tiles"
+ },
+ "placement": {
+  "on": [
+   "ground",
+   "deck"
+  ],
+  "stratum": "any",
+  "requires": [
+   {
+    "kind": "tube_line",
+    "axis": "x",
+    "at_level": 1.2,
+    "note": "joins tube network A on both sides"
+   },
+   {
+    "kind": "tube_line",
+    "axis": "y",
+    "at_level": 3.4,
+    "note": "joins tube network B on both sides"
+   },
+   {
+    "kind": "walkway",
+    "within_cells": 1,
+    "note": "concourse entrance on the south side"
+   }
+  ],
+  "clear_height_levels": 6
+ },
+ "capacity": {
+  "passengers_per_hour": 9000,
+  "transfers_per_hour": 3000,
+  "platforms": 2,
+  "residents": 0
+ },
+ "jobs": {
+  "total": 12,
+  "shifts": 3,
+  "roles": [
+   {
+    "role": "station staff",
+    "n": 6
+   },
+   {
+    "role": "maintenance",
+    "n": 4
+   },
+   {
+    "role": "security",
+    "n": 2
+   }
+  ]
+ },
+ "services": {
+  "needs": {
+   "power": {
+    "kw": 420,
+    "note": "traction feed for both lines at the station + lifts"
+   },
+   "air": {
+    "m3_per_min": 30,
+    "note": "platform ventilation"
+   },
+   "water": {
+    "m3_per_day": 2
+   }
+  },
+  "provides": {
+   "transit": {
+    "lines": [
+     "A",
+     "B"
+    ],
+    "coverage_radius_cells": 8,
+    "transfer": true,
+    "note": "any cell within 8 cells counts as served by lines A and B"
+   }
+  }
+ },
+ "effects": {
+  "light_air": {
+   "radius_cells": 2,
+   "daylight_delta": -0.1,
+   "note": "two tubes over one lot shade the ground beneath"
+  },
+  "land_value": {
+   "radius_cells": 8,
+   "delta": 20,
+   "note": "transit access"
+  },
+  "noise": {
+   "radius_cells": 3,
+   "db": 12,
+   "note": "trains, announcements"
+  },
+  "footfall": {
+   "radius_cells": 5,
+   "delta": 40
+  }
+ },
+ "economy": {
+  "build_cost": 6200,
+  "upkeep_per_day": 55,
+  "build_days": 40
+ },
+ "construction": [
+  {
+   "step": 1,
+   "name": "piers",
+   "drones": {
+    "lifter": 2,
+    "welder": 1
+   },
+   "days": 10,
+   "action": "cast four piers (two low for line A, two tall for line B) and the platform columns"
+  },
+  {
+   "step": 2,
+   "name": "tube segments",
+   "drones": {
+    "lifter": 3,
+    "welder": 2
+   },
+   "days": 12,
+   "action": "lift the line A station segment onto the low piers, then line B onto the tall piers"
+  },
+  {
+   "step": 3,
+   "name": "platforms",
+   "drones": {
+    "lifter": 2,
+    "glazier": 2
+   },
+   "days": 8,
+   "action": "hang the two enclosed glass platforms alongside the tubes"
+  },
+  {
+   "step": 4,
+   "name": "circulation",
+   "drones": {
+    "lifter": 1,
+    "welder": 1
+   },
+   "days": 6,
+   "action": "raise the glazed lift tower on the north-east corner (platform B) and the stair + landing to platform A"
+  },
+  {
+   "step": 5,
+   "name": "concourse",
+   "drones": {
+    "lifter": 1,
+    "electrician": 1
+   },
+   "days": 4,
+   "action": "set the ground concourse hall and signage; commission"
+  }
+ ]
+}

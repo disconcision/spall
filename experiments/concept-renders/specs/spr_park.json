@@ -1,0 +1,1 @@
+{"meta":{"name":"spr_park","style":"sprite","seed":5,"grid":{"cell":4.0,"level":3.5},"light":"studio","kind":"building-type","footprint":{"x":0,"y":0,"w":1,"d":1},"description":"Pocket park."},"parts":[{"id":0,"type":"terrace","x":0,"y":0,"level":0,"w":1,"d":1,"h":0.2,"params":{"ntrees":3,"edge":"","path":false,"tree_h":[4,7]}}]}

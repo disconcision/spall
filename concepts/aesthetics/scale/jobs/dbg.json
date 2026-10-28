@@ -1,0 +1,48 @@
+{
+ "defaults": {
+  "res": [
+   1600,
+   1000
+  ],
+  "samples": 32
+ },
+ "jobs": [
+  {
+   "spec": "scale/specs/p_world.json",
+   "out": "scale/out/test/dbg0.png",
+   "light": "aerial",
+   "style": "scale",
+   "camera": {
+    "az": 0.0,
+    "el": 12,
+    "target": [
+     0,
+     -40,
+     630
+    ],
+    "ortho_scale": 120
+   },
+   "fog": {
+    "h": 0.0,
+    "gamma": 1.4,
+    "d": 0.05,
+    "z_lo": 0.0,
+    "z_hi": 800,
+    "d_start": 0.0
+   },
+   "name": "p2",
+   "max_lights": 80,
+   "samples": 16,
+   "clip": [
+    0.05,
+    3000000.0
+   ],
+   "view": {
+    "mode": "full",
+    "skip_types": [
+     "clouds"
+    ]
+   }
+  }
+ ]
+}

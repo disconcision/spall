@@ -1,0 +1,42 @@
+{
+ "spec": "specs/bridge_market.json",
+ "revision": 3,
+ "stock": {
+  "errors": [
+   "#0 core: leaves the 4x2 footprint by more than the 0.5-cell overhang allowance",
+   "#0 core: top at 17.5 m exceeds max_levels (7.0 m)",
+   "#1 core: leaves the 4x2 footprint by more than the 0.5-cell overhang allowance",
+   "#1 core: top at 17.5 m exceeds max_levels (7.0 m)",
+   "#2 capsule: leaves the 4x2 footprint by more than the 0.5-cell overhang allowance",
+   "#2 capsule: top at 7.3 m exceeds max_levels (7.0 m)",
+   "#3 capsule: leaves the 4x2 footprint by more than the 0.5-cell overhang allowance",
+   "#4 pipe: leaves the 4x2 footprint by more than the 0.5-cell overhang allowance",
+   "#4 pipe: top at 17.5 m exceeds max_levels (7.0 m)"
+  ],
+  "warnings": [],
+  "notes": [
+   "#2 capsule: cantilevered off #0 core",
+   "#10 sign: cantilevered off #8 column",
+   "#13 sign: cantilevered off #11 column",
+   "41 parts (detail 14, infill 12, landscape 5, service 1, support 8, transit 1); height 17.5 m"
+  ],
+  "pass_": false,
+  "context_errors": 9,
+  "overruled": []
+ },
+ "extended": {
+  "errors": [],
+  "warnings": [],
+  "notes": [
+   "41 parts (5 context), 0 oriented; 0 attach to the host directly"
+  ]
+ },
+ "logic": {
+  "errors": [],
+  "warnings": []
+ },
+ "errors": [],
+ "warnings": [],
+ "pass_": true,
+ "categories": {}
+}

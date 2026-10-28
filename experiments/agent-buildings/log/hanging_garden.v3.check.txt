@@ -1,0 +1,7 @@
+validate specs/drafts/hanging_garden.v3.json  (revision 3)
+  stock agent_check.py: FAIL (8 errors, 2 of them on context parts, 2 warnings)
+  warn   #1 wall: param "rib_w" is ignored by the renderer (did you mean "ribs"?)
+  warn   #1 wall: param "rib_d" is ignored by the renderer (did you mean "ribs"?)
+  note   34 parts (1 context), 13 oriented; 0 attach to the host directly
+  note   34 parts (landscape 22, service 1, support 5, transit 6); height 28.0 m
+  => PASS (0 errors, 2 warnings)

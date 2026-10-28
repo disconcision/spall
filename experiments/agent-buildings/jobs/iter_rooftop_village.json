@@ -1,0 +1,195 @@
+{
+ "defaults": {},
+ "jobs": [
+  {
+   "spec": "specs/drafts/rooftop_village.v2.json",
+   "out": "out/iter/rooftop_village_v2_concept.png",
+   "light": "dusk",
+   "style": "kowloon",
+   "res": [
+    1000,
+    750
+   ],
+   "samples": 24,
+   "camera": {
+    "target": [
+     5.5,
+     6.5,
+     2.0
+    ],
+    "ortho_scale": 30
+   },
+   "env": {
+    "lantern": 2.6
+   }
+  },
+  {
+   "spec": "specs/drafts/rooftop_village.v2.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/iter/rooftop_village_v2_r0_lo.png",
+   "res": [
+    116,
+    108
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/iter/rooftop_village_v2_r0_lo.cam.json"
+  },
+  {
+   "spec": "specs/drafts/rooftop_village.v2.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 0,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/iter/rooftop_village_v2_r0_hi.png",
+   "res": [
+    696,
+    648
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  },
+  {
+   "spec": "specs/drafts/rooftop_village.v2.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/iter/rooftop_village_v2_r1_lo.png",
+   "res": [
+    116,
+    108
+   ],
+   "samples": 16,
+   "filter_size": 0.0,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 5.65685424949238
+   },
+   "camera_out": "out/iter/rooftop_village_v2_r1_lo.cam.json"
+  },
+  {
+   "spec": "specs/drafts/rooftop_village.v2.json",
+   "view": {
+    "mode": "sprite",
+    "rot": 1,
+    "footprint": [
+     0,
+     0,
+     3,
+     3
+    ]
+   },
+   "transparent": true,
+   "nofog": true,
+   "bloom": 0,
+   "drop_tags": [
+    "context"
+   ],
+   "light": "studio",
+   "style": "sprite",
+   "style_overrides": {
+    "remap": {
+     "glass_clear": "glass_px",
+     "glass_green": "glass_green_px"
+    }
+   },
+   "out": "out/iter/rooftop_village_v2_r1_hi.png",
+   "res": [
+    696,
+    648
+   ],
+   "samples": 64,
+   "camera": {
+    "target": [
+     4.6875,
+     7.3125,
+     3.21496
+    ],
+    "px_per_m": 33.94112549695428
+   }
+  }
+ ]
+}

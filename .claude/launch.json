@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "stratum-prototype",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "5190", "--bind", "127.0.0.1", "--directory", "experiments"],
+      "port": 5190
+    }
+  ]
+}

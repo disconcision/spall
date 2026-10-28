@@ -1,0 +1,622 @@
+{
+ "meta": {
+  "name": "hanging_garden",
+  "kind": "building-type",
+  "title": "Hanging Garden",
+  "author": "Claude (agent-authored in this experiment)",
+  "revision": 3,
+  "style": "sprite",
+  "seed": 303,
+  "grid": {
+   "cell": 4.0,
+   "level": 3.5
+  },
+  "footprint": {
+   "x": 0,
+   "y": 0,
+   "w": 2,
+   "d": 1,
+   "max_levels": 6,
+   "overhang": 0.5,
+   "host": "wall"
+  },
+  "light": "studio",
+  "brief": "a hanging garden that grows off a shaft wall (mixed directions)",
+  "description": "A timber trellis bolted to a shaft wall carries three cantilevered planting trays on knee-brace brackets. Growth goes every way: trees on the trays grow up, vines climb the trellis, trailing vines hang from every tray soffit, trees and moss grow sideways straight out of the trellis, and baskets hang upside-down under the trays. A narrow cascade falls from under the top tray into a basin on the lowest.",
+  "sprite": {
+   "px_per_tile": 32,
+   "rotations": 4,
+   "palette": "kit64"
+  }
+ },
+ "parts": [
+  {
+   "type": "block",
+   "x": -0.5,
+   "y": 1.0,
+   "level": -2,
+   "w": 3,
+   "d": 1.5,
+   "h": 10,
+   "material": "concrete",
+   "tags": [
+    "context"
+   ],
+   "params": {
+    "parapet": false,
+    "dots": 0.004,
+    "dots_lit": 0.5,
+    "slots": 3
+   }
+  },
+  {
+   "type": "wall",
+   "x": 0.05,
+   "y": 0.92,
+   "level": 0.2,
+   "w": 1.9,
+   "d": 0.08,
+   "h": 5.6,
+   "material": "timber_dark",
+   "tags": [
+    "step:anchors"
+   ],
+   "params": {
+    "parapet": false,
+    "ribs": 7,
+    "rib_w": 0.18,
+    "rib_d": 0.12
+   }
+  },
+  {
+   "type": "ramp",
+   "x": 0.25,
+   "y": 0.25,
+   "level": 0.386,
+   "w": 0.07,
+   "d": 0.67,
+   "h": 0.5,
+   "rot": 3,
+   "material": "steel",
+   "tags": [
+    "step:anchors"
+   ],
+   "params": {
+    "rail": false
+   }
+  },
+  {
+   "type": "ramp",
+   "x": 1.68,
+   "y": 0.25,
+   "level": 0.386,
+   "w": 0.07,
+   "d": 0.67,
+   "h": 0.5,
+   "rot": 3,
+   "material": "steel",
+   "tags": [
+    "step:anchors"
+   ],
+   "params": {
+    "rail": false
+   }
+  },
+  {
+   "type": "ramp",
+   "x": 0.62,
+   "y": 0.4,
+   "level": 2.186,
+   "w": 0.07,
+   "d": 0.52,
+   "h": 0.5,
+   "rot": 3,
+   "material": "steel",
+   "tags": [
+    "step:anchors"
+   ],
+   "params": {
+    "rail": false
+   }
+  },
+  {
+   "type": "ramp",
+   "x": 1.78,
+   "y": 0.4,
+   "level": 2.186,
+   "w": 0.07,
+   "d": 0.52,
+   "h": 0.5,
+   "rot": 3,
+   "material": "steel",
+   "tags": [
+    "step:anchors"
+   ],
+   "params": {
+    "rail": false
+   }
+  },
+  {
+   "type": "ramp",
+   "x": 0.12,
+   "y": 0.25,
+   "level": 3.886,
+   "w": 0.07,
+   "d": 0.67,
+   "h": 0.5,
+   "rot": 3,
+   "material": "steel",
+   "tags": [
+    "step:anchors"
+   ],
+   "params": {
+    "rail": false
+   }
+  },
+  {
+   "type": "ramp",
+   "x": 1.05,
+   "y": 0.25,
+   "level": 3.886,
+   "w": 0.07,
+   "d": 0.67,
+   "h": 0.5,
+   "rot": 3,
+   "material": "steel",
+   "tags": [
+    "step:anchors"
+   ],
+   "params": {
+    "rail": false
+   }
+  },
+  {
+   "type": "pipe",
+   "x": 1.85,
+   "y": 0.84,
+   "level": 0.3,
+   "w": 0.08,
+   "d": 0.08,
+   "h": 4.5,
+   "material": "pipe2",
+   "tags": [
+    "step:anchors"
+   ],
+   "params": {
+    "axis": "z",
+    "n": 1,
+    "r": 0.15,
+    "flange": 3.5
+   }
+  },
+  {
+   "type": "slab",
+   "x": 0.1,
+   "y": 0.1,
+   "level": 1,
+   "w": 1.8,
+   "d": 0.82,
+   "h": 0.1,
+   "material": "concrete_light",
+   "tags": [
+    "step:trays"
+   ],
+   "params": {
+    "t": 0.4
+   }
+  },
+  {
+   "type": "slab",
+   "x": 0.5,
+   "y": 0.3,
+   "level": 2.8,
+   "w": 1.4,
+   "d": 0.62,
+   "h": 0.1,
+   "material": "concrete_light",
+   "tags": [
+    "step:trays"
+   ],
+   "params": {
+    "t": 0.4
+   }
+  },
+  {
+   "type": "slab",
+   "x": 0.0,
+   "y": 0.1,
+   "level": 4.5,
+   "w": 1.2,
+   "d": 0.82,
+   "h": 0.1,
+   "material": "concrete_light",
+   "tags": [
+    "step:trays"
+   ],
+   "params": {
+    "t": 0.4
+   }
+  },
+  {
+   "type": "terrace",
+   "x": 0.1,
+   "y": 0.1,
+   "level": 1,
+   "w": 1.8,
+   "d": 0.82,
+   "h": 0.1,
+   "tags": [
+    "step:planting"
+   ],
+   "params": {
+    "ntrees": 2,
+    "tree_h": [
+     3.0,
+     4.5
+    ],
+    "edge": "",
+    "path": false,
+    "rail": "swe"
+   }
+  },
+  {
+   "type": "terrace",
+   "x": 0.5,
+   "y": 0.3,
+   "level": 2.8,
+   "w": 1.4,
+   "d": 0.62,
+   "h": 0.1,
+   "tags": [
+    "step:planting"
+   ],
+   "params": {
+    "ntrees": 0,
+    "edge": "",
+    "path": false,
+    "rail": "swe"
+   }
+  },
+  {
+   "type": "planter",
+   "x": 0.55,
+   "y": 0.34,
+   "level": 2.8,
+   "w": 1.3,
+   "d": 0.18,
+   "h": 0.2,
+   "tags": [
+    "step:planting"
+   ],
+   "params": {
+    "ph": 0.6
+   }
+  },
+  {
+   "type": "tree",
+   "x": 1.5,
+   "y": 0.6,
+   "level": 2.8,
+   "w": 0.3,
+   "d": 0.3,
+   "h": 1,
+   "tags": [
+    "step:planting"
+   ],
+   "params": {
+    "height": 3.5
+   }
+  },
+  {
+   "type": "terrace",
+   "x": 0.0,
+   "y": 0.1,
+   "level": 4.5,
+   "w": 1.2,
+   "d": 0.82,
+   "h": 0.1,
+   "tags": [
+    "step:planting"
+   ],
+   "params": {
+    "ntrees": 2,
+    "tree_h": [
+     2.5,
+     3.5
+    ],
+    "edge": "",
+    "path": false,
+    "rail": "swe"
+   }
+  },
+  {
+   "type": "vines",
+   "x": 0.2,
+   "y": 0.84,
+   "level": 1.03,
+   "w": 0.28,
+   "d": 0.08,
+   "h": 1.6,
+   "tags": [
+    "step:planting"
+   ],
+   "params": {
+    "density": 2.0,
+    "lmin": 2.5,
+    "lmax": 5.4
+   }
+  },
+  {
+   "type": "vines",
+   "x": 1.3,
+   "y": 0.84,
+   "level": 2.83,
+   "w": 0.6,
+   "d": 0.08,
+   "h": 1.5,
+   "tags": [
+    "step:planting"
+   ],
+   "params": {
+    "density": 1.6,
+    "lmin": 2.0,
+    "lmax": 5.0
+   }
+  },
+  {
+   "type": "vines",
+   "x": 0.15,
+   "y": 0.3,
+   "level": 0.886,
+   "w": 1.7,
+   "d": 0.2,
+   "h": 0.8,
+   "orient": "-z",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "density": 1.5,
+    "lmin": 1.0,
+    "lmax": 2.8
+   }
+  },
+  {
+   "type": "vines",
+   "x": 0.55,
+   "y": 0.5,
+   "level": 2.686,
+   "w": 1.3,
+   "d": 0.2,
+   "h": 1.4,
+   "orient": "-z",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "density": 1.5,
+    "lmin": 1.5,
+    "lmax": 4.9
+   }
+  },
+  {
+   "type": "vines",
+   "x": 0.05,
+   "y": 0.3,
+   "level": 4.386,
+   "w": 1.1,
+   "d": 0.2,
+   "h": 1.5,
+   "orient": "-z",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "density": 1.5,
+    "lmin": 1.5,
+    "lmax": 5.2
+   }
+  },
+  {
+   "type": "tree",
+   "x": 0.2,
+   "y": 0.92,
+   "level": 1.514,
+   "w": 0.6,
+   "d": 0.6,
+   "h": 1.143,
+   "orient": "-y",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "height": 4.0,
+    "species": "round"
+   }
+  },
+  {
+   "type": "tree",
+   "x": 1.3,
+   "y": 0.92,
+   "level": 3.229,
+   "w": 0.6,
+   "d": 0.6,
+   "h": 1.0,
+   "orient": "-y",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "height": 3.5,
+    "species": "round"
+   }
+  },
+  {
+   "type": "tree",
+   "x": 1.3,
+   "y": 0.92,
+   "level": 4.943,
+   "w": 0.6,
+   "d": 0.6,
+   "h": 0.857,
+   "orient": "-y",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "height": 3.0,
+    "species": "round"
+   }
+  },
+  {
+   "type": "terrace",
+   "x": 1.0,
+   "y": 0.92,
+   "level": 1.2,
+   "w": 0.9,
+   "d": 1.0,
+   "h": 0.12,
+   "orient": "-y",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "ntrees": 0,
+    "edge": "",
+    "path": false,
+    "surface": "foliage2"
+   }
+  },
+  {
+   "type": "terrace",
+   "x": 0.1,
+   "y": 0.92,
+   "level": 3.0,
+   "w": 0.8,
+   "d": 0.875,
+   "h": 0.12,
+   "orient": "-y",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "ntrees": 0,
+    "edge": "",
+    "path": false,
+    "surface": "foliage2"
+   }
+  },
+  {
+   "type": "terrace",
+   "x": 1.25,
+   "y": 0.92,
+   "level": 4.629,
+   "w": 0.7,
+   "d": 1.0,
+   "h": 0.12,
+   "orient": "-y",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "ntrees": 0,
+    "edge": "",
+    "path": false,
+    "surface": "foliage2"
+   }
+  },
+  {
+   "type": "planter",
+   "x": 0.8,
+   "y": 0.75,
+   "level": 2.686,
+   "w": 0.18,
+   "d": 0.18,
+   "h": 0.25,
+   "orient": "-z",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "ph": 0.45
+   }
+  },
+  {
+   "type": "planter",
+   "x": 1.4,
+   "y": 0.75,
+   "level": 2.686,
+   "w": 0.18,
+   "d": 0.18,
+   "h": 0.25,
+   "orient": "-z",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "ph": 0.45
+   }
+  },
+  {
+   "type": "planter",
+   "x": 0.4,
+   "y": 0.8,
+   "level": 4.386,
+   "w": 0.18,
+   "d": 0.18,
+   "h": 0.25,
+   "orient": "-z",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "ph": 0.45
+   }
+  },
+  {
+   "type": "planter",
+   "x": 0.85,
+   "y": 0.8,
+   "level": 4.386,
+   "w": 0.18,
+   "d": 0.18,
+   "h": 0.25,
+   "orient": "-z",
+   "tags": [
+    "step:wall growth"
+   ],
+   "params": {
+    "ph": 0.45
+   }
+  },
+  {
+   "type": "water",
+   "x": 0.12,
+   "y": 0.55,
+   "level": 1,
+   "w": 0.3,
+   "d": 0.3,
+   "h": 0.2,
+   "tags": [
+    "step:cascade"
+   ],
+   "params": {
+    "rim": true,
+    "rim_mat": "concrete_light",
+    "rim_w": 0.2
+   }
+  },
+  {
+   "type": "waterfall",
+   "x": 0.14,
+   "y": 0.65,
+   "level": 1.157,
+   "w": 0.15,
+   "d": 0.1,
+   "h": 3.229,
+   "tags": [
+    "step:cascade"
+   ]
+  }
+ ]
+}
