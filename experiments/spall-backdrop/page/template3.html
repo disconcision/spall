@@ -1,0 +1,230 @@
+<title>Spall Backdrops, Round Three</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+/* Round three of the backdrop folio: the same plates and palette, laid out as a guide to walk through in order. */
+:root {
+  --bg: #0e0f11; --plate: #16171a; --rule: #2a2a2c; --ink: #e6dfcf; --dim: #a39c8e; --faint: #7a746a; --accent: #e8a83c; --accent-ink: #1b1305;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 var(--body); }
+.wrap { max-width: 1140px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; display: grid; gap: 44px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: .02em; text-wrap: balance; margin: 0; line-height: 1.05; }
+h1 { font-size: clamp(34px, 6vw, 56px); text-transform: uppercase; letter-spacing: .06em; }
+h2 { font-size: 30px; text-transform: uppercase; letter-spacing: .05em; }
+h3 { font-size: 15px; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--dim); font-size: 16px; }
+.cap { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+img, video { display: block; max-width: 100%; image-rendering: pixelated; }
+header { display: grid; gap: 14px; }
+.eyebrow { font: 600 13px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+.answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 40px; }
+@media (max-width: 760px) { .answers { grid-template-columns: minmax(0, 1fr); } }
+.answer { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; display: grid; gap: 10px; align-content: start; }
+.answer b { color: var(--ink); }
+.keys { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 0; }
+.keys dt { font: 500 13px var(--mono); color: var(--ink); white-space: nowrap; }
+.keys dd { margin: 0; color: var(--dim); }
+kbd { font: 500 12px var(--mono); color: var(--ink); background: var(--plate); border: 1px solid var(--rule); border-bottom-width: 2px; padding: 0 5px; }
+
+.toc { display: grid; gap: 8px; counter-reset: s; margin: 0; padding: 0; list-style: none; }
+.toc li { counter-increment: s; display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: baseline; }
+.toc li::before { content: counter(s, decimal-leading-zero); font: 500 12px var(--mono); color: var(--accent); }
+.toc a { color: var(--ink); text-decoration-color: var(--rule); text-underline-offset: 3px; }
+.toc a:hover { text-decoration-color: var(--accent); }
+.toc span { color: var(--dim); }
+
+.plate { display: grid; gap: 16px; padding-top: 22px; border-top: 1px solid var(--rule); scroll-margin-top: 16px; }
+.plate-head { display: grid; gap: 8px; }
+.plate-head .k { font: 500 12px var(--mono); color: var(--accent); }
+.look { display: grid; gap: 6px; padding: 12px 16px; background: var(--plate); border: 1px solid var(--rule); max-width: 76ch; }
+.look ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
+figure img, figure video { width: 100%; height: auto; background: #000; }
+.row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 760px) { .row2, .row3 { grid-template-columns: minmax(0, 1fr); } }
+.figcap { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }
+.seg { display: flex; flex-wrap: wrap; gap: 2px; }
+.seg button { font: 600 13px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); background: var(--plate); border: 1px solid var(--rule); padding: 8px 11px; cursor: pointer; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.seg button:focus-visible, .shots button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.shots button { all: unset; cursor: zoom-in; display: block; width: 100%; }
+
+.notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; }
+@media (max-width: 760px) { .notes { grid-template-columns: minmax(0, 1fr); } }
+.notes section { display: grid; gap: 10px; align-content: start; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; max-width: 68ch; }
+.pick { border: 1px solid var(--accent); padding: 18px 20px; display: grid; gap: 10px; background: var(--plate); }
+code { font: 13px var(--mono); color: var(--ink); background: var(--plate); padding: 1px 5px; }
+.lb { position: fixed; inset: 0; background: rgba(5,5,6,.94); display: grid; place-items: center; z-index: 20; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
+.lb img { max-height: 92vh; width: auto; max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Spall · concept · backdrop · round three</div>
+    <h1>Lower, darker, and a second world</h1>
+    <p class="lede">The pedestal is now shorter and darker, sits just inside the city's edge, and reads as the city's own lower body. The smog is no longer a noisy cloud blanket: the undercity shows through thinner, layered air. The horizon no longer stops: far geometry fogs into exactly the sky behind it, and giant towers rise through the haze to break the line. The undercity has more to it than plain boxes. And the dark grey-blue abyss from round one is back, rebuilt in the new model. Every image and clip here came out of the game.</p>
+  </header>
+
+  <section class="answers" aria-label="Your questions">
+    <div class="answer">
+      <h3>How to look at it yourself</h3>
+      <p>Open <code>experiments/spall-backdrop/backdrop.html</code> in a browser. It's the normal 2D game with the new backdrop behind it.</p>
+      <dl class="keys">
+        <dt><kbd>3</kbd></dt><dd>switch between the 2D view and the 3D study</dd>
+        <dt><kbd>B</kbd></dt><dd>switch backdrop: Undercity ↔ Abyss</dd>
+        <dt><kbd>Shift</kbd> <kbd>B</kbd></dt><dd>round one's old panoramas (the skewed ones), then the original sky</dd>
+        <dt><kbd>T</kbd></dt><dd>time of day (day, dusk, night)</dd>
+        <dt>3D: drag</dt><dd>orbit · right-drag or scroll to pan and zoom</dd>
+        <dt>3D: <kbd>W</kbd> <kbd>S</kbd></dt><dd>tilt up and down; tilt all the way down to see the horizon</dd>
+        <dt>3D: <kbd>Q</kbd> <kbd>E</kbd> <kbd>0</kbd></dt><dd>turn 90°; back to the iso angle</dd>
+        <dt>2D: scroll</dt><dd>scroll below the city to see the pedestal</dd>
+      </dl>
+    </div>
+    <div class="answer">
+      <h3>Was there only one new backdrop?</h3>
+      <p>Yes. Round two rebuilt only the undercity. Now there are two: <b>Undercity</b> and <b>Abyss</b>, the dark grey-blue foggy one you asked about. The other round-one ideas (the cloud sea, horizon cities, close neighbours) are still on <kbd>Shift</kbd> <kbd>B</kbd> in their old, swimming form. I'd drop them.</p>
+      <h3>What I meant by “diffusion textures”</h3>
+      <p>In round two you said a diffusion- or transformer-generated pass might come later, as long as it matches the game's low-fidelity pixel art. I meant using an image model to paint small facade and monolith textures, which the renderer would wrap onto these boxes. The geometry would keep the views agreeing, and the paint would add fidelity. It's parked: this round adds the detail as geometry instead.</p>
+    </div>
+  </section>
+
+  <section aria-label="Guide">
+    <h3 style="margin-bottom:12px">The guide, in order</h3>
+    <ol class="toc">
+      <li><a href="#tower">The pedestal</a> <span>smaller than the city, darker, uneven, near featureless</span></li>
+      <li><a href="#under3d">The undercity in 3D</a> <span>tilt down to the horizon; the clouds are gone</span></li>
+      <li><a href="#under2d">The undercity from the main view</a> <span>finer grain, so it reads as far below</span></li>
+      <li><a href="#abyss">The abyss</a> <span>round one's grey-blue void, in the new model</span></li>
+      <li><a href="#notes">What changed, and what's open</a></li>
+    </ol>
+  </section>
+
+  <section class="plate" id="tower" aria-label="The pedestal">
+    <div class="plate-head"><span class="k">01 · PEDESTAL</span><h2>Part of the city, not under it</h2>
+      <p>It now starts a few cells inside the city's edge, so the city overhangs it like a lip. It's built from bays of different depths, some stopping partway down, with slots between them. The colour is the city's own darkest wall tone, and it's nearly featureless. Under the city's edge it falls into shadow by day, and the city's lights spill down onto it at night. It drops 420 levels (about 1.4 km) instead of 600, and at the bottom it splays into a footing among the undercity's streets.</p></div>
+    <div class="look"><h3>Look for</h3><ul><li>Whether the city reads as the top of one mass, or as something set on a box.</li><li>Whether it's dark enough, or should go darker still.</li></ul></div>
+    <div class="row3">
+      <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="{{IMG:under_2d_below_day}}" alt="2D scrolled below the city, day: the pedestal" loading="lazy"></button></div><span class="cap">2D · scrolled below · day</span></figure>
+      <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="{{IMG:under_2d_below_night}}" alt="2D scrolled below the city, night: city light spilling down the pedestal" loading="lazy"></button></div><span class="cap">2D · scrolled below · night</span></figure>
+      <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="{{IMG:under_3d_side_day}}" alt="3D from beside the pedestal, day" loading="lazy"></button></div><span class="cap">3D · beside the pedestal · day</span></figure>
+    </div>
+  </section>
+
+  <section class="plate" id="under3d" aria-label="The undercity in 3D">
+    <div class="plate-head"><span class="k">02 · UNDERCITY · 3D</span><h2>Down to the horizon</h2>
+      <p>The orbit's tilt dips to 12°, which is where you saw the clouds and the hard horizon last time. Now the haze thins with height, so you see the city through it. Far geometry fogs to the same colour as the sky behind it, so there's no edge where the world stops. Nine giants 16 to 40 km out rise through the haze, and their tops break the horizon line.</p></div>
+    <div class="look"><h3>Look for</h3><ul><li>The horizon: does it still feel fake?</li><li>The monolith in front: it's one of the near ones, about 4 km out. Is it too dominant?</li></ul></div>
+    <figure><video src="{{VID:under_orbit_day}}" controls muted loop autoplay playsinline aria-label="3D orbit over the undercity by day, tilt dipping near level"></video><span class="cap">3D · orbit, tilt 12°–28° · day</span></figure>
+    <figure>
+      <div class="shots"><button type="button" aria-label="Enlarge"><img id="u3" src="{{IMG:under_3d_hz_day}}" alt="3D, low tilt, the horizon behind the city, day"></button></div>
+      <div class="figcap"><span class="cap">3D · tilt 12° · the horizon</span>
+        <div class="seg" data-img="u3" data-set="under_3d_hz" role="group" aria-label="Time of day">
+          <button type="button" data-k="day" aria-pressed="true">Day</button><button type="button" data-k="dusk" aria-pressed="false">Dusk</button><button type="button" data-k="night" aria-pressed="false">Night</button>
+        </div></div>
+    </figure>
+    <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="{{IMG:under_3d_far_dusk}}" alt="3D zoomed out over the city's edge, dusk" loading="lazy"></button></div><span class="cap">3D · from above the edge · dusk</span></figure>
+  </section>
+
+  <section class="plate" id="under2d" aria-label="The undercity from the main view">
+    <div class="plate-head"><span class="k">03 · UNDERCITY · 2D</span><h2>From the main view</h2>
+      <p>The undercity's grain is now finer: superblocks are 100 cells rather than 150, cut into more blocks. With the shallower drop, that keeps it reading as far below rather than next door. Smog thickens gradually with depth, with no surface to it, so roofs come through clearly and streets sink into it. The clip scrolls from the pedestal up to the top of the city, then turns through all four rotations.</p></div>
+    <div class="look"><h3>Look for</h3><ul><li>Scale: does the undercity feel far below?</li><li>Dusk is the haziest of the three. Day is the clearest.</li></ul></div>
+    <figure>
+      <div class="shots"><button type="button" aria-label="Enlarge"><img id="u2" src="{{IMG:under_2d_top_day}}" alt="2D view at the top of the city, day"></button></div>
+      <div class="figcap"><span class="cap">2D · top of the city · 2×</span>
+        <div class="seg" data-img="u2" data-set="under_2d_top" role="group" aria-label="Time of day">
+          <button type="button" data-k="day" aria-pressed="true">Day</button><button type="button" data-k="dusk" aria-pressed="false">Dusk</button><button type="button" data-k="night" aria-pressed="false">Night</button>
+        </div></div>
+    </figure>
+    <figure><video src="{{VID:under_pan_dusk}}" controls muted loop autoplay playsinline aria-label="2D scrolling from the pedestal up past the city, then rotating, dusk"></video><span class="cap">2D · scroll up from the pedestal, then the four rotations · dusk</span></figure>
+  </section>
+
+  <section class="plate" id="abyss" aria-label="The abyss">
+    <div class="plate-head"><span class="k">04 · ABYSS</span><h2>Inside the larger thing</h2>
+      <p>Round one's grey-blue void, rebuilt in the new model. The city's pedestal drops into a void with no floor. Colossal pillars stand around it, each built from lengths of different girth with collars between them. Open trusses and draped cables span between neighbours, and a few pillars carry platforms like ours. The air thickens both ways: dark below, a pale glow above, so the pillars rise and sink out of sight with no visible top or bottom. To keep the views agreeing, no pillar near the city can rise high enough to cross in front of it at any angle.</p></div>
+    <div class="look"><h3>Look for</h3><ul><li>Whether this is the mood you remembered.</li><li>It's sparse on purpose. The trusses and cables are faint; they could carry more.</li></ul></div>
+    <figure><video src="{{VID:abyss_orbit_day}}" controls muted loop autoplay playsinline aria-label="3D orbit in the abyss by day"></video><span class="cap">3D · orbit · day</span></figure>
+    <div class="row2">
+      <figure>
+        <div class="shots"><button type="button" aria-label="Enlarge"><img id="a2" src="{{IMG:abyss_2d_top_day}}" alt="Abyss, 2D view at the top of the city, day"></button></div>
+        <div class="figcap"><span class="cap">2D · top of the city</span>
+          <div class="seg" data-img="a2" data-set="abyss_2d_top" role="group" aria-label="Time of day">
+            <button type="button" data-k="day" aria-pressed="true">Day</button><button type="button" data-k="dusk" aria-pressed="false">Dusk</button><button type="button" data-k="night" aria-pressed="false">Night</button>
+          </div></div>
+      </figure>
+      <figure>
+        <div class="shots"><button type="button" aria-label="Enlarge"><img id="a3" src="{{IMG:abyss_3d_hz_day}}" alt="Abyss, 3D at a low tilt, day"></button></div>
+        <div class="figcap"><span class="cap">3D · tilt 12°</span>
+          <div class="seg" data-img="a3" data-set="abyss_3d_hz" role="group" aria-label="Time of day">
+            <button type="button" data-k="day" aria-pressed="true">Day</button><button type="button" data-k="dusk" aria-pressed="false">Dusk</button><button type="button" data-k="night" aria-pressed="false">Night</button>
+          </div></div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="notes" id="notes" aria-label="Notes">
+    <section class="pick">
+      <h3>My read</h3>
+      <p><b>Undercity by day</b> is the strongest image so far: misty, contiguous, monolithic, and the city clearly sits on something. <b>Abyss by day</b> has the mood but is thin on structure. Night works in both, but it's quiet. Dusk is the weakest: the orange smog swallows the most detail.</p>
+      <p>The pedestal is the change I'm least sure of. Near-featureless was your suggestion, and I think it's right, but the line where the city meets it is worth a close look in the 2D view.</p>
+    </section>
+    <section>
+      <h3>What changed</h3>
+      <ul>
+        <li><b>Pedestal:</b> inset 1.5–7 cells; bays and slots; the city's dark tone; a shadow lip and a night spill; a splayed footing; 420 levels, down from 600.</li>
+        <li><b>Air:</b> one model for geometry and sky. Each pixel's air colour depends on its direction from the eye, and fog thins with height. The smog's top fades in over 150 levels instead of being a noisy surface. Far geometry ends in exactly the sky colour, so the horizon has no seam.</li>
+        <li><b>More than boxes:</b> battered skirts, fins, ledges and crowns on the monoliths; pyramid caps and masts on towers; viaducts on piers down some avenues; trusses and cables in the abyss. Boxes can now taper.</li>
+        <li><b>Horizon:</b> the city runs out to about 24 km (only plinths past 7 km), and nine giants stand among the far parts.</li>
+        <li><b>Size:</b> about 100,000 boxes for the undercity and 116,000 for the abyss, generated in 60–110 ms. Each redraw takes 6–10 ms, and only when the camera moves.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Knobs</h3>
+      <ul>
+        <li>URL hash parameters, for example <code>backdrop.html#bd=abyss&amp;tod=dusk</code>.</li>
+        <li><code>bd</code> scene (<code>under</code>, <code>abyss</code>) · <code>uz</code> pedestal depth in levels (420) · <code>ue</code> perspective (150; lower is stronger) · <code>uf</code> haze distance · <code>uh</code> how fast haze thins with height · <code>ufl</code> smog density.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Open</h3>
+      <ul>
+        <li>The city's own mist should take the backdrop's air colour, so the city's edge sinks into the same air.</li>
+        <li>Abyss: heavier trusses, light falling in shafts from above, and more platforms with their own life.</li>
+        <li>Motion: traffic on the viaducts, aircraft lights, slow drifting haze.</li>
+        <li>Night needs more contrast in both scenes.</li>
+      </ul>
+    </section>
+  </section>
+</div>
+
+<script>
+{{SHOTS}}
+for (const seg of document.querySelectorAll('.seg[data-set]')) {
+  const img = document.getElementById(seg.dataset.img), set = seg.dataset.set;
+  SHOTS[set + '_day'] = img.src;
+  for (const b of seg.querySelectorAll('button')) b.addEventListener('click', () => {
+    for (const o of seg.querySelectorAll('button')) o.setAttribute('aria-pressed', String(o === b));
+    img.src = SHOTS[set + '_' + b.dataset.k]; img.alt = img.alt.replace(/(day|dusk|night)$/, b.dataset.k);
+  });
+}
+for (const btn of document.querySelectorAll('.shots button')) btn.addEventListener('click', () => {
+  const img = btn.querySelector('img'), lb = document.createElement('div');
+  lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-label', img.alt); lb.tabIndex = -1;
+  const big = document.createElement('img'); big.src = img.src; big.alt = img.alt; lb.appendChild(big);
+  const close = () => { lb.remove(); document.removeEventListener('keydown', esc); btn.focus(); };
+  const esc = e => { if (e.key === 'Escape') close(); };
+  lb.addEventListener('click', close); document.addEventListener('keydown', esc);
+  document.body.appendChild(lb); lb.focus();
+});
+</script>

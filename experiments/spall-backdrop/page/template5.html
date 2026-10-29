@@ -1,0 +1,155 @@
+<title>Spall Backdrop, Round Five</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+/* Round five of the backdrop folio: the same plates and palette; night, the 3D sky, and the merge. */
+:root {
+  --bg: #0e0f11; --plate: #16171a; --rule: #2a2a2c; --ink: #e6dfcf; --dim: #a39c8e; --faint: #7a746a; --accent: #e8a83c; --accent-ink: #1b1305;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 var(--body); }
+.wrap { max-width: 1140px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; display: grid; gap: 44px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: .02em; text-wrap: balance; margin: 0; line-height: 1.05; }
+h1 { font-size: clamp(34px, 6vw, 56px); text-transform: uppercase; letter-spacing: .06em; }
+h2 { font-size: 30px; text-transform: uppercase; letter-spacing: .05em; }
+h3 { font-size: 15px; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--dim); font-size: 16px; }
+.cap { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+img, video { display: block; max-width: 100%; image-rendering: pixelated; }
+header { display: grid; gap: 14px; }
+.eyebrow { font: 600 13px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+.answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 40px; }
+@media (max-width: 760px) { .answers { grid-template-columns: minmax(0, 1fr); } }
+.answer { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; display: grid; gap: 10px; align-content: start; }
+.answer b { color: var(--ink); }
+.keys { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 0; }
+.keys dt { font: 500 13px var(--mono); color: var(--ink); white-space: nowrap; }
+.keys dd { margin: 0; color: var(--dim); }
+kbd { font: 500 12px var(--mono); color: var(--ink); background: var(--plate); border: 1px solid var(--rule); border-bottom-width: 2px; padding: 0 5px; }
+
+.toc { display: grid; gap: 8px; counter-reset: s; margin: 0; padding: 0; list-style: none; }
+.toc li { counter-increment: s; display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: baseline; }
+.toc li::before { content: counter(s, decimal-leading-zero); font: 500 12px var(--mono); color: var(--accent); }
+.toc a { color: var(--ink); text-decoration-color: var(--rule); text-underline-offset: 3px; }
+.toc a:hover { text-decoration-color: var(--accent); }
+.toc span { color: var(--dim); }
+
+.plate { display: grid; gap: 16px; padding-top: 22px; border-top: 1px solid var(--rule); scroll-margin-top: 16px; }
+.plate-head { display: grid; gap: 8px; }
+.plate-head .k { font: 500 12px var(--mono); color: var(--accent); }
+.look { display: grid; gap: 6px; padding: 12px 16px; background: var(--plate); border: 1px solid var(--rule); max-width: 76ch; }
+.look ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
+figure img, figure video { width: 100%; height: auto; background: #000; }
+.row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 760px) { .row2, .row3 { grid-template-columns: minmax(0, 1fr); } }
+.figcap { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }
+.seg { display: flex; flex-wrap: wrap; gap: 2px; }
+.seg button { font: 600 13px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); background: var(--plate); border: 1px solid var(--rule); padding: 8px 11px; cursor: pointer; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.seg button:focus-visible, .shots button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.shots button { all: unset; cursor: zoom-in; display: block; width: 100%; }
+
+.notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; }
+@media (max-width: 760px) { .notes { grid-template-columns: minmax(0, 1fr); } }
+.notes section { display: grid; gap: 10px; align-content: start; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; max-width: 68ch; }
+.pick { border: 1px solid var(--accent); padding: 18px 20px; display: grid; gap: 10px; background: var(--plate); }
+code { font: 13px var(--mono); color: var(--ink); background: var(--plate); padding: 1px 5px; }
+.lb { position: fixed; inset: 0; background: rgba(5,5,6,.94); display: grid; place-items: center; z-index: 20; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
+.lb img { max-height: 92vh; width: auto; max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Spall · concept · backdrop · round five</div>
+    <h1>Night, sky, and merged in</h1>
+    <p class="lede">Night is darker and navy, with fainter warm lights spread unevenly over the avenue grid, and the lit rectangles are gone. The 3D view has round one's pixel sky: a dithered gradient, the sun, a cumulus deck in perspective, and stars at night. The backdrop is no longer a separate experiment. It's part of the prototype now, in both the 2D game and the 3D study.</p>
+  </header>
+
+  <section class="answers" aria-label="Your questions">
+    <div class="answer">
+      <h3>The bluish morning: is it there?</h3>
+      <p>Yes, but only under the <b>morning</b> light; noon is still the grey one. Press <kbd>T</kbd> to step through morning, noon, evening and night. In this round, morning has a bit more blue in the haze, and its sky above the horizon runs from blue to a warm cream, after round one's. Compare the first two buttons below.</p>
+    </div>
+    <div class="answer">
+      <h3>Merged</h3>
+      <p>The backdrop is now <code>stratum-wires/src/93_backdrop.js</code>, built into <code>stratum.html</code>. The 3D study adds a small hook, <code>spall-3d/src/92_backdrop3d.js</code>, that draws the same world through its own camera. <code>spall-backdrop</code> no longer has a build: it keeps only the shot scripts and report pages. <kbd>B</kbd> still switches to the old flat sky, for now. Nothing is committed yet.</p>
+    </div>
+  </section>
+
+  <section class="plate" aria-label="Night">
+    <div class="plate-head"><span class="k">01 · NIGHT</span><h2>Far off, so faint</h2>
+      <p>The air, walls and haze are dark navy, and the lights are a warm yellow-orange. Far-off windows are fewer and dimmer points, and only one light in seven twinkles, and gently. The lit roof outlines are gone. Lights are spread unevenly: each 400-cell tile has its own share, and the avenues between tiles get more. Squint and you find a loose grid, but it shouldn't jump out. Street lamps and traffic are toned down to match.</p></div>
+    <div class="look"><h3>Look for</h3><ul><li>Whether it still distracts from the city.</li><li>Whether the grid is too faint, about right, or overdone.</li></ul></div>
+    <div class="row2">
+      <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="{{IMG:2d_top_night}}" alt="2D at the top of the city, night" loading="lazy"></button></div><span class="cap">2D · top of the city · 2× · night</span></figure>
+      <figure><video src="{{VID:still_night}}" controls muted loop autoplay playsinline aria-label="2D at night, camera still: a few lights twinkle and traffic moves"></video><span class="cap">2D · night · camera still</span></figure>
+    </div>
+    <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="{{IMG:2d_wide_night}}" alt="2D at 1×, night" loading="lazy"></button></div><span class="cap">2D · 1× · night</span></figure>
+  </section>
+
+  <section class="plate" aria-label="The 3D sky">
+    <div class="plate-head"><span class="k">02 · SKY</span><h2>Round one's sky, from the same eye</h2>
+      <p>Above the horizon, the 3D view now paints round one's sky: a six-stop dithered gradient, the sun's disc, a cumulus deck about 2 km up (lit on its sun side, flattening and fading toward the horizon), and stars at night. It's drawn from the same eye as the undercity, so it turns with the view and doesn't swim. You see it when you tilt down to 12° (<kbd>S</kbd>) and zoom out a little. These shots are at 0.6×.</p></div>
+    <figure>
+      <div class="shots"><button type="button" aria-label="Enlarge"><img id="s3" src="{{IMG:sky_morning}}" alt="3D at a 12° tilt, zoomed out, the sky, morning"></button></div>
+      <div class="figcap"><span class="cap">3D · tilt 12° · 0.6×</span><div class="seg" data-img="s3" data-set="sky" role="group" aria-label="Light"><button type="button" data-k="morning" aria-pressed="true">Morning</button><button type="button" data-k="day" aria-pressed="false">Noon</button><button type="button" data-k="dusk" aria-pressed="false">Evening</button><button type="button" data-k="night" aria-pressed="false">Night</button></div></div>
+    </figure>
+    <figure><video src="{{VID:orbit_morning}}" controls muted loop autoplay playsinline aria-label="3D orbit, morning, with the sky"></video><span class="cap">3D · orbit, tilt 12°–28° · 0.75× · morning</span></figure>
+  </section>
+
+  <section class="plate" aria-label="Four lights in 2D">
+    <div class="plate-head"><span class="k">03 · 2D</span><h2>The main view, four lights</h2>
+      <p>The 2D view never shows the sky, but the haze carries each light's colour: blue-grey in the morning, grey at noon, orange in the evening, and navy at night.</p></div>
+    <figure>
+      <div class="shots"><button type="button" aria-label="Enlarge"><img id="l2" src="{{IMG:2d_top_morning}}" alt="2D view at the top of the city, morning"></button></div>
+      <div class="figcap"><span class="cap">2D · top of the city · 2×</span><div class="seg" data-img="l2" data-set="2d_top" role="group" aria-label="Light"><button type="button" data-k="morning" aria-pressed="true">Morning</button><button type="button" data-k="day" aria-pressed="false">Noon</button><button type="button" data-k="dusk" aria-pressed="false">Evening</button><button type="button" data-k="night" aria-pressed="false">Night</button></div></div>
+    </figure>
+  </section>
+
+  <section class="notes" aria-label="Notes">
+    <section class="pick">
+      <h3>My read</h3>
+      <p>Night now sits behind the city instead of competing with it. The sky makes the low 3D angles feel like a place. The clouds read as thin streaks because we only ever see the deck at a low angle; a lower deck or a wider zoom-out would show more of it.</p>
+    </section>
+    <section>
+      <h3>Next</h3>
+      <ul>
+        <li>Commit the merge (the prototype, the 3D hook, and this folder's tools).</li>
+        <li>Retire <kbd>B</kbd> and the flat sky once you're happy.</li>
+        <li>Give the city's own mist the backdrop's air colour, so the edge sinks into the same air.</li>
+      </ul>
+    </section>
+  </section>
+</div>
+
+<script>
+{{SHOTS}}
+for (const seg of document.querySelectorAll('.seg[data-set]')) {
+  const img = document.getElementById(seg.dataset.img), set = seg.dataset.set;
+  SHOTS[set + '_' + seg.querySelector('[aria-pressed="true"]').dataset.k] = img.src;
+  for (const b of seg.querySelectorAll('button')) b.addEventListener('click', () => {
+    for (const o of seg.querySelectorAll('button')) o.setAttribute('aria-pressed', String(o === b));
+    img.src = SHOTS[set + '_' + b.dataset.k]; img.alt = img.alt.replace(/(morning|day|dusk|night)$/, b.dataset.k);
+  });
+}
+for (const btn of document.querySelectorAll('.shots button')) btn.addEventListener('click', () => {
+  const img = btn.querySelector('img'), lb = document.createElement('div');
+  lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-label', img.alt); lb.tabIndex = -1;
+  const big = document.createElement('img'); big.src = img.src; big.alt = img.alt; lb.appendChild(big);
+  const close = () => { lb.remove(); document.removeEventListener('keydown', esc); btn.focus(); };
+  const esc = e => { if (e.key === 'Escape') close(); };
+  lb.addEventListener('click', close); document.addEventListener('keydown', esc);
+  document.body.appendChild(lb); lb.focus();
+});
+</script>
