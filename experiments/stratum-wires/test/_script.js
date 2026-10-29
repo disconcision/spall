@@ -884,7 +884,8 @@ function getSprite(t, v, q, m, mask) {
   let s = SPR.get(key);
   if (s) return s;
   const E = EXTRA[t] || 0, w = t === T.CRANE ? 48 : 16;
-  const c = mk(w, 20 + E), g = c.getContext('2d');
+  // read back once for its depth mask (spriteMask): kept on the CPU, so that read costs no GPU sync
+  const c = mk(w, 20 + E), g = c.getContext('2d', { willReadFrequently: true });
   (DRAW[t] || DRAW_MISSING)(g, v, E, painter(q), m, mask, t);
   s = { c, ox: -(w >> 1), oy: -12 - E, E };
   SPR.set(key, s);
@@ -1076,7 +1077,8 @@ const WATERCYC = {
   night: [0, 0, '#1f3b39', '#2b4d48', '#4a6660', '#b08a4e', '#4a6660', '#2b4d48']
 };
 
-function markAllDirty() { for (let z = 0; z < NL; z++) dirtyLv.add(z); for (const c of CUTS.values()) c.dirty = true; GHC.dirty = true; planDirty = secDirty = thumbDirty = true; }
+// lazy: the level images are rebuilt a level a frame (renderIso) rather than all before the next frame
+function markAllDirty(lazy) { for (let z = 0; z < NL; z++) (lazy ? lazyLv : dirtyLv).add(z); for (const c of CUTS.values()) c.dirty = true; GHC.dirty = true; planDirty = secDirty = thumbDirty = true; }
 function markDirty(z) { dirtyLv.add(z); const cc = CUTS.get(z); if (cc) cc.dirty = true; if (z > S.level) GHC.dirty = true; planDirty = secDirty = thumbDirty = true; }
 const tallN = n => n && TI[n].tall;
 function faceOccluded(u, v, z, face) {
@@ -1299,7 +1301,14 @@ const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
 function buildSky() {
   const bw = S.bw, bh = S.bh;
   if (!SKYC.c || SKYC.c.width !== bw || SKYC.c.height !== bh) SKYC.c = mk(bw, bh);
-  const skyT = LIT.on && LIT.sun === 'evening' ? 'dusk' : S.tod, g = SKYC.c.getContext('2d'), cols = SKYCOL[skyT], n = cols.length;
+  // the dithered gradient is a canvas call per pixel: batched like the wires (same pixels)
+  const g0 = SKYC.c.getContext('2d'), px = wpxBegin(g0), g = px ? WPXC : g0;
+  try { buildSkyTo(g); } finally { if (px) wpxEnd(); }
+  skyDirty = false;
+}
+function buildSkyTo(g) {
+  const bw = S.bw, bh = S.bh;
+  const skyT = LIT.on && LIT.sun === 'evening' ? 'dusk' : S.tod, cols = SKYCOL[skyT], n = cols.length;
   const hz = Math.round(bh * 0.62);
   for (let y = 0; y < bh; y++) {
     const f = clamp(y / hz, 0, 1) * (n - 1), k = Math.min(n - 2, Math.floor(f)), fr = f - k;
@@ -1321,7 +1330,6 @@ function buildSky() {
     g.fillStyle = col; g.fillRect(0, base, bw, bh - base);
   }
   if (S.tod === 'night') { g.fillStyle = '#c9cfc8'; for (let k = 0; k < 60; k++) g.fillRect(Math.floor(rnd() * bw), Math.floor(rnd() * hz * 0.6), 1, 1); }
-  skyDirty = false;
 }
 
 // ---------- dynamic layer for one level ----------
@@ -1387,7 +1395,7 @@ function renderIso(ctx, t) {
     ctx.drawImage(wf, bx0, fy);
     Object.assign(WDT, { fd: WFC.fd, w: CW, h: LFH, ox: bx0, oy: fy, wd: null }); WDT.key = '';
     WDT.on = true; drawBirds(ctx); drawWireHighlight(ctx, floor, t); WDT.on = false; WDT.ox = WDT.oy = 0;
-  } else if (useDepth) { compositeDepth(depthLevels, bx0); if (!WDT.wd || WDT.wd.length !== S.bw * S.bh) WDT.wd = new Float32Array(S.bw * S.bh); WDT.wd.fill(-1e9); WDT.on = true; for (let z = floor; z < NL; z++) drawWiresLevel(ctx, z); drawBirds(ctx); drawWireHighlight(ctx, floor, t); WDT.on = false; }
+  } else if (useDepth) { compositeDepth(depthLevels, bx0); if (!WDT.wd || WDT.wd.length !== S.bw * S.bh) WDT.wd = new Float32Array(S.bw * S.bh); WDT.wd.fill(-1e9); WDT.on = true; wpxHold(ctx, () => { for (let z = floor; z < NL; z++) drawWiresLevel(ctx, z); }); drawBirds(ctx); drawWireHighlight(ctx, floor, t); WDT.on = false; }
   LIT.ov = useDepth ? [top, L, sliced, bx0, by0] : null;   // drawn once the sky is in, so additive light never punches holes in it
   drawAfterWorld(ctx, t, sliced, ex);
 }
@@ -1418,7 +1426,7 @@ function wireFrame(levels, top, L, sliced, floor) {
     S.bw = CW; S.bh = LFH; S.cam.x = CW / 2 - OX; S.cam.y = LFH / 2 - OY - NL * LH;
     Object.assign(WDT, { fd: WFC.fd, w: CW, h: LFH, ox: 0, oy: 0, wd: null }); WDT.key = '';
     WFC.g.clearRect(0, 0, CW, LFH);
-    try { WDT.on = true; for (let z = floor || 0; z < NL; z++) drawWiresLevel(WFC.g, z); }
+    try { WDT.on = true; wpxHold(WFC.g, () => { for (let z = floor || 0; z < NL; z++) drawWiresLevel(WFC.g, z); }); }
     finally { WDT.on = false; [S.bw, S.bh, S.cam.x, S.cam.y] = sv; }
     WFC.wKey = wKey;
   }
@@ -3234,14 +3242,14 @@ function stepWires(dt) {
       if (!window.__nocohere && !(it & 1)) cohere(runs, 0.7);     // every other pass, a little stiffer
       for (const c of CS) {
         if (c.asleep) continue;
-        const X = c.X, Wt = c.W, r = c.rest, bs = c.g.stretch * fe.stretch, bb = c.g.bend * fe.bend;   // a cable in hand is the same cable as one attached
+        const X = c.X, Wt = c.W, LS = c.lamS, LB = c.lamB, r = c.rest, bs = c.g.stretch * fe.stretch, bb = c.g.bend * fe.bend;   // a cable in hand is the same cable as one attached
         // alternate the sweep direction so a pull travels both ways along the cable in a few passes
         const fwd = !(it & 1);
         for (let q = 0; q < c.n - 1; q++) {
           const i = fwd ? q : c.n - 2 - q;
           const a = i * 3, b = a + 3, wa = Wt[i], wb = Wt[i + 1], ws = wa + wb; if (!ws) continue;
           const dx = X[b] - X[a], dy = X[b + 1] - X[a + 1], dz = X[b + 2] - X[a + 2], len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1e-9;
-          const at = bs * ws, dl = (r - len - at * c.lamS[i]) / (ws + at); c.lamS[i] += dl;
+          const at = bs * ws, dl = (r - len - at * LS[i]) / (ws + at); LS[i] += dl;
           const nx = dx / len * dl, ny = dy / len * dl, nz = dz / len * dl;
           X[a] -= nx * wa; X[a + 1] -= ny * wa; X[a + 2] -= nz * wa; X[b] += nx * wb; X[b + 1] += ny * wb; X[b + 2] += nz * wb;
         }
@@ -3249,7 +3257,7 @@ function stepWires(dt) {
           const a = i * 3, b = a + 6, wa = Wt[i], wb = Wt[i + 2], ws = wa + wb; if (!ws) continue;
           const dx = X[b] - X[a], dy = X[b + 1] - X[a + 1], dz = X[b + 2] - X[a + 2], len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1e-9;
           if (len >= 2 * r) continue;
-          const at = bb * ws, dl = (2 * r - len - at * c.lamB[i]) / (ws + at); c.lamB[i] += dl;
+          const at = bb * ws, dl = (2 * r - len - at * LB[i]) / (ws + at); LB[i] += dl;
           const nx = dx / len * dl, ny = dy / len * dl, nz = dz / len * dl;
           X[a] -= nx * wa; X[a + 1] -= ny * wa; X[a + 2] -= nz * wa; X[b] += nx * wb; X[b + 1] += ny * wb; X[b + 2] += nz * wb;
         }
@@ -3741,10 +3749,17 @@ function presetTrunk(st) {
 }
 function settle(n) { for (let s = 0; s < (n || 400); s++) stepWires(1 / 60); }
 function clearWires() { spineCache.key = -1; WIRES.cables = []; WIRES.ties = []; WIRES.posts = []; WIRES.girders = []; WIRES.mounts = []; WIRES.hue = [0, 0, 0, 0]; }
-function seedWires() {
+// defer: lay the cables out but leave the settling (that many steps of stepWires, then
+// seedWiresDone) to the caller; boot does it in slices so the loading screen keeps moving
+function seedWires(defer) {
   clearWires();
   WIRES.stage = buildStageGeometry();
-  if (typeof defaultScene === 'function') { defaultScene(WIRES.stage); settle(150); } else { presetTrunk(WIRES.stage); settle(400); }
+  let n;
+  if (typeof defaultScene === 'function') { defaultScene(WIRES.stage); n = 150; } else { presetTrunk(WIRES.stage); n = 400; }
+  if (defer) return n;
+  settle(n); seedWiresDone();
+}
+function seedWiresDone() {
   if (typeof initBirds === 'function') initBirds();
   markAllDirty(); skyDirty = true; stripDirty = true;
 }
@@ -3905,7 +3920,7 @@ function drawWireHighlight(ctx, floor, t) {
   if (!HLC.c || HLC.c.width !== w || HLC.c.height !== h) { HLC.c = mk(w, h); HLC.g = HLC.c.getContext('2d'); HLC.t = mk(w, h); HLC.tg = HLC.t.getContext('2d'); }
   const g = HLC.g; g.clearRect(0, 0, w, h);
   WIRES.only = target;
-  try { for (let z = floor || 0; z < NL; z++) drawWiresLevel(g, z); } finally { WIRES.only = null; }
+  try { wpxHold(g, () => { for (let z = floor || 0; z < NL; z++) drawWiresLevel(g, z); }); } finally { WIRES.only = null; }
   const tint = col => { const tg = HLC.tg; tg.globalCompositeOperation = 'source-over'; tg.clearRect(0, 0, w, h); tg.drawImage(HLC.c, 0, 0); tg.globalCompositeOperation = 'source-in'; tg.fillStyle = col; tg.fillRect(0, 0, w, h); tg.globalCompositeOperation = 'source-over'; return HLC.t; };
   const outline = (col, a) => { const o = tint(col); ctx.globalAlpha = a; for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) ctx.drawImage(o, dx, dy); ctx.globalAlpha = 1; ctx.drawImage(HLC.c, 0, 0); };
   const glow = (a) => { const o = tint('#ffc062'); ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.filter = 'blur(2px)'; ctx.globalAlpha = 0.85 * a; ctx.drawImage(o, 0, 0); ctx.filter = 'blur(5px)'; ctx.globalAlpha = 0.55 * a; ctx.drawImage(o, 0, 0); ctx.restore(); };
@@ -3919,7 +3934,133 @@ function drawWireHighlight(ctx, floor, t) {
   else if (style === 'glow-outline') { outline('#2a1a08', 1); glow(0.8); }
   ctx.restore();
 }
+// Every cable segment, bundle step, socket and band, bucketed by the level its midpoint is
+// in and sorted back to front: built once per frame (or wire change) for all the levels
+// instead of each level walking every cable. oz is the height the cut-plane test uses.
+let WSEG = { key: null };
+function wireSegs() {
+  const SP = spines(), key = [S.time, WIRES.ver || 0, WIRES.nextId, WIRES.cables.length, WIRES.ties.length, WIRES.sockets, WIRES.bundleLook, S.rot].join('|');
+  if (WSEG.key === key && WSEG.sp === SP) return WSEG;
+  const hidden = new Map(), override = new Map(), lv = new Map();
+  const put = (zz, sg) => { const k = Math.floor(zz); let a = lv.get(k); if (!a) lv.set(k, a = []); a.push(sg); };
+  for (const sp of SP) sp.r.pairs.forEach((pr, j) => {
+    if (!hidden.has(pr.c)) hidden.set(pr.c, []);
+    hidden.get(pr.c).push([pr.a.i, pr.b.i]);
+    if (!override.has(pr.c)) override.set(pr.c, new Map());
+    override.get(pr.c).set(pr.a.i, sp.pos(j, 0)); override.get(pr.c).set(pr.b.i, sp.pos(j, sp.N));
+  });
+  // loose wire: drawn from its own particles, joined seamlessly to the bundles it enters
+  for (const c of WIRES.cables) {
+    const hid = hidden.get(c) || [], ov = override.get(c);
+    const P = i => (ov && ov.get(i)) || xAt(c, i);
+    for (let i = 0; i < c.n - 1; i++) {
+      if (hid.some(([a, b]) => i >= a && i < b)) continue;
+      const pa = P(i), pb = P(i + 1), zm = (pa[2] + pb[2]) / 2;
+      put(zm, { c, i, pa, pb, k: depthKey((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2, zm), zm, oz: zm });
+    }
+    if (WIRES.sockets) for (const pin of [c.pinA, c.pinB]) {
+      if (!pin) continue;
+      put(pin[2], { sock: c, p: pin, k: depthKey(pin[0], pin[1], pin[2]) + 0.05, oz: pin[2] });
+    }
+  }
+  // bundled runs
+  const tube = WIRES.bundleLook === 'tube';
+  for (const sp of SP) {
+    for (let s = 0; s < sp.N; s++) {
+      const a = sp.pts[s], b = sp.pts[s + 1], zm = (a[2] + b[2]) / 2;
+      const k = depthKey((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, zm);
+      if (tube && sp.round) put(zm, { tube: sp, s, k, oz: zm });
+      else {
+        if (sp.round) put(zm, { core: sp, s, k: k - 0.4, d: k, oz: zm });
+        sp.r.pairs.forEach((pr, j) => { const pa = sp.pos(j, s), pb = sp.pos(j, s + 1); put(zm, { c: pr.c, i: -1, pa, pb, k: depthKey((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2, zm), zm, oz: zm }); });
+      }
+    }
+  }
+  // ties: a band wrapped tight round the bundle where a run starts or ends; a clip on a ribbon
+  const banded = new Set();
+  for (const sp of SP) for (const [t, s] of [[sp.r.t1, 0], [sp.r.t2, sp.N]]) {
+    if (banded.has(t)) continue; banded.add(t);
+    const p = sp.pts[s];
+    put(p[2], { band: t, sp, s, k: depthKey(p[0], p[1], p[2]) + 0.6, d: depthKey(p[0], p[1], p[2]) + 0.3, oz: p[2] });
+  }
+  for (const a of lv.values()) a.sort((a, b) => a.k - b.k);
+  WSEG = { key, sp: SP, lv, loneTies: WIRES.ties.filter(t => !banded.has(t)) };
+  return WSEG;
+}
+// ---------- pixel batching ----------
+// A cable is drawn a pixel at a time, and a canvas call per pixel cost more than the rest of
+// the wire pass. So the wires are written into a pixel buffer (WPXC stands in for the canvas)
+// and the rectangle they touched goes onto the real canvas in one putImageData + drawImage:
+// the same pixels in the same order. wpxHold() keeps one batch open over several levels.
+const WPX = { bufs: [], b: null, ctx: null, depth: 0, cols: new Map(), probe: null };
+function wpxColor(s) {
+  let v = WPX.cols.get(s);
+  if (v !== undefined) return v;
+  let r, g, b, a = 255;
+  if (s[0] === '#' && s.length === 7) { r = parseInt(s.slice(1, 3), 16); g = parseInt(s.slice(3, 5), 16); b = parseInt(s.slice(5, 7), 16); }
+  else if (/^rgb\(/.test(s)) [r, g, b] = s.match(/\d+/g).map(Number);
+  else {   // anything else (named, short hex, rgba): let the canvas parse it
+    if (!WPX.probe) WPX.probe = mk(1, 1).getContext('2d', { willReadFrequently: true });
+    const p = WPX.probe; p.clearRect(0, 0, 1, 1); p.fillStyle = s; p.fillRect(0, 0, 1, 1); [r, g, b, a] = p.getImageData(0, 0, 1, 1).data;
+  }
+  v = ((a << 24) | (b << 16) | (g << 8) | r) >>> 0;
+  WPX.cols.set(s, v);
+  return v;
+}
+const WPXC = {
+  col: 0, str: '',
+  get fillStyle() { return this.str; },
+  set fillStyle(s) { this.str = s; this.col = wpxColor(s); },
+  fillRect(x, y, w, h) {
+    const B = WPX.b, bw = B.w, bh = B.h, u = B.u;
+    let x0 = Math.max(0, x | 0), y0 = Math.max(0, y | 0); const x1 = Math.min(bw, (x + w) | 0), y1 = Math.min(bh, (y + h) | 0);
+    if (x1 <= x0 || y1 <= y0) return;
+    if (x0 < B.x0) B.x0 = x0; if (y0 < B.y0) B.y0 = y0; if (x1 > B.x1) B.x1 = x1; if (y1 > B.y1) B.y1 = y1;
+    const c = this.col, sa = c >>> 24;
+    for (let yy = y0; yy < y1; yy++) {
+      const row = yy * bw;
+      if (sa === 255) { for (let xx = x0; xx < x1; xx++) u[row + xx] = c; continue; }
+      for (let xx = x0; xx < x1; xx++) u[row + xx] = wpxOver(c, u[row + xx]);
+    }
+  }
+};
+function wpxOver(s, d) {   // source-over, unpremultiplied
+  const sa = (s >>> 24) / 255, da = (d >>> 24) / 255, oa = sa + da * (1 - sa);
+  if (oa <= 0) return 0;
+  const ch = k => Math.round((((s >>> k) & 255) * sa + ((d >>> k) & 255) * da * (1 - sa)) / oa);
+  return ((Math.round(oa * 255) << 24) | (ch(16) << 16) | (ch(8) << 8) | ch(0)) >>> 0;
+}
+function wpxBegin(ctx) {
+  if (window.__nowpx) return false;   // debug: draw straight to the canvas
+  if (WPX.depth > 0) { if (WPX.ctx !== ctx) return false; WPX.depth++; return true; }
+  const cv = ctx.canvas, w = cv && cv.width, h = cv && cv.height;
+  if (!w || !h || !ctx.getTransform().isIdentity) return false;
+  let B = WPX.bufs.find(q => q.w === w && q.h === h);
+  if (!B) {
+    const c = mk(w, h), u8 = new Uint8ClampedArray(w * h * 4);
+    B = { w, h, c, g: c.getContext('2d'), u: new Uint32Array(u8.buffer), img: new ImageData(u8, w, h), x0: w, y0: h, x1: 0, y1: 0 };
+    WPX.bufs.unshift(B); if (WPX.bufs.length > 3) WPX.bufs.pop();
+  }
+  WPX.b = B; WPX.ctx = ctx; WPX.depth = 1;
+  return true;
+}
+function wpxEnd() {
+  if (--WPX.depth > 0) return;
+  const B = WPX.b, ctx = WPX.ctx; WPX.b = WPX.ctx = null; WPX.depth = 0;
+  if (B.x1 <= B.x0) return;
+  const { x0, y0 } = B, w = B.x1 - x0, h = B.y1 - y0;
+  B.g.putImageData(B.img, 0, 0, x0, y0, w, h);
+  ctx.drawImage(B.c, x0, y0, w, h, x0, y0, w, h);
+  for (let y = y0; y < B.y1; y++) B.u.fill(0, y * B.w + x0, y * B.w + B.x1);
+  B.x0 = B.w; B.y0 = B.h; B.x1 = B.y1 = 0;
+}
+// several drawWiresLevel calls onto one canvas, nothing else drawn between them: one batch
+function wpxHold(ctx, fn) { const on = wpxBegin(ctx); try { fn(); } finally { if (on) wpxEnd(); } }
 function drawWiresLevel(ctx, z) {
+  if (!wpxBegin(ctx)) { drawWiresLevelTo(ctx, z); return; }
+  try { drawWiresLevelTo(WPXC, z); } finally { wpxEnd(); }
+}
+function drawWiresLevelTo(ctx, z) {
   WIRES.mist = wireMist(z);
   const cutTop = S.level + HT / LH, inLv = p => Math.floor(p) === z;
   const cutting = S.mode === 'cut' && S.level < NL - 1;
@@ -3958,52 +4099,7 @@ function drawWiresLevel(ctx, z) {
     const q = projIso(...m.p), X = Math.round(q[0]), Y = Math.round(q[1]), pal = wpal(GIRDER_HEX, 4); WDT.D = depthKey(...m.p) + 0.2;
     RW(ctx, X - 1, Y, 3, 2, pal[2]); RW(ctx, X - 1, Y, 2, 1, pal[0]); RW(ctx, X, Y, 1, 1, GLEAM);
   }
-  const SP = spines(), hidden = new Map(), override = new Map();
-  for (const sp of SP) sp.r.pairs.forEach((pr, j) => {
-    if (!hidden.has(pr.c)) hidden.set(pr.c, []);
-    hidden.get(pr.c).push([pr.a.i, pr.b.i]);
-    if (!override.has(pr.c)) override.set(pr.c, new Map());
-    override.get(pr.c).set(pr.a.i, sp.pos(j, 0)); override.get(pr.c).set(pr.b.i, sp.pos(j, sp.N));
-  });
-  const segs = [];
-  // loose wire: drawn from its own particles, joined seamlessly to the bundles it enters
-  for (const c of WIRES.cables) {
-    const hid = hidden.get(c) || [], ov = override.get(c);
-    const P = i => (ov && ov.get(i)) || xAt(c, i);
-    for (let i = 0; i < c.n - 1; i++) {
-      if (hid.some(([a, b]) => i >= a && i < b)) continue;
-      const pa = P(i), pb = P(i + 1), zm = (pa[2] + pb[2]) / 2;
-      if (!inLv(zm) || !ok(zm)) continue;
-      segs.push({ c, i, pa, pb, k: depthKey((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2, zm), zm });
-    }
-    if (WIRES.sockets) for (const pin of [c.pinA, c.pinB]) {
-      if (!pin || !inLv(pin[2]) || !ok(pin[2])) continue;
-      segs.push({ sock: c, p: pin, k: depthKey(pin[0], pin[1], pin[2]) + 0.05 });
-    }
-  }
-  // bundled runs
-  const tube = WIRES.bundleLook === 'tube';
-  for (const sp of SP) {
-    for (let s = 0; s < sp.N; s++) {
-      const a = sp.pts[s], b = sp.pts[s + 1], zm = (a[2] + b[2]) / 2;
-      if (!inLv(zm) || !ok(zm)) continue;
-      const k = depthKey((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, zm);
-      if (tube && sp.round) segs.push({ tube: sp, s, k });
-      else {
-        if (sp.round) segs.push({ core: sp, s, k: k - 0.4, d: k });
-        sp.r.pairs.forEach((pr, j) => { const pa = sp.pos(j, s), pb = sp.pos(j, s + 1); segs.push({ c: pr.c, i: -1, pa, pb, k: depthKey((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2, zm), zm }); });
-      }
-    }
-  }
-  // ties: a band wrapped tight round the bundle where a run starts or ends; a clip on a ribbon
-  const banded = new Set();
-  for (const sp of SP) for (const [t, s] of [[sp.r.t1, 0], [sp.r.t2, sp.N]]) {
-    if (banded.has(t)) continue; banded.add(t);
-    const p = sp.pts[s]; if (!inLv(p[2]) || !ok(p[2])) continue;
-    segs.push({ band: t, sp, s, k: depthKey(p[0], p[1], p[2]) + 0.6, d: depthKey(p[0], p[1], p[2]) + 0.3 });
-  }
-  const loneTies = WIRES.ties.filter(t => !banded.has(t));
-  segs.sort((a, b) => a.k - b.k);
+  const WS = wireSegs(), segs = (WS.lv.get(z) || []).filter(sg => ok(sg.oz)), loneTies = WS.loneTies;
   const light = p => wq(p[0], p[1], p[2]);
   for (const sg of segs) {
     if (!all && !hlMatch(sg)) continue;
@@ -5874,7 +5970,7 @@ function setMode(m) {
   const prev = S.mode;
   S.mode = m; S.modeT = 0;
   const lf = m === 'exploded' ? 2 : 0;   // strata are seen from above when exploded: lift baked occlusion so plates read
-  if (lf !== (S.lightFloor || 0)) { S.lightFloor = lf; markAllDirty(); }
+  if (lf !== (S.lightFloor || 0)) { S.lightFloor = lf; markAllDirty(true); }   // a subtle lift: let it arrive during the move instead of stalling it
   S.explodeTarget = m === 'exploded' ? 1 : 0;
   toolsForMode(m);
   if (m === 'plan') S.zoom = fitZoomFor(...planSize());
@@ -6039,6 +6135,7 @@ function setupInput() {
     if (Math.abs(wheelAcc) > step) { setZoom(S.zoom + (wheelAcc < 0 ? 1 : -1)); wheelAcc = 0; sfx.click(); }
   }, { passive: false });
   window.addEventListener('keydown', e => {
+    if (!BOOT.done) return;   // still loading
     if (e.target.closest && e.target.closest('input, textarea, select')) return;
     if ((e.metaKey || e.ctrlKey) && k_lower(e) === 'z') { undoWires(e.shiftKey); e.preventDefault(); return; }
     if ((e.metaKey || e.ctrlKey) && k_lower(e) === 'y') { undoWires(true); e.preventDefault(); return; }
@@ -6170,7 +6267,7 @@ function renderSec(ctx, t) {
 }
 function render() {
   const ctx = VIEW.ctx;
-  if (!ctx) return;
+  if (!ctx || BOOT.hold) return;
   if (S.mode === 'plan') renderPlan(ctx, S.time);
   else if (S.mode === 'section') renderSec(ctx, S.time);
   else renderIso(ctx, S.time);
@@ -6182,12 +6279,35 @@ function frame(now) {
   requestAnimationFrame(frame);
   try { step(dt); render(); } catch (e) { if (!frame.warned) { frame.warned = true; console.error(e); } }
 }
-function boot() {
+// ---- boot, behind the loading screen (#loader) ----
+// The same steps as ever, in slices: every ~200 ms it lets a frame through so the status line
+// and bar can move (the loop itself runs on the compositor either way). Nothing is drawn
+// until the end (BOOT.hold), so the level images are built once, here, not by a resize.
+// window.__booted resolves once the first frame is up and the loading screen is going.
+const BOOT = { hold: true, done: false };
+window.__booted = new Promise(r => { BOOT.resolve = r; });
+const afterPaint = () => new Promise(r => { if (document.hidden) setTimeout(r, 0); else requestAnimationFrame(() => setTimeout(r, 0)); });
+function bootSlicer() {
+  let t0 = performance.now();
+  return force => (!force && performance.now() - t0 < 200) ? null : afterPaint().then(() => { t0 = performance.now(); });
+}
+function bootNote(txt, f) { const n = $('ldNote'), b = $('ldBar'); if (txt) performance.mark('boot: ' + txt); if (n && txt) n.textContent = txt; if (b) b.style.transform = `scaleX(${f.toFixed(3)})`; }
+async function boot() {
+  const slice = bootSlicer();
+  bootNote('generating the world', 0.02); await slice(true);
   generate(S.seed);
   if (LIT.on) { LIT.sun = 'noon'; S.tod = 'day'; }
   setupUI(); setupInput(); resize();
   if (S.cssW < 700) setZoom(1);
-  initLife(); seedWires(); markAllDirty();
+  initLife();
+  bootNote('settling the cables', 0.1); await slice(true);
+  const n = seedWires(true);
+  for (let k = 0; k < n; k++) { stepWires(1 / 60); const w = slice(); if (w) { bootNote(null, 0.1 + 0.62 * k / n); await w; } }
+  seedWiresDone(); markAllDirty();
+  bootNote('lighting the levels', 0.72); await slice(true);
+  const lv = [...dirtyLv];
+  for (let k = 0; k < lv.length; k++) { buildLevel(lv[k], false); const w = slice(); if (w) { bootNote(null, 0.72 + 0.26 * k / lv.length); await w; } }
+  BOOT.hold = false; performance.mark('boot: levels built');
   let agentPref = '1'; try { agentPref = localStorage.getItem('stratum.agent') || '1'; } catch (e) { /* no storage: claude stays on */ }
   setAgentOn(agentPref === '1');
   try { const hl = localStorage.getItem('spall.hl'); if (HL_STYLES.includes(hl)) WIRES.hl = hl; } catch (e) { /* default highlight */ }
@@ -6197,7 +6317,21 @@ function boot() {
   $('bShade').setAttribute('aria-pressed', 'true');
   log('sys', `World generated · seed ${S.seed} · ${WORLD.cores.length} cores, ${WORLD.paths.length} transit runs, ${WORLD.wells.length} light wells`, 'sys');
   updateStrip(); updateStatus();
+  render(); performance.mark('boot: first frame');
   requestAnimationFrame(frame);
+  bootNote(null, 1);
+  // lift the loading screen once the interface fonts are in (or have had their chance)
+  await Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 1500))]);
+  performance.mark('boot: fonts');
+  await afterPaint();
+  performance.mark('boot: done');
+  const ld = $('loader'); if (ld) { ld.classList.add('out'); setTimeout(() => ld.remove(), 600); }
+  BOOT.done = true; BOOT.resolve();
+}
+function bootFailed(e) {
+  console.error(e);
+  BOOT.hold = false;
+  const n = $('ldNote'); if (n) { n.textContent = 'could not start: ' + (e && e.message || e); n.style.color = 'var(--bad)'; }
 }
 
 // ---- hooks used by the local test wrapper (screenshots); harmless in the page ----
@@ -6243,7 +6377,7 @@ window.STRATUM = {
     if (p.perf) { const t0 = performance.now(); for (let k = 0; k < 30; k++) { step(1 / 60); render(); } window.__perf = ((performance.now() - t0) / 30).toFixed(2) + 'ms/frame'; }
   }
 };
-setTimeout(boot, 0);   // after the later script parts (route builders) have run
+setTimeout(() => boot().catch(bootFailed), 0);   // after the later script parts (route builders) have run
 // ==========================================================================
 // Scripted wire demo for recordings: a visible cursor drives the same wire
 // handlers the mouse does. The story: an offshoot of the main trunk stops at

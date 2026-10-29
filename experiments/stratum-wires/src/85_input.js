@@ -27,7 +27,7 @@ function setMode(m) {
   const prev = S.mode;
   S.mode = m; S.modeT = 0;
   const lf = m === 'exploded' ? 2 : 0;   // strata are seen from above when exploded: lift baked occlusion so plates read
-  if (lf !== (S.lightFloor || 0)) { S.lightFloor = lf; markAllDirty(); }
+  if (lf !== (S.lightFloor || 0)) { S.lightFloor = lf; markAllDirty(true); }   // a subtle lift: let it arrive during the move instead of stalling it
   S.explodeTarget = m === 'exploded' ? 1 : 0;
   toolsForMode(m);
   if (m === 'plan') S.zoom = fitZoomFor(...planSize());
@@ -192,6 +192,7 @@ function setupInput() {
     if (Math.abs(wheelAcc) > step) { setZoom(S.zoom + (wheelAcc < 0 ? 1 : -1)); wheelAcc = 0; sfx.click(); }
   }, { passive: false });
   window.addEventListener('keydown', e => {
+    if (!BOOT.done) return;   // still loading
     if (e.target.closest && e.target.closest('input, textarea, select')) return;
     if ((e.metaKey || e.ctrlKey) && k_lower(e) === 'z') { undoWires(e.shiftKey); e.preventDefault(); return; }
     if ((e.metaKey || e.ctrlKey) && k_lower(e) === 'y') { undoWires(true); e.preventDefault(); return; }

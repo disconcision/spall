@@ -28,7 +28,8 @@ const WATERCYC = {
   night: [0, 0, '#1f3b39', '#2b4d48', '#4a6660', '#b08a4e', '#4a6660', '#2b4d48']
 };
 
-function markAllDirty() { for (let z = 0; z < NL; z++) dirtyLv.add(z); for (const c of CUTS.values()) c.dirty = true; GHC.dirty = true; planDirty = secDirty = thumbDirty = true; }
+// lazy: the level images are rebuilt a level a frame (renderIso) rather than all before the next frame
+function markAllDirty(lazy) { for (let z = 0; z < NL; z++) (lazy ? lazyLv : dirtyLv).add(z); for (const c of CUTS.values()) c.dirty = true; GHC.dirty = true; planDirty = secDirty = thumbDirty = true; }
 function markDirty(z) { dirtyLv.add(z); const cc = CUTS.get(z); if (cc) cc.dirty = true; if (z > S.level) GHC.dirty = true; planDirty = secDirty = thumbDirty = true; }
 const tallN = n => n && TI[n].tall;
 function faceOccluded(u, v, z, face) {
@@ -251,7 +252,14 @@ const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
 function buildSky() {
   const bw = S.bw, bh = S.bh;
   if (!SKYC.c || SKYC.c.width !== bw || SKYC.c.height !== bh) SKYC.c = mk(bw, bh);
-  const skyT = LIT.on && LIT.sun === 'evening' ? 'dusk' : S.tod, g = SKYC.c.getContext('2d'), cols = SKYCOL[skyT], n = cols.length;
+  // the dithered gradient is a canvas call per pixel: batched like the wires (same pixels)
+  const g0 = SKYC.c.getContext('2d'), px = wpxBegin(g0), g = px ? WPXC : g0;
+  try { buildSkyTo(g); } finally { if (px) wpxEnd(); }
+  skyDirty = false;
+}
+function buildSkyTo(g) {
+  const bw = S.bw, bh = S.bh;
+  const skyT = LIT.on && LIT.sun === 'evening' ? 'dusk' : S.tod, cols = SKYCOL[skyT], n = cols.length;
   const hz = Math.round(bh * 0.62);
   for (let y = 0; y < bh; y++) {
     const f = clamp(y / hz, 0, 1) * (n - 1), k = Math.min(n - 2, Math.floor(f)), fr = f - k;
@@ -273,7 +281,6 @@ function buildSky() {
     g.fillStyle = col; g.fillRect(0, base, bw, bh - base);
   }
   if (S.tod === 'night') { g.fillStyle = '#c9cfc8'; for (let k = 0; k < 60; k++) g.fillRect(Math.floor(rnd() * bw), Math.floor(rnd() * hz * 0.6), 1, 1); }
-  skyDirty = false;
 }
 
 // ---------- dynamic layer for one level ----------
@@ -339,7 +346,7 @@ function renderIso(ctx, t) {
     ctx.drawImage(wf, bx0, fy);
     Object.assign(WDT, { fd: WFC.fd, w: CW, h: LFH, ox: bx0, oy: fy, wd: null }); WDT.key = '';
     WDT.on = true; drawBirds(ctx); drawWireHighlight(ctx, floor, t); WDT.on = false; WDT.ox = WDT.oy = 0;
-  } else if (useDepth) { compositeDepth(depthLevels, bx0); if (!WDT.wd || WDT.wd.length !== S.bw * S.bh) WDT.wd = new Float32Array(S.bw * S.bh); WDT.wd.fill(-1e9); WDT.on = true; for (let z = floor; z < NL; z++) drawWiresLevel(ctx, z); drawBirds(ctx); drawWireHighlight(ctx, floor, t); WDT.on = false; }
+  } else if (useDepth) { compositeDepth(depthLevels, bx0); if (!WDT.wd || WDT.wd.length !== S.bw * S.bh) WDT.wd = new Float32Array(S.bw * S.bh); WDT.wd.fill(-1e9); WDT.on = true; wpxHold(ctx, () => { for (let z = floor; z < NL; z++) drawWiresLevel(ctx, z); }); drawBirds(ctx); drawWireHighlight(ctx, floor, t); WDT.on = false; }
   LIT.ov = useDepth ? [top, L, sliced, bx0, by0] : null;   // drawn once the sky is in, so additive light never punches holes in it
   drawAfterWorld(ctx, t, sliced, ex);
 }
@@ -370,7 +377,7 @@ function wireFrame(levels, top, L, sliced, floor) {
     S.bw = CW; S.bh = LFH; S.cam.x = CW / 2 - OX; S.cam.y = LFH / 2 - OY - NL * LH;
     Object.assign(WDT, { fd: WFC.fd, w: CW, h: LFH, ox: 0, oy: 0, wd: null }); WDT.key = '';
     WFC.g.clearRect(0, 0, CW, LFH);
-    try { WDT.on = true; for (let z = floor || 0; z < NL; z++) drawWiresLevel(WFC.g, z); }
+    try { WDT.on = true; wpxHold(WFC.g, () => { for (let z = floor || 0; z < NL; z++) drawWiresLevel(WFC.g, z); }); }
     finally { WDT.on = false; [S.bw, S.bh, S.cam.x, S.cam.y] = sv; }
     WFC.wKey = wKey;
   }

@@ -67,7 +67,7 @@ function renderSec(ctx, t) {
 }
 function render() {
   const ctx = VIEW.ctx;
-  if (!ctx) return;
+  if (!ctx || BOOT.hold) return;
   if (S.mode === 'plan') renderPlan(ctx, S.time);
   else if (S.mode === 'section') renderSec(ctx, S.time);
   else renderIso(ctx, S.time);
@@ -79,12 +79,35 @@ function frame(now) {
   requestAnimationFrame(frame);
   try { step(dt); render(); } catch (e) { if (!frame.warned) { frame.warned = true; console.error(e); } }
 }
-function boot() {
+// ---- boot, behind the loading screen (#loader) ----
+// The same steps as ever, in slices: every ~200 ms it lets a frame through so the status line
+// and bar can move (the loop itself runs on the compositor either way). Nothing is drawn
+// until the end (BOOT.hold), so the level images are built once, here, not by a resize.
+// window.__booted resolves once the first frame is up and the loading screen is going.
+const BOOT = { hold: true, done: false };
+window.__booted = new Promise(r => { BOOT.resolve = r; });
+const afterPaint = () => new Promise(r => { if (document.hidden) setTimeout(r, 0); else requestAnimationFrame(() => setTimeout(r, 0)); });
+function bootSlicer() {
+  let t0 = performance.now();
+  return force => (!force && performance.now() - t0 < 200) ? null : afterPaint().then(() => { t0 = performance.now(); });
+}
+function bootNote(txt, f) { const n = $('ldNote'), b = $('ldBar'); if (txt) performance.mark('boot: ' + txt); if (n && txt) n.textContent = txt; if (b) b.style.transform = `scaleX(${f.toFixed(3)})`; }
+async function boot() {
+  const slice = bootSlicer();
+  bootNote('generating the world', 0.02); await slice(true);
   generate(S.seed);
   if (LIT.on) { LIT.sun = 'noon'; S.tod = 'day'; }
   setupUI(); setupInput(); resize();
   if (S.cssW < 700) setZoom(1);
-  initLife(); seedWires(); markAllDirty();
+  initLife();
+  bootNote('settling the cables', 0.1); await slice(true);
+  const n = seedWires(true);
+  for (let k = 0; k < n; k++) { stepWires(1 / 60); const w = slice(); if (w) { bootNote(null, 0.1 + 0.62 * k / n); await w; } }
+  seedWiresDone(); markAllDirty();
+  bootNote('lighting the levels', 0.72); await slice(true);
+  const lv = [...dirtyLv];
+  for (let k = 0; k < lv.length; k++) { buildLevel(lv[k], false); const w = slice(); if (w) { bootNote(null, 0.72 + 0.26 * k / lv.length); await w; } }
+  BOOT.hold = false; performance.mark('boot: levels built');
   let agentPref = '1'; try { agentPref = localStorage.getItem('stratum.agent') || '1'; } catch (e) { /* no storage: claude stays on */ }
   setAgentOn(agentPref === '1');
   try { const hl = localStorage.getItem('spall.hl'); if (HL_STYLES.includes(hl)) WIRES.hl = hl; } catch (e) { /* default highlight */ }
@@ -94,7 +117,21 @@ function boot() {
   $('bShade').setAttribute('aria-pressed', 'true');
   log('sys', `World generated · seed ${S.seed} · ${WORLD.cores.length} cores, ${WORLD.paths.length} transit runs, ${WORLD.wells.length} light wells`, 'sys');
   updateStrip(); updateStatus();
+  render(); performance.mark('boot: first frame');
   requestAnimationFrame(frame);
+  bootNote(null, 1);
+  // lift the loading screen once the interface fonts are in (or have had their chance)
+  await Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 1500))]);
+  performance.mark('boot: fonts');
+  await afterPaint();
+  performance.mark('boot: done');
+  const ld = $('loader'); if (ld) { ld.classList.add('out'); setTimeout(() => ld.remove(), 600); }
+  BOOT.done = true; BOOT.resolve();
+}
+function bootFailed(e) {
+  console.error(e);
+  BOOT.hold = false;
+  const n = $('ldNote'); if (n) { n.textContent = 'could not start: ' + (e && e.message || e); n.style.color = 'var(--bad)'; }
 }
 
 // ---- hooks used by the local test wrapper (screenshots); harmless in the page ----
@@ -140,4 +177,4 @@ window.STRATUM = {
     if (p.perf) { const t0 = performance.now(); for (let k = 0; k < 30; k++) { step(1 / 60); render(); } window.__perf = ((performance.now() - t0) / 30).toFixed(2) + 'ms/frame'; }
   }
 };
-setTimeout(boot, 0);   // after the later script parts (route builders) have run
+setTimeout(() => boot().catch(bootFailed), 0);   // after the later script parts (route builders) have run
