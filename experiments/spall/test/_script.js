@@ -4822,14 +4822,15 @@ function arrowSprite() {
   ARROW.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === 'X') R_(g, x, y, 1, 1, ROLE.agentInk); if (ch === 'W') R_(g, x, y, 1, 1, x <= 2 ? ROLE.agentHi : ROLE.agent); }));
   return c;
 }
-// claude's cursor (CU in UICFG): 1 the arrow and a name tag, 2 the spark, 3 the spark and a name tag, 4 the arrow
-// with a spark at its heel, 5 the pixel crab, 6 the spark, turning while claude works (like the CLI's spinner).
+// claude's cursor (CU in UICFG): 1 the arrow and a name tag, 2 the spark, 3 the spark and a name tag, turning while
+// claude works (like the CLI's spinner; the default), 4 the arrow with a spark at its heel, 5 the pixel crab, 6 the
+// turning spark without the tag.
 // Shapes get a dark rim so they read on any wall; centred ones sit on the point they mark, the arrow points at it.
 const SPARK = ['....#....', '.#..#..#.', '..#.#.#..', '...###...', '#########', '...###...', '..#.#.#..', '.#..#..#.', '....#....'];
 const SPARK_TURN = [['....#....', '....#....', '....#....', '...###...', '#########', '...###...', '....#....', '....#....', '....#....'], SPARK,
   ['#.......#', '.#.....#.', '..#...#..', '...###...', '...###...', '...###...', '..#...#..', '.#.....#.', '#.......#'], SPARK];
 const SPARK_S = ['#.#.#', '.###.', '#####', '.###.', '#.#.#'];
-const CU = { 1: { tag: true }, 2: {}, 3: { tag: true }, 4: {}, 5: {}, 6: {} };
+const CU = { 1: { tag: true }, 2: {}, 3: { tag: true, turn: true }, 4: {}, 5: {}, 6: { turn: true } };
 const CURS = new Map();
 function rimSprite(rows, ox = 1, oy = 1, c) {   // rows of '#' in claude's colour, a rim round them, lit from the top left
   const h = rows.length, w = Math.max(...rows.map(r => r.length));
@@ -4841,10 +4842,10 @@ function rimSprite(rows, ox = 1, oy = 1, c) {   // rows of '#' in claude's colou
   }
   return c;
 }
-const CU_NAMES = { 1: 'arrow + name', 2: 'spark', 3: 'spark + name', 4: 'arrow, spark heel', 5: 'crab', 6: 'spark, turns while working' };
+const CU_NAMES = { 1: 'arrow + name', 2: 'spark', 3: 'spark + name, turns while working', 4: 'arrow, spark heel', 5: 'crab', 6: 'spark, turns while working' };
 function cursorSprite(t, cu = UICFG.CU) {
-  const busy = AGENT.state !== 'idle';
-  const k = cu === 6 && busy && !REDUCED ? 60 + ((t * 5) | 0) % 4 : cu;
+  const busy = AGENT.state === 'survey' || AGENT.state === 'look' || AGENT.state === 'build';   // waiting on you isn't working
+  const k = CU[cu].turn && busy && !REDUCED ? 60 + ((t * 5) | 0) % 4 : cu;
   let s = CURS.get(k); if (s) return s;
   if (cu === 1) s = { c: arrowSprite(), ax: 0, ay: 0 };
   else if (cu === 4) { const c = mk(14, 16); c.getContext('2d').drawImage(arrowSprite(), 0, 0); rimSprite(SPARK_S, 8, 10, c); s = { c, ax: 0, ay: 0 }; }
@@ -5847,7 +5848,7 @@ function showCard(j) {
   j.pieces.forEach(p => { if (p.state !== 'blocked') ph[p.ph]++; });
   const blocked = j.pieces.filter(p => p.state === 'blocked').length, pct = v => Math.round(v * 100) + '%';
   const row = (k, v, warn) => `<dt>${k}</dt><dd${warn ? ' class="warn"' : ''}>${v}</dd>`;
-  const li = document.createElement('li'); li.className = 'pr pending ' + j.owner; j.li = li;
+  const li = document.createElement('li'); li.className = 'pr pending ask ' + j.owner; j.li = li;
   li.innerHTML = `<div class="prh"><span class="who">${glyph(LOGWHO[j.owner], 1)}</span><span class="ic">${logIcon({ ic: 'propose' })}</span>` +
     `<span class="hd"><b>Proposal ${pad2(j.no)}</b>${logEsc(j.name)} <span class="v"></span></span><time>${fmtTime(S.time)}</time></div><dl>` +
     row('site', logAt([j.site.x, j.site.y, z0]) + (z1 > z0 ? '–' + lvCode(z1) : '')) +
@@ -5855,17 +5856,17 @@ function showCard(j) {
     row('cost', '¤ ' + m.cost.toLocaleString('en-US') + (m.res ? ` · +${m.res} households` : '')) +
     row('light', m.probeZ >= 0 ? `${lvCode(m.probeZ)} ${pct(m.before)} → ${pct(m.after)} sky` : '—', m.before - m.after > 0.12) +
     row('fill', m.zf != null ? `${lvCode(m.zf)} ${pct(m.fb)} → ${pct(m.fa)} (cap 50%)` : '—', m.fa > 0.5) +
-    `</dl><div class="pra"><button type="button" class="btn sm go" data-pr="ok">Approve <kbd>⏎</kbd></button><button type="button" class="btn sm" data-pr="no">Reject <kbd>Del</kbd></button><span class="auto"></span></div><i class="prt"></i>`;
+    `</dl><div class="pra"><button type="button" class="btn sm go" data-pr="ok">Approve <kbd>⏎</kbd></button><button type="button" class="btn sm" data-pr="no">Reject <kbd>Del</kbd></button><span class="auto"></span></div>`;
   feedAppend(li); railAsk();
 }
 function settleProposal(j, v) {
   const li = j.li; if (!li || !li.classList.contains('pending')) return;
-  li.classList.remove('pending'); li.classList.add(v === 'auto' ? 'ok' : v);
+  li.classList.remove('pending', 'ask'); li.classList.add(v === 'auto' ? 'ok' : v);
   li.querySelector('.v').textContent = '· ' + PR_V[v];
-  li.querySelector('.pra').remove(); li.querySelector('.prt').remove();
+  li.querySelector('.pra').remove();
 }
 function hideCard() { if (CARDJOB) settleProposal(CARDJOB, 'gone'); CARDJOB = null; railAsk(); }
-function setCursorStyle(k) { UICFG.CU = clamp(k, 1, 6); store.set('cursor', UICFG.CU); }
+function setCursorStyle(k) { UICFG.CU = clamp(k, 1, 6); store.set('cu', UICFG.CU); }
 // collapsed panel: the rail's claude button asks too
 function railAsk() {
   const b = document.querySelector('.sb-rail .rb.cl'); if (!b) return;
@@ -5888,6 +5889,35 @@ function addPin(h) {
   if (S.pins.length > 4) S.pins.shift();
   renderChips(); sfx.pin();
   toast(`Pinned ${TI[t].name} @ (${h.x},${h.y},${lvCode(h.z)}) — now ask claude in the chat`);
+}
+// things to ask: a light menu over the field while it's empty or what you type matches one; arrows pick, Enter sends
+const SUGG = ['Add a garden here', 'Connect this to the nearest core', 'Build housing near here', 'Open a light well here', 'Why there?'];
+function setupSuggest() {
+  const inp = $('chatIn'), menu = $('suggMenu'), f = $('chatf');
+  let sel = -1, items = [];
+  const close = () => { menu.hidden = true; sel = -1; };
+  const show = () => {
+    const q = inp.value.trim().toLowerCase();
+    items = SUGG.filter(s => !q || s.toLowerCase().includes(q));
+    if (!items.length || items.some(s => s.toLowerCase() === q)) { close(); return; }
+    sel = Math.min(sel, items.length - 1);
+    menu.innerHTML = `<li class="sh" role="presentation">${q ? 'matches' : 'try'}</li>` + items.map((s, k) => `<li role="option" data-k="${k}" class="${k === sel ? 'on' : ''}" aria-selected="${k === sel}">${logEsc(s)}</li>`).join('');
+    menu.style.bottom = (f.offsetParent.clientHeight - f.offsetTop + 4) + 'px';
+    menu.hidden = false;
+  };
+  inp.addEventListener('focus', show);
+  inp.addEventListener('click', () => { if (menu.hidden) show(); });
+  inp.addEventListener('input', () => { sel = -1; show(); });
+  inp.addEventListener('blur', close);
+  inp.addEventListener('keydown', e => {
+    if (menu.hidden) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sel = (sel + (e.key === 'ArrowDown' ? 1 : items.length - 1 + (sel < 0 ? 1 : 0))) % items.length; show(); }
+    else if (e.key === 'Enter' && sel >= 0) { e.preventDefault(); const s = items[sel]; inp.value = ''; close(); sendChat(s); }
+    else if (e.key === 'Escape') close();
+  });
+  menu.addEventListener('pointerdown', e => e.preventDefault());   // keep the field focused
+  menu.addEventListener('click', e => { const li = e.target.closest('[data-k]'); if (!li) return; const s = items[+li.dataset.k]; inp.value = ''; close(); sendChat(s); });
+  f.addEventListener('submit', close);
 }
 function sendChat(text) {
   text = text.trim(); if (!text) return;
@@ -5957,7 +5987,8 @@ function updateAgentDom() {
   tag.classList.toggle('off', off); tag.classList.toggle('none', !CU[UICFG.CU].tag);
   const label = 'claude' + (!sc[2] ? ' · off view ' + lvCode(A.level) : off ? ' · ' + (A.level > S.level ? '↑ ' : A.level < S.level ? '↓ ' : '') + lvCode(A.level) : '');
   if (tag.textContent !== label) tag.textContent = label;
-  tag.style.transform = `translate(${Math.round(clamp(X + 11 * S.zoom, S.safeL + 2, S.cssW - S.safeR - tag.offsetWidth - 4))}px,${Math.round(Math.min(Y + 13 * S.zoom, S.cssH - 44))}px)`;
+  const cs = cursorSprite(S.time), tx = cs.ax ? X + (cs.c.width + cs.ax) * S.zoom + 3 : X + 11 * S.zoom, ty = cs.ax ? Y - tag.offsetHeight / 2 : Y + 13 * S.zoom;   // centred marks: the tag sits just right of it
+  tag.style.transform = `translate(${Math.round(clamp(tx, S.safeL + 2, S.cssW - S.safeR - tag.offsetWidth - 4))}px,${Math.round(Math.min(ty, S.cssH - 44))}px)`;
   if (S.time < A.speechT) {
     const bx = Math.max(S.safeL + 4, Math.min(X + 12, S.cssW - S.safeR - bub.offsetWidth - 6));
     let by = Y - bub.offsetHeight - 10;
@@ -5971,8 +6002,7 @@ function uiTick() {
   if (stripDirty) updateStrip();
   updateStatus();
   if (CARDJOB && CARDJOB.li) {
-    const li = CARDJOB.li, left = CARDJOB.approveAt - S.time, n = Math.max(0, Math.ceil(left));
-    li.querySelector('.prt').style.width = `calc(${(clamp(left / 8, 0, 1) * 100).toFixed(1)}% - var(--p))`;
+    const li = CARDJOB.li, n = Math.max(0, Math.ceil(CARDJOB.approveAt - S.time));
     if (li._n !== n) { li._n = n; li.querySelector('.auto').textContent = n ? `auto ${n} s` : ''; }
   }
   if (toastT && S.time > toastT) { $('toast').hidden = true; toastT = 0; }
@@ -6002,7 +6032,7 @@ function openKeys() {
 
 function setupUI() {
   const tone = store.get('tone', 'dark'); UICFG.MT = tone === 'dark' ? 10 : 11;
-  UICFG.CU = clamp(+store.get('cursor', 1) || 1, 1, 6);
+  UICFG.CU = clamp(+store.get('cu', 3) || 3, 1, 6);
   UI.logo = clamp(+store.get('logo', 0) || 0, 0, LOGOS.length - 1); UICFG.LG = LOGOS[UI.logo];
   UI.tb = clamp(+store.get('tools', 1), 0, 2);
   UI.lvx = store.get('levels', innerWidth < 860 ? 'c' : 'x') === 'x';
@@ -6059,13 +6089,12 @@ function setupUI() {
   document.querySelectorAll('.sb-rail [data-sbopen]').forEach(b => b.onclick = () => { setFeed(b.dataset.sbopen); setSidebar(true); });
   $('feedFilter').addEventListener('click', e => { const b = e.target.closest('[data-feed]'); if (b) setFeed(b.dataset.feed); });
   $('chatf').addEventListener('submit', e => { e.preventDefault(); const i = $('chatIn'); sendChat(i.value); i.value = ''; });
-  for (const s of ['Add a garden here', 'Connect this to the nearest core', 'Build housing near here', 'Open a light well here', 'Why there?']) {
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn sm'; b.textContent = s; b.onclick = () => sendChat(s); $('sugg').appendChild(b);
-  }
+  setupSuggest();
   if (store.get('side', 'open') === 'rail') document.body.classList.add('sb-off');
   addEventListener('resize', () => { sizeLevels(); renderToolLayer(); UI.helpSig = ''; layoutHelp(); });
   syncSliders();
-  addMsg('ai', '', null, 'On site. I walk the stack looking for bays worth building in. When one checks out I ghost a plan and ask you here before any drones fly. <kbd>⌥</kbd>-click to point me somewhere.');
+  const ag = t => `<span class="chip ag">${t}</span>`;
+  addMsg('ai', '', null, `I can ghost a ${ag('stack')} ${ag('bridge')} ${ag('garden')} or ${ag('light well')}. Point first: <kbd>⌥</kbd>-click.`);
   setTool('inspect');
 }
 // ==========================================================================

@@ -44,19 +44,27 @@ figcaption b{color:var(--accent);font-weight:600}
 <main>
 <h1>TALKING TO CLAUDE</h1>
 <p>This round covers proposals in the feed, a name for the channel where claude and you talk, claude's cursor, its first message, and a sweep for UI that had fallen behind the current look. Section 1 and the fixes in section 6 are live in the game. The rest are options with codes, so you can mix and match.</p>
-<div class="box"><p><b>Picks wanted:</b> a name for "Chat" (<span class="code">NM</span>), which extra Desk items to build (<span class="code">DK</span>), claude's cursor (<span class="code">CU</span>, also switchable in the game), and the first message (<span class="code">IN</span>).</p></div>
+<div class="box"><p><b>Decided, 1 Nov:</b></p>
+<ul style="margin:4px 0 0;padding-left:18px">
+<li>"Chat" stays Chat for now (<span class="code">NM1</span>).</li>
+<li>The cursor is <span class="code">CU3</span>, the spark with its name, turning while claude works; the name tag now sits right beside it.</li>
+<li>The first message is <span class="code">IN3</span>.</li>
+<li>Anything that wants an answer is marked by a soft band behind the asker's mark and nothing else: no edge, outline or countdown bar.</li>
+<li>The suggestion buttons are gone; the same requests appear in a small menu when you click into the field.</li>
+</ul>
+<p style="margin-top:8px">All of these are live in the game.</p></div>
 
 <h2>1 · Proposals live in the feed <span class="live">● live</span></h2>
-<p>A proposal is now an item in the feed, built from the same row as the log: who, icon, text, time. It shows the site (a place link: hover lights it, click goes there), the parts, the cost, and what it does to light and fill (warnings in red). Approve or reject it with the buttons, or with <kbd>Enter</kbd> / <kbd>Del</kbd> from anywhere. A thin bar counts down to the auto-approve.</p>
+<p>A proposal is now an item in the feed, built from the same row as the log: who, icon, text, time. It shows the site (a place link: hover lights it, click goes there), the parts, the cost, and what it does to light and fill (warnings in red). Approve or reject it with the buttons, or with <kbd>Enter</kbd> / <kbd>Del</kbd> from anywhere. "auto 7 s" counts down to the auto-approve. While it waits, a soft band of claude's colour, a little wider than claude's mark, runs down its left side. That band is the one sign of something asking you; there is no other border.</p>
 <p>While a proposal waits, it sticks to the top or bottom edge of the feed, so chatter can't scroll it away. Once answered, it folds to one line with the verdict: approved by you, auto-approved, rejected or withdrawn. Click the line to open it again. Proposals show under All, Log and Chat; under Band they show only while they wait. With the panel collapsed, the rail's claude button shows a <b>?</b> until you answer. The floating paper card is gone, and so are the separate "Proposed… / approved" log lines; the item records both.</p>
 <div class="row">
-  <figure><img src="talk/feed-pending.png" width="302" alt="A waiting proposal in the feed"><figcaption><b>Waiting.</b> Sticky until answered; the countdown runs along its bottom edge.</figcaption></figure>
+  <figure><img src="talk/feed-pending.png" width="302" alt="A waiting proposal in the feed, and the request menu open over the field"><figcaption><b>Waiting.</b> Sticky until answered. At the bottom, the request menu: click into the field and it opens; arrows pick, Enter sends, and typing filters it.</figcaption></figure>
   <figure><img src="talk/feed-folded.png" width="302" alt="An answered proposal folded to one line"><figcaption><b>Answered.</b> One line with the verdict; click it to open.</figcaption></figure>
-  <figure><img src="talk/desk-light.png" width="302" alt="The feed in the light tone"><figcaption><b>Light tone.</b> All of it is tokens, so the light chrome needed no extra rules.</figcaption></figure>
+  <figure><img src="talk/desk-light.png" width="302" alt="The feed in the light tone"><figcaption><b>Light tone.</b> The band is claude's colour mixed toward the panel, so it follows the tone with no extra rules.</figcaption></figure>
   <figure><img src="talk/rail-ask.png" width="60" alt="The collapsed rail with a question badge"><figcaption><b>Rail.</b> Collapsed, claude's button asks.</figcaption></figure>
 </div>
 
-<h2>2 · What to call "Chat"</h2>
+<h2>2 · What to call "Chat" <span class="pick">kept as Chat for now</span></h2>
 <p>The feed has three kinds of thing in it. It helps to say what separates them:</p>
 <dl class="chan">
   <dt>Log</dt><dd>What happened to the world, by anyone. Third person, past tense, terse; a record.</dd>
@@ -73,7 +81,7 @@ figcaption b{color:var(--accent);font-weight:600}
   <figure><img src="talk/name-inbox.png" alt="Inbox"><figcaption><b>NM6 · Inbox</b>: "what needs you". Clear, but software-flavoured.</figcaption></figure>
 </div>
 
-<h2>3 · What belongs on the Desk</h2>
+<h2>3 · What else could live in Chat</h2>
 <p>The Desk filter in the real game, with some <b>mocked</b> items placed into the real feed (marked below) beside a live proposal. The idea: anything that wants your attention, or says something to you, lands here as a row of the same kind, and nothing else does.</p>
 <div class="row">
   <figure><img src="talk/desk.png" width="302" alt="The Desk channel with mocked items"><figcaption>Desk filter. Top to bottom: your message with its pinned place, a question, another agent, your reply, a job reporting progress, then a live proposal.</figcaption></figure>
@@ -89,7 +97,8 @@ figcaption b{color:var(--accent);font-weight:600}
   </div>
 </div>
 
-<h2>4 · Claude's cursor</h2>
+<h2>4 · Claude's cursor <span class="pick">CU3, turning</span></h2>
+<div class="row"><figure><img src="talk/cu3-working.gif" width="600" style="image-rendering:pixelated" alt="The spark cursor turning while claude builds, with its name tag beside it"><figcaption style="max-width:600px"><b>CU3 in the game now</b>: claude building, the spark turning, and the tag right beside it (3 s, looping). At rest, and while it waits for your answer, the spark holds still.</figcaption></figure></div>
 <p>All six are in the game now. Choose one in the world menu (click the SPALL wordmark) under Interface; the choice is remembered. Shown at 3× in the real scene, gazing at a proposal. The shapes get a dark rim so they read on any wall. With a name tag (CU1, CU3) the tag now carries the level ("claude · ↑ L10"), so the canvas plate steps aside and there's one label, not two.</p>
 <div class="cu">
   <figure><img src="talk/cu1.png" alt="CU1"><figcaption><b>CU1 · Arrow + name</b>: what it was. Reads as "a cursor"; the tag does the identity.</figcaption></figure>
@@ -97,15 +106,15 @@ figcaption b{color:var(--accent);font-weight:600}
   <figure><img src="talk/cu3.png" alt="CU3"><figcaption><b>CU3 · Spark + name</b>: the mark, plus the tag for anyone who doesn't know it.</figcaption></figure>
   <figure><img src="talk/cu4.png" alt="CU4"><figcaption><b>CU4 · Arrow, spark heel</b>: still a pointer, signed with the spark.</figcaption></figure>
   <figure><img src="talk/cu5.png" alt="CU5"><figcaption><b>CU5 · Crab</b>: the pixel crab from the panel header, walking the stack.</figcaption></figure>
-  <figure><img src="talk/cu6.png" alt="CU6"><figcaption><b>CU6 · Turning spark</b> (my pick): the spark at rest; while claude works it turns through + ✱ ×, like the CLI's spinner.</figcaption></figure>
+  <figure><img src="talk/cu6.png" alt="CU6"><figcaption><b>CU6 · Turning spark</b>: CU3 without the name; the spark at rest; while claude works it turns through + ✱ ×, like the CLI's spinner.</figcaption></figure>
 </div>
 <div class="row"><figure><img src="talk/cu6-working.png" alt="CU6 frames while building"><figcaption style="max-width:none"><b>CU6 while building</b>: four frames, about 0.2 s apart.</figcaption></figure></div>
 
 <h2>5 · Claude's first message</h2>
-<p>"I'm the coral cursor…" is gone. <span class="code">IN1</span> is live; the others are mocks.</p>
+<p>"I'm the coral cursor…" is gone. <span class="code">IN3</span> is live now.</p>
 <div class="row">
-  <figure><img src="talk/in1.png" width="302" alt="IN1"><figcaption><b>IN1 · On site</b> (live): in claude's voice, what it does and how to point.</figcaption></figure>
-  <figure><img src="talk/in3.png" width="302" alt="IN3"><figcaption><b>IN3 · What I can do</b>: the four things as chips, then how to point. Terse, a little menu-like.</figcaption></figure>
+  <figure><img src="talk/in1.png" width="302" alt="IN1"><figcaption><b>IN1 · On site</b> (live until 1 Nov): in claude's voice, what it does and how to point.</figcaption></figure>
+  <figure><img src="talk/in3.png" width="302" alt="IN3"><figcaption><b>IN3 · What I can do</b> (live): the four things as chips, then how to point. Terse, a little menu-like.</figcaption></figure>
   <figure><img src="talk/in2-top.png" width="302" alt="IN2 feed"><img src="talk/in2-input.png" width="302" alt="IN2 input"><figcaption><b>IN2 · Say nothing</b>: no first message; the hint lives in the input's placeholder.</figcaption></figure>
 </div>
 

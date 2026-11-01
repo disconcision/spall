@@ -48,7 +48,7 @@ body[data-mt="16"]{--pxo:#000;--pxL:#3e3c38;--pxl:#2c2b28;--pxm:#1d1c1a;--pxf:#1
   --ink:#e6dfcf;--dim:#a39c8e;--faint:#7a746a;--acct:#e8a83c;--well:#2c2a26;--fillc:#8d877a;--tick:#d9d2c2;--grv:#030303;--cap:#2f2e2c;
   --afl:rgba(163,156,142,.35);--field:#060606;--hov:rgba(255,255,255,.07);--kbg:#a39c8e;--knock:#121211;--tipbg:#121211;--sel:rgba(232,168,60,.18);--fade:.36}
 /* role colours as text and washes on the chrome; the light tones need darker inks */
-body{--agent-t:#ff7a52;--you-t:#5fd3f2;--world-t:#5fd3c4;--folk:#cdb898;--agent-wash:rgba(255,122,82,.08);--you-wash:rgba(95,211,242,.08);--warn:#ff8a5c}
+body{--agent-band:color-mix(in srgb,var(--agent) 30%,var(--pxf));--agent-t:#ff7a52;--you-t:#5fd3f2;--world-t:#5fd3c4;--folk:#cdb898;--agent-wash:rgba(255,122,82,.08);--you-wash:rgba(95,211,242,.08);--warn:#ff8a5c}
 body[data-mt="11"],body[data-mt="15"]{--bg:var(--pxf);--text:var(--ink);--agent-t:#b8431c;--you-t:#1279a0;--world-t:#1d7d72;--folk:#7d5f36;--agent-wash:rgba(200,80,40,.07);--you-wash:rgba(18,121,160,.07);--warn:#a3301c}   /* band canvases re-ink themselves for light tones (bnInk) */
 /* bevels (BV) built from the tone; the panel frames themselves are nine-slice images made in applyChrome() */
 body[data-bv="1"]{--bsh:inset var(--p) var(--p) 0 var(--pxl),inset calc(-1*var(--p)) calc(-1*var(--p)) 0 var(--pxd);--press:inset var(--p) var(--p) 0 var(--pxd),inset calc(-1*var(--p)) calc(-1*var(--p)) 0 var(--pxl);
@@ -318,8 +318,8 @@ aside#side{display:flex;flex-direction:column;min-height:0;position:relative;z-i
 #feed .lg .ic img.rm{opacity:.45;filter:grayscale(1)}
 #feed .lg .hd{flex:1 1 0;min-width:0}
 #feed .lg>time{flex:none;font-size:9px;color:var(--faint);opacity:.75}
-#feed .lg .at{color:var(--dim);cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;white-space:nowrap}
-#feed .lg .at:hover,#feed .lg .at:focus-visible{color:var(--ink);text-decoration-style:solid;outline:none}
+#feed .at{color:var(--dim);cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;white-space:nowrap}   /* a place: in log rows, messages and proposals alike */
+#feed .at:hover,#feed .at:focus-visible{color:var(--ink);text-decoration-style:solid;outline:none}
 #feed .lg .cnt,#feed .lg .chev{display:none}
 #feed .lg.grp .hd{cursor:pointer}
 #feed .lg.grp .cnt{display:inline-block;margin-left:5px;padding:0 4px;color:var(--ink);background:var(--hov);font-weight:600}
@@ -347,13 +347,16 @@ aside#side{display:flex;flex-direction:column;min-height:0;position:relative;z-i
 #feed .m .tx kbd{vertical-align:1px;margin:0 1px}
 #feed .m>time{flex:none;font-size:9px;color:var(--faint);opacity:.75;line-height:15px}
 #feed .m .ctx{display:block;color:var(--you-t);font-size:10px;line-height:13px}
+/* something that wants an answer: a soft band behind the asker's mark, a little wider than it, and nothing else */
+#feed .ask{position:relative}
+#feed .ask::before{content:"";position:absolute;left:-3px;top:0;bottom:0;width:20px;background:var(--agent-band)}
+#feed .ask .who{position:relative}
 /* a proposal: asks in the feed, stays in view until answered, then folds to one line (click to open) */
-#feed .pr{flex:none;position:relative;font-size:10px;line-height:13px;color:var(--dim);background:var(--field);box-shadow:inset var(--p) 0 0 var(--agent);padding:5px 6px 6px 0}
-#feed .pr.you{box-shadow:inset var(--p) 0 0 var(--you)}
-#feed .pr.pending{position:sticky;top:0;bottom:0;z-index:2;box-shadow:inset var(--p) 0 0 var(--agent),0 0 0 1px var(--pxo)}
+#feed .pr{flex:none;position:relative;font-size:10px;line-height:13px;color:var(--dim);padding:2px 0}
+#feed .pr.pending{position:sticky;top:0;bottom:0;z-index:2;background:var(--pxf);padding:6px 0 7px}
 #feed .pr .prh{display:flex;align-items:flex-start;gap:0 5px;cursor:pointer}
 #feed .pr.pending .prh{cursor:default}
-#feed .pr .who{flex:none;width:14px;height:13px;margin-left:2px;display:flex;align-items:center;justify-content:center;color:var(--agent)}
+#feed .pr .who{flex:none;width:14px;height:13px;display:flex;align-items:center;justify-content:center;color:var(--agent)}
 #feed .pr .ic{flex:none;width:16px;height:13px;display:flex;align-items:center;justify-content:center;color:var(--dim)}
 #feed .pr .hd{flex:1 1 0;min-width:0;color:var(--ink)}
 #feed .pr .hd b{font:700 11px/13px var(--cond);letter-spacing:.1em;text-transform:uppercase;color:var(--agent-t);margin-right:5px}
@@ -366,14 +369,10 @@ aside#side{display:flex;flex-direction:column;min-height:0;position:relative;z-i
 #feed .pr dt{color:var(--faint)}
 #feed .pr dd{margin:0;color:var(--dim)}
 #feed .pr dd.warn{color:var(--warn)}
-#feed .pr .at{color:var(--dim);cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
-#feed .pr .at:hover{color:var(--ink)}
 #feed .pr .pra{display:none;align-items:center;gap:6px;margin:7px 0 0 42px}
 #feed .pr.pending .pra{display:flex}
 #feed .pr .pra .btn{padding:0 9px}
 #feed .pr .auto{margin-left:auto;color:var(--faint);font-size:9.5px;font-variant-numeric:tabular-nums}
-#feed .pr .prt{position:absolute;left:var(--p);bottom:0;height:var(--p);background:var(--agent);opacity:.8}
-#feed .pr:not(.pending) .prt{display:none}
 #feed.f-log .m,#feed.f-chat .lg,#feed.f-band .pr:not(.pending){display:none}
 /* ---- the band: bot chatter in the feed, drawn in pixels (88_band.js) ---- */
 .sb-body{position:relative}
@@ -446,7 +445,13 @@ body[data-mt="11"] #bandPop .row .ic,body[data-mt="15"] #bandPop .row .ic{filter
 #chips:empty{display:none}
 .chip{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 2px 2px 6px;box-shadow:inset 0 0 0 1px var(--you-t);color:var(--you-t);background:var(--you-wash)}
 .chip button{color:inherit;padding:0 4px;line-height:1}
-#sugg{display:flex;flex-wrap:wrap;gap:6px 2px;padding:6px 7px 4px}
+.chip.ag{color:var(--agent-t);box-shadow:inset 0 0 0 1px var(--agent);background:var(--agent-wash);padding:1px 5px}
+#suggMenu{position:absolute;left:10px;right:10px;z-index:5;list-style:none;margin:0;padding:3px 0;font-size:11px}
+#suggMenu[hidden]{display:none}
+#suggMenu li{padding:4px 9px;color:var(--dim);cursor:pointer}
+#suggMenu li:hover,#suggMenu li.on{background:var(--hov);color:var(--ink)}
+#suggMenu .sh{padding:2px 9px 3px;color:var(--faint);font-size:9.5px;cursor:default}
+#suggMenu .sh:hover{background:none;color:var(--faint)}
 #chatf{display:flex;align-items:center;margin:4px 10px 10px;background:var(--field);box-shadow:inset var(--p) var(--p) 0 var(--pxo),inset calc(-1*var(--p)) calc(-1*var(--p)) 0 var(--pxl)}
 #chatf input{flex:1;min-width:0;background:transparent;border:0;outline:none;padding:7px 8px;font-size:11px;color:var(--ink)}
 #chatf input::placeholder{color:var(--faint)}
@@ -538,6 +543,9 @@ body.shoot #tools, body.shoot #strip, body.shoot #status, body.shoot #tip, body.
    thread: three strata part and close, as the exploded view does. Art from loader-art.py. ---- */
 #loader{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0e0f11;color:#e6dfcf;transition:opacity .4s ease;user-select:none;-webkit-user-select:none}   /* raw-colour: the loader paints before the tone is known */
 #loader.out{opacity:0;pointer-events:none}
+#loader.lt{background:#d9d3c4;color:#1e1b17}   /* raw-colour: the light tone's ground and ink, before the tokens exist */
+#loader.lt .ldmsg{color:#7c766b}   /* raw-colour: loader */
+#loader.lt .ldbar{background:#bdb6a6}   /* raw-colour: loader */
 #loader svg{display:block}
 #loader .ldw{margin-bottom:46px}
 #loader .stack{position:relative;width:84px;height:105px}
@@ -552,6 +560,7 @@ body.shoot #tools, body.shoot #strip, body.shoot #status, body.shoot #tip, body.
 </style>
 
 <div id="loader" role="status" aria-label="Loading Spall"><svg class="ldw" width="258" height="42" viewBox="0 0 43 7" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true"><rect x="1" y="0" width="5" height="1"/><rect x="9" y="0" width="6" height="1"/><rect x="19" y="0" width="5" height="1"/><rect x="27" y="0" width="2" height="1"/><rect x="36" y="0" width="2" height="1"/><rect x="0" y="1" width="2" height="1"/><rect x="5" y="1" width="2" height="1"/><rect x="9" y="1" width="2" height="1"/><rect x="14" y="1" width="2" height="1"/><rect x="18" y="1" width="2" height="1"/><rect x="23" y="1" width="2" height="1"/><rect x="27" y="1" width="2" height="1"/><rect x="36" y="1" width="2" height="1"/><rect x="0" y="2" width="2" height="1"/><rect x="9" y="2" width="2" height="1"/><rect x="14" y="2" width="2" height="1"/><rect x="18" y="2" width="2" height="1"/><rect x="23" y="2" width="2" height="1"/><rect x="27" y="2" width="2" height="1"/><rect x="36" y="2" width="2" height="1"/><rect x="1" y="3" width="5" height="1"/><rect x="9" y="3" width="6" height="1"/><rect x="18" y="3" width="7" height="1"/><rect x="27" y="3" width="2" height="1"/><rect x="36" y="3" width="2" height="1"/><rect x="5" y="4" width="2" height="1"/><rect x="9" y="4" width="2" height="1"/><rect x="18" y="4" width="2" height="1"/><rect x="23" y="4" width="2" height="1"/><rect x="27" y="4" width="2" height="1"/><rect x="36" y="4" width="2" height="1"/><rect x="0" y="5" width="2" height="1"/><rect x="5" y="5" width="2" height="1"/><rect x="9" y="5" width="2" height="1"/><rect x="18" y="5" width="2" height="1"/><rect x="23" y="5" width="2" height="1"/><rect x="27" y="5" width="2" height="1"/><rect x="36" y="5" width="2" height="1"/><rect x="1" y="6" width="5" height="1"/><rect x="9" y="6" width="2" height="1"/><rect x="18" y="6" width="2" height="1"/><rect x="23" y="6" width="2" height="1"/><rect x="27" y="6" width="7" height="1"/><rect x="36" y="6" width="7" height="1"/></svg><div class="stack"><svg class="ldp p1" width="84" height="51" viewBox="0 0 28 17" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true"><rect x="12" y="0" width="4" height="1" fill="#38342e"/><rect x="10" y="1" width="8" height="1" fill="#38342e"/><rect x="8" y="2" width="12" height="1" fill="#38342e"/><rect x="6" y="3" width="16" height="1" fill="#38342e"/><rect x="4" y="4" width="20" height="1" fill="#38342e"/><rect x="2" y="5" width="24" height="1" fill="#38342e"/><rect x="0" y="6" width="28" height="1" fill="#38342e"/><rect x="0" y="7" width="2" height="1" fill="#4f4a41"/><rect x="2" y="7" width="24" height="1" fill="#38342e"/><rect x="26" y="7" width="2" height="1" fill="#4f4a41"/><rect x="0" y="8" width="2" height="1" fill="#26241f"/><rect x="2" y="8" width="2" height="1" fill="#4f4a41"/><rect x="4" y="8" width="20" height="1" fill="#38342e"/><rect x="24" y="8" width="2" height="1" fill="#4f4a41"/><rect x="26" y="8" width="2" height="1" fill="#1b1a17"/><rect x="0" y="9" width="4" height="1" fill="#26241f"/><rect x="4" y="9" width="2" height="1" fill="#4f4a41"/><rect x="6" y="9" width="16" height="1" fill="#38342e"/><rect x="22" y="9" width="2" height="1" fill="#4f4a41"/><rect x="24" y="9" width="4" height="1" fill="#1b1a17"/><rect x="0" y="10" width="6" height="1" fill="#26241f"/><rect x="6" y="10" width="2" height="1" fill="#4f4a41"/><rect x="8" y="10" width="12" height="1" fill="#38342e"/><rect x="20" y="10" width="2" height="1" fill="#4f4a41"/><rect x="22" y="10" width="6" height="1" fill="#1b1a17"/><rect x="2" y="11" width="6" height="1" fill="#26241f"/><rect x="8" y="11" width="2" height="1" fill="#4f4a41"/><rect x="10" y="11" width="8" height="1" fill="#38342e"/><rect x="18" y="11" width="2" height="1" fill="#4f4a41"/><rect x="20" y="11" width="6" height="1" fill="#1b1a17"/><rect x="4" y="12" width="6" height="1" fill="#26241f"/><rect x="10" y="12" width="2" height="1" fill="#4f4a41"/><rect x="12" y="12" width="4" height="1" fill="#38342e"/><rect x="16" y="12" width="2" height="1" fill="#4f4a41"/><rect x="18" y="12" width="6" height="1" fill="#1b1a17"/><rect x="6" y="13" width="6" height="1" fill="#26241f"/><rect x="12" y="13" width="4" height="1" fill="#4f4a41"/><rect x="16" y="13" width="6" height="1" fill="#1b1a17"/><rect x="8" y="14" width="6" height="1" fill="#26241f"/><rect x="14" y="14" width="6" height="1" fill="#1b1a17"/><rect x="10" y="15" width="4" height="1" fill="#26241f"/><rect x="14" y="15" width="4" height="1" fill="#1b1a17"/><rect x="12" y="16" width="2" height="1" fill="#26241f"/><rect x="14" y="16" width="2" height="1" fill="#1b1a17"/></svg><svg class="ldp p2" width="84" height="51" viewBox="0 0 28 17" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true"><rect x="12" y="0" width="4" height="1" fill="#6a645a"/><rect x="10" y="1" width="8" height="1" fill="#6a645a"/><rect x="8" y="2" width="12" height="1" fill="#6a645a"/><rect x="6" y="3" width="16" height="1" fill="#6a645a"/><rect x="4" y="4" width="20" height="1" fill="#6a645a"/><rect x="2" y="5" width="24" height="1" fill="#6a645a"/><rect x="0" y="6" width="28" height="1" fill="#6a645a"/><rect x="0" y="7" width="2" height="1" fill="#857e72"/><rect x="2" y="7" width="24" height="1" fill="#6a645a"/><rect x="26" y="7" width="2" height="1" fill="#857e72"/><rect x="0" y="8" width="2" height="1" fill="#4f4a41"/><rect x="2" y="8" width="2" height="1" fill="#857e72"/><rect x="4" y="8" width="20" height="1" fill="#6a645a"/><rect x="24" y="8" width="2" height="1" fill="#857e72"/><rect x="26" y="8" width="2" height="1" fill="#38342e"/><rect x="0" y="9" width="4" height="1" fill="#4f4a41"/><rect x="4" y="9" width="2" height="1" fill="#857e72"/><rect x="6" y="9" width="16" height="1" fill="#6a645a"/><rect x="22" y="9" width="2" height="1" fill="#857e72"/><rect x="24" y="9" width="4" height="1" fill="#38342e"/><rect x="0" y="10" width="6" height="1" fill="#4f4a41"/><rect x="6" y="10" width="2" height="1" fill="#857e72"/><rect x="8" y="10" width="12" height="1" fill="#6a645a"/><rect x="20" y="10" width="2" height="1" fill="#857e72"/><rect x="22" y="10" width="6" height="1" fill="#38342e"/><rect x="2" y="11" width="6" height="1" fill="#4f4a41"/><rect x="8" y="11" width="2" height="1" fill="#857e72"/><rect x="10" y="11" width="8" height="1" fill="#6a645a"/><rect x="18" y="11" width="2" height="1" fill="#857e72"/><rect x="20" y="11" width="6" height="1" fill="#38342e"/><rect x="4" y="12" width="6" height="1" fill="#4f4a41"/><rect x="10" y="12" width="2" height="1" fill="#857e72"/><rect x="12" y="12" width="4" height="1" fill="#6a645a"/><rect x="16" y="12" width="2" height="1" fill="#857e72"/><rect x="18" y="12" width="6" height="1" fill="#38342e"/><rect x="6" y="13" width="6" height="1" fill="#4f4a41"/><rect x="12" y="13" width="4" height="1" fill="#857e72"/><rect x="16" y="13" width="6" height="1" fill="#38342e"/><rect x="8" y="14" width="6" height="1" fill="#4f4a41"/><rect x="14" y="14" width="6" height="1" fill="#38342e"/><rect x="10" y="15" width="4" height="1" fill="#4f4a41"/><rect x="14" y="15" width="4" height="1" fill="#38342e"/><rect x="12" y="16" width="2" height="1" fill="#4f4a41"/><rect x="14" y="16" width="2" height="1" fill="#38342e"/></svg><svg class="ldp p3" width="84" height="51" viewBox="0 0 28 17" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true"><rect x="12" y="0" width="4" height="1" fill="#e8a83c"/><rect x="10" y="1" width="8" height="1" fill="#e8a83c"/><rect x="8" y="2" width="12" height="1" fill="#e8a83c"/><rect x="6" y="3" width="16" height="1" fill="#e8a83c"/><rect x="4" y="4" width="20" height="1" fill="#e8a83c"/><rect x="2" y="5" width="24" height="1" fill="#e8a83c"/><rect x="0" y="6" width="28" height="1" fill="#e8a83c"/><rect x="0" y="7" width="2" height="1" fill="#f5c46a"/><rect x="2" y="7" width="24" height="1" fill="#e8a83c"/><rect x="26" y="7" width="2" height="1" fill="#f5c46a"/><rect x="0" y="8" width="2" height="1" fill="#b07a22"/><rect x="2" y="8" width="2" height="1" fill="#f5c46a"/><rect x="4" y="8" width="20" height="1" fill="#e8a83c"/><rect x="24" y="8" width="2" height="1" fill="#f5c46a"/><rect x="26" y="8" width="2" height="1" fill="#8a5c14"/><rect x="0" y="9" width="4" height="1" fill="#b07a22"/><rect x="4" y="9" width="2" height="1" fill="#f5c46a"/><rect x="6" y="9" width="16" height="1" fill="#e8a83c"/><rect x="22" y="9" width="2" height="1" fill="#f5c46a"/><rect x="24" y="9" width="4" height="1" fill="#8a5c14"/><rect x="0" y="10" width="6" height="1" fill="#b07a22"/><rect x="6" y="10" width="2" height="1" fill="#f5c46a"/><rect x="8" y="10" width="12" height="1" fill="#e8a83c"/><rect x="20" y="10" width="2" height="1" fill="#f5c46a"/><rect x="22" y="10" width="6" height="1" fill="#8a5c14"/><rect x="2" y="11" width="6" height="1" fill="#b07a22"/><rect x="8" y="11" width="2" height="1" fill="#f5c46a"/><rect x="10" y="11" width="8" height="1" fill="#e8a83c"/><rect x="18" y="11" width="2" height="1" fill="#f5c46a"/><rect x="20" y="11" width="6" height="1" fill="#8a5c14"/><rect x="4" y="12" width="6" height="1" fill="#b07a22"/><rect x="10" y="12" width="2" height="1" fill="#f5c46a"/><rect x="12" y="12" width="4" height="1" fill="#e8a83c"/><rect x="16" y="12" width="2" height="1" fill="#f5c46a"/><rect x="18" y="12" width="6" height="1" fill="#8a5c14"/><rect x="6" y="13" width="6" height="1" fill="#b07a22"/><rect x="12" y="13" width="4" height="1" fill="#f5c46a"/><rect x="16" y="13" width="6" height="1" fill="#8a5c14"/><rect x="8" y="14" width="6" height="1" fill="#b07a22"/><rect x="14" y="14" width="6" height="1" fill="#8a5c14"/><rect x="10" y="15" width="4" height="1" fill="#b07a22"/><rect x="14" y="15" width="4" height="1" fill="#8a5c14"/><rect x="12" y="16" width="2" height="1" fill="#b07a22"/><rect x="14" y="16" width="2" height="1" fill="#8a5c14"/></svg></div><div class="ldmsg" id="ldNote">loading</div><div class="ldbar"><i id="ldBar"></i></div></div>
+<script>try { if (localStorage.getItem('spall.tone') === 'light') document.getElementById('loader').classList.add('lt'); } catch (e) { /* storage unavailable: the loader stays dark */ }</script>
 <div id="app">
 <header class="tb bar" id="topbar">
   <div class="wm">
@@ -619,7 +628,7 @@ body.shoot #tools, body.shoot #strip, body.shoot #status, body.shoot #tip, body.
       <div class="sb-f"><span class="sgc" id="feedFilter" role="radiogroup" style="--n:4;--i:0"><button type="button" class="on" data-feed="all" role="radio" aria-checked="true">All</button><button type="button" data-feed="log" role="radio" aria-checked="false">Log</button><button type="button" data-feed="chat" role="radio" aria-checked="false">Chat</button><button type="button" data-feed="band" role="radio" aria-checked="false" data-tip="The band: every bot, drone and process">Band</button><i class="ind"></i></span><span class="sp"></span><button type="button" class="bandb" id="bandBtn" aria-haspopup="true" aria-expanded="false" data-tip="The band: traffic, mix, how much reaches All" aria-label="Band settings"><span id="bandN">0</span></button></div>
       <ol id="feed" class="f-all" aria-live="polite"></ol>
       <div id="chips"></div>
-      <div id="sugg"></div>
+      <ul id="suggMenu" class="float" role="listbox" aria-label="Things to ask claude" hidden></ul>
       <form id="chatf" autocomplete="off"><input id="chatIn" placeholder="Ask claude to build…" aria-label="Message to agent"><button type="submit" aria-label="Send"></button></form>
     </div>
   </aside>
@@ -5452,14 +5461,15 @@ function arrowSprite() {
   ARROW.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === 'X') R_(g, x, y, 1, 1, ROLE.agentInk); if (ch === 'W') R_(g, x, y, 1, 1, x <= 2 ? ROLE.agentHi : ROLE.agent); }));
   return c;
 }
-// claude's cursor (CU in UICFG): 1 the arrow and a name tag, 2 the spark, 3 the spark and a name tag, 4 the arrow
-// with a spark at its heel, 5 the pixel crab, 6 the spark, turning while claude works (like the CLI's spinner).
+// claude's cursor (CU in UICFG): 1 the arrow and a name tag, 2 the spark, 3 the spark and a name tag, turning while
+// claude works (like the CLI's spinner; the default), 4 the arrow with a spark at its heel, 5 the pixel crab, 6 the
+// turning spark without the tag.
 // Shapes get a dark rim so they read on any wall; centred ones sit on the point they mark, the arrow points at it.
 const SPARK = ['....#....', '.#..#..#.', '..#.#.#..', '...###...', '#########', '...###...', '..#.#.#..', '.#..#..#.', '....#....'];
 const SPARK_TURN = [['....#....', '....#....', '....#....', '...###...', '#########', '...###...', '....#....', '....#....', '....#....'], SPARK,
   ['#.......#', '.#.....#.', '..#...#..', '...###...', '...###...', '...###...', '..#...#..', '.#.....#.', '#.......#'], SPARK];
 const SPARK_S = ['#.#.#', '.###.', '#####', '.###.', '#.#.#'];
-const CU = { 1: { tag: true }, 2: {}, 3: { tag: true }, 4: {}, 5: {}, 6: {} };
+const CU = { 1: { tag: true }, 2: {}, 3: { tag: true, turn: true }, 4: {}, 5: {}, 6: { turn: true } };
 const CURS = new Map();
 function rimSprite(rows, ox = 1, oy = 1, c) {   // rows of '#' in claude's colour, a rim round them, lit from the top left
   const h = rows.length, w = Math.max(...rows.map(r => r.length));
@@ -5471,10 +5481,10 @@ function rimSprite(rows, ox = 1, oy = 1, c) {   // rows of '#' in claude's colou
   }
   return c;
 }
-const CU_NAMES = { 1: 'arrow + name', 2: 'spark', 3: 'spark + name', 4: 'arrow, spark heel', 5: 'crab', 6: 'spark, turns while working' };
+const CU_NAMES = { 1: 'arrow + name', 2: 'spark', 3: 'spark + name, turns while working', 4: 'arrow, spark heel', 5: 'crab', 6: 'spark, turns while working' };
 function cursorSprite(t, cu = UICFG.CU) {
-  const busy = AGENT.state !== 'idle';
-  const k = cu === 6 && busy && !REDUCED ? 60 + ((t * 5) | 0) % 4 : cu;
+  const busy = AGENT.state === 'survey' || AGENT.state === 'look' || AGENT.state === 'build';   // waiting on you isn't working
+  const k = CU[cu].turn && busy && !REDUCED ? 60 + ((t * 5) | 0) % 4 : cu;
   let s = CURS.get(k); if (s) return s;
   if (cu === 1) s = { c: arrowSprite(), ax: 0, ay: 0 };
   else if (cu === 4) { const c = mk(14, 16); c.getContext('2d').drawImage(arrowSprite(), 0, 0); rimSprite(SPARK_S, 8, 10, c); s = { c, ax: 0, ay: 0 }; }
@@ -6477,7 +6487,7 @@ function showCard(j) {
   j.pieces.forEach(p => { if (p.state !== 'blocked') ph[p.ph]++; });
   const blocked = j.pieces.filter(p => p.state === 'blocked').length, pct = v => Math.round(v * 100) + '%';
   const row = (k, v, warn) => `<dt>${k}</dt><dd${warn ? ' class="warn"' : ''}>${v}</dd>`;
-  const li = document.createElement('li'); li.className = 'pr pending ' + j.owner; j.li = li;
+  const li = document.createElement('li'); li.className = 'pr pending ask ' + j.owner; j.li = li;
   li.innerHTML = `<div class="prh"><span class="who">${glyph(LOGWHO[j.owner], 1)}</span><span class="ic">${logIcon({ ic: 'propose' })}</span>` +
     `<span class="hd"><b>Proposal ${pad2(j.no)}</b>${logEsc(j.name)} <span class="v"></span></span><time>${fmtTime(S.time)}</time></div><dl>` +
     row('site', logAt([j.site.x, j.site.y, z0]) + (z1 > z0 ? '–' + lvCode(z1) : '')) +
@@ -6485,17 +6495,17 @@ function showCard(j) {
     row('cost', '¤ ' + m.cost.toLocaleString('en-US') + (m.res ? ` · +${m.res} households` : '')) +
     row('light', m.probeZ >= 0 ? `${lvCode(m.probeZ)} ${pct(m.before)} → ${pct(m.after)} sky` : '—', m.before - m.after > 0.12) +
     row('fill', m.zf != null ? `${lvCode(m.zf)} ${pct(m.fb)} → ${pct(m.fa)} (cap 50%)` : '—', m.fa > 0.5) +
-    `</dl><div class="pra"><button type="button" class="btn sm go" data-pr="ok">Approve <kbd>⏎</kbd></button><button type="button" class="btn sm" data-pr="no">Reject <kbd>Del</kbd></button><span class="auto"></span></div><i class="prt"></i>`;
+    `</dl><div class="pra"><button type="button" class="btn sm go" data-pr="ok">Approve <kbd>⏎</kbd></button><button type="button" class="btn sm" data-pr="no">Reject <kbd>Del</kbd></button><span class="auto"></span></div>`;
   feedAppend(li); railAsk();
 }
 function settleProposal(j, v) {
   const li = j.li; if (!li || !li.classList.contains('pending')) return;
-  li.classList.remove('pending'); li.classList.add(v === 'auto' ? 'ok' : v);
+  li.classList.remove('pending', 'ask'); li.classList.add(v === 'auto' ? 'ok' : v);
   li.querySelector('.v').textContent = '· ' + PR_V[v];
-  li.querySelector('.pra').remove(); li.querySelector('.prt').remove();
+  li.querySelector('.pra').remove();
 }
 function hideCard() { if (CARDJOB) settleProposal(CARDJOB, 'gone'); CARDJOB = null; railAsk(); }
-function setCursorStyle(k) { UICFG.CU = clamp(k, 1, 6); store.set('cursor', UICFG.CU); }
+function setCursorStyle(k) { UICFG.CU = clamp(k, 1, 6); store.set('cu', UICFG.CU); }
 // collapsed panel: the rail's claude button asks too
 function railAsk() {
   const b = document.querySelector('.sb-rail .rb.cl'); if (!b) return;
@@ -6518,6 +6528,35 @@ function addPin(h) {
   if (S.pins.length > 4) S.pins.shift();
   renderChips(); sfx.pin();
   toast(`Pinned ${TI[t].name} @ (${h.x},${h.y},${lvCode(h.z)}) — now ask claude in the chat`);
+}
+// things to ask: a light menu over the field while it's empty or what you type matches one; arrows pick, Enter sends
+const SUGG = ['Add a garden here', 'Connect this to the nearest core', 'Build housing near here', 'Open a light well here', 'Why there?'];
+function setupSuggest() {
+  const inp = $('chatIn'), menu = $('suggMenu'), f = $('chatf');
+  let sel = -1, items = [];
+  const close = () => { menu.hidden = true; sel = -1; };
+  const show = () => {
+    const q = inp.value.trim().toLowerCase();
+    items = SUGG.filter(s => !q || s.toLowerCase().includes(q));
+    if (!items.length || items.some(s => s.toLowerCase() === q)) { close(); return; }
+    sel = Math.min(sel, items.length - 1);
+    menu.innerHTML = `<li class="sh" role="presentation">${q ? 'matches' : 'try'}</li>` + items.map((s, k) => `<li role="option" data-k="${k}" class="${k === sel ? 'on' : ''}" aria-selected="${k === sel}">${logEsc(s)}</li>`).join('');
+    menu.style.bottom = (f.offsetParent.clientHeight - f.offsetTop + 4) + 'px';
+    menu.hidden = false;
+  };
+  inp.addEventListener('focus', show);
+  inp.addEventListener('click', () => { if (menu.hidden) show(); });
+  inp.addEventListener('input', () => { sel = -1; show(); });
+  inp.addEventListener('blur', close);
+  inp.addEventListener('keydown', e => {
+    if (menu.hidden) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sel = (sel + (e.key === 'ArrowDown' ? 1 : items.length - 1 + (sel < 0 ? 1 : 0))) % items.length; show(); }
+    else if (e.key === 'Enter' && sel >= 0) { e.preventDefault(); const s = items[sel]; inp.value = ''; close(); sendChat(s); }
+    else if (e.key === 'Escape') close();
+  });
+  menu.addEventListener('pointerdown', e => e.preventDefault());   // keep the field focused
+  menu.addEventListener('click', e => { const li = e.target.closest('[data-k]'); if (!li) return; const s = items[+li.dataset.k]; inp.value = ''; close(); sendChat(s); });
+  f.addEventListener('submit', close);
 }
 function sendChat(text) {
   text = text.trim(); if (!text) return;
@@ -6587,7 +6626,8 @@ function updateAgentDom() {
   tag.classList.toggle('off', off); tag.classList.toggle('none', !CU[UICFG.CU].tag);
   const label = 'claude' + (!sc[2] ? ' · off view ' + lvCode(A.level) : off ? ' · ' + (A.level > S.level ? '↑ ' : A.level < S.level ? '↓ ' : '') + lvCode(A.level) : '');
   if (tag.textContent !== label) tag.textContent = label;
-  tag.style.transform = `translate(${Math.round(clamp(X + 11 * S.zoom, S.safeL + 2, S.cssW - S.safeR - tag.offsetWidth - 4))}px,${Math.round(Math.min(Y + 13 * S.zoom, S.cssH - 44))}px)`;
+  const cs = cursorSprite(S.time), tx = cs.ax ? X + (cs.c.width + cs.ax) * S.zoom + 3 : X + 11 * S.zoom, ty = cs.ax ? Y - tag.offsetHeight / 2 : Y + 13 * S.zoom;   // centred marks: the tag sits just right of it
+  tag.style.transform = `translate(${Math.round(clamp(tx, S.safeL + 2, S.cssW - S.safeR - tag.offsetWidth - 4))}px,${Math.round(Math.min(ty, S.cssH - 44))}px)`;
   if (S.time < A.speechT) {
     const bx = Math.max(S.safeL + 4, Math.min(X + 12, S.cssW - S.safeR - bub.offsetWidth - 6));
     let by = Y - bub.offsetHeight - 10;
@@ -6601,8 +6641,7 @@ function uiTick() {
   if (stripDirty) updateStrip();
   updateStatus();
   if (CARDJOB && CARDJOB.li) {
-    const li = CARDJOB.li, left = CARDJOB.approveAt - S.time, n = Math.max(0, Math.ceil(left));
-    li.querySelector('.prt').style.width = `calc(${(clamp(left / 8, 0, 1) * 100).toFixed(1)}% - var(--p))`;
+    const li = CARDJOB.li, n = Math.max(0, Math.ceil(CARDJOB.approveAt - S.time));
     if (li._n !== n) { li._n = n; li.querySelector('.auto').textContent = n ? `auto ${n} s` : ''; }
   }
   if (toastT && S.time > toastT) { $('toast').hidden = true; toastT = 0; }
@@ -6632,7 +6671,7 @@ function openKeys() {
 
 function setupUI() {
   const tone = store.get('tone', 'dark'); UICFG.MT = tone === 'dark' ? 10 : 11;
-  UICFG.CU = clamp(+store.get('cursor', 1) || 1, 1, 6);
+  UICFG.CU = clamp(+store.get('cu', 3) || 3, 1, 6);
   UI.logo = clamp(+store.get('logo', 0) || 0, 0, LOGOS.length - 1); UICFG.LG = LOGOS[UI.logo];
   UI.tb = clamp(+store.get('tools', 1), 0, 2);
   UI.lvx = store.get('levels', innerWidth < 860 ? 'c' : 'x') === 'x';
@@ -6689,13 +6728,12 @@ function setupUI() {
   document.querySelectorAll('.sb-rail [data-sbopen]').forEach(b => b.onclick = () => { setFeed(b.dataset.sbopen); setSidebar(true); });
   $('feedFilter').addEventListener('click', e => { const b = e.target.closest('[data-feed]'); if (b) setFeed(b.dataset.feed); });
   $('chatf').addEventListener('submit', e => { e.preventDefault(); const i = $('chatIn'); sendChat(i.value); i.value = ''; });
-  for (const s of ['Add a garden here', 'Connect this to the nearest core', 'Build housing near here', 'Open a light well here', 'Why there?']) {
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn sm'; b.textContent = s; b.onclick = () => sendChat(s); $('sugg').appendChild(b);
-  }
+  setupSuggest();
   if (store.get('side', 'open') === 'rail') document.body.classList.add('sb-off');
   addEventListener('resize', () => { sizeLevels(); renderToolLayer(); UI.helpSig = ''; layoutHelp(); });
   syncSliders();
-  addMsg('ai', '', null, 'On site. I walk the stack looking for bays worth building in. When one checks out I ghost a plan and ask you here before any drones fly. <kbd>⌥</kbd>-click to point me somewhere.');
+  const ag = t => `<span class="chip ag">${t}</span>`;
+  addMsg('ai', '', null, `I can ghost a ${ag('stack')} ${ag('bridge')} ${ag('garden')} or ${ag('light well')}. Point first: <kbd>⌥</kbd>-click.`);
   setTool('inspect');
 }
 // ==========================================================================

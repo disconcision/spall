@@ -233,14 +233,15 @@ function arrowSprite() {
   ARROW.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === 'X') R_(g, x, y, 1, 1, ROLE.agentInk); if (ch === 'W') R_(g, x, y, 1, 1, x <= 2 ? ROLE.agentHi : ROLE.agent); }));
   return c;
 }
-// claude's cursor (CU in UICFG): 1 the arrow and a name tag, 2 the spark, 3 the spark and a name tag, 4 the arrow
-// with a spark at its heel, 5 the pixel crab, 6 the spark, turning while claude works (like the CLI's spinner).
+// claude's cursor (CU in UICFG): 1 the arrow and a name tag, 2 the spark, 3 the spark and a name tag, turning while
+// claude works (like the CLI's spinner; the default), 4 the arrow with a spark at its heel, 5 the pixel crab, 6 the
+// turning spark without the tag.
 // Shapes get a dark rim so they read on any wall; centred ones sit on the point they mark, the arrow points at it.
 const SPARK = ['....#....', '.#..#..#.', '..#.#.#..', '...###...', '#########', '...###...', '..#.#.#..', '.#..#..#.', '....#....'];
 const SPARK_TURN = [['....#....', '....#....', '....#....', '...###...', '#########', '...###...', '....#....', '....#....', '....#....'], SPARK,
   ['#.......#', '.#.....#.', '..#...#..', '...###...', '...###...', '...###...', '..#...#..', '.#.....#.', '#.......#'], SPARK];
 const SPARK_S = ['#.#.#', '.###.', '#####', '.###.', '#.#.#'];
-const CU = { 1: { tag: true }, 2: {}, 3: { tag: true }, 4: {}, 5: {}, 6: {} };
+const CU = { 1: { tag: true }, 2: {}, 3: { tag: true, turn: true }, 4: {}, 5: {}, 6: { turn: true } };
 const CURS = new Map();
 function rimSprite(rows, ox = 1, oy = 1, c) {   // rows of '#' in claude's colour, a rim round them, lit from the top left
   const h = rows.length, w = Math.max(...rows.map(r => r.length));
@@ -252,10 +253,10 @@ function rimSprite(rows, ox = 1, oy = 1, c) {   // rows of '#' in claude's colou
   }
   return c;
 }
-const CU_NAMES = { 1: 'arrow + name', 2: 'spark', 3: 'spark + name', 4: 'arrow, spark heel', 5: 'crab', 6: 'spark, turns while working' };
+const CU_NAMES = { 1: 'arrow + name', 2: 'spark', 3: 'spark + name, turns while working', 4: 'arrow, spark heel', 5: 'crab', 6: 'spark, turns while working' };
 function cursorSprite(t, cu = UICFG.CU) {
-  const busy = AGENT.state !== 'idle';
-  const k = cu === 6 && busy && !REDUCED ? 60 + ((t * 5) | 0) % 4 : cu;
+  const busy = AGENT.state === 'survey' || AGENT.state === 'look' || AGENT.state === 'build';   // waiting on you isn't working
+  const k = CU[cu].turn && busy && !REDUCED ? 60 + ((t * 5) | 0) % 4 : cu;
   let s = CURS.get(k); if (s) return s;
   if (cu === 1) s = { c: arrowSprite(), ax: 0, ay: 0 };
   else if (cu === 4) { const c = mk(14, 16); c.getContext('2d').drawImage(arrowSprite(), 0, 0); rimSprite(SPARK_S, 8, 10, c); s = { c, ax: 0, ay: 0 }; }
