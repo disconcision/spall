@@ -24,7 +24,7 @@ Spall is a pixel-art isometric megastructure builder (working title; it was "Str
 - **A new variant of the game:** a build folder, `experiments/spall-<what>/`, that reads main's sources (a build list or a sync script, never a hand copy).
 - **A write-up, comparison or concept page:** a study, beside the work it's about.
 - **Big or throwaway files** (recordings, render dumps, built report pages with inlined media): a `local/` folder. Dropbox syncs it; git ignores it.
-- **The front page:** add every new build or study to `ENTRIES` in `experiments/index.html`. `node --experimental-websocket experiments/home/shoot.mjs <id>` makes its thumbnail.
+- **The front page:** add every new build or study to `ENTRIES` in `experiments/index.html`, with a one-line plain description (what it is, no pitch or flavor). `node --experimental-websocket experiments/home/shoot.mjs <id>` makes its thumbnail.
 
 ## Main is shared
 
