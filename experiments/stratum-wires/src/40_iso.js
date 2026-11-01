@@ -345,8 +345,8 @@ function renderIso(ctx, t) {
     const wf = wireFrame(depthLevels, top, L, sliced, floor), fy = by0 - NL * LH;
     ctx.drawImage(wf, bx0, fy);
     Object.assign(WDT, { fd: WFC.fd, w: CW, h: LFH, ox: bx0, oy: fy, wd: null }); WDT.key = '';
-    WDT.on = true; drawBirds(ctx); drawWireHighlight(ctx, floor, t); WDT.on = false; WDT.ox = WDT.oy = 0;
-  } else if (useDepth) { compositeDepth(depthLevels, bx0); if (!WDT.wd || WDT.wd.length !== S.bw * S.bh) WDT.wd = new Float32Array(S.bw * S.bh); WDT.wd.fill(-1e9); WDT.on = true; wpxHold(ctx, () => { for (let z = floor; z < NL; z++) drawWiresLevel(ctx, z); }); drawBirds(ctx); drawWireHighlight(ctx, floor, t); WDT.on = false; }
+    WDT.on = true; drawBirds(ctx); drawBots(ctx); drawWireHighlight(ctx, floor, t); WDT.on = false; WDT.ox = WDT.oy = 0;
+  } else if (useDepth) { compositeDepth(depthLevels, bx0); if (!WDT.wd || WDT.wd.length !== S.bw * S.bh) WDT.wd = new Float32Array(S.bw * S.bh); WDT.wd.fill(-1e9); WDT.on = true; wpxHold(ctx, () => { for (let z = floor; z < NL; z++) drawWiresLevel(ctx, z); }); drawBirds(ctx); drawBots(ctx); drawWireHighlight(ctx, floor, t); WDT.on = false; }
   LIT.ov = useDepth ? [top, L, sliced, bx0, by0] : null;   // drawn once the sky is in, so additive light never punches holes in it
   drawAfterWorld(ctx, t, sliced, ex);
 }

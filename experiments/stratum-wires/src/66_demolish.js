@@ -35,7 +35,7 @@ function demoFinish() {
   UNDO.past.push(undo); if (UNDO.past.length > 60) UNDO.past.shift(); UNDO.future = [];
   worldChanged(zs);
   sfx.click();
-  log('you', `Demolished ${tg.length} module${tg.length > 1 ? 's' : ''}${DEMO.sky ? ' to the sky' : ''}`, 'sys');
+  log('you', `Demolished ${tg.length} module${tg.length > 1 ? 's' : ''}${DEMO.sky ? ' to the sky' : ''}`, 'sys', { ic: 'demolish', s: `demolish ${tg.length}${DEMO.sky ? ' to the sky' : ''}` });
 }
 // after cells change: rebuild what shows them, relight, let cables fall where floors went
 function worldChanged(zs) {

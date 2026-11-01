@@ -119,7 +119,7 @@ function finishCapture() {
   if (!P.length) { toast('Nothing to capture there (cores and ground are excluded)'); return; }
   const u = { name: 'Unit ' + String.fromCharCode(65 + UNITS.length % 26), size: [x1 - x0 + 1, y1 - y0 + 1, h], pieces: P };
   UNITS.push(u); addUnitButton(u); setTool('unit', u);
-  log('you', `Captured blueprint ${u.name}: ${u.size.join('×')}, ${P.length} parts (supports excluded)`, 'sys');
+  log('you', `Captured blueprint ${u.name}: ${u.size.join('×')}, ${P.length} parts (supports excluded)`, 'sys', { ic: 'capture', s: `capture ${u.name} · ${u.size.join('×')} · ${P.length} parts` });
   toast(`Captured ${u.name} — click to stamp copies; drones build them`); sfx.ghost();
 }
 function setupInput() {

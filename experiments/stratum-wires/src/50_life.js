@@ -118,20 +118,22 @@ function drawSteam(ctx, t, maxZ) {
     ctx.fillRect(Math.round(bx) - (sz >> 1), Math.round(by) - (sz >> 1), sz, sz);
   }
 }
+// the beam's strength is the lighting panel's Well light slider (1 = as designed)
+const wellBeam = () => { const k = LIT.well ? LIT.wellK : 0, night = S.tod === 'night'; return k ? [night ? [160, 190, 200] : S.tod === 'dusk' ? [255, 196, 120] : [255, 246, 220], Math.min(0.6, (night ? 0.035 : S.tod === 'dusk' ? 0.06 : 0.07) * k), k] : null; };
 function drawWellLight(ctx, t, maxZ) {
-  const night = S.tod === 'night';
+  const night = S.tod === 'night', wb = wellBeam(); if (!wb) return;
   for (const w of WORLD.wells) {
     const topH = Math.min(NL, maxZ + 1), botH = 0.35;
     const pts = [[w.x, w.y], [w.x + w.s, w.y], [w.x + w.s, w.y + w.s], [w.x, w.y + w.s]];
     const T0 = pts.map(p => projIso(p[0], p[1], topH)), B0 = pts.map(p => projIso(p[0], p[1], botH));
     const xl = Math.min(...T0.map(p => p[0])), xr = Math.max(...T0.map(p => p[0]));
     const ytop = Math.min(...T0.map(p => p[1])), ybot = Math.max(...B0.map(p => p[1]));
-    ctx.fillStyle = night ? 'rgba(160,190,200,0.035)' : S.tod === 'dusk' ? 'rgba(255,196,120,0.06)' : 'rgba(255,246,220,0.07)';
+    ctx.fillStyle = `rgba(${wb[0].join(',')},${wb[1].toFixed(3)})`;
     for (let x = Math.round(xl); x < xr; x += 2) ctx.fillRect(x, Math.round(ytop), 1, Math.round(ybot - ytop));
     if (!night) for (const m of MOTES) {
       if (m.w !== w || m.z > maxZ + 1) continue;
       const [bx, by] = projIso(m.x, m.y, m.z);
-      if ((Math.sin(t * 3 + m.ph * 5) + 1) > 0.8) { ctx.fillStyle = 'rgba(255,240,205,0.8)'; ctx.fillRect(Math.round(bx), Math.round(by), 1, 1); }
+      if ((Math.sin(t * 3 + m.ph * 5) + 1) > 0.8) { ctx.fillStyle = `rgba(255,240,205,${Math.min(1, 0.8 * Math.sqrt(wb[2])).toFixed(2)})`; ctx.fillRect(Math.round(bx), Math.round(by), 1, 1); }
     }
   }
 }

@@ -17,7 +17,7 @@ function step(dt) {
     if (Math.hypot(S.camTarget.x - S.cam.x, S.camTarget.y - S.cam.y) < 0.5) S.camTarget = null;
   }
   heldPan(dt);
-  updateLife(dt); updateJobs(dt); if (!WIRES.agentOff) agentUpdate(dt); updateWires(dt); updateBirds(dt);
+  updateLife(dt); updateJobs(dt); if (!WIRES.agentOff) agentUpdate(dt); updateWires(dt); updateBirds(dt); updateBand(dt);
   if (S.follow && AGENT.state !== 'idle') {
     if (S.mode !== 'exploded' && AGENT.level !== S.level && S.time - (S.lastFollow || -9) > 0.9) { S.lastFollow = S.time; setLevel(AGENT.level); }
     if (S.mode === 'cut' && AGENT.screen && !S.camTarget) {
@@ -151,7 +151,7 @@ function demoAgent(stage) {
   return s;
 }
 window.STRATUM = {
-  S, AGENT, WIRES, LAY, WGRAB, seedWires, jolt, tieStroke, stepWires, JOBS: () => JOBS, setMode, setLevel, rotate, setTod, setZoom, toggleGhost, toggleFollow, centerOn, demoAgent,
+  S, AGENT, WIRES, LAY, WGRAB, BAND, bandWarm, seedWires, jolt, tieStroke, stepWires, JOBS: () => JOBS, setMode, setLevel, rotate, setTod, setZoom, toggleGhost, toggleFollow, centerOn, demoAgent,
   step(sec) { const n = Math.round(sec * 30); for (let k = 0; k < n; k++) step(1 / 30); },
   test(p) {
     if (p.zoom) setZoom(+p.zoom);
@@ -173,6 +173,8 @@ window.STRATUM = {
     if (p.pin) { const [x, y, z] = p.pin.split(',').map(Number); addPin({ x, y, z }); }
     if (p.chat) sendChat(p.chat);
     if (p.t2) this.step(+p.t2);
+    if (p.band) { if (p.gloss) BAND.cfg.gloss = p.gloss; if (p.traffic) BAND.cfg.traffic = +p.traffic; bandWarm(+p.band); }
+    if (p.feed) setFeed(p.feed);
     render();
     if (p.perf) { const t0 = performance.now(); for (let k = 0; k < 30; k++) { step(1 / 60); render(); } window.__perf = ((performance.now() - t0) / 30).toFixed(2) + 'ms/frame'; }
   }

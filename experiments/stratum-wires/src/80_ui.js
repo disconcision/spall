@@ -53,6 +53,7 @@ const GLYPH = {
   ao: ['#########','#++++....','#++......','#+.......','#+.......','#........','#........','#........','#........'],
   mist: ['.........','.##...##.','#..###..#','.........','.##...##.','#..###..#','.........','.##...##.','#..###..#'],
   shafts: ['#..#..#..','.#..#..#.','..#..#..#','...#..#..','....#..#.','.....#..#','......#..','.......#.','........#'],
+  well: ['#.......#','#.+...+.#','#...+...#','#.+...+.#','#...+...#','#.+...+.#','#...+...#','#.+...+.#','#########'],
   bloom: ['....+....','..+.#.+..','...###...','+.#####.+','.+#####+.','+.#####.+','...###...','..+.#.+..','....+....'],
   L7: ['+.+.+.+.+.+.+','.............','+...........+','.............','aaaaaaaaaaaaa','#############','#+#+#+#+#+#+#','#############','#++++##+++++#','#############'],
   LGB: ["ttt..............ttt", "...tt....w.....tt...", ".....t...Ww...t.....", "......tttWwttt......", "vvvvvvvvvWwvvvvvvvvv", "......oooWwooo......", ".....o...Ww...o.....", "...oo.....k....oo...", "ooo..............ooo"],
@@ -422,7 +423,8 @@ const SLD = {
   vol: { lo: 0, hi: 1, get: () => AUD.vol, set: v => { AUD.vol = v; applyVol(); } },
   mistA: { lo: 0, hi: 0.08, get: () => LIT.mistA, set: v => { LIT.mistA = Math.round(v / 0.005) * 0.005; } },
   shaftK: { lo: 0, hi: 2, get: () => LIT.shaftK, set: v => { LIT.shaftK = Math.round(v * 10) / 10; } },
-  bloomK: { lo: 0, hi: 2, get: () => LIT.bloomK, set: v => { LIT.bloomK = Math.round(v * 10) / 10; } }
+  bloomK: { lo: 0, hi: 2, get: () => LIT.bloomK, set: v => { LIT.bloomK = Math.round(v * 10) / 10; } },
+  wellK: { lo: 0, hi: 4, get: () => LIT.wellK, set: v => { LIT.wellK = Math.round(v * 10) / 10; } }
 };
 function slHTML(k, dis) { const s = SLD[k], v = clamp((s.get() - s.lo) / (s.hi - s.lo), 0, 1); return `<span class="sl ${dis ? 'dis' : ''}" data-sl="${k}" tabindex="${dis ? -1 : 0}" role="slider" aria-valuenow="${Math.round(v * 100)}" aria-valuemin="0" aria-valuemax="100" style="--v:${v.toFixed(3)}"><span class="tr"><i class="fl"></i></span><i class="th"></i></span>`; }
 function syncSliders() { document.querySelectorAll('.sl[data-sl]').forEach(el => { const s = SLD[el.dataset.sl]; if (!s) return; const v = clamp((s.get() - s.lo) / (s.hi - s.lo), 0, 1); el.style.setProperty('--v', v.toFixed(3)); el.setAttribute('aria-valuenow', Math.round(v * 100)); }); }
@@ -475,7 +477,7 @@ const HELP = {
   tb: { el: '#topbar', side: 'd', items: [['#logoMark', 'The mark: click to try the next one'], ['#wmText', 'World menu: sheet, seed, presets, save slots, keys'], ['[data-mode="cut"]', 'Views: cut, exploded, plan, section · <kbd>1</kbd>–<kbd>4</kbd>'], ['#bGhost', 'Levels above the cut as outlines · <kbd>G</kbd>'], ['#bFollow', 'Follow claude’s level · <kbd>F</kbd>'], ['#bLightMenu', 'Lighting settings (or right-click the bulb)'], ['#bTod', 'Time of day · <kbd>T</kbd>'], ['#bRotL', 'Rotate the view · <kbd>Q</kbd> <kbd>E</kbd>'], ['#bAgent', 'claude on/off'], ['#bSound', 'Start the ambience'], ['#vol', 'Volume'], ['#bUiTone', 'Light / dark interface'], ['#bHelp', 'Help on/off · <kbd>?</kbd>']] },
   tl: { el: '#tools', side: 'r', extra: '#toolLayer .grow, #flyout', items: [['.tl-thumb', 'Collapsed · groups · all tools · <kbd>`</kbd>'], ['[data-slot="build"]', 'A group: click to stick its tools out; they stay out'], ['.grow', 'Its tools. Click one; click it again for its options'], ['#flyout', 'Options stay open until the same tool, × or <kbd>Esc</kbd>'], ['#tools .tool[aria-pressed="true"]', 'The tool in use']] },
   lv: { el: '#strip', side: 'l', items: [['#lvToggle', 'Collapse to a thin ruler, or expand'], ['#stripCut', 'The cut: the level you build on'], ['#thumb', 'Section through the stack; click to cut there'], ['#levels .row.above', 'Above the cut: removed from the view'], ['#levels .row.cut', 'Click a row, <kbd>↑</kbd> <kbd>↓</kbd>, or scroll over the list to move the cut'], ['#levels .row.cut .f', 'How built-up the level is; the tick is 50%'], ['#levels .row.ag .a', 'claude is working on this level'], ['#lvGrab', 'Drag up to cut away the levels below too (<kbd>Shift</kbd> <kbd>↑</kbd> <kbd>↓</kbd>)']] },
-  sb: { el: '#side', side: 'l', items: [['#sbGlyph', 'claude, and what it is doing now'], ['#feedFilter', 'Everything, just the log, or just the chat'], ['#feed', 'What claude did and said; newest at the bottom'], ['#sugg', 'Quick requests'], ['#chatf', 'Ask claude. <kbd>Alt</kbd>-click the scene to point'], ['#sbFold', 'Collapse · <kbd>\\</kbd>'], ['.sb-rail .rb.cl', 'Expand · <kbd>\\</kbd>']] },
+  sb: { el: '#side', side: 'l', items: [['#sbGlyph', 'claude, and what it is doing now'], ['#feedFilter', 'Everything, the log, the chat, or the band (the bots)'], ['#bandBtn', 'The band: traffic, mix, and how much of it reaches All'], ['#feed', 'What claude did and said; newest at the bottom'], ['#sugg', 'Quick requests'], ['#chatf', 'Ask claude. <kbd>Alt</kbd>-click the scene to point'], ['#sbFold', 'Collapse · <kbd>\\</kbd>'], ['.sb-rail .rb.cl', 'Expand · <kbd>\\</kbd>']] },
   st: { el: '#status', side: 'u', items: [['#slice', 'The cut you are editing'], ['#hints', 'Keys for the current tool'], ['#zoomStep', 'Zoom · <kbd>+</kbd> <kbd>−</kbd>']] }
 };
 const PANEL_SEL = '#topbar, #tools, #toolLayer, #strip, #side, #status';
@@ -535,50 +537,103 @@ function layoutHelp() {
 function feedAppend(li) {
   const el = $('feed'), atEnd = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
   el.appendChild(li);
-  while (el.children.length > 160) el.removeChild(el.firstChild);
+  while (el.children.length - BAND.recs.length > 160) { const old = el.querySelector(':scope > :not(.bd)'); if (!old) break; el.removeChild(old); }   // the band prunes its own lines (88_band.js)
   if (atEnd || !li.classList.contains('lg')) el.scrollTop = el.scrollHeight;
   if (document.body.classList.contains('sb-off')) { UI.unread++; $('railBadge').textContent = UI.unread > 9 ? '9+' : UI.unread; }
 }
-// consecutive entries of the same kind (same actor, same words once numbers are set aside)
-// fold into one row with a count; click it to see each one
+// ---------- the log: what claude (and you) did, read like tool calls ----------
+// A row: who (claude's mark, your cursor, a dot for the system), what (the part's own sprite at a device
+// pixel a pixel, or the tool's icon), a short line, a place to go to (click; hover lights the cell), the time.
+// Runs of the same call (same actor, part and job) fold into
+// one row with a count; click the row to see each one. Band lines and chat in between don't break a run, and a run
+// that has scrolled out of sight comes back down to the bottom when it grows.
+// m: { ic: {t, v} | a TOOLICON id | a LOGIC / GLYPH key, s: short line, at: [x, y, z], sub: per-item label, key: run key, rm }
+const LOGIC = {
+  look: ['.###...', '#...#..', '#...#..', '#...#..', '.###...', '....##.', '.....##'],
+  survey: ['.......', '..###..', '.#...#.', '#..#..#', '.#...#.', '..###..', '.......'],
+  propose: ['v.v.v.v', '.......', 'v.....v', '.......', 'v.....v', '.......', 'v.v.v.v'],
+  ghost: ['y.y.y.y', '.......', 'y.....y', '.......', 'y.....y', '.......', 'y.y.y.y'],
+  ok: ['......#', '.....##', '#...##.', '##.##..', '.###...', '..#....', '.......'],
+  no: ['#.....#', '.#...#.', '..#.#..', '...#...', '..#.#..', '.#...#.', '#.....#'],
+  done: ['#####..', '######.', '#####..', '#......', '#......', '#......', '#......'],
+  skip: ['..###..', '.#...#.', '#...#.#', '#..#..#', '#.#...#', '.#...#.', '..###..'],
+  pause: ['##.##', '##.##', '##.##', '##.##', '##.##'],
+  sys: ['.....', '.....', '.###.', '.###.', '.###.']
+};
+const LOGWHO = { claude: 'clawd', you: ['#....', '##...', '###..', '####.', '###..', '..#..'] };
+const LOGPX = devicePixelRatio >= 2 ? 0.5 : 1, LOGTHUMB = new Map();
+// a part's sprite, lit as by day, cropped to its pixels
+function logThumb(t, v) {
+  const key = t * 4096 + v; let u = LOGTHUMB.get(key); if (u) return u;
+  const E = EXTRA[t] || 0, c = mk(t === T.CRANE ? 48 : 16, 20 + E), g = c.getContext('2d', { willReadFrequently: true }), tod = S.tod;
+  S.tod = 'day'; (DRAW[t] || DRAW_MISSING)(g, v, E, painter(4), 0, 0, t); S.tod = tod;
+  const d = g.getImageData(0, 0, c.width, c.height).data; let x0 = c.width, y0 = c.height, x1 = 0, y1 = 0;
+  for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) if (d[(y * c.width + x) * 4 + 3]) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+  if (x0 > x1) x0 = y0 = 0;
+  const o = mk(x1 - x0 + 1, y1 - y0 + 1); o.getContext('2d').drawImage(c, -x0, -y0);
+  u = { src: o.toDataURL(), w: o.width, h: o.height }; LOGTHUMB.set(key, u); return u;
+}
+const logEsc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function logIcon(m) {
+  const ic = m.ic;
+  if (ic && typeof ic === 'object') { const u = logThumb(ic.t, ic.v); return `<img class="spr${m.rm ? ' rm' : ''}" src="${u.src}" width="${u.w * LOGPX}" height="${u.h * LOGPX}" alt="">`; }
+  if (ic && TOOLICON[ic]) return `<img src="${TOOLICON[ic]}" width="15" height="11" alt="">`;
+  return glyph(LOGIC[ic] || GLYPH[ic] || LOGIC.sys, 1);
+}
+const logAt = a => a ? `<a class="at" data-at="${a.join(',')}" tabindex="0">(${a[0]},${a[1]}) ${lvCode(a[2])}</a>` : '';
+const logItem = (m, text, tm) => `<li><span>${logEsc(m.sub || (m.at ? '' : text))}</span>${logAt(m.at)}<time>${tm}</time></li>`;
 const logSig = (owner, text) => owner + '|' + text.replace(/\(.*?\)/g, '').replace(/[\d/]+/g, '#').split(/\s+/).slice(0, 3).join(' ');
-function log(owner, text, cls) {
-  const sig = logSig(owner, text), last = $('feed').lastElementChild;
+function lastLogRow() { let e = $('feed').lastElementChild; while (e && !e.classList.contains('lg')) e = e.previousElementSibling; return e; }   // band lines and chat don't break a run
+function logInView(li) { return !li.offsetParent || li.getBoundingClientRect().bottom > $('feed').getBoundingClientRect().top + 4; }
+function log(owner, text, cls, m) {
+  m = m || { s: text };
+  const sig = m.key ? owner + '|' + m.key : logSig(owner, text), last = lastLogRow(), tm = fmtTime(S.time);
   if (last && last.dataset.sig === sig) {
-    const sub = last.querySelector('.sub') || (() => {
-      const o = document.createElement('ol'); o.className = 'sub';
-      const first = document.createElement('li'); first.textContent = last.dataset.text; o.appendChild(first);
-      last.classList.add('grp'); last.appendChild(o);
-      last.querySelector('span').addEventListener('click', () => last.classList.toggle('open'));
-      return o;
-    })();
-    const it = document.createElement('li'); it.textContent = fmtTime(S.time) + ' ' + text; sub.appendChild(it);
-    const n = sub.children.length, sp = last.querySelector('span');
-    sp.querySelector('time').textContent = fmtTime(S.time);
-    sp.childNodes[1].textContent = (OWN[owner] ? OWN[owner].name : owner) + ' · ' + text;   // [0] is the time
-    let c = sp.querySelector('.cnt'); if (!c) { c = document.createElement('b'); c.className = 'cnt'; sp.appendChild(c); const ch = document.createElement('i'); ch.className = 'chev'; ch.textContent = '›'; sp.appendChild(ch); }
-    c.textContent = '×' + n;
+    let sub = last.querySelector('.sub');
+    if (!sub) { sub = document.createElement('ol'); sub.className = 'sub'; sub.innerHTML = last._item; last.classList.add('grp'); last.appendChild(sub); }
+    sub.insertAdjacentHTML('beforeend', logItem(m, text, tm));
+    last.querySelector('.cnt').textContent = '×' + sub.children.length;
+    last.querySelector(':scope > time').textContent = tm; last.title = text;
+    last.querySelector('.s').textContent = m.s;
+    const at = last.querySelector('.hd .at'); if (at) at.outerHTML = logAt(m.at);
+    if (!logInView(last)) feedAppend(last);
     return;
   }
-  const li = document.createElement('li');
-  li.dataset.sig = sig; li.dataset.text = fmtTime(S.time) + ' ' + text;
-  li.className = 'lg ' + owner + ' ' + (cls || '') + ' new';
-  const tm = document.createElement('time'); tm.textContent = fmtTime(S.time);
-  const sp = document.createElement('span'); sp.appendChild(tm); sp.appendChild(document.createTextNode((OWN[owner] ? OWN[owner].name : owner) + ' · ' + text));
-  li.appendChild(sp); feedAppend(li);
+  const li = document.createElement('li'), who = LOGWHO[owner];
+  li.dataset.sig = sig; li.className = 'lg ' + owner + ' ' + (cls || '') + ' new'; li.title = text; li._item = logItem(m, text, tm);
+  li.innerHTML = `<span class="who">${who ? glyph(who, 1) : ''}</span><span class="ic">${logIcon(m)}</span>` +
+    `<span class="hd"><span class="s">${logEsc(m.s)}</span> ${logAt(m.at)}<b class="cnt"></b><i class="chev">›</i></span><time>${tm}</time>`;
+  feedAppend(li);
   setTimeout(() => li.classList.remove('new'), 1800);
+}
+// a place in the log: hover lights its cell in the world, click goes there
+function logGo(a, how) {
+  const [x, y, z] = a.dataset.at.split(',').map(Number), own = a.closest('.lg'), col = own && own.classList.contains('you') ? '#5fd3f2' : '#ff7a52';
+  if (how === 'off') { if (S.beacon && S.beacon.hov) S.beacon = null; return; }
+  S.beacon = { x, y, z, col, hov: how === 'hover', until: performance.now() + 2600 };
+  if (how === 'go') { setLevel(z); centerOn(x + 0.5, y + 0.5, z); sfx.click(); }
+}
+function setupLog() {
+  const el = $('feed');
+  el.addEventListener('click', e => {
+    const a = e.target.closest('.at'); if (a) { logGo(a, 'go'); return; }
+    const g = e.target.closest('.lg.grp'); if (g && !e.target.closest('.sub')) g.classList.toggle('open');
+  });
+  el.addEventListener('keydown', e => { const a = e.target.closest && e.target.closest('.at'); if (a && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); logGo(a, 'go'); } });
+  el.addEventListener('mouseover', e => { const a = e.target.closest('.at'); if (a) logGo(a, 'hover'); });
+  el.addEventListener('mouseout', e => { const a = e.target.closest('.at'); if (a) logGo(a, 'off'); });
 }
 function addMsg(who, text, ctx) {
   const li = document.createElement('li');
   li.className = 'm ' + (who === 'me' ? 'me' : 'ai');
   if (ctx) { const s = document.createElement('span'); s.className = 'ctx'; s.textContent = ctx; li.appendChild(s); }
-  if (who !== 'me') { const b = document.createElement('b'); b.textContent = 'claude '; li.appendChild(b); }
+  if (who !== 'me') li.insertAdjacentHTML('beforeend', `<span class="who" title="claude">${glyph('clawd', 1)}</span>`);
   li.appendChild(document.createTextNode(text));
   feedAppend(li);
 }
 function setFeed(f) {
   UI.feed = f; $('feed').className = 'f-' + f;
-  const fl = $('feedFilter'), i = ['all', 'log', 'chat'].indexOf(f);
+  const fl = $('feedFilter'), i = ['all', 'log', 'chat', 'band'].indexOf(f);
   fl.style.setProperty('--i', i); fl.querySelectorAll('button').forEach(b => { const on = b.dataset.feed === f; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
   $('feed').scrollTop = $('feed').scrollHeight;
 }
@@ -588,7 +643,7 @@ function setProposalsMuted(on, quiet) {
   const b = $('sbMute'); b.setAttribute('aria-pressed', on); b.dataset.tip = on ? 'Resume claude’s proposals' : 'Pause claude’s proposals'; b.setAttribute('aria-label', b.dataset.tip);
   if (on && CARDJOB && CARDJOB.status === 'proposed') rejectQuiet(CARDJOB);
   if (on) setAgentState('idle', 'proposals paused'); else if (AGENT.state === 'idle') setAgentState('idle', 'idle');
-  if (!quiet) { log('you', on ? 'Paused claude’s proposals' : 'Resumed claude’s proposals', 'sys'); sfx.click(); }
+  if (!quiet) { log('you', on ? 'Paused claude’s proposals' : 'Resumed claude’s proposals', 'sys', { ic: 'pause', s: (on ? 'pause' : 'resume') + ' claude’s proposals' }); sfx.click(); }
 }
 function setSidebar(open) {
   document.body.classList.toggle('sb-off', !open); store.set('side', open ? 'open' : 'rail');
@@ -719,7 +774,7 @@ function uiTick() {
 }
 // Esc peels the top layer: popovers, then help, then the flyout; true when it closed something
 function closeLayers() {
-  for (const id of ['keysPop', 'worldPop', 'lightPop']) { const p = $(id); if (p && !p.hidden) { p.hidden = true; if (id === 'worldPop') $('wmText').setAttribute('aria-expanded', 'false'); syncBar(); return true; } }
+  for (const id of ['keysPop', 'worldPop', 'lightPop', 'bandPop']) { const p = $(id); if (p && !p.hidden) { p.hidden = true; if (id === 'worldPop') $('wmText').setAttribute('aria-expanded', 'false'); syncBar(); return true; } }
   if (UI.help) { toggleHelp(false); return true; }
   return closeFlyout();
 }
@@ -774,6 +829,7 @@ function setupUI() {
   $('bTod').onclick = () => cycleTod();
   $('bLight').onclick = () => toggleLight();
   setupLightPanel();
+  setupLog(); setupBand();
   $('bRotL').onclick = () => rotate(-1);
   $('bRotR').onclick = () => rotate(1);
   setupWorldMenu();

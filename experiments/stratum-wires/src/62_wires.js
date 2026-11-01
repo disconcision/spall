@@ -601,7 +601,7 @@ function moveSlack(by) {
 }
 function endSlack() {
   const c = SLACK.c, d = cableLen(c) - SLACK.L0; SLACK.on = false; SLACK.c = null;
-  if (Math.abs(d) > 0.02) log('you', `${d > 0 ? 'Paid out' : 'Took in'} ${Math.abs(d).toFixed(1)} cells of ${c.g.name} (now ${cableLen(c).toFixed(1)})`, 'sys');
+  if (Math.abs(d) > 0.02) log('you', `${d > 0 ? 'Paid out' : 'Took in'} ${Math.abs(d).toFixed(1)} cells of ${c.g.name} (now ${cableLen(c).toFixed(1)})`, 'sys', { ic: 'cable', s: `${d > 0 ? 'pay out' : 'take in'} ${Math.abs(d).toFixed(1)} · ${c.g.name}` });
 }
 // ---------- girder tool ----------
 // Girders run along grid lines at the working height: drag to lay one along x or y (it snaps
@@ -750,7 +750,7 @@ function wireDown(bx, by, e) {
     if (x < 0 || y < 0 || x >= W || y >= D || wsolid(x, y, top)) { toast('A post needs open air at the working height'); return true; }
     let z0 = top; while (z0 > 0 && !wsolid(x, y, z0 - 0.05)) z0 -= 0.05;
     addPost(x, y, z0, top); sfx.click();
-    log('you', `Post at ${x},${y}: ${lvCode(Math.floor(z0))} up to ${lvCode(Math.floor(top))}, ${(top - z0).toFixed(1)} levels`, 'sys');
+    log('you', `Post at ${x},${y}: ${lvCode(Math.floor(z0))} up to ${lvCode(Math.floor(top))}, ${(top - z0).toFixed(1)} levels`, 'sys', { ic: 'post', s: `post · ${(top - z0).toFixed(1)} levels`, at: [x, y, Math.floor(z0)] });
     return true;
   }
   const pc = pickWire(bx, by, 5);
@@ -793,11 +793,11 @@ function wireMove(bx, by) {
   return false;
 }
 function wireUp(bx, by) {
-  if (WIRES.stroke) { const s = WIRES.stroke; WIRES.stroke = null; if (Math.hypot(s.x1 - s.x0, s.y1 - s.y0) <= 2) { const pc = pickWire(bx, by, 5); if (pc && pc.tie) { removeTie(pc.tie); log('you', 'Snipped a tie', 'sys'); } return true; } if (true) { const t = tieStroke(s.x0, s.y0, s.x1, s.y1); if (t) log('you', `Tied ${t.m.length} cable${t.m.length > 1 ? 's' : ''} into a ${t.round ? 'round bundle' : 'ribbon'} (${tieMass(t).toFixed(1)} t/m)`, 'sys'); } return true; }
+  if (WIRES.stroke) { const s = WIRES.stroke; WIRES.stroke = null; if (Math.hypot(s.x1 - s.x0, s.y1 - s.y0) <= 2) { const pc = pickWire(bx, by, 5); if (pc && pc.tie) { removeTie(pc.tie); log('you', 'Snipped a tie', 'sys', { ic: 'tie', s: 'snip a tie' }); } return true; } if (true) { const t = tieStroke(s.x0, s.y0, s.x1, s.y1); if (t) log('you', `Tied ${t.m.length} cable${t.m.length > 1 ? 's' : ''} into a ${t.round ? 'round bundle' : 'ribbon'} (${tieMass(t).toFixed(1)} t/m)`, 'sys', { ic: 'tie', s: `tie ${t.m.length} into a ${t.round ? 'bundle' : 'ribbon'}` }); } return true; }
   if (SLACK.on) { endSlack(); return true; }
   if (GDRAG.on) {
     GDRAG.on = false; const a = GDRAG.a, b = GDRAG.b;
-    if (v3.dist(a, b) >= 1) { addGirder(a, b); log('you', `Girder ${v3.dist(a, b)} cells along ${a[0] === b[0] ? 'y' : 'x'} at ${lvCode(Math.floor(a[2]))}`, 'sys'); }
+    if (v3.dist(a, b) >= 1) { addGirder(a, b); log('you', `Girder ${v3.dist(a, b)} cells along ${a[0] === b[0] ? 'y' : 'x'} at ${lvCode(Math.floor(a[2]))}`, 'sys', { ic: 'girder', s: `girder · ${v3.dist(a, b)} along ${a[0] === b[0] ? 'y' : 'x'}`, at: [Math.floor(a[0]), Math.floor(a[1]), Math.floor(a[2])] }); }
     else {   // a column: from whatever is below up to the working height
       let z0 = a[2]; while (z0 > 0 && !wsolid(a[0] + 0.01, a[1] + 0.01, z0 - 0.05)) z0 -= 0.05;
       if (a[2] - z0 > 0.3) addGirder([a[0], a[1], z0], a);

@@ -10,7 +10,7 @@
 const LIT = {
   on: true,
   sunOn: true, sky: true, ao: true,   // baked into the level images (changing them relights)
-  mist: true, shafts: true, bloom: true, mistA: 0.035, shaftK: 1, bloomK: 1,   // drawn per frame
+  mist: true, shafts: true, bloom: true, well: true, mistA: 0.035, shaftK: 1, bloomK: 1, wellK: 1,   // drawn per frame
   sun: 'noon',                        // 'morning' | 'noon' | 'evening' | 'night'
   tkey: '', skey: '', tr: null, skyV: null, sunSoft: null, sunHard: null, sv: null,
   shaftC: null, shKey: '', bloomC: null, blKey: ''
@@ -244,8 +244,8 @@ function toggleLight(v) {
 }
 // the settings popover (LT1): what is baked into the levels (relights) and what is drawn per frame.
 // Built with the shared chrome controls (groove toggles, groove sliders, segmented times; see 80_ui.js).
-const LIGHT_PARTS = [['sunOn', 'Sun & shadows', 1], ['sky', 'Sky light', 1], ['ao', 'Occlusion', 1], ['mist', 'Mist', 0, 'mistA', 0, 0.08, 0.005], ['shafts', 'Shafts', 0, 'shaftK', 0, 2, 0.1], ['bloom', 'Night glow', 0, 'bloomK', 0, 2, 0.1]];
-const LIGHT_DEFAULTS = { sunOn: true, sky: true, ao: true, mist: true, shafts: true, bloom: true, mistA: 0.035, shaftK: 1, bloomK: 1 };
+const LIGHT_PARTS = [['sunOn', 'Sun & shadows', 1], ['sky', 'Sky light', 1], ['ao', 'Occlusion', 1], ['mist', 'Mist', 0, 'mistA', 0, 0.08, 0.005], ['shafts', 'Shafts', 0, 'shaftK', 0, 2, 0.1], ['bloom', 'Night glow', 0, 'bloomK', 0, 2, 0.1], ['well', 'Well light', 0, 'wellK', 0, 4, 0.1]];
+const LIGHT_DEFAULTS = { sunOn: true, sky: true, ao: true, mist: true, shafts: true, bloom: true, mistA: 0.035, shaftK: 1, bloomK: 1, well: true, wellK: 1 };
 let relightT = 0;
 function setupLightPanel() {
   const pop = document.createElement('div'); pop.id = 'lightPop'; pop.className = 'popm pn'; pop.hidden = true;

@@ -578,7 +578,7 @@ buildSky = function () {
 };
 
 // ---------- switching and hooks: B turns the backdrop off (the old flat sky, for now) and on ----------
-function setBackdrop(s) { BD.scene = s; skyDirty = true; UC.key = ''; if (typeof G3 !== 'undefined') G3.skyKey = ''; log('sys', 'Backdrop: ' + (s === 'under' ? 'Undercity' : 'the flat sky'), 'sys'); }
+function setBackdrop(s) { BD.scene = s; skyDirty = true; UC.key = ''; if (typeof G3 !== 'undefined') G3.skyKey = ''; log('sys', 'Backdrop: ' + (s === 'under' ? 'Undercity' : 'the flat sky'), 'sys', { ic: 'sky', s: 'backdrop · ' + (s === 'under' ? 'Undercity' : 'the flat sky') }); }
 window.addEventListener('keydown', e => {
   if (e.target.closest && e.target.closest('input, textarea, select')) return;
   if (e.metaKey || e.ctrlKey || e.altKey || e.key.toLowerCase() !== 'b') return;
