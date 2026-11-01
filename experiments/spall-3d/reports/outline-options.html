@@ -1,0 +1,127 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0">
+<meta charset="utf-8">
+<title>Spall Outline Options</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Chivo:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg: #f3efe6; --panel: #e8e2d4; --fg: #26211b; --muted: #6c6355; --line: #cfc6b4; --accent: #b0761a; --accent-ink: #fff8ea;
+  --good: #2f7d6b; --bad: #a8452e; --meh: #8a6d1f;
+  --f-display: "Silkscreen", "Courier New", monospace;
+  --f-body: "Chivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15130f; --panel: #1f1b16; --fg: #e4dccb; --muted: #9a8f7c; --line: #352f27; --accent: #f0b43c; --accent-ink: #1a1408;
+  --good: #6cc4ad; --bad: #e07a5f; --meh: #d9b25a; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15130f; --panel: #1f1b16; --fg: #e4dccb; --muted: #9a8f7c; --line: #352f27; --accent: #f0b43c; --accent-ink: #1a1408;
+  --good: #6cc4ad; --bad: #e07a5f; --meh: #d9b25a; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--f-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.col { max-width: 46rem; margin: 0 auto; }
+.wide { max-width: 68rem; margin: 0 auto; }
+header { padding-block: 3rem 1rem; }
+h1 { font: 400 clamp(1.8rem, 5vw, 2.6rem)/1.1 var(--f-display); margin: 0 0 1rem; letter-spacing: .01em; text-wrap: balance; }
+h1 span { color: var(--accent); }
+h2 { font: 400 1.15rem/1.3 var(--f-display); margin: 3rem 0 .75rem; letter-spacing: .03em; text-wrap: balance; }
+h3 { font: 700 1.05rem/1.3 var(--f-body); margin: 2.25rem 0 .4rem; text-wrap: balance; }
+p { margin: 0 0 1rem; }
+.lede { font-size: 1.1rem; }
+.meta { font: 12px/1.5 var(--f-mono); color: var(--muted); }
+kbd { font: 600 .85em var(--f-mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; padding: 0 .3em; }
+ul.pts { padding-left: 1.1rem; margin: 0 0 1rem; } ul.pts li { margin-bottom: .5rem; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; margin: 1rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+th, td { text-align: left; padding: .55rem .8rem; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font: 600 11px/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); background: var(--panel); }
+td.num { font-family: var(--f-mono); font-size: .85rem; white-space: nowrap; }
+td.hot { color: var(--bad); } td.cool { color: var(--good); font-weight: 600; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin: 1rem 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: .75rem; }
+figure { margin: 0; background: var(--panel); border-radius: 4px; padding: 6px; min-width: 0; }
+figure img { display: block; width: 100%; height: auto; image-rendering: pixelated; border-radius: 2px; }
+figcaption { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem .6rem; padding: .45rem .2rem .15rem; font-size: .9rem; }
+figcaption b { font-weight: 700; }
+figcaption small { flex-basis: 100%; color: var(--muted); font-size: .82rem; }
+.tag { font: 600 10.5px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .07em; border: 1px solid currentColor; border-radius: 3px; padding: .2rem .35rem; }
+figure.bad .tag { color: var(--bad); } figure.ok .tag { color: var(--good); } figure.meh .tag { color: var(--meh); } figure.ref .tag { color: var(--muted); }
+figure.pick { outline: 2px solid var(--accent); outline-offset: -2px; } figure.pick .tag { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.spot p { max-width: 46rem; }
+.legend { display: grid; gap: .6rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.legend li { display: grid; grid-template-columns: 11.5rem minmax(0, 1fr); gap: .75rem; padding-bottom: .6rem; border-bottom: 1px solid var(--line); }
+.legend li:last-child { border-bottom: 0; }
+.legend b { font-weight: 700; }
+@media (max-width: 560px) { .legend li { grid-template-columns: minmax(0, 1fr); gap: .1rem; } }
+.callout { background: var(--panel); border-left: 3px solid var(--accent); border-radius: 0 4px 4px 0; padding: .9rem 1.1rem; margin: 1.25rem 0; }
+.callout p:last-child { margin-bottom: 0; }
+footer { padding-block: 2.5rem 4rem; }
+</style>
+
+<div class="wrap"><div class="col">
+<header>
+  <p class="meta">experiments/spall-3d · 29 Oct 2026 · follows “the white cut outlines”</p>
+  <h1>Spall 3D, <span>outlines and cleanEdge</span></h1>
+  <p class="lede">cleanEdge is now cheap enough to leave on, and it’s on by default. Below that is a plainer side-by-side of the four ways to draw the white cut outline, with what each one is.</p>
+</header>
+
+<h2>cleanEdge is now nearly free</h2>
+<p>It used to work out, for every pixel on screen, which way the art’s staircases lean: about 20 texture reads and a few dozen comparisons each. Those decisions depend only on the art, so it now works them out once for each sprite pixel when the sprite is made and keeps them in a table. A screen pixel looks up its entry and does at most three line tests. The picture is identical to the slow version: across eight views, the only differing pixels were a pod that had moved between captures.</p>
+<p>A second gain came free. Just having cleanEdge’s code in the scene shader slowed every pixel, even with cleanEdge off. The scene now has two compiled versions, so the plain scene got faster too.</p>
+<div class="tablewrap"><table>
+  <thead><tr><th>View</th><th>Before, off</th><th>Before, on</th><th>Now, off</th><th>Now, on</th></tr></thead>
+  <tbody>
+    <tr><td>20° / 30°, zoom 2</td><td class="num">8.5 ms</td><td class="num hot">63 ms</td><td class="num">5.6 ms</td><td class="num cool">7.6 ms</td></tr>
+    <tr><td>60° / 25°</td><td class="num">14.0 ms</td><td class="num hot">86 ms</td><td class="num">9.2 ms</td><td class="num cool">10.5 ms</td></tr>
+    <tr><td>45° / 30° (home)</td><td class="num">14.1 ms</td><td class="num hot">75 ms</td><td class="num">9.0 ms</td><td class="num cool">10.6 ms</td></tr>
+    <tr><td>35° / 18°</td><td class="num">13.9 ms</td><td class="num hot">90 ms</td><td class="num">8.3 ms</td><td class="num cool">11.0 ms</td></tr>
+  </tbody>
+</table></div>
+<p class="meta">Scene pass only, 1280×800, median of 15 frames, the same headless Metal browser for both builds. The table is rebuilt when new sprites appear (about 4 ms for the whole atlas, less for just the new rows). <kbd>D</kbd> still switches cleanEdge off.</p>
+<p>What it does, on a walkway at 60° / 25°, zoom 2. The yellow edge and the railing become steady lines rather than stepped pieces:</p>
+<div class="pair">
+  <figure><img src="media/1684522cf3fb.png" alt="Walkway with cleanEdge off" width="120" height="80"><figcaption><b>cleanEdge off</b></figcaption></figure>
+  <figure class="pick"><img src="media/f217d9a4a5bd.png" alt="Walkway with cleanEdge on" width="120" height="80"><figcaption><b>cleanEdge on</b><span class="tag">default now</span></figcaption></figure>
+</div>
+<p>cleanEdge doesn’t touch the white cut outlines when they’re drawn as lines; it smooths the art under them.</p>
+
+<h2>The white cut outline, four ways</h2>
+<p>When a level is cut, each block’s top gets a thin white outline. There are two ways to draw it, and each can be with or without cleanEdge:</p>
+<ul class="legend">
+  <li><b>Before the fix</b><span>The outline drawn as a separate line on top of the scene, with a check so things in front hide it. The check was too strict and threw away a quarter to two-thirds of the outline’s pixels, mostly on far edges. This is what “Today” meant on the last page.</span></li>
+  <li><b>Fixed lines</b><span>The same separate lines with the check corrected. Near edges are solid, far edges dotted on purpose, as the 2D view draws them.</span></li>
+  <li><b>Fixed lines + cleanEdge</b><span>The fixed lines, with cleanEdge on the art underneath. This is the default now.</span></li>
+  <li><b>In the art</b><span>No separate line: the outline stays painted into each block’s sprite, and the sprite is laid onto the tilted top like the rest of the art. This is how the first 3D build did it, and <kbd>L</kbd> switches back to it. A 1-pixel line painted into a sprite breaks up when the sprite is turned, the same thing that happens to every thin line in the art.</span></li>
+  <li><b>In the art + cleanEdge</b><span><kbd>L</kbd> and <kbd>D</kbd> together. cleanEdge joins some of those broken pieces back up.</span></li>
+</ul>
+</div></div>
+
+<div class="wrap"><div class="wide">
+<section class="spot"><h3>Home view, 45° / 30°</h3><p>Before and after the fix look almost the same here, and both look like the 2D view: near edges solid, far edges dotted. The bug mostly ate far-edge pixels, and 2D draws those dotted anyway, so at this angle it hid itself. In the art is dotted all the way round, even on the near edges.</p><div class="grid"><figure class="bad"><img src="media/7efe9275a8d7.png" alt="Before the fix, Home view, 45° / 30°" width="120" height="85"><figcaption><b>Before the fix</b><span class="tag">drops pixels</span><small>Real lines, with the depth bug</small></figcaption></figure><figure class="ok"><img src="media/bf0f0bf19411.png" alt="Fixed lines, Home view, 45° / 30°" width="120" height="85"><figcaption><b>Fixed lines</b><span class="tag">whole</span><small>Real lines, nothing dropped</small></figcaption></figure><figure class="pick"><img src="media/bf0f0bf19411.png" alt="Fixed lines + cleanEdge, Home view, 45° / 30°" width="120" height="85"><figcaption><b>Fixed lines + cleanEdge</b><span class="tag">default now</span><small>What you get now</small></figcaption></figure><figure class="bad"><img src="media/f748a299ef4b.png" alt="In the art, Home view, 45° / 30°" width="120" height="85"><figcaption><b>In the art</b><span class="tag">breaks up</span><small>Outline painted in the sprite (L)</small></figcaption></figure><figure class="meh"><img src="media/f748a299ef4b.png" alt="In the art + cleanEdge, Home view, 45° / 30°" width="120" height="85"><figcaption><b>In the art + cleanEdge</b><span class="tag">partly mended</span><small>L and D together</small></figcaption></figure><figure class="ref"><img src="media/fd9dab97ef42.png" alt="2D view, Home view, 45° / 30°" width="120" height="85"><figcaption><b>2D view</b><span class="tag">the target</span><small>For reference</small></figcaption></figure></div></section>
+<section class="spot"><h3>60° / 25°: your pillar</h3><p>Look at the top’s left edge. Before the fix it is almost all gone; fixed, it is whole. In the art it breaks into dashes along every edge, and cleanEdge joins some of them back up but not all.</p><div class="grid"><figure class="bad"><img src="media/79028c382590.png" alt="Before the fix, 60° / 25°: your pillar" width="120" height="85"><figcaption><b>Before the fix</b><span class="tag">drops pixels</span><small>Real lines, with the depth bug</small></figcaption></figure><figure class="ok"><img src="media/fbd8e9935597.png" alt="Fixed lines, 60° / 25°: your pillar" width="120" height="85"><figcaption><b>Fixed lines</b><span class="tag">whole</span><small>Real lines, nothing dropped</small></figcaption></figure><figure class="pick"><img src="media/9ac03eb341fa.png" alt="Fixed lines + cleanEdge, 60° / 25°: your pillar" width="120" height="85"><figcaption><b>Fixed lines + cleanEdge</b><span class="tag">default now</span><small>What you get now</small></figcaption></figure><figure class="bad"><img src="media/83cea7210530.png" alt="In the art, 60° / 25°: your pillar" width="120" height="85"><figcaption><b>In the art</b><span class="tag">breaks up</span><small>Outline painted in the sprite (L)</small></figcaption></figure><figure class="meh"><img src="media/7db41e1f5462.png" alt="In the art + cleanEdge, 60° / 25°: your pillar" width="120" height="85"><figcaption><b>In the art + cleanEdge</b><span class="tag">partly mended</span><small>L and D together</small></figcaption></figure></div></section>
+<section class="spot"><h3>20° / 30°</h3><p>The same story at a shallower turn: before the fix the far edges thin out to a few pixels, the fixed lines stay whole, and the in-art outline goes ragged.</p><div class="grid"><figure class="bad"><img src="media/3dde2081345e.png" alt="Before the fix, 20° / 30°" width="120" height="85"><figcaption><b>Before the fix</b><span class="tag">drops pixels</span><small>Real lines, with the depth bug</small></figcaption></figure><figure class="ok"><img src="media/246694790fae.png" alt="Fixed lines, 20° / 30°" width="120" height="85"><figcaption><b>Fixed lines</b><span class="tag">whole</span><small>Real lines, nothing dropped</small></figcaption></figure><figure class="pick"><img src="media/499a9e5b4c2b.png" alt="Fixed lines + cleanEdge, 20° / 30°" width="120" height="85"><figcaption><b>Fixed lines + cleanEdge</b><span class="tag">default now</span><small>What you get now</small></figcaption></figure><figure class="bad"><img src="media/f4fae4178188.png" alt="In the art, 20° / 30°" width="120" height="85"><figcaption><b>In the art</b><span class="tag">breaks up</span><small>Outline painted in the sprite (L)</small></figcaption></figure><figure class="meh"><img src="media/52d14020da41.png" alt="In the art + cleanEdge, 20° / 30°" width="120" height="85"><figcaption><b>In the art + cleanEdge</b><span class="tag">partly mended</span><small>L and D together</small></figcaption></figure></div></section>
+</div></div>
+
+<div class="wrap"><div class="col">
+<h2>So, reading it</h2>
+<ul class="pts">
+  <li><b>If “before the fix” looks fine to you, check the angle.</b> At the home view it does look fine. Its dropped pixels mostly fell on far edges, which 2D draws dotted anyway. As soon as the camera turns, whole edges go, as on your pillar.</li>
+  <li><b>The fixed lines are the only option that stays whole at every angle.</b> They’re drawn, not painted, so they don’t break up when the block turns.</li>
+  <li><b>In the art looks worse at every angle, even the home view,</b> where it comes out dotted all the way round. cleanEdge helps it, but not enough to catch up.</li>
+  <li><b>The default is now fixed lines + cleanEdge.</b> cleanEdge cleans up the art and doesn’t change the outline, so that combination gets both.</li>
+</ul>
+<div class="callout">
+  <p><b>The trade-off you noticed.</b> Because the fixed lines are drawn on top, they’re crisper than the art around them, which is the “drawn on” look. If that keeps bothering you, the next thing to try is making the line follow the art more closely: a slightly dimmer colour, or a dotted rhythm that matches the art’s pixel grid on near edges too.</p>
+</div>
+</div></div>
+
+<div class="wrap"><div class="col">
+<footer>
+  <p class="meta">Frames from experiments/spall-3d at the L9 cut, 640×480, one art pixel per screen pixel; crops shown enlarged with no smoothing. Earlier pages: the white cut outlines (the full-frame switcher), lines at rest.</p>
+</footer>
+</div></div>
+
+</body></html>

@@ -11,7 +11,7 @@ Spall is a pixel-art isometric megastructure builder (working title; it was "Str
   - `spall-3d/build.sh` reads `../spall/src` in the order `../spall/build.sh` lists it.
   - `spall-multimodal/sync.py` copies main's sources and applies its hooks. Re-run it after main changes; never hand-edit the copied files.
 - **Studies:** documents (findings, comparisons, concept pages), some with live parts. Examples: `spall-multimodal/notes.html`, `agent-chat-reference/`, `spall/mockups/`.
-- **Archive:** the Stratum-era prototypes and retired tools (`megastructure-layers/`, `ui-mockups/`, `lines-and-voids/`, `concept-renders/`, `agent-buildings/`, `aesthetics/`). Leave them as they are. `concept-renders/` and `agent-buildings/` have gallery pages that show web copies of `out/` (`web.sh` makes them).
+- **Archive:** the Stratum-era prototypes and retired tools (`megastructure-layers/`, `ui-mockups/`, `lines-and-voids/`, `concept-renders/`, `agent-buildings/`, `aesthetics/`, `multiscale-toy/`). Leave them as they are. `concept-renders/` and `agent-buildings/` have gallery pages that show web copies of `out/` (`web.sh` makes them); `ui-mockups/index.html` shows all eight screens on one page.
 
 ## Names
 
@@ -24,7 +24,8 @@ Spall is a pixel-art isometric megastructure builder (working title; it was "Str
 - **A new variant of the game:** a build folder, `experiments/spall-<what>/`, that reads main's sources (a build list or a sync script, never a hand copy).
 - **A write-up, comparison or concept page:** a study, beside the work it's about.
 - **Big or throwaway files** (recordings, render dumps, built report pages with inlined media): a `local/` folder. Dropbox syncs it; git ignores it.
-- **The front page:** add every new build or study to `ENTRIES` in `experiments/index.html`, with a one-line plain description (what it is, no pitch or flavor). `node --experimental-websocket experiments/home/shoot.mjs <id>` makes its thumbnail.
+- **A built report page worth keeping:** build it in `local/`, then `python3 experiments/home/unpack.py <local/page.html> <folder>/reports` puts it in the repo as a page plus a `media/` folder. Re-run it after each rebuild.
+- **The front page:** add every new build or study to `ENTRIES` in `experiments/index.html`, with a one-line plain description (what it is, no pitch or flavor). Link only pages in the repo, never claude.ai artifacts: those are private, so the links break for everyone else. `node --experimental-websocket experiments/home/shoot.mjs <id>` makes its thumbnail.
 
 ## Main is shared
 

@@ -25,24 +25,25 @@ Conventions for agents and people working here (names, folders, commits, testing
 | `experiments/index.html` | **The front page.** Its `ENTRIES` list is the map; `home/` holds the thumbnails and `home/shoot.mjs`, which makes them. |
 | `experiments/spall/` | **The main build.** Physics cables with sliding ties, girders, posts, demolish; live lighting (sun, sky, occlusion, mist, shafts); birds; a 64×64×30 world on a pedestal over an undercity backdrop; claude as an agent; the band (bot chatter in the feed); presets and save slots. |
 | `experiments/spall/mockups/` | Studies on the main build: UI chrome concepts (`ui.html`), highlight styles, 1× vs 2× fidelity (`hires.html`), lighting (`light.html`), wire looks (`index.html`, `v1`–`v3`), the placement study (`placement/`) and the gameplay zine (`zine/`). |
-| `experiments/spall-3d/` | Build: the main build drawn by WebGL with a free orbit camera and smooth zoom (press 3). Reads `../spall/src`. `README.md` has the findings. |
+| `experiments/spall-3d/` | Build: the main build drawn by WebGL with a free orbit camera and smooth zoom (press 3). Reads `../spall/src`. `README.md` has the findings; the study pages are in `reports/`. |
 | `experiments/spall-multimodal/` | Build: the main build plus talk, point and sketch input (Web Speech or Moonshine; pixel ink anchored in 3D; one timeline for an agent). `sync.py` keeps it current with main; `notes.html` has the findings. |
-| `experiments/spall-backdrop/` | Study: the backdrop, now merged into the main build. Keeps its shot and page tools; its pages are in `local/`. |
+| `experiments/spall-backdrop/` | Study: the backdrop, now merged into the main build. Keeps its shot and page tools; its pages are in `reports/`. |
 | `experiments/agent-chat-reference/` | Study: art reference for the band, a sidebar of agents and bots talking in symbolic languages. |
 | `experiments/megastructure-layers/` | Archive: the original layer-view prototype, the touchstone for the look. |
 | `experiments/lines-and-voids/` | Archive: a rejected renderer study. `tools/cdp.mjs` is the headless-Chrome tool the tests use. |
 | `experiments/concept-renders/` | Archive: Blender kit-of-parts renderer, concept renders and the accretion time-lapse (needs Blender). `index.html` is a gallery of them. |
 | `experiments/agent-buildings/` | Archive: building types an agent designed from requests. Uses `concept-renders/`. `index.html` is a gallery of them. |
 | `experiments/aesthetics/` | Archive: aesthetic studies built from the kit renders, round two (`index.html`) and round three, scale (`scale/index.html`). Was `concepts/aesthetics/`. |
-| `experiments/ui-mockups/` | Archive: early game-screen mock-ups composited over renders. |
-| `notes/` | Design notes: megastructure, multiscale simulation, creative brief; `multiscale-toy.html`, the toy the multiscale note describes. |
+| `experiments/ui-mockups/` | Archive: early game-screen mock-ups composited over renders. `index.html` shows all eight, fitted to the page. |
+| `experiments/multiscale-toy/` | Archive: the multiscale simulation toy that `notes/multiscale-simulation.md` describes. |
+| `notes/` | Design notes: megastructure, multiscale simulation, creative brief. |
 
 ## Not in git
 
 Everything in this folder is committed except:
 
 - `node_modules/`, `__pycache__/`, `*.pyc`, `.DS_Store`: rebuildable.
-- **Any folder named `local/`**, wherever it is. Put big or throwaway artifacts there: long recordings, render dumps, scratch exports. The project lives in Dropbox, so those files are still synced; they just aren't versioned.
+- **Any folder named `local/`**, wherever it is. Put big or throwaway artifacts there: long recordings, render dumps, scratch exports. The project lives in Dropbox, so those files are still synced; they just aren't versioned. Built report pages are kept in the repo as `reports/` folders, unpacked from `local/` by `experiments/home/unpack.py`.
 
 A pre-commit hook refuses files over 20 MB and says to move them into a `local/` folder. It lives in `.githooks/`; enable it in a fresh clone with `git config core.hooksPath .githooks`.
 

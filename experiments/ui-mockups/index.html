@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stratum UI Mock-ups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../home/gallery.css">
+<!-- Every screen in src/ is a fixed 2560 x 1440 page. Here each one is the live page in an iframe, scaled to the column. -->
+<style>
+.screen{margin-top:14px}
+.fit{position:relative;overflow:hidden;background:#0a0b0c;aspect-ratio:16/9}
+.fit iframe{position:absolute;left:0;top:0;width:2560px;height:1440px;border:0;transform-origin:0 0;pointer-events:none}
+.fit a{position:absolute;inset:0}
+.screen figcaption .n{font:600 11px/1 var(--mono);color:var(--acct);margin-right:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="crumb"><a href="../">Spall</a> / archive / ui-mockups</div>
+  <h1>UI mock-ups</h1>
+  <p class="intro">Eight game screens in one drawing-set language, composited over <a href="../concept-renders/">concept renders</a>
+    with overlays placed by each render's camera. Dark panels show live state; anything to decide on arrives as a paper sheet.
+    Yellow is focus and agent attention; blue is planned but not built.</p>
+  <div class="meta">Stratum era · 30 Sep 2026 · each screen is 2560 × 1440; click one to open it at full size · rebuild with <code>./build.sh</code></div>
+</header>
+<div id="screens"></div>
+<footer><code>src/</code> the screens (HTML over render passes); <code>render/</code> the Blender passes and composites; <code>pixel/</code> the palette-locked map for pixel mode; <code>out/</code> screenshots.</footer>
+</div>
+<script>
+const SCREENS = [
+  ['m1_level_hud', 'A-108', 'Level navigation', 'Cutaway at L8 with three levels below faded and structure above as ghost massing; a strip of named strata showing fill against the 50% cap; a persistent slice banner.'],
+  ['m2_section_services', 'S-201', 'Section and services', 'Risers, manifolds, lifts and the cistern in section, with per-level fill, daylight, air and land value by height.'],
+  ['m3_pattern_book', 'P-012', 'Pattern book', 'Units move from captured to templated to pattern with grow rules; stamping shows ghosts and a drone queue.'],
+  ['m4_agent_cobuild', 'A-125', 'Co-building', "The agent's cursor and gaze on a ghost sky bridge inside a revision cloud; a proposal sheet with cost, light, loads and steps; drones claiming steps."],
+  ['m5_mod_request', 'MR-0031', 'Mod request', 'The agent-made hydroponic stack: brief, spec excerpt, four rotations, validator history from v1 fail to v4 pass, and Install.'],
+  ['m6_accretion_timeline', 'T-005', 'Timeline', 'Replay of the growing block with agent and crew lanes, a planned phase in blue, and an armed runaway-builders control.'],
+  ['m7_sound_map', 'N-201', 'Sound map', 'A night section as a listening diagram: undercroft hum, street murmur, transit whoosh, shaft reverb, canopy wind, with a bus mixer.'],
+  ['m8_pixel_mode', 'A-108/px', 'Pixel mode', 'The same block and HUD through the palette-locked sprite camera.'],
+];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+document.getElementById('screens').innerHTML = SCREENS.map(([f, n, t, d]) =>
+  `<h2 id="${f}">${esc(t)}</h2><figure class="pn screen"><div class="fit"><iframe src="src/${f}.html" loading="lazy" tabindex="-1" title="${esc(t)}"></iframe><a href="src/${f}.html" target="_blank" aria-label="Open ${esc(t)} at full size"></a></div>` +
+  `<figcaption><span><span class="n">${esc(n)}</span>${esc(d)}</span><a class="src" href="src/${f}.html" target="_blank">open at full size</a></figcaption></figure>`).join('');
+// scale each 2560-wide screen to its column
+const fit = () => document.querySelectorAll('.fit').forEach(el => { el.firstElementChild.style.transform = `scale(${el.clientWidth / 2560})`; });
+new ResizeObserver(fit).observe(document.getElementById('screens'));
+fit();
+</script>
+</body>
+</html>

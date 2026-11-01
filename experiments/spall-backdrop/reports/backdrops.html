@@ -1,0 +1,690 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0">
+<title>Spall Backdrops</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+/* Layout: one column of plates, like a concept-art folio; each concept is a plate with its in-game views.
+   Single dark look on purpose: pixel art and dusk skies read best on the game's own charcoal. */
+:root {
+  --bg: #0e0f11; --plate: #16171a; --rule: #2a2a2c; --ink: #e6dfcf; --dim: #a39c8e; --faint: #7a746a; --accent: #e8a83c; --accent-ink: #1b1305;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 var(--body); }
+.wrap { max-width: 1140px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; display: grid; gap: 44px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: .02em; text-wrap: balance; margin: 0; line-height: 1.05; }
+h1 { font-size: clamp(34px, 6vw, 56px); text-transform: uppercase; letter-spacing: .06em; }
+h2 { font-size: 30px; text-transform: uppercase; letter-spacing: .05em; }
+h3 { font-size: 15px; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--dim); font-size: 16px; }
+.mono, .cap { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+img, canvas, video { display: block; max-width: 100%; image-rendering: pixelated; }
+header { display: grid; gap: 14px; }
+.eyebrow { font: 600 13px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+
+/* viewer */
+.viewer { display: grid; gap: 10px; }
+.stage { position: relative; background: #000; border: 1px solid var(--rule); aspect-ratio: 16 / 8; max-width: 100%; overflow: hidden; touch-action: none; cursor: grab; }
+.stage:active { cursor: grabbing; }
+.stage canvas { width: 100%; height: 100%; }
+.busy { position: absolute; inset: 0; display: grid; place-items: center; font: 500 13px var(--mono); color: var(--ink); background: rgba(10,11,12,.55); }
+.hud { position: absolute; left: 10px; bottom: 8px; font: 500 11px var(--mono); color: var(--ink); text-shadow: 0 1px 0 #000; opacity: .85; pointer-events: none; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+.seg { display: flex; flex-wrap: wrap; gap: 2px; }
+.seg button { font: 600 13px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); background: var(--plate); border: 1px solid var(--rule); padding: 8px 11px; cursor: pointer; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.seg button:focus-visible, .shots button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.map { position: relative; border: 1px solid var(--rule); }
+.map canvas { width: 100%; height: auto; image-rendering: auto; }
+.map .mark { position: absolute; top: 0; bottom: 0; border: 1px solid var(--accent); box-shadow: 0 0 0 1px rgba(0,0,0,.6); pointer-events: none; }
+
+/* plates */
+.plate { display: grid; gap: 16px; padding-top: 22px; border-top: 1px solid var(--rule); }
+.plate-head { display: grid; gap: 8px; }
+.plate-head .k { font: 500 12px var(--mono); color: var(--accent); }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
+figure img { width: 100%; height: auto; background: #000; }
+.tod { display: flex; gap: 2px; }
+.row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.shots button { all: unset; cursor: zoom-in; display: block; width: 100%; }
+.row3 img { aspect-ratio: 550 / 418; object-fit: cover; }
+[hidden] { display: none !important; }
+@media (max-width: 760px) { .row3 { grid-template-columns: minmax(0, 1fr); } }
+.figcap { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* notes */
+.notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; }
+@media (max-width: 760px) { .notes { grid-template-columns: minmax(0, 1fr); } }
+.notes section { display: grid; gap: 10px; align-content: start; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; max-width: 68ch; }
+.pick { border: 1px solid var(--accent); padding: 18px 20px; display: grid; gap: 10px; background: var(--plate); }
+code { font: 13px var(--mono); color: var(--ink); background: var(--plate); padding: 1px 5px; }
+
+.lb { position: fixed; inset: 0; background: rgba(5,5,6,.94); display: grid; place-items: center; z-index: 20; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
+.lb img { max-height: 92vh; width: auto; max-width: 100%; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Spall · concept · backdrop</div>
+    <h1>What lies beyond the arcology</h1>
+    <p class="lede">Five candidate worlds for the backdrop, each painted as a full 360° sphere and shown in the game as it is now: the 2D view scrolled up to the top of the city, and the 3D study from a few angles. Every image below came out of the game; the viewer paints its panoramas live in this page with the same code.</p>
+  </header>
+
+  <section class="viewer" aria-label="Panorama viewer">
+    <div class="controls">
+      <div class="seg" id="sceneSeg" role="group" aria-label="Backdrop"></div>
+      <div class="seg" id="todSeg" role="group" aria-label="Time of day"></div>
+    </div>
+    <div class="stage" id="stage"><canvas id="view" aria-label="Look around the panorama: drag to turn and tilt"></canvas><div class="busy" id="busy" hidden>Painting…</div><div class="hud" id="hud"></div></div>
+    <div class="figcap"><span class="cap">Drag to look around. The lens matches the game's: 1 panorama pixel to 1 art pixel at the centre, shown at 2×.</span><span class="cap" id="paintMs"></span></div>
+    <div class="map" id="map"><canvas id="mapc" aria-label="The whole panorama, unwrapped"></canvas><div class="mark" id="mark"></div></div>
+    <span class="cap">The whole sphere, unwrapped: 2560 × 1280 px, 360° across, zenith at the top, nadir at the bottom. The box is the viewer's frame.</span>
+  </section>
+
+  
+  <section class="plate" id="off" aria-label="The current sky">
+    <div class="plate-head"><span class="k">Today</span><h2>The current sky</h2><p>A flat gradient with two rows of grey skyline, fixed to the screen. It never moves with the city, and the 3D view shows the same picture whichever way it faces.</p></div>
+    <figure class="pair">
+      <div class="shots"><button type="button" aria-label="Enlarge"><img id="img-off" src="media/df412431b491.webp" alt="The current sky: 2D view at the top of the city, dusk"></button></div>
+      <div class="figcap"><span class="cap">2D · scrolled to the top of the city · the view turns 90° between times of day, so each shows another quarter of the world</span>
+        <div class="seg tod" data-img="img-off" role="group" aria-label="Time of day"><button type="button" id="tod-off-dusk" data-k="off_2d_top_dusk" data-alt="The current sky: 2D view at the top of the city, dusk" aria-pressed="true">Dusk</button><button type="button" id="tod-off-day" data-k="off_2d_top_day" data-alt="The current sky: 2D view at the top of the city, day" aria-pressed="false">Day</button><button type="button" id="tod-off-night" data-k="off_2d_top_night" data-alt="The current sky: 2D view at the top of the city, night" aria-pressed="false">Night</button></div></div>
+    </figure>
+    <div class="row3"><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/a5eb473ad979.webp" alt="The current sky: 3D · low angle · dusk" loading="lazy"></button></div><span class="cap">3D · low angle · dusk</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/5d419a4834ae.webp" alt="The current sky: 3D · low, other side · day" loading="lazy"></button></div><span class="cap">3D · low, other side · day</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/7c9f8c2e128a.webp" alt="The current sky: 3D · zoomed out · dusk" loading="lazy"></button></div><span class="cap">3D · zoomed out · dusk</span></figure></div>
+  </section>
+  <section class="plate" id="empty" aria-label="Alone">
+    <div class="plate-head"><span class="k">A</span><h2>Alone</h2><p>The arcology stands by itself on a dry salt flat. A far ridge, a few broken stumps, one ruin 5 km out and a fallen tower lying on its side. Big weather overhead. It makes the structure the last thing standing.</p></div>
+    <figure class="pair">
+      <div class="shots"><button type="button" aria-label="Enlarge"><img id="img-empty" src="media/88d70034c531.webp" alt="Alone: 2D view at the top of the city, dusk"></button></div>
+      <div class="figcap"><span class="cap">2D · scrolled to the top of the city · the view turns 90° between times of day, so each shows another quarter of the world</span>
+        <div class="seg tod" data-img="img-empty" role="group" aria-label="Time of day"><button type="button" id="tod-empty-dusk" data-k="empty_2d_top_dusk" data-alt="Alone: 2D view at the top of the city, dusk" aria-pressed="true">Dusk</button><button type="button" id="tod-empty-day" data-k="empty_2d_top_day" data-alt="Alone: 2D view at the top of the city, day" aria-pressed="false">Day</button><button type="button" id="tod-empty-night" data-k="empty_2d_top_night" data-alt="Alone: 2D view at the top of the city, night" aria-pressed="false">Night</button></div></div>
+    </figure>
+    <div class="row3"><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/af7e3ea4e646.webp" alt="Alone: 3D · low angle · dusk" loading="lazy"></button></div><span class="cap">3D · low angle · dusk</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/b470088f3e5b.webp" alt="Alone: 3D · low, other side · day" loading="lazy"></button></div><span class="cap">3D · low, other side · day</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/b8aa515708d6.webp" alt="Alone: 3D · zoomed out · dusk" loading="lazy"></button></div><span class="cap">3D · zoomed out · dusk</span></figure></div>
+  </section>
+  <section class="plate" id="clouds" aria-label="Cloud sea">
+    <div class="plate-head"><span class="k">B</span><h2>Cloud sea</h2><p>The top deck is above the weather. A cloud sea 360 m down hides everything below it, and the tops of a dozen other towers break through, out to 70 km. Thin, clear air with cirrus overhead.</p></div>
+    <figure class="pair">
+      <div class="shots"><button type="button" aria-label="Enlarge"><img id="img-clouds" src="media/b02be46b7182.webp" alt="Cloud sea: 2D view at the top of the city, dusk"></button></div>
+      <div class="figcap"><span class="cap">2D · scrolled to the top of the city · the view turns 90° between times of day, so each shows another quarter of the world</span>
+        <div class="seg tod" data-img="img-clouds" role="group" aria-label="Time of day"><button type="button" id="tod-clouds-dusk" data-k="clouds_2d_top_dusk" data-alt="Cloud sea: 2D view at the top of the city, dusk" aria-pressed="true">Dusk</button><button type="button" id="tod-clouds-day" data-k="clouds_2d_top_day" data-alt="Cloud sea: 2D view at the top of the city, day" aria-pressed="false">Day</button><button type="button" id="tod-clouds-night" data-k="clouds_2d_top_night" data-alt="Cloud sea: 2D view at the top of the city, night" aria-pressed="false">Night</button></div></div>
+    </figure>
+    <div class="row3"><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/1c5d4deaecd2.webp" alt="Cloud sea: 3D · low angle · dusk" loading="lazy"></button></div><span class="cap">3D · low angle · dusk</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/27c789ad3580.webp" alt="Cloud sea: 3D · low, other side · day" loading="lazy"></button></div><span class="cap">3D · low, other side · day</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/cd9f48ea5222.webp" alt="Cloud sea: 3D · zoomed out · dusk" loading="lazy"></button></div><span class="cap">3D · zoomed out · dusk</span></figure></div>
+  </section>
+  <section class="plate" id="horizon" aria-label="Horizon cities">
+    <div class="plate-head"><span class="k">C</span><h2>Horizon cities</h2><p>Ours is one of many. Three rings of arcologies 9 to 80 km out and 1 to 6 km tall fade into smog. Great cables sag between neighbours. Below, the undercity glows up through the haze.</p></div>
+    <figure class="pair">
+      <div class="shots"><button type="button" aria-label="Enlarge"><img id="img-horizon" src="media/1c439690b4c2.webp" alt="Horizon cities: 2D view at the top of the city, dusk"></button></div>
+      <div class="figcap"><span class="cap">2D · scrolled to the top of the city · the view turns 90° between times of day, so each shows another quarter of the world</span>
+        <div class="seg tod" data-img="img-horizon" role="group" aria-label="Time of day"><button type="button" id="tod-horizon-dusk" data-k="horizon_2d_top_dusk" data-alt="Horizon cities: 2D view at the top of the city, dusk" aria-pressed="true">Dusk</button><button type="button" id="tod-horizon-day" data-k="horizon_2d_top_day" data-alt="Horizon cities: 2D view at the top of the city, day" aria-pressed="false">Day</button><button type="button" id="tod-horizon-night" data-k="horizon_2d_top_night" data-alt="Horizon cities: 2D view at the top of the city, night" aria-pressed="false">Night</button></div></div>
+    </figure>
+    <div class="row3"><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/341c5c6d040d.webp" alt="Horizon cities: 3D · low angle · dusk" loading="lazy"></button></div><span class="cap">3D · low angle · dusk</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/3cceac368004.webp" alt="Horizon cities: 3D · low, other side · day" loading="lazy"></button></div><span class="cap">3D · low, other side · day</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/dcec3f0f1fda.webp" alt="Horizon cities: 3D · zoomed out · dusk" loading="lazy"></button></div><span class="cap">3D · zoomed out · dusk</span></figure></div>
+  </section>
+  <section class="plate" id="near" aria-label="Close neighbours">
+    <div class="plate-head"><span class="k">D</span><h2>Close neighbours</h2><p>The high-detail version: nine neighbours within 6 km, close enough to read their decks and lit windows, with skybridges and cable runs between them. The far ring stays hazy behind.</p></div>
+    <figure class="pair">
+      <div class="shots"><button type="button" aria-label="Enlarge"><img id="img-near" src="media/98f99a691157.webp" alt="Close neighbours: 2D view at the top of the city, dusk"></button></div>
+      <div class="figcap"><span class="cap">2D · scrolled to the top of the city · the view turns 90° between times of day, so each shows another quarter of the world</span>
+        <div class="seg tod" data-img="img-near" role="group" aria-label="Time of day"><button type="button" id="tod-near-dusk" data-k="near_2d_top_dusk" data-alt="Close neighbours: 2D view at the top of the city, dusk" aria-pressed="true">Dusk</button><button type="button" id="tod-near-day" data-k="near_2d_top_day" data-alt="Close neighbours: 2D view at the top of the city, day" aria-pressed="false">Day</button><button type="button" id="tod-near-night" data-k="near_2d_top_night" data-alt="Close neighbours: 2D view at the top of the city, night" aria-pressed="false">Night</button></div></div>
+    </figure>
+    <div class="row3"><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/b618af86d6dd.webp" alt="Close neighbours: 3D · low angle · dusk" loading="lazy"></button></div><span class="cap">3D · low angle · dusk</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/651d4a833883.webp" alt="Close neighbours: 3D · low, other side · day" loading="lazy"></button></div><span class="cap">3D · low, other side · day</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/1b20cb650409.webp" alt="Close neighbours: 3D · zoomed out · dusk" loading="lazy"></button></div><span class="cap">3D · zoomed out · dusk</span></figure></div>
+  </section>
+  <section class="plate" id="envelope" aria-label="Inside the larger thing">
+    <div class="plate-head"><span class="k">E</span><h2>Inside the larger thing</h2><p>We are not outside at all. Colossal pillars rise from an abyss to a coffered ceiling 2.6 km up. Trusses and cables cross between them, and light falls in shafts through a few openings. Mostly shadow and haze.</p></div>
+    <figure class="pair">
+      <div class="shots"><button type="button" aria-label="Enlarge"><img id="img-envelope" src="media/3ce9e9ba2f72.webp" alt="Inside the larger thing: 2D view at the top of the city, dusk"></button></div>
+      <div class="figcap"><span class="cap">2D · scrolled to the top of the city · the view turns 90° between times of day, so each shows another quarter of the world</span>
+        <div class="seg tod" data-img="img-envelope" role="group" aria-label="Time of day"><button type="button" id="tod-envelope-dusk" data-k="envelope_2d_top_dusk" data-alt="Inside the larger thing: 2D view at the top of the city, dusk" aria-pressed="true">Dusk</button><button type="button" id="tod-envelope-day" data-k="envelope_2d_top_day" data-alt="Inside the larger thing: 2D view at the top of the city, day" aria-pressed="false">Day</button><button type="button" id="tod-envelope-night" data-k="envelope_2d_top_night" data-alt="Inside the larger thing: 2D view at the top of the city, night" aria-pressed="false">Night</button></div></div>
+    </figure>
+    <div class="row3"><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/d5b02ea3fe45.webp" alt="Inside the larger thing: 3D · low angle · dusk" loading="lazy"></button></div><span class="cap">3D · low angle · dusk</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/1559afc0157a.webp" alt="Inside the larger thing: 3D · low, other side · day" loading="lazy"></button></div><span class="cap">3D · low, other side · day</span></figure><figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/78e4f45dafa1.webp" alt="Inside the larger thing: 3D · zoomed out · dusk" loading="lazy"></button></div><span class="cap">3D · zoomed out · dusk</span></figure></div>
+  </section>
+
+  <section class="plate" aria-label="In motion">
+    <div class="plate-head"><span class="k">IN MOTION</span><h2>Orbiting inside</h2>
+      <p>A full turn of the 3D study with "Inside the larger thing" behind it. The sky is at infinity, so panning doesn't move it and orbiting turns it. Orbits for the other four are in <code>local/vid/</code>.</p></div>
+    <video src="media/d7605fe866da.mp4" controls muted loop autoplay playsinline aria-label="3D orbit with the Inside backdrop"></video>
+  </section>
+
+  <section class="notes" aria-label="Notes">
+    <section class="pick">
+      <h3>My pick</h3>
+      <p><b>Horizon cities</b> as the default. It works at all three times of day, gives the arcology a quiet band of fogged towers to stand against, and says "one of many" without crowding the play area.</p>
+      <p><b>Inside the larger thing</b> is the most distinctive and the closest to BLAME!, but it contradicts the current lighting: there is no open sky for sun and sky light to come from. If you want it, the light should follow it, arriving in shafts through openings far above. Light wells would then be part of the fiction rather than a lighting trick.</p>
+      <p><b>Alone</b> and <b>Cloud sea</b> are the same idea, the last thing standing. I would keep one. <b>Close neighbours</b> is the high-detail version you asked for; it is busy enough to compete with the cables, so I would hold it for a zoomed-out or establishing view.</p>
+    </section>
+    <section>
+      <h3>How it is made</h3>
+      <ul>
+        <li>One 2560 × 1280 equirectangular panorama per backdrop and time of day: 7.1 px per degree, so it lands 1 : 1 on art pixels at the 2D zoom.</li>
+        <li>Painted procedurally at load, about 1 s each, in the game's palette with the old sky's 4 × 4 Bayer dither. Towers, beams and cables are placed in metres around the arcology and projected exactly, with a depth buffer, distance fog and ground haze, so cables sag and towers hide one another correctly.</li>
+        <li><b>2D:</b> a 1 : 1 crop, so pixels stay crisp. Each 90° turn of the view shows another quarter of the world. The horizon is held to the city's far corner at L15, so it scrolls with the city and appears as you scroll to the top.</li>
+        <li><b>3D:</b> sampled per art pixel through a lens that matches the 2D crop at the iso tilt and becomes true perspective as you tilt down. It is recomputed on the CPU when the camera moves, about 10 ms; it belongs in a shader.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Try it</h3>
+      <ul>
+        <li><code>experiments/spall-backdrop/backdrop.html</code>. Press <b>B</b> to cycle the backdrops (and back to the current sky), <b>3</b> for the 3D view.</li>
+        <li>It reads <code>stratum-wires</code> and <code>spall-3d</code> unchanged and adds one module, <code>src/92_backdrop.js</code>. Nothing else is touched or committed.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Open issues</h3>
+      <ul>
+        <li>The scene's own mist doesn't take the backdrop's haze colour yet. Matching them would tie the city into the sky, inside most of all.</li>
+        <li>In 3D the sky crawls a little while orbiting (nearest sampling). Panning is clean.</li>
+        <li>Close neighbours and Inside are only a few km away, so they should move a little when you pan in 3D. A second, nearer layer with slight parallax would fix that.</li>
+        <li>Night lights still read a bit like noise at a distance.</li>
+        <li>Everything is static. Drifting clouds, shafts that move, and lights coming on at dusk are all cheap on top of this.</li>
+      </ul>
+    </section>
+  </section>
+</div>
+
+<script>
+// ---- the game's painter (experiments/spall-backdrop/src/92_backdrop.js), with the few helpers it needs ----
+const W = 64, D = 64;
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+function mk(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+// ===================================================================
+// Painted 360° backdrop (study). One equirectangular panorama per scene and time of day,
+// painted as pixel art at load: sky, sun, cloud layers, ground / cloud sea / abyss, and
+// distant structures, beams and cables placed in world space round the arcology and
+// projected to (azimuth, elevation). Everything is far enough away to sit "at infinity".
+// The 2D view shows a 1:1 crop: azimuth from the view rotation, horizon locked to a height in
+// the world (the far corner at BD.hz) so it scrolls with the city. The 3D view samples it per art pixel through
+// a lens-shifted perspective that agrees with the 2D crop at the iso angle and looks straight
+// down when tilted to top-down.
+// ===================================================================
+const BDW = 2560, BDH = 1280, BDF = BDW / (2 * Math.PI);   // px per radian: 1:1 with art pixels at the centre
+const BD = { scene: 'horizon', hz: 15, cache: new Map(), ms: 0 };
+const BD_CORNERS = [[0, 0], [W, 0], [0, D], [W, D]];   // the horizon is held to the far corner at height BD.hz
+const BD_SCENES = ['empty', 'clouds', 'horizon', 'near', 'envelope'];
+const BD_NAMES = { empty: 'Alone', clouds: 'Cloud sea', horizon: 'Horizon cities', near: 'Close neighbours', envelope: 'Inside the larger thing', off: 'Current sky' };
+
+const hexRGB = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+const bdCols = a => a.map(hexRGB);
+const mix3 = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const bay = (x, y) => (BAYER[(x & 3) + (y & 3) * 4] + 0.5) / 16;
+// a gradient over palette steps, two neighbouring colours ordered-dithered (as the old sky)
+function bdGrad(c, t, x, y) {
+  const f = clamp(t, 0, 1) * (c.length - 1), k = Math.min(c.length - 2, Math.floor(f));
+  return f - k > bay(x, y) ? c[k + 1] : c[k];
+}
+// blend a → b in n flat steps, dithered between steps
+function bdMix(a, b, t, x, y, n) {
+  if (t <= 0) return a; if (t >= 1) return b;
+  const s = t * n, k = Math.floor(s), q = (k + (s - k > bay(x, y) ? 1 : 0)) / n;
+  return mix3(a, b, q);
+}
+// value noise (seeded), smooth and cheap
+function bdH(x, y, z, s) {
+  let h = Math.imul(x | 0, 374761393) ^ Math.imul(y | 0, 668265263) ^ Math.imul(z | 0, 1440662683) ^ Math.imul(s | 0, 1274126177);
+  h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+}
+function bdN(x, y, z, s) {
+  const X = Math.floor(x), Y = Math.floor(y), Z = Math.floor(z), fx = x - X, fy = y - Y, fz = z - Z;
+  const u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy), w = fz * fz * (3 - 2 * fz);
+  const l = (a, b, t) => a + (b - a) * t;
+  return l(l(l(bdH(X, Y, Z, s), bdH(X + 1, Y, Z, s), u), l(bdH(X, Y + 1, Z, s), bdH(X + 1, Y + 1, Z, s), u), v),
+    l(l(bdH(X, Y, Z + 1, s), bdH(X + 1, Y, Z + 1, s), u), l(bdH(X, Y + 1, Z + 1, s), bdH(X + 1, Y + 1, Z + 1, s), u), v), w);
+}
+function bdFbm(x, y, z, s, oct) { let a = 0, m = 0.5, f = 1, n = 0; for (let k = 0; k < oct; k++) { a += bdN(x * f, y * f, z * f, s + k) * m; n += m; m *= 0.5; f *= 2.03; } return a / n; }
+
+// ---------- palettes: time of day first, then each scene's own air ----------
+const BD_TOD = {
+  day: {
+    sky: bdCols(['#6c8b99', '#7f9aa4', '#97aaac', '#b2bab0', '#cdc8b2', '#dcd2b6']), fog: hexRGB('#c9c5b0'), below: bdCols(['#c9c5b0', '#a9aca1', '#8c918b']),
+    st: bdCols(['#3e4546', '#555c5b', '#6f7571']), lit: hexRGB('#8e8f84'), win: hexRGB('#2c3233'), lamp: hexRGB('#e8d9a8'), lampK: 0,
+    cl: bdCols(['#a2a9a6', '#c9c8bb', '#e9e5d6', '#f6f1e2']), ground: bdCols(['#8f8a79', '#a29b86', '#b3ab93']),
+    sun: { az: 120, el: 62, core: hexRGB('#fffbea'), glow: hexRGB('#ece3c2'), r: 0.012 }, stars: 0
+  },
+  dusk: {
+    sky: bdCols(['#1c2630', '#283036', '#343538', '#4a3d3a', '#5f4439', '#83513a', '#a75f39', '#c27440', '#d98a45']), fog: hexRGB('#9a5d3e'), below: bdCols(['#a75f39', '#6d4636', '#3c2f30', '#221e22', '#141316']),
+    st: bdCols(['#1f1c20', '#2d282c', '#3d3436']), lit: hexRGB('#7a4a34'), win: hexRGB('#1a1719'), lamp: hexRGB('#e0b45e'), lampK: 0.5,
+    cl: bdCols(['#3a3236', '#6a4a42', '#a8613f', '#e09456']), ground: bdCols(['#2a2326', '#3a2e2d', '#4c3a34']),
+    sun: { az: 330, el: 13, core: hexRGB('#ffe0a0'), glow: hexRGB('#f0a050'), r: 0.016 }, stars: 0
+  },
+  night: {
+    sky: bdCols(['#05070a', '#080b0f', '#0a0f13', '#0d1418', '#0f171b', '#131c1d', '#16201f', '#1b2624']), fog: hexRGB('#1a2423'), below: bdCols(['#1b2624', '#121a1b', '#0b1012', '#06080a']),
+    st: bdCols(['#080c0e', '#0d1316', '#141b1d']), lit: hexRGB('#1c2628'), win: hexRGB('#0a0e10'), lamp: hexRGB('#e0b45e'), lampK: 1,
+    cl: bdCols(['#0d1214', '#151c1e', '#1f2829', '#2b3536']), ground: bdCols(['#07090b', '#0b0f10', '#101617']),
+    sun: { az: 210, el: 38, core: hexRGB('#dfe6e0'), glow: hexRGB('#3a4746'), r: 0.008 }, stars: 1
+  }
+};
+// scenes: eye height above the ground (m), fog distance (m), haze, and how each one treats sky, ground and air
+const BD_DEF = {
+  empty: { eye: 380, rf: 30000, haze: 260, ground: 'flat', clouds: { h: 1700, cover: 0.46, scale: 2600 }, warm: 0 },
+  clouds: { eye: 420, rf: 30000, haze: 0, ground: 'deck', deck: 360, clouds: { h: 5200, cover: 0.22, scale: 5200, wisp: 1 }, clear: 1 },
+  horizon: { eye: 320, rf: 26000, haze: 700, ground: 'grid', clouds: { h: 2100, cover: 0.38, scale: 3200 } },
+  near: { eye: 320, rf: 22000, haze: 450, ground: 'grid', clouds: { h: 2400, cover: 0.32, scale: 3400 } },
+  envelope: { eye: 0, rf: 5200, haze: 0, ground: 'abyss', ceil: 2600, dark: 1 }
+};
+function bdPal(scene, tod) {
+  const P = Object.assign({}, BD_TOD[tod]), d = BD_DEF[scene];
+  if (d.clear && tod === 'day') { P.sky = bdCols(['#4f7e94', '#6290a0', '#7aa1aa', '#96b2b0', '#b4c2b4', '#d2d2bc']); P.fog = hexRGB('#c6cbbb'); }
+  if (d.dark) {   // inside: dimmer, colder air; light falls from far above
+    const D = { day: ['#56646a', '#2a3236', '#3a4448', '#d8d4bc'], dusk: ['#4a3a38', '#1e1a1e', '#2c2528', '#e8a060'], night: ['#0f1618', '#070a0c', '#0c1113', '#6f8a86'] }[tod].map(hexRGB);
+    P.fog = D[0]; P.st = [D[1], mix3(D[1], D[2], 0.5), D[2]]; P.lit = mix3(D[2], D[3], 0.18); P.shaft = D[3];
+    P.below = [P.fog, mix3(P.fog, D[1], 0.3), mix3(P.fog, D[1], 0.65), D[1], mix3(D[1], [0, 0, 0], 0.6)];
+    P.sky = [mix3(P.fog, D[3], 0.25), mix3(P.fog, D[3], 0.12), P.fog, P.fog];
+    P.lampK = tod === 'day' ? 0.12 : tod === 'dusk' ? 0.7 : 1;
+  }
+  return P;
+}
+
+// ---------- the panorama ----------
+// Each pixel holds a colour and the distance of what it shows (Infinity for sky).
+const bdPhi = y => (0.5 - (y + 0.5) / BDH) * Math.PI;
+const bdRow = phi => (0.5 - phi / Math.PI) * BDH - 0.5;
+const bdCol = th => th * BDF;
+
+function bdPaint(scene, tod) {
+  const t0 = performance.now();
+  const P = bdPal(scene, tod), d = BD_DEF[scene], rnd = mulberry32(BD_SCENES.indexOf(scene) * 97 + 13);
+  const img = new ImageData(BDW, BDH), px = img.data, dep = new Float32Array(BDW * BDH).fill(Infinity);
+  const put = (x, y, c) => { const i = (y * BDW + x) * 4; px[i] = c[0]; px[i + 1] = c[1]; px[i + 2] = c[2]; px[i + 3] = 255; };
+  const get = (x, y) => { const i = (y * BDW + x) * 4; return [px[i], px[i + 1], px[i + 2]]; };
+  const sunA = P.sun.az * Math.PI / 180, sunE = P.sun.el * Math.PI / 180, sv = [Math.cos(sunE) * Math.cos(sunA), Math.cos(sunE) * Math.sin(sunA), Math.sin(sunE)];
+  const hzRow = BDH / 2;
+  // the air's colour by elevation: the sky's own gradient above, the haze below (undithered)
+  const airAt = phi => {
+    if (phi >= 0) { const t = 1 - Math.pow(clamp(phi / (Math.PI / 2), 0, 1), 0.45), f = t * (P.sky.length - 1), k = Math.min(P.sky.length - 2, Math.floor(f)); return mix3(P.sky[k], P.sky[k + 1], f - k); }
+    const t = Math.pow(clamp(-phi / (Math.PI / 2), 0, 1), d.dark ? 0.8 : 0.5), f = t * (P.below.length - 1), k = Math.min(P.below.length - 2, Math.floor(f)); return mix3(P.below[k], P.below[k + 1], f - k);
+  };
+  const fogOf = (r, z) => {   // aerial perspective: distance, then ground haze below its top
+    let f = 1 - Math.exp(-r / d.rf);
+    if (d.haze) { const h = clamp((d.haze - (z + d.eye)) / d.haze, 0, 1); f = 1 - (1 - f) * (1 - h * h * 0.75); }
+    if (d.dark && z < 0) f = 1 - (1 - f) * Math.exp(z / 2600);   // the abyss swallows what goes down
+    return f;
+  };
+
+  // --- sky ---
+  for (let y = 0; y < BDH; y++) {
+    const phi = bdPhi(y), up = phi >= 0;
+    const t = up ? 1 - Math.pow(clamp(phi / (Math.PI / 2), 0, 1), 0.45) : Math.pow(clamp(-phi / (Math.PI / 2), 0, 1), d.dark ? 0.8 : 0.5);
+    for (let x = 0; x < BDW; x++) {
+      let c = up ? bdGrad(P.sky, t, x, y) : bdGrad(P.below, t, x, y);
+      if (!d.dark) {   // sun glow and disc
+        const th = x / BDF, cp = Math.cos(phi), dv = [cp * Math.cos(th), cp * Math.sin(th), Math.sin(phi)];
+        const ang = Math.acos(clamp(dv[0] * sv[0] + dv[1] * sv[1] + dv[2] * sv[2], -1, 1));
+        if (ang < P.sun.r) c = P.sun.core;
+        else { const g = Math.exp(-ang / (tod === 'dusk' ? 0.3 : 0.18)) * (tod === 'night' ? 0.45 : 0.8); if (g > 0.012) c = bdMix(c, P.sun.glow, g, x, y, 16); }
+      }
+      if (P.stars && up && phi > 0.08 && bdH(x, y, 7, 3) < 0.0016) c = mix3(c, [200, 207, 200], 0.4 + bdH(x, y, 8, 3) * 0.6);
+      put(x, y, c);
+    }
+  }
+
+  // --- cloud layer: a noise field on a plane above the eye, seen in perspective ---
+  const CL = d.clouds;
+  if (CL) {
+    const sx = Math.cos(sunA), sy = Math.sin(sunA);
+    for (let y = 0; y < hzRow; y++) {
+      const phi = bdPhi(y); if (phi < 0.004) continue;
+      const r = CL.h / Math.tan(phi); if (r > 90000) continue;
+      const oct = r > 40000 ? 2 : r > 15000 ? 3 : 5, fade = Math.exp(-r / (d.rf * 1.6));
+      for (let x = 0; x < BDW; x++) {
+        const th = x / BDF, wx = r * Math.cos(th) / CL.scale, wy = r * Math.sin(th) / CL.scale;
+        let n = CL.wisp ? bdFbm(wx * 0.35, wy * 2.2, 0, 41, oct) : bdFbm(wx, wy * 1.6, 0, 41, oct);
+        const cov = n - (1 - CL.cover) * 0.75 - 0.18;
+        if (cov <= 0) continue;
+        const dens = clamp(cov * 16, 0, 1);
+        const n2 = CL.wisp ? n : bdFbm(wx + sx * 0.18, wy * 1.6 + sy * 0.18, 0, 41, oct);   // denser toward the sun: self-shadowed
+        const lit = CL.wisp ? 0.7 + (n - 0.5) * 0.6 : clamp(0.62 + (n - n2) * 9 - dens * 0.25, 0, 1);
+        let c = bdGrad(P.cl, lit, x, y);
+        c = bdMix(airAt(phi), c, dens * fade, x, y, 3);
+        put(x, y, c);
+      }
+    }
+  }
+
+  // --- what lies below: flat ground, cloud deck, city grid, or nothing (abyss) ---
+  if (d.ground !== 'abyss') {
+    const gh = d.ground === 'deck' ? d.deck : d.eye;
+    for (let y = hzRow; y < BDH; y++) {
+      const phi = bdPhi(y), r = gh / Math.tan(-phi);
+      for (let x = 0; x < BDW; x++) {
+        const th = x / BDF, gx = r * Math.cos(th), gy = r * Math.sin(th);
+        let c, z = -gh;
+        if (d.ground === 'flat') {   // salt flat: long dunes, polygon cracks
+          const n = bdFbm(gx / 1800, gy / 600, 0, 5, r > 20000 ? 2 : 4), crack = r < 6000 && Math.abs(bdN(gx / 90, gy / 90, 0, 9) - 0.5) < 0.012;
+          c = crack ? P.ground[0] : bdGrad(P.ground, n * 1.3 - 0.1, x, y);
+        } else if (d.ground === 'deck') {   // cloud sea: lumpy tops lit from the sun side
+          const s = 2400, oct = r > 30000 ? 2 : r > 10000 ? 3 : 5;
+          const n = bdFbm(gx / s, gy / s, 0, 61, oct), n2 = bdFbm((gx - Math.cos(sunA) * 300) / s, (gy - Math.sin(sunA) * 300) / s, 0, 61, oct);
+          c = bdGrad(P.cl, clamp(0.68 + (n - n2) * 3 + (n - 0.5) * 0.4, 0.42, 1), x, y);
+        } else {   // the city below: blocks, streets, lamps at dusk and night
+          const B = 120, S2 = 16, bx = ((gx % B) + B) % B, by = ((gy % B) + B) % B, street = bx < S2 || by < S2;
+          const blk = bdH(Math.floor(gx / B), Math.floor(gy / B), 0, 17);
+          c = street ? P.st[0] : bdGrad(P.st, 0.3 + blk * 0.7, x, y);
+          // the undercity glows up through the smog: lamps are mixed in after the haze
+          const lamp = P.lampK && r < 30000 && street && blk < 0.45 && bdH(x, y, 1, 21) < 0.05 * P.lampK;   // only some streets are lit
+          const fg = Math.max(0.9, fogOf(r, z));
+          put(x, y, lamp ? bdMix(P.lamp, airAt(phi), fg * 0.55, x, y, 4) : bdMix(c, airAt(phi), fg, x, y, 6)); dep[y * BDW + x] = r; continue;
+        }
+        put(x, y, bdMix(c, airAt(phi), fogOf(r, z), x, y, 6));
+        dep[y * BDW + x] = r;
+      }
+    }
+  }
+
+  // --- the ceiling (inside the larger thing): coffered underside, a few openings to the sky ---
+  const CEIL = d.ceil, CS = 900, CW = 110;
+  const ceilOpen = (gx, gy) => { const cx = Math.floor(gx / CS), cy = Math.floor(gy / CS), bx = gx - cx * CS, by = gy - cy * CS; return bx > CW && by > CW && bdH(cx, cy, 0, 77) < 0.075; };
+  if (CEIL) {
+    for (let y = 0; y < hzRow; y++) {
+      const phi = bdPhi(y); if (phi < 0.01) continue;
+      const r = CEIL / Math.tan(phi);
+      for (let x = 0; x < BDW; x++) {
+        const th = x / BDF, gx = r * Math.cos(th), gy = r * Math.sin(th);
+        if (ceilOpen(gx, gy)) { const c = bdMix(P.shaft, airAt(phi), fogOf(r, CEIL) * 0.8, x, y, 5); put(x, y, c); dep[y * BDW + x] = r; continue; }
+        const bx = ((gx % CS) + CS) % CS, by = ((gy % CS) + CS) % CS, beam = bx < CW || by < CW;
+        const sub = ((bx % 150) < 16 || (by % 150) < 16);
+        let c = beam ? P.st[0] : sub ? P.st[0] : P.st[1];
+        if (!beam && bdH(Math.floor(gx / 150), Math.floor(gy / 150), 3, 79) < 0.12) c = P.st[2];
+        if (P.lampK && bdH(x, y, 4, 81) < 0.004 * P.lampK) c = P.lamp;
+        put(x, y, bdMix(c, airAt(phi), fogOf(r, CEIL), x, y, 6)); dep[y * BDW + x] = r;
+      }
+    }
+  }
+
+  // --- structures ---
+  const objs = [], beams = [], cablesQ = [], plumes = [];
+  const sunFace = (nAz) => { const c = Math.cos(nAz - sunA) * Math.cos(sunE); return clamp(c, 0, 1); };
+  // a tower: stacked boxes sharing a centre; each box has two visible faces split at uc
+  function tower(o) {
+    const { r } = o, ppm = BDF / r, th = o.th;
+    const yaw = o.yaw != null ? o.yaw : (rnd() - 0.5) * 1.2;
+    const nL = th + Math.PI - Math.PI / 4 + yaw, nR = th + Math.PI + Math.PI / 4 + yaw;
+    const fL = sunFace(nL), fR = sunFace(nR), uc = clamp(0.5 - yaw / 1.6, 0.12, 0.88);
+    const pl = o.pal || P.st, step = f => f > 0.55 ? 2 : f > 0.2 ? 1 : 0;   // flat faces: one palette step each
+    let iL = step(fL), iR = step(fR); if (iL === iR) { if (fL >= fR) iR = Math.max(0, iR - 1); else iL = Math.max(0, iL - 1); }
+    const floorH = o.floorH || 6, floorPx = floorH * ppm;
+    for (const b of o.boxes) {
+      const hw = Math.atan(b.w / 2 / r) * BDF, cx = bdCol(th) + (b.dx || 0) * ppm;
+      const xa = Math.floor(cx - hw), xb = Math.ceil(cx + hw);
+      for (let X = xa; X < xb; X++) {
+        const u = (X + 0.5 - (cx - hw)) / (2 * hw); if (u < 0 || u > 1) continue;
+        const x = ((X % BDW) + BDW) % BDW;
+        let top = b.z1;
+        if (o.broken) top -= (bdFbm(u * b.w / 60, 0, 0, o.seed, 3) * 0.9 + (bdH(Math.floor(u * b.w / 14), 0, 1, o.seed) < 0.25 ? 0.25 : 0)) * o.broken;
+        const ya = Math.max(0, Math.floor(bdRow(Math.atan(top / r)))), yb = Math.min(BDH - 1, Math.ceil(bdRow(Math.atan(b.z0 / r))));
+        const left = u < uc, fl = left ? fL : fR, sh = left ? 0 : 1;
+        for (let y = ya; y <= yb; y++) {
+          const i = y * BDW + x; if (dep[i] <= r) continue;
+          const z = r * Math.tan(bdPhi(y));
+          let c = pl[left ? iL : iR];
+          if (y === ya && fl > 0.25) c = P.lit;   // sunlit roof edge
+          if (Math.abs(u - uc) * 2 * hw < 0.5 && fl > 0.1) c = P.lit;   // the lit corner
+          const fu = (left ? u / uc : (u - uc) / (1 - uc)) * b.w * (left ? uc : 1 - uc), fz = z - b.z0;
+          if (floorPx >= 2.5) {   // readable: floor lines, window grid, lit windows
+            const fi = Math.floor(fz / floorH), ff = fz / floorH - fi, ww = floorH * 0.8, wi = Math.floor(fu / ww), wf = fu / ww - wi;
+            if (ff < 1 / floorPx) c = mix3(c, P.win, 0.6);
+            else if (floorPx >= 4 && ff > 0.35 && ff < 0.8 && wf > 0.25 && wf < 0.75) {
+              const h = bdH(wi, fi, o.seed, 5 + sh);
+              c = P.lampK && h < 0.32 * P.lampK ? (h < 0.04 ? P.lit : P.lamp) : P.win;
+            }
+            if (((fu / (floorH * 5)) % 1) * floorH * 5 * ppm < 1) c = mix3(c, P.win, 0.5);   // structural bays
+          } else {
+            if (((fu / (o.rib || 40)) % 1) * (o.rib || 40) * ppm < 1 && ppm * (o.rib || 40) >= 3) c = mix3(c, P.st[0], 0.6);
+            if (P.lampK && bdH(y, 0, o.seed, 12) < 0.35 && bdH(Math.floor(x / 3), y, o.seed, 11) < (o.lights || 0.06) * P.lampK * 1.4) c = P.lamp;   // lit floors: short runs along a row
+          }
+          put(x, y, bdMix(c, airAt(bdPhi(y)), fogOf(r, z), x, y, 7)); dep[i] = r;
+        }
+      }
+    }
+    for (const a of o.masts || []) {   // masts and antennas: one pixel wide
+      const X = Math.round(bdCol(th) + a.dx * ppm), x = ((X % BDW) + BDW) % BDW;
+      const ya = Math.max(0, Math.round(bdRow(Math.atan((a.z0 + a.h) / r)))), yb = Math.round(bdRow(Math.atan(a.z0 / r)));
+      for (let y = ya; y <= yb; y++) { const i = y * BDW + x; if (dep[i] <= r) continue; const z = r * Math.tan(bdPhi(y)); put(x, y, bdMix(y === ya && P.lampK ? [220, 90, 60] : P.st[0], airAt(bdPhi(y)), fogOf(r, z), x, y, 7)); dep[i] = r; }
+    }
+  }
+  // a straight beam or truss passing at perpendicular distance r0, bearing th0, height zc
+  function beam(o) {
+    const span = o.span || 1.3;
+    for (let X = Math.floor(bdCol(o.th0 - span)); X < bdCol(o.th0 + span); X++) {
+      const th = X / BDF, dth = th - o.th0, r = o.r0 / Math.cos(dth), s = o.r0 * Math.tan(dth);
+      if (o.s0 != null && (s < o.s0 || s > o.s1)) continue;
+      const x = ((X % BDW) + BDW) % BDW, ppm = BDF / r;
+      const ya = Math.max(0, Math.floor(bdRow(Math.atan((o.zc + o.t / 2) / r)))), yb = Math.min(BDH - 1, Math.ceil(bdRow(Math.atan((o.zc - o.t / 2) / r))));
+      for (let y = ya; y <= yb; y++) {
+        const i = y * BDW + x; if (dep[i] <= r) continue;
+        const z = r * Math.tan(bdPhi(y)), v = (z - (o.zc - o.t / 2)) / o.t;   // 0 bottom .. 1 top
+        let c;
+        if (o.truss && o.t * ppm > 7) {   // chords top and bottom, X-bracing between: the sky shows through
+          const ch = 0.16, q = ((s / o.t) % 1 + 1) % 1, onDiag = Math.abs(q - v) < 0.07 || Math.abs(q - (1 - v)) < 0.07;
+          if (!(v < ch || v > 1 - ch || onDiag || q < 0.05)) continue;
+        }
+        c = v > 0.85 ? (o.zc > 0 ? P.st[0] : P.st[2]) : v < 0.2 ? P.st[0] : P.st[1];
+        if (P.lampK && v < 0.25 && bdH(x, y, 3, o.seed) < 0.03 * P.lampK) c = P.lamp;
+        put(x, y, bdMix(c, airAt(bdPhi(y)), fogOf(r, z), x, y, 7)); dep[i] = r;
+      }
+    }
+  }
+  // a hanging cable between two world points, as a catenary-like sag; depth-tested, 1–3 px
+  function cable(A, B, sag, dia) {
+    const n = 900;
+    let prev = null;
+    for (let k = 0; k <= n; k++) {
+      const t = k / n, p = [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t - sag * 4 * t * (1 - t)];
+      const r = Math.hypot(p[0], p[1]), th = Math.atan2(p[1], p[0]), phi = Math.atan2(p[2], r);
+      const X = bdCol(th < 0 ? th + 2 * Math.PI : th), Y = bdRow(phi), w = Math.max(1, Math.round(dia * BDF / r));
+      const pts = [];
+      if (prev) { let dx = X - prev[0]; if (dx > BDW / 2) dx -= BDW; if (dx < -BDW / 2) dx += BDW; const m = Math.max(1, Math.ceil(Math.max(Math.abs(dx), Math.abs(Y - prev[1])))); for (let j = 1; j <= m; j++) pts.push([prev[0] + dx * j / m, prev[1] + (Y - prev[1]) * j / m]); }
+      else pts.push([X, Y]);
+      for (const [qx, qy] of pts) for (let j = 0; j < w; j++) {
+        const x = ((Math.round(qx) % BDW) + BDW) % BDW, y = Math.round(qy) + j; if (y < 0 || y >= BDH) continue;
+        const i = y * BDW + x; if (dep[i] <= r) continue;
+        put(x, y, bdMix(j === 0 && w > 1 ? P.st[2] : P.st[0], airAt(phi), fogOf(r, p[2]), x, y, 7)); dep[i] = r - 1;
+      }
+      prev = [X, Y];
+    }
+  }
+  const at = (th, r, z) => [r * Math.cos(th), r * Math.sin(th), z];
+  const ground = -d.eye;
+
+  // --- scene contents ---
+  if (scene === 'empty') {
+    // a far range of hills, then a handful of ruined stumps on the flat
+    for (let k = 0; k < 30; k++) { const th = k / 30 * Math.PI * 2 + rnd() * 0.1, h = 600 + bdFbm(k * 0.4, 0, 0, 3, 2) * 1600; objs.push({ th, r: 95000 + rnd() * 20000, boxes: [{ w: 18000 + rnd() * 14000, z0: ground - 50, z1: ground + h }], broken: h * 0.7, seed: 200 + k, pal: [P.st[1], P.st[2], P.st[2]], lights: 0, rib: 1e9, yaw: 0 }); }
+    for (let k = 0; k < 7; k++) { const th = rnd() * Math.PI * 2, r = 8000 + rnd() * 26000, h = 400 + rnd() * 1600, w = 400 + rnd() * 900; objs.push({ th, r, boxes: [{ w, z0: ground, z1: ground + h }], broken: h * (0.25 + rnd() * 0.4), seed: 300 + k, lights: 0.004, rib: 30 }); }
+    objs.push({ th: 0.6, r: 5200, boxes: [{ w: 1100, z0: ground, z1: ground + 2300 }, { w: 500, z0: ground + 1200, z1: ground + 2900, dx: -200 }], broken: 900, seed: 333, lights: 0.003, rib: 40, floorH: 24 });
+    // the fallen one: lying on its side, ribs open to the sky
+    beams.push({ th0: 2.2, r0: 11000, zc: ground + 160, t: 320, truss: 1, s0: -4200, s1: 1400, seed: 5 });
+  } else if (scene === 'clouds') {
+    for (let k = 0; k < 16; k++) {
+      const th = rnd() * Math.PI * 2, r = 9000 + rnd() * 60000, w = 500 + rnd() * 1400, top = -d.deck + 500 + rnd() * 3200;
+      const boxes = [{ w, z0: -d.deck - 50, z1: top }]; if (rnd() < 0.6) boxes.push({ w: w * 0.55, z0: top - 1, z1: top + 200 + rnd() * 700 });
+      objs.push({ th, r, boxes, seed: 400 + k, lights: 0.05, masts: rnd() < 0.5 ? [{ dx: 0, z0: boxes[boxes.length - 1].z1, h: 80 + rnd() * 150 }] : [] });
+    }
+  } else if (scene === 'horizon' || scene === 'near') {
+    const ring = (n, r0, r1, h0, h1, w0, w1, seed) => {
+      for (let k = 0; k < n; k++) {
+        const th = (k + rnd() * 0.8) / n * Math.PI * 2, r = r0 + rnd() * (r1 - r0), w = w0 + rnd() * (w1 - w0), H = h0 + rnd() * (h1 - h0);
+        const boxes = [{ w, z0: ground - 200, z1: ground + H }];
+        let zz = ground + H, ww = w;
+        while (rnd() < 0.55 && ww > w * 0.3) { ww *= 0.55 + rnd() * 0.3; const dz = 60 + rnd() * H * 0.35; boxes.push({ w: ww, z0: zz - 1, z1: zz + dz, dx: (rnd() - 0.5) * (w - ww) * 0.6 }); zz += dz; }
+        if (rnd() < 0.35) boxes.push({ w: w * 0.4, z0: ground + H * 0.3, z1: ground + H * 0.75, dx: w * (rnd() < 0.5 ? -0.6 : 0.6) });
+        // accretions: pods, decks and cores grown onto the sides over centuries
+        for (let j = 0, nj = Math.floor(rnd() * 6); j < nj; j++) { const z0 = ground + H * (0.1 + rnd() * 0.8), side = rnd() < 0.5 ? -1 : 1, ww2 = w * (0.12 + rnd() * 0.3); boxes.push({ w: ww2, z0, z1: z0 + H * (0.03 + rnd() * (rnd() < 0.3 ? 0.5 : 0.08)), dx: side * (w / 2 + ww2 * 0.3) }); }
+        const tint = rnd(), pal = P.st.map(c => mix3(c, tint < 0.5 ? P.win : P.lit, Math.abs(tint - 0.5) * 0.35));
+        const o = { th, r, boxes, pal, seed: seed + k, lights: 0.07, floorH: r < 8000 ? 24 : 6, broken: rnd() < 0.3 ? H * (0.06 + rnd() * 0.12) : 0, masts: rnd() < 0.6 ? [{ dx: (rnd() - 0.5) * ww * 0.6, z0: zz, h: 40 + rnd() * 160 }] : [] };
+        objs.push(o);
+        if (rnd() < 0.2) plumes.push({ th, r, z: zz, seed: seed + k });
+      }
+    };
+    if (scene === 'horizon') { ring(30, 45000, 80000, 2500, 6500, 3000, 8000, 500); ring(24, 22000, 42000, 1500, 4500, 1500, 4000, 600); ring(13, 9000, 19000, 900, 3000, 800, 2500, 700); }
+    else { ring(26, 30000, 70000, 2000, 6000, 2500, 7000, 500); ring(9, 2600, 6500, 1300, 3200, 500, 1300, 800); }
+    // great cables slung between neighbours
+    const near = objs.filter(o => o.r < (scene === 'near' ? 7000 : 21000)).sort((a, b) => a.th - b.th);
+    for (let k = 0; k < near.length; k++) {
+      const a = near[k], b = near[(k + 1) % near.length], dth = Math.abs(((b.th - a.th + 3 * Math.PI) % (2 * Math.PI)) - Math.PI);
+      const A0 = at(a.th, a.r, 0), B0 = at(b.th, b.r, 0), gap = Math.hypot(A0[0] - B0[0], A0[1] - B0[1]);
+      if (dth > 1.1 || gap > (scene === 'near' ? 7000 : 13000) || rnd() < 0.3) continue;
+      const ha = a.boxes[0].z1 - ground, hb = b.boxes[0].z1 - ground;
+      const za = ground + ha * (0.45 + rnd() * 0.4), zb = ground + hb * (0.45 + rnd() * 0.4), sag = gap * (0.05 + rnd() * 0.08);
+      const nn = scene === 'near' ? 2 + Math.floor(rnd() * 3) : 1 + Math.floor(rnd() * 2);
+      if (scene === 'near' && gap < 5000 && rnd() < 0.6) { const zb2 = ground + Math.min(ha, hb) * (0.2 + rnd() * 0.5); cablesQ.push([at(a.th, a.r, zb2), at(b.th, b.r, zb2), 0, 50 + rnd() * 60]); }
+      for (let j = 0; j < nn; j++) cablesQ.push([at(a.th, a.r, za - j * 40), at(b.th, b.r, zb - j * 40), sag + j * 60, scene === 'near' ? 14 : 24]);
+    }
+  } else if (scene === 'envelope') {
+    // colossal pillars from the abyss to the ceiling, with things grown onto them
+    for (let k = 0; k < 34; k++) {
+      const th = rnd() * Math.PI * 2, r = 1300 + Math.pow(rnd(), 1.4) * 14000, w = 260 + rnd() * 900;
+      const boxes = [{ w, z0: -9000, z1: CEIL + 50 }];
+      for (let j = 0; j < 5; j++) if (rnd() < 0.7) { const z0 = -2500 + rnd() * 4200; boxes.push({ w: w * (0.25 + rnd() * 0.5), z0, z1: z0 + 60 + rnd() * 400, dx: w * (rnd() < 0.5 ? -0.55 : 0.55) }); }
+      objs.push({ th, r, boxes, seed: 900 + k, lights: tod === 'day' ? 0.004 : 0.015, floorH: 14, rib: 70 });
+    }
+    // crossing beams and trusses at many heights
+    for (let k = 0; k < 14; k++) beams.push({ th0: rnd() * Math.PI * 2, r0: 1500 + rnd() * 9000, zc: -1800 + rnd() * 4000, t: 40 + rnd() * 140, truss: rnd() < 0.6, span: 1.45, seed: 50 + k });
+    // cables slung pillar to pillar, sagging into the dark
+    const near = objs.filter(o => o.r < 9000);
+    for (let k = 0; k < 26; k++) {
+      const a = near[Math.floor(rnd() * near.length)], b = near[Math.floor(rnd() * near.length)]; if (a === b) continue;
+      const za = -600 + rnd() * 2600, zb = za + (rnd() - 0.5) * 600;
+      cablesQ.push([at(a.th, a.r, za), at(b.th, b.r, zb), 200 + rnd() * 900, 3 + rnd() * 10]);
+    }
+  }
+  objs.sort((a, b) => a.r - b.r);   // near first: the depth test keeps the nearer pixel
+  for (const o of objs) tower(o);
+  for (const b of beams) beam(b);
+  for (const c of cablesQ) cable(...c);
+
+  // --- smoke from a few stacks: soft columns leaning downwind ---
+  for (const p of plumes) {
+    const ppm = BDF / p.r;
+    for (let k = 0; k < 220; k++) {
+      const hz = k * 9, wob = bdN(k * 0.05, 0, 0, p.seed) - 0.5;
+      const cx = bdCol(p.th) + (Math.pow(hz, 0.85) * 0.9 + wob * 40) * ppm, cz = p.z + hz, rad = (12 + hz * 0.22) * ppm;
+      const cy = bdRow(Math.atan(cz / p.r)), dens = Math.max(0, 1 - k / 220) * 0.8;
+      for (let y = Math.floor(cy - rad); y <= cy + rad; y++) for (let X = Math.floor(cx - rad); X <= cx + rad; X++) {
+        if ((X - cx) ** 2 + (y - cy) ** 2 > rad * rad || y < 0 || y >= BDH) continue;
+        const x = ((X % BDW) + BDW) % BDW, i = y * BDW + x; if (dep[i] < p.r) continue;
+        const nn = bdN(X * 0.25, y * 0.25, k * 0.1, p.seed + 1);
+        if (nn * dens < 0.32) continue;
+        put(x, y, bdMix(get(x, y), mix3(P.fog, P.st[2], 0.4), 0.55, x, y, 3));
+      }
+    }
+  }
+
+  // --- light shafts from the ceiling's openings (inside only): marched at quarter size ---
+  if (CEIL) {
+    const qw = BDW / 4, qh = BDH / 4, L = new Float32Array(qw * qh);
+    const sl = [Math.cos(sunA) * 0.25, Math.sin(sunA) * 0.25];   // shafts lean a little with the sun
+    for (let j = 0; j < qh; j++) {
+      const phi = bdPhi(j * 4 + 1.5), cp = Math.cos(phi), sp = Math.sin(phi);
+      for (let i = 0; i < qw; i++) {
+        const th = (i * 4 + 1.5) / BDF, dx = cp * Math.cos(th), dy = cp * Math.sin(th);
+        const dmax = Math.min(dep[(j * 4 + 1) * BDW + i * 4 + 1], 16000);
+        let acc = 0;
+        for (let s = 150; s < dmax; s += 120 + s * 0.04) {
+          const z = sp * s; if (z > CEIL || z < -2200) continue;
+          const up = CEIL - z;
+          if (ceilOpen(dx * s + sl[0] * up, dy * s + sl[1] * up)) acc += 0.022 * Math.exp(-s / 6000) * Math.max(0, 1 - up / 4800);
+        }
+        L[j * qw + i] = acc;
+      }
+    }
+    for (let y = 0; y < BDH; y++) for (let x = 0; x < BDW; x++) {
+      const fx = clamp((x - 1.5) / 4, 0, qw - 1.001), fy = clamp((y - 1.5) / 4, 0, qh - 1.001), ix = Math.floor(fx), iy = Math.floor(fy), ax = fx - ix, ay = fy - iy;
+      const ix1 = (ix + 1) % qw;
+      const v = (L[iy * qw + ix] * (1 - ax) + L[iy * qw + ix1] * ax) * (1 - ay) + (L[(iy + 1) * qw + ix] * (1 - ax) + L[(iy + 1) * qw + ix1] * ax) * ay;
+      if (v > 0.02) put(x, y, bdMix(get(x, y), P.shaft, Math.min(0.7, v), x, y, 5));
+    }
+  }
+
+  const c = mk(BDW, BDH); c.getContext('2d').putImageData(img, 0, 0);
+  BD.ms = Math.round(performance.now() - t0);
+  return { c, px, dep };
+}
+
+
+const SHOTS = {"off_2d_top_day":"media/a7fbd64fd5f4.webp","off_2d_top_night":"media/a6ffc362527f.webp","empty_2d_top_day":"media/0aad40e9bc9c.webp","empty_2d_top_night":"media/609434dafb9a.webp","clouds_2d_top_day":"media/567c02eda7fd.webp","clouds_2d_top_night":"media/89261941db4c.webp","horizon_2d_top_day":"media/eba537ba4d2b.webp","horizon_2d_top_night":"media/6ef49df38d3f.webp","near_2d_top_day":"media/29ba369e1b8a.webp","near_2d_top_night":"media/03bcc097ebf6.webp","envelope_2d_top_day":"media/752129793b12.webp","envelope_2d_top_night":"media/bc276bd6a69e.webp"};
+for (const i of document.querySelectorAll("img[id^=img-]")) SHOTS[i.id.slice(4) + "_2d_top_dusk"] = i.src;
+
+// ---- viewer ----
+const SC = ['empty', 'clouds', 'horizon', 'near', 'envelope'], TODS = ['dusk', 'day', 'night'];
+const st = { scene: 'horizon', tod: 'dusk', yaw: 3.93, pitch: 0.06, auto: !matchMedia('(prefers-reduced-motion: reduce)').matches, pano: null };
+const cache = new Map(), view = document.getElementById('view'), vg = view.getContext('2d'), stage = document.getElementById('stage');
+const mapc = document.getElementById('mapc'), mg = mapc.getContext('2d'), mark = document.getElementById('mark');
+function seg(el, items, names, key) {
+  for (const it of items) {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = names[it]; b.id = key + '-' + it;
+    b.setAttribute('aria-pressed', st[key] === it); b.onclick = () => { st[key] = it; for (const c of el.children) c.setAttribute('aria-pressed', c === b); load(); };
+    el.appendChild(b);
+  }
+}
+seg(document.getElementById('sceneSeg'), SC, BD_NAMES, 'scene');
+seg(document.getElementById('todSeg'), TODS, { dusk: 'Dusk', day: 'Day', night: 'Night' }, 'tod');
+function load() {
+  const k = st.scene + '|' + st.tod;
+  if (cache.has(k)) { st.pano = cache.get(k); drawMap(); draw(); return; }
+  document.getElementById('busy').hidden = false;
+  setTimeout(() => {
+    const p = bdPaint(st.scene, st.tod); cache.set(k, p);
+    document.getElementById('paintMs').textContent = 'painted in ' + BD.ms + ' ms';
+    document.getElementById('busy').hidden = true; st.pano = p; drawMap(); draw();
+  }, 30);
+}
+function drawMap() { mapc.width = BDW / 2; mapc.height = BDH / 2; mg.imageSmoothingEnabled = true; mg.drawImage(st.pano.c, 0, 0, BDW / 2, BDH / 2); }
+function draw() {
+  if (!st.pano) return;
+  const r = stage.getBoundingClientRect(), w = Math.max(2, Math.floor(r.width / 2)), h = Math.max(2, Math.floor(r.height / 2));
+  if (view.width !== w || view.height !== h) { view.width = w; view.height = h; }
+  const img = vg.createImageData(w, h), o = img.data, src = st.pano.px, f = BDF;
+  const cy = Math.cos(st.yaw), sy = Math.sin(st.yaw), cp = Math.cos(st.pitch), sp = Math.sin(st.pitch);
+  const F = [cp * cy, cp * sy, sp], R = [-sy, cy, 0], U = [-sp * cy, -sp * sy, cp];
+  for (let y = 0; y < h; y++) {
+    const v = h / 2 - y, bx = F[0] * f + U[0] * v, by = F[1] * f + U[1] * v, bz = F[2] * f + U[2] * v;
+    for (let x = 0; x < w; x++) {
+      const u = x - w / 2, dx = bx + R[0] * u, dy = by + R[1] * u, dz = bz + R[2] * u;
+      let th = Math.atan2(dy, dx); if (th < 0) th += 2 * Math.PI;
+      const px = Math.min(BDW - 1, Math.floor(th * BDF)), py = clamp(Math.floor(bdRow(Math.atan2(dz, Math.hypot(dx, dy))) + 0.5), 0, BDH - 1);
+      const si = (py * BDW + px) * 4, di = (y * w + x) * 4;
+      o[di] = src[si]; o[di + 1] = src[si + 1]; o[di + 2] = src[si + 2]; o[di + 3] = 255;
+    }
+  }
+  vg.putImageData(img, 0, 0);
+  const hf = Math.atan(w / 2 / f), vf = Math.atan(h / 2 / f), mw = mapc.getBoundingClientRect().width;
+  const yw = ((st.yaw % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  mark.style.left = ((yw - hf) / (2 * Math.PI) * mw) + 'px'; mark.style.width = (2 * hf / (2 * Math.PI) * mw) + 'px';
+  mark.style.top = ((0.5 - (st.pitch + vf) / Math.PI) * 100) + '%'; mark.style.bottom = ((0.5 + (st.pitch - vf) / Math.PI) * 100) + '%';
+  document.getElementById('hud').textContent = `${BD_NAMES[st.scene]} · ${st.tod} · heading ${Math.round(yw * 180 / Math.PI)}° · pitch ${Math.round(st.pitch * 180 / Math.PI)}°`;
+}
+let drag = null;
+stage.addEventListener('pointerdown', e => { drag = [e.clientX, e.clientY]; st.auto = false; stage.setPointerCapture(e.pointerId); });
+stage.addEventListener('pointermove', e => {
+  if (!drag) return;
+  st.yaw -= (e.clientX - drag[0]) / 2 / BDF; st.pitch = clamp(st.pitch + (e.clientY - drag[1]) / 2 / BDF, -1.45, 1.45);
+  drag = [e.clientX, e.clientY]; draw();
+});
+stage.addEventListener('pointerup', () => { drag = null; });
+stage.addEventListener('pointercancel', () => { drag = null; });
+addEventListener('resize', draw);
+let last = performance.now();
+(function tick(t) { const dt = Math.min(0.05, (t - last) / 1000); last = t; if (st.auto && st.pano) { st.yaw += dt * 0.05; draw(); } requestAnimationFrame(tick); })(last);
+load();
+// ---- plates: time-of-day switch on the 2D figure, click any shot to see it full size ----
+for (const t of document.querySelectorAll('.tod')) for (const b of t.querySelectorAll('button')) b.onclick = () => {
+  const img = document.getElementById(t.dataset.img); img.src = SHOTS[b.dataset.k]; img.alt = b.dataset.alt;
+  for (const c of t.children) c.setAttribute('aria-pressed', c === b);
+};
+for (const b of document.querySelectorAll('.shots button')) b.onclick = () => {
+  const lb = document.createElement('div'); lb.className = 'lb'; lb.tabIndex = 0;
+  const im = document.createElement('img'); im.src = b.querySelector('img').src; im.alt = b.querySelector('img').alt; lb.appendChild(im);
+  const close = () => lb.remove(); lb.onclick = close; lb.onkeydown = e => { if (e.key === 'Escape') close(); };
+  document.body.appendChild(lb); lb.focus();
+};
+</script>
+
+</body></html>

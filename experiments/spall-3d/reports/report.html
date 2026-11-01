@@ -1,0 +1,273 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0">
+<title>Spall in 3D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: one reading column on a drawing-board ground; figures break wider; the game's amber marks the cut and the verdicts. */
+:root {
+  --ground: #f1ece2; --sheet: #fbf8f2; --ink: #1d1a16; --dim: #6a6256; --rule: #d8cfbf;
+  --amber: #b9771a; --amber-soft: #f3dfb8; --steel: #4d6670; --good: #3f7a4f; --warn: #a2551f;
+  --display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --ground: #121110; --sheet: #1a1917; --ink: #e9e2d3; --dim: #a19784; --rule: #34302a;
+  --amber: #e8a83c; --amber-soft: #3a2c14; --steel: #8fb0bb; --good: #7cc08c; --warn: #e28a55; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --ground: #121110; --sheet: #1a1917; --ink: #e9e2d3; --dim: #a19784; --rule: #34302a;
+  --amber: #e8a83c; --amber-soft: #3a2c14; --steel: #8fb0bb; --good: #7cc08c; --warn: #e28a55; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--ground); color: var(--ink); font: 16px/1.6 var(--body); margin: 0 }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 80px }
+.col { max-width: 68ch }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.15; margin: 0 }
+h1 { font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 700; letter-spacing: -0.01em }
+h2 { font-size: 1.75rem; font-weight: 700; margin-top: 64px; padding-top: 16px; border-top: 2px solid var(--ink) }
+h3 { font-size: 1.15rem; font-weight: 600; margin-top: 28px }
+p { margin: 12px 0 }
+a { color: var(--steel) }
+.eyebrow { font: 600 12px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber) }
+.lede { font-size: 1.2rem; line-height: 1.5; margin-top: 16px; max-width: 60ch }
+.meta { font: 12px/1.5 var(--mono); color: var(--dim); margin-top: 16px }
+code, kbd, .mono { font-family: var(--mono); font-size: 0.88em }
+kbd { border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 3px; padding: 0 4px; background: var(--sheet) }
+.verdict { margin-top: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px }
+.verdict > div { background: var(--sheet); border: 1px solid var(--rule); border-top: 3px solid var(--amber); padding: 14px 16px; min-width: 0 }
+.verdict b { display: block; font: 600 12px/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); margin-bottom: 6px }
+.verdict p { margin: 0; font-size: 0.95rem; line-height: 1.5 }
+figure { margin: 24px 0; min-width: 0 }
+figcaption { font-size: 0.88rem; color: var(--dim); margin-top: 8px; max-width: 72ch }
+figcaption b { color: var(--ink); font-weight: 600 }
+.px { image-rendering: pixelated; image-rendering: crisp-edges; display: block; width: 100%; height: auto; background: #000 }
+video { display: block; width: 100%; max-width: 100%; height: auto; background: #000 }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px }
+.grid2 figure { margin: 0 }
+.tag { font: 600 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); display: block; margin-bottom: 6px }
+/* the 2D / 3D compare */
+.cmp { position: relative; overflow: hidden; border: 1px solid var(--rule); background: #000; max-width: 100% }
+.cmp img { display: block; width: 100%; height: auto; image-rendering: pixelated }
+.cmp .top { position: absolute; inset: 0; clip-path: inset(0 0 0 var(--cut, 50%)) }
+.cmp .bar { position: absolute; top: 0; bottom: 0; left: var(--cut, 50%); width: 2px; background: var(--amber); pointer-events: none }
+.cmp .lab { position: absolute; top: 8px; font: 600 11px/1 var(--mono); background: rgba(0,0,0,.72); color: #ece2cc; padding: 4px 6px; letter-spacing: 0.06em }
+.cmp .lab.l { left: 8px } .cmp .lab.r { right: 8px }
+.cmpctl { display: flex; gap: 12px; align-items: center; margin-top: 8px; font: 12px var(--mono); color: var(--dim); flex-wrap: wrap }
+.cmpctl input[type=range] { flex: 1 1 200px; accent-color: var(--amber) }
+.cmpctl button { font: 600 12px var(--mono); background: var(--sheet); color: var(--ink); border: 1px solid var(--rule); padding: 4px 10px; border-radius: 3px; cursor: pointer }
+.cmpctl button:focus-visible, .cmpctl input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px }
+/* tables */
+.tbl { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); background: var(--sheet) }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 0.9rem }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--rule) }
+th { font: 600 11px/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--dim); background: var(--ground) }
+tr:last-child td { border-bottom: 0 }
+td.pick { box-shadow: inset 3px 0 0 var(--amber) }
+.r { font: 600 12px/1 var(--mono); white-space: nowrap }
+.r.g { color: var(--good) } .r.w { color: var(--warn) } .r.n { color: var(--dim) }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 20px 0 }
+.stats div { border-left: 2px solid var(--amber); padding: 2px 12px; min-width: 0 }
+.stats b { display: block; font: 700 1.6rem/1.1 var(--display); font-variant-numeric: tabular-nums }
+.stats span { font-size: 0.85rem; color: var(--dim) }
+ul, ol { padding-left: 22px } li { margin: 6px 0 }
+.steps li::marker { font-family: var(--mono); color: var(--amber); font-weight: 600 }
+.note { background: var(--amber-soft); padding: 12px 16px; border-radius: 2px; font-size: 0.95rem }
+.keys { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; font-size: 0.92rem; margin: 12px 0 }
+.keys dt { font-family: var(--mono); font-size: 0.85rem; white-space: nowrap } .keys dd { margin: 0; min-width: 0 }
+pre { background: var(--sheet); border: 1px solid var(--rule); padding: 12px 14px; overflow-x: auto; font: 13px/1.5 var(--mono) }
+.refs li { font-size: 0.92rem }
+@media (prefers-reduced-motion: reduce) { video { animation: none } }
+</style>
+
+<div class="wrap">
+<header class="col" style="max-width:none">
+  <div class="eyebrow">Study · Spall · 28 Oct 2026</div>
+  <h1>Spall in 3D</h1>
+  <p class="lede">Can the arcology go to a free camera (orbit, tilt, smooth zoom) and still look like the game? Yes. A working prototype draws today's world, sprites, cables and lighting in WebGL. At the default angle you can hardly tell it from the 2D renderer, and you can turn it to any angle and lay cables from there.</p>
+  <p class="meta">Prototype: <code>experiments/spall-3d/</code> (press <kbd>3</kbd> to switch views) · one new module, 766 lines · nothing in <code>stratum-wires</code> changed</p>
+  <div class="verdict">
+    <div><b>Looks the same at rest</b><p>At the iso angle the 3D renderer redraws the 2D frame: 74% of pixels within 6/255, 93% within 32/255. The rest is overlays not ported yet.</p></div>
+    <div><b>Free angles hold up</b><p>Every angle in between still reads as Spall: crisp pixels, the same palette, the same cables. Edges shimmer while turning; nothing creeps while panning.</p></div>
+    <div><b>Cable work gets easier</b><p>The existing cable tools (grab, lay, tie, slack, girders, posts) run through the 3D camera unchanged. Low angles along a void are now possible.</p></div>
+    <div><b>Recommendation</b><p>Adopt this approach: sprites stay the art source, planes carry them in 3D. Iso stays the resting view; free orbit is a working mode.</p></div>
+  </div>
+</header>
+
+<h2>Same frame, two renderers</h2>
+<div class="col"><p>Drag the divider. The left side is the current canvas renderer. The right side is the WebGL renderer at the same camera, with live lighting on in both and light shafts off.</p></div>
+<figure>
+  <div class="cmp" id="cmp" style="--cut:50%">
+    <img src="media/06415cb4e6a5.webp" alt="The 2D canvas renderer: L9 cut through the megastructure, cables crossing the voids" width="550" height="420">
+    <img class="top" src="media/80eae8db423c.webp" alt="The WebGL renderer at the same camera" width="550" height="420">
+    <div class="bar"></div><span class="lab l">2D canvas</span><span class="lab r">3D WebGL</span>
+  </div>
+  <div class="cmpctl"><label for="cut">2D</label><input id="cut" type="range" min="0" max="100" value="50" aria-label="Divider between the 2D and 3D renders"><label for="cut">3D</label><button id="flick" type="button">Flicker</button></div>
+  <figcaption><b>Where they differ:</b> the lift cars, people and the light-well beam are overlays drawn by the 2D renderer that the 3D view doesn't draw yet. Cut faces edge slightly differently, because 2D sprites overlap their neighbours in painter's order and 3D faces stop at their true edges. Shadows in the canopy are a little darker in 3D.</figcaption>
+</figure>
+<div class="grid2">
+  <figure><span class="tag">2D · art pixels ×4</span><img class="px" src="media/7f30be8d1c09.webp" alt="Close crop of the 2D renderer" width="120" height="80"></figure>
+  <figure><span class="tag">3D · art pixels ×4</span><img class="px" src="media/9c27d3e49cba.webp" alt="Close crop of the 3D renderer at the same spot" width="120" height="80"></figure>
+</div>
+<div class="stats">
+  <div><b>74%</b><span>of pixels within 6/255 of the 2D frame</span></div>
+  <div><b>93%</b><span>within 32/255</span></div>
+  <div><b>4–6 ms</b><span>GPU per frame at 554 × 434 art px</span></div>
+  <div><b>~14 ms</b><span>CPU for the cable pass (readback + 2D cable drawing)</span></div>
+</div>
+
+<h2>Turning it</h2>
+<div class="col"><p>Orbit from the default view through 90°, tilt up to 65°, then a smooth zoom from 2× to 4.8×. These frames are captured straight from the renderer. Watch the edges while it turns: that crawl is the one cost of free rotation, and every project that tries this hits it.</p></div>
+<figure>
+  <video src="media/4fc87f2c56cc.mp4" autoplay muted loop playsinline controls aria-label="Orbit, tilt and zoom of the 3D view"></video>
+  <figcaption><b>Orbit, tilt, zoom.</b> 800 × 600 at 30 fps. The zoom sweep uses fractional scales with the sharp filter, so pixels stay square.</figcaption>
+</figure>
+<div class="grid2">
+  <figure><span class="tag">azimuth 25° · tilt 30°</span><img class="px" src="media/a143e54879ca.webp" alt="The arcology turned 20° off the iso view" width="550" height="420"></figure>
+  <figure><span class="tag">azimuth 25° · tilt 45°</span><img class="px" src="media/ac152afd0a52.webp" alt="Tilted to 45 degrees" width="550" height="420"></figure>
+  <figure><span class="tag">azimuth 45° · tilt 62°</span><img class="px" src="media/fd01664ebeb2.webp" alt="Tilted to 62 degrees, closer to plan" width="550" height="420"></figure>
+  <figure><span class="tag">top-down</span><img class="px" src="media/0b602512e663.webp" alt="Straight down: the voids read as a plan" width="550" height="420"></figure>
+  <figure><span class="tag">azimuth 0° · elevation view</span><img class="px" src="media/df1833d55855.webp" alt="Looking straight along the y axis" width="550" height="420"></figure>
+  <figure><span class="tag">azimuth −20°</span><img class="px" src="media/ebc3b097e61a.webp" alt="Turned the other way" width="550" height="420"></figure>
+</div>
+
+<h2>The case you asked about: hanging things</h2>
+<div class="col"><p>This is the view the four rotations can't give you. The camera sits low and looks along a void at 16° of tilt, so you can see the drape of each cable and which ledge it lands on.</p></div>
+<figure><span class="tag">azimuth 10° · tilt 16° · zoom 3×</span><img class="px" src="media/f407550a1730.webp" alt="A low view along a void with cables draping between ledges" width="366" height="280"></figure>
+<figure>
+  <video src="media/8e49090ca394.mp4" autoplay muted loop playsinline controls aria-label="Laying a power cable across a void in the 3D view"></video>
+  <figcaption><b>Laying a cable from a low angle.</b> The cable tool is selected; press on the spur deck, drag across the void, release on the far balcony. The cable anchors and drapes. Everything here is the existing 2D tool code: <code>wireDown</code>, <code>wireMove</code> and <code>wireUp</code> run with the 3D camera swapped in. Hovering also works from any angle; the cell under the pointer comes straight from the depth buffer.</figcaption>
+</figure>
+
+<h2>How the prototype works</h2>
+<div class="col">
+<p>The plan was to avoid redrawing anything. Every sprite in Spall is painted in face coordinates (left face, right face, top diamond), so its pixels already know where they sit on a box. The renderer only has to put boxes where the cells are and project each sprite back onto them.</p>
+<ol class="steps">
+  <li><b>Cells become planes.</b> Each cell type becomes a few axis-aligned planes: a box for buildings and cores, a slab for streets and decks, four lattice sides for trusses and frames, edge planes for railings, and an inset box for a capsule inside its cage. Faces shared by two solid cells are dropped.</li>
+  <li><b>Each plane is painted by its own sprite.</b> A point on a plane shows the sprite pixel it covers in the default view. At that view every fragment lands on its own pixel, so the 2D frame comes back pixel for pixel wherever the geometry covers the sprite. Transparent pixels drop out, which is how trusses, cages and railings stay open.</li>
+  <li><b>Back faces mirror.</b> A plane seen from −x or −y shows the +x or +y face's pixels, mirrored. That is what the 2D game draws when you turn it 180°, so all four classic views match their 2D versions.</li>
+  <li><b>Soft things face the camera.</b> Trees, masts, risers, tanks and the crane are camera-facing sprites standing on their slabs. The slab art and the standing art are separated by subtracting the floor sprite.</li>
+  <li><b>Cables are drawn by the 2D code.</b> The cable renderer already projects true 3D points with <code>projIso</code>. Swap in the 3D camera, read back a depth target, and it draws the same pixel tubes, ties, sockets, girders and birds, correctly occluded.</li>
+  <li><b>Pixel-locked output.</b> The scene renders at one art pixel per pixel into a small target. The camera snaps to whole art pixels and the leftover fraction shifts the final upscale, so panning is smooth with no pixel creep. Zoom is any real number: the target is scaled up with square pixels and a one-pixel blend at the seams.</li>
+  <li><b>Lighting moves to the GPU.</b> Sky light, occlusion, sun and shadow, and mist run per pixel in the shader, from the same light volumes as 2D, uploaded as 3D textures.</li>
+</ol>
+</div>
+
+<h3>Two texel modes, and why projected wins</h3>
+<div class="col"><p>Iso pixel art lives on the screen grid, not on the surface. Projected mode keeps it there: exact at the iso view, but from above a top face shows its pixels as small diamonds. The alternative gives each face its own square texel grid (8 across a cell, 12 up a level), like Minecraft. It looked cleaner on paper. In practice it loses detail at the iso view (deck rails, roof edges) and isn't noticeably better off-angle.</p></div>
+<div class="grid2">
+  <figure><span class="tag">projected (default) · zoom 4×</span><img class="px" src="media/b91f37d7c275.webp" alt="Projected texels seen at 22 degrees azimuth, 48 degrees tilt" width="100" height="75"></figure>
+  <figure><span class="tag">face texels · same view</span><img class="px" src="media/4c6c0c94e44e.webp" alt="Face-grid texels at the same view" width="100" height="75"></figure>
+</div>
+
+<h3>Smooth zoom</h3>
+<div class="col"><p>Between whole-number scales, plain nearest-neighbour scaling makes some art pixels one screen pixel wider than others (left). The sharp filter keeps every art pixel the same size and blends only the one-pixel seam between them (right). At whole-number scales the two are identical.</p></div>
+<div class="grid2">
+  <figure><span class="tag">1.5× · nearest</span><img class="px" src="media/7c4063489e78.webp" alt="Zoom 1.5 with nearest-neighbour scaling: uneven pixel widths" width="260" height="200"></figure>
+  <figure><span class="tag">1.5× · sharp</span><img class="px" src="media/8a8b5cf14223.webp" alt="Zoom 1.5 with the sharp filter: even pixels" width="260" height="200"></figure>
+</div>
+
+<h2>What breaks off-angle</h2>
+<div class="col">
+<p>All of these come from the art being drawn for one view. None blocks the move; each has a known fix if it starts to bother us.</p>
+<ul>
+  <li><b>Rotation shimmer.</b> Edges and fine detail crawl while the camera turns. Nobody has solved this for orthographic pixel art (see Research). Mitigations: ease back to an iso view on release (built in, <kbd>O</kbd>), or snap rotation in steps.</li>
+  <li><b>Roof props are decals.</b> AC units, vents and rooftop boxes are painted into the top diamond, so seen from above they flatten into stickers. Fix: give roof props their own small boxes.</li>
+  <li><b>Left and right swap in the side views.</b> At the two 90° views, window-side choices (capsule windows on the "left" face) land on the other wall. Hardly visible.</li>
+  <li><b>Billboards turn with you.</b> Trees, the crane and masts always face the camera. Trees and masts get away with it; the crane does not. Fix: make the crane a few boxes.</li>
+  <li><b>Top faces from above.</b> Projected top faces show diamond-shaped pixels from steep angles. Water and decks show it most.</li>
+</ul>
+<p><b>Not ported yet:</b> light shafts, bloom, the well beam, steam, lift cars and people, water shimmer, window flicker, ghost-above outlines, the cut outline and label, build ghosts and drones, and building or demolishing (those still pick cells through the 2D path).</p>
+</div>
+
+<h2>The options</h2>
+<div class="col"><p>Six ways to get a free camera without losing the look, rated for Spall specifically. The prototype is option C.</p></div>
+<div class="tbl"><table>
+  <thead><tr><th>Approach</th><th>Looks like today at rest</th><th>Free orbit</th><th>Art cost</th><th>Engine cost</th><th>Fit for Spall</th></tr></thead>
+  <tbody>
+  <tr><td><b>A · Stay 2D, more angles</b><br>Pre-draw each sprite at 8 or 16 headings (RollerCoaster Tycoon, SimCity 4)</td><td><span class="r g">exact</span></td><td><span class="r w">steps only</span></td><td>Every sprite redrawn per angle; procedural sprites would need a 3D source anyway</td><td>Low</td><td><span class="r n">no</span> Still steps, and angles multiply the art</td></tr>
+  <tr><td><b>B · Billboards in 3D</b><br>Today's sprites on camera-facing quads (HD-2D, Don't Starve)</td><td><span class="r g">exact</span></td><td><span class="r w">buildings break</span></td><td>None</td><td>Low</td><td><span class="r n">partly</span> Right for trees and masts, wrong for architecture</td></tr>
+  <tr><td class="pick"><b>C · Sprites projected onto planes</b><br>The prototype</td><td><span class="r g">near-exact</span></td><td><span class="r g">yes</span>, shimmers while turning</td><td>None to start; small boxes for props over time</td><td>Medium; the prototype took one session</td><td><span class="r g">yes</span> Keeps the procedural sprites as the single art source</td></tr>
+  <tr><td><b>D · Native low-poly + hand-painted textures</b><br>t3ssel8r, SimCity 4's large buildings</td><td><span class="r w">close if texels are 1:1</span></td><td><span class="r g">yes</span>, shimmers while turning</td><td>All art redone as meshes and textures</td><td>Medium</td><td><span class="r n">later</span> Where C goes as kit pieces need real shapes</td></tr>
+  <tr><td><b>E · Voxels, one voxel per pixel</b><br>Fez's trixels, Voxel Tycoon</td><td><span class="r w">close, blockier</span></td><td><span class="r g">90° clean</span>, free orbit shimmers</td><td>All art re-authored in voxels</td><td>High (≈94M voxels at 8×8×12 per cell)</td><td><span class="r n">no</span> The October ray-cast detour showed the blockiness</td></tr>
+  <tr><td><b>F · Texel splatting</b><br>Ebert 2026, rotation-stable cubemap texels</td><td><span class="r w">perspective look</span></td><td><span class="r g">stable</span></td><td>As D</td><td>Research-grade</td><td><span class="r n">watch</span> Built for first-person views</td></tr>
+  </tbody>
+</table></div>
+
+<h2>What others have done</h2>
+<div class="col">
+<p>From a survey of write-ups, repos and shipped games:</p>
+<ul>
+  <li><b>The standard pipeline is settled.</b> Orthographic camera, low-res target, nearest upscale, camera snapped to the texel grid with the remainder applied in the upscale. Everyone uses it: <a href="https://www.davidhol.land/articles/3d-pixel-art-rendering/">David Holland's Godot write-up</a>, aarthificial's smooth pixel camera, <a href="https://threejs.org/examples/webgl_postprocessing_pixel.html">Kody King's three.js pixel example</a>, UPixelator, ProPixelizer. The prototype does the same.</li>
+  <li><b>Rotation shimmer is unsolved for orthographic.</b> Kody King's example snaps orbit to 9° steps and zoom to 0.1 steps. Unity threads on rotating pixel cameras end without a fix. Only the 2026 cubemap methods (<a href="https://dylanebert.com/texel-splatting">texel splatting</a>, Shadowglass texel marching) are rotation-stable, and both target perspective views.</li>
+  <li><b>Fez is the closest precedent for "collapse to 2D".</b> 16³ trixels per block; "when the game collapses into orthographic 2D, all those little cubes become pixels." It turns in 90° steps and freezes movement while turning.</li>
+  <li><b>SimCity 4 is the closest city builder.</b> It mixes real 3D terrain with billboard small buildings and simple polygon large ones, under a fixed camera. Our mix (planes for architecture, billboards for soft things) is the same idea with a free camera.</li>
+  <li><b>No shipped pixel-art city builder has free orbit.</b> As far as the survey could find, 2023–2026 included. Voxel Tycoon is voxels, not pixel-crisp. That looks like open ground.</li>
+  <li><b>Cables are a known hard case.</b> Rotated pixel line segments look wrong once their ends aren't level (Unity forums). Drawing cables as screen-space pixel tubes from 3D points, as Spall already does, sidesteps it.</li>
+</ul>
+</div>
+
+<h2>Recommendation</h2>
+<div class="col">
+<p>Make the 3D renderer the game's renderer, with the iso view as home. The sprites stay the single art source. Free orbit and tilt are for working: hanging cables, checking a drape, looking into a void. The camera eases home when you let go, unless you pin it.</p>
+<ol class="steps">
+  <li><b>Close the gaps</b> (estimate: a day). Port shafts, bloom, the well beam, lift cars and people, water shimmer and flicker. Move building and demolish picking to the depth buffer, which already works for hover.</li>
+  <li><b>Make the cable pass GPU-native</b> (estimate: a day or two). Draw tubes as screen-space-width strips in a shader, so the depth readback goes away and frames get cheap enough for 60 fps at large windows.</li>
+  <li><b>Give the worst decals real shape</b> (ongoing). Roof props, the crane, rooftop boxes. Each is a few boxes on the existing sprite.</li>
+  <li><b>Decide on rotation feel</b> (your call). Free orbit with ease-home, or stepped orbit (15° or 22.5°) that never rests between angles. Stepped turns trade smoothness for less visible shimmer.</li>
+  <li><b>Then the higher-resolution question</b> gets an easy answer. Zoom is now continuous, so "closer zoom" can mean a 2× art set picked by zoom level, OpenTTD style, without touching the camera code.</li>
+</ol>
+<p class="note">One thing to decide first: keep the 2D canvas renderer as a fallback, or retire it once the 3D view has everything? Keeping both costs little (the 3D module only reads the world and sprites), but every new overlay would need drawing twice.</p>
+</div>
+
+<h2>Running it</h2>
+<div class="col">
+<pre>cd ~/Dropbox/projects/spall/experiments/spall-3d && ./build.sh
+python3 -m http.server 5190 --bind 127.0.0.1 --directory ..
+open http://127.0.0.1:5190/spall-3d/spall3d.html</pre>
+<p>Press <kbd>3</kbd> to switch views. It starts at exactly the 2D camera.</p>
+<dl class="keys">
+  <dt>drag</dt><dd>orbit; it eases back to the nearest iso view on release while snap (<kbd>O</kbd>) is on</dd>
+  <dt>drag a cable or tie</dt><dd>grab it; the cable, tie, girder and post tools all work</dd>
+  <dt>right-drag, two-finger scroll</dt><dd>pan</dd>
+  <dt>pinch, wheel</dt><dd>smooth zoom about the pointer</dd>
+  <dt><kbd>Q</kbd> <kbd>E</kbd></dt><dd>turn 90°</dd>
+  <dt><kbd>W</kbd> <kbd>S</kbd></dt><dd>tilt</dd>
+  <dt><kbd>9</kbd> · <kbd>0</kbd></dt><dd>top-down · back to iso</dd>
+  <dt><kbd>N</kbd> · <kbd>M</kbd></dt><dd>upscale filter · texel mode</dd>
+  <dt><kbd>[</kbd> <kbd>]</kbd></dt><dd>cut level, as in 2D</dd>
+</dl>
+<p>Files: <code>src/91_gl3d.js</code> (the renderer, camera and input), <code>README.md</code> (findings), <code>mockups/</code> (these stills and both clips). The build concatenates <code>../stratum-wires/src</code> unchanged, so the 3D view always tracks the current prototype.</p>
+</div>
+
+<h2>Sources</h2>
+<ul class="refs col">
+  <li>David Holland, <a href="https://www.davidhol.land/articles/3d-pixel-art-rendering/">3D Pixel Art Rendering</a> (Godot): grid snapping with screen-space correction.</li>
+  <li>t3ssel8r, <a href="https://www.youtube.com/watch?v=d6tp43wZqps">3D pixel art rendering in Unity</a> (video).</li>
+  <li>three.js <a href="https://threejs.org/examples/webgl_postprocessing_pixel.html">webgl_postprocessing_pixel</a> by Kody King; <a href="https://threejs.org/docs/pages/RenderPixelatedPass.html">RenderPixelatedPass</a>.</li>
+  <li>Dylan Ebert, <a href="https://arxiv.org/abs/2603.14587">Texel Splatting</a> (2026) and <a href="https://dylanebert.com/texel-splatting">demo</a>.</li>
+  <li><a href="https://www.gamedeveloper.com/pc/road-to-the-igf-kokoromi-s-multidimensional-i-fez-i-">Road to the IGF: Fez</a>, Game Developer.</li>
+  <li><a href="https://en.wikipedia.org/wiki/SimCity_4">SimCity 4</a> rendering mix; OpenTTD wiki on <a href="https://wiki.openttd.org/en/Archive/Community/Users/Planetmaker/About%2032bpp">per-zoom sprite sets</a>.</li>
+  <li>Gabriel Sassone, <a href="https://jorenjoestar.github.io/post/pixel_art_filtering/">Pixel Art Filtering</a>: the sharp-upscale filters compared.</li>
+  <li><a href="https://www.gamedeveloper.com/production/art-design-deep-dive-using-a-3d-pipeline-for-2d-animation-in-i-dead-cells-i-">Dead Cells' 3D-to-pixel pipeline</a>, Game Developer.</li>
+</ul>
+</div>
+
+<script>
+(function () {
+  var cmp = document.getElementById('cmp'), cut = document.getElementById('cut'), fl = document.getElementById('flick'), timer = null;
+  function set(v) { cmp.style.setProperty('--cut', v + '%'); }
+  cut.addEventListener('input', function () { set(cut.value); });
+  var drag = false;
+  function at(e) { var r = cmp.getBoundingClientRect(); var v = Math.max(0, Math.min(100, (e.clientX - r.left) / r.width * 100)); cut.value = v; set(v); }
+  cmp.addEventListener('pointerdown', function (e) { drag = true; cmp.setPointerCapture(e.pointerId); at(e); });
+  cmp.addEventListener('pointermove', function (e) { if (drag) at(e); });
+  cmp.addEventListener('pointerup', function () { drag = false; });
+  fl.addEventListener('click', function () {
+    if (timer) { clearInterval(timer); timer = null; fl.textContent = 'Flicker'; set(cut.value); return; }
+    var on = false; fl.textContent = 'Stop';
+    timer = setInterval(function () { on = !on; set(on ? 0 : 100); }, 450);
+  });
+})();
+</script>
+
+</body></html>

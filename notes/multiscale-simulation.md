@@ -1,6 +1,6 @@
 # Multi-scale simulation for Stratum: related work and a proposal
 
-30 September 2026. Follows "Multi-scale simulation (renormalization-group flavour)" in [2026-09-30-megastructure-and-multiscale.md](2026-09-30-megastructure-and-multiscale.md). The toy is [multiscale-toy.html](multiscale-toy.html): one self-contained file, open it in any browser. There is also a private copy as a [claude.ai artifact](https://claude.ai/artifact/8XDMu1CpULUgBSBCA5CvSN).
+30 September 2026. Follows "Multi-scale simulation (renormalization-group flavour)" in [2026-09-30-megastructure-and-multiscale.md](2026-09-30-megastructure-and-multiscale.md). The toy is [multiscale-toy.html](../experiments/multiscale-toy/index.html): one self-contained file, open it in any browser. There is also a private copy as a [claude.ai artifact](https://claude.ai/artifact/8XDMu1CpULUgBSBCA5CvSN).
 
 **Scope.** This is for the broader Stratum megastructure version: the de novo layered engine that the report recommends (TypeScript, deterministic, cells indexed by (x, y, level); see [the report](../reports/SimCity%20foundation%20for%20agentic%20modding.md)), with its own pixel-art aesthetic, for which the layer prototype is the touchstone. The SC2K version keeps SimCity 2000's flat grid and is not the target. It appears only where an idea can be tried there cheaply first.
 
@@ -821,7 +821,7 @@ Proposals:
 
 ### 2.13 What the toy shows
 
-[`notes/multiscale-toy.html`](multiscale-toy.html) is one self-contained file. Open it in any browser; it contains no Maxis art.
+[`experiments/multiscale-toy/`](../experiments/multiscale-toy/index.html) is one self-contained file. Open it in any browser; it contains no Maxis art.
 
 - **Coarse simulation everywhere.** 8×6 blocks, each with a 16-lot genome, are always simulated coarsely:
   - households drift to better neighbours, arrive and depart;
@@ -866,7 +866,7 @@ Not in the toy: intermediate levels and history bridges (the block level runs ev
 
 | Phase | Build | Done when |
 |---|---|---|
-| 0. Toy (done) | `notes/multiscale-toy.html`: two levels, conservation, memory, relaxation, rumours | You've played with it and marked what feels right or wrong |
+| 0. Toy (done) | `experiments/multiscale-toy/`: two levels, conservation, memory, relaxation, rumours | You've played with it and marked what feels right or wrong |
 | 1. Lifting kernel (2–3 days) | A TypeScript module in the new engine: typed variables (extensive, intensive, categorical, flow, history); keyed hash RNG with a golden test; divisor apportionment and IPU; restrict; verify; memory records | Property tests pass: restrict∘lift = identity, determinism, house-monotonicity, order independence, save/load round trip |
 | 2. Vertical slice on the lattice (1–2 weeks) | Superblock → block → lot, with levels; queue links between blocks and a macroscopic fundamental diagram per superblock; flux accumulators at seams; τ-correction; history bridges for dormant blocks; detail following the cutting plane | CI runs the lumpability, seam and observer-bias tests; plan and section views show live, warm and cold cells |
 | 3. Agent integration (about 1 week) | The agent-kit adapter at several resolutions: `summary()` and `viewRegion()` by level; coarse pointer refs; sandboxed lifts; authored records; digest and rumour narration on Haiku | A live agent turn plans at superblock level, zooms into one block to place a building, and the digest mentions it a year later |

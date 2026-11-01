@@ -1,0 +1,308 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0">
+<meta charset="utf-8">
+<title>Spall Edges at Rest</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Chivo:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg: #f3efe6; --panel: #e8e2d4; --fg: #26211b; --muted: #6c6355; --line: #cfc6b4; --accent: #b0761a; --accent-ink: #fff8ea;
+  --art: #cbbf9f; --ink: #3a2f22; --hit: #2f7d6b; --miss: #a8452e; --band: rgba(176,118,26,.28);
+  --f-display: "Silkscreen", "Courier New", monospace;
+  --f-body: "Chivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15130f; --panel: #1f1b16; --fg: #e4dccb; --muted: #9a8f7c; --line: #352f27; --accent: #f0b43c; --accent-ink: #1a1408;
+  --art: #4a4335; --ink: #f0e3c4; --hit: #6cc4ad; --miss: #e07a5f; --band: rgba(240,180,60,.25); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15130f; --panel: #1f1b16; --fg: #e4dccb; --muted: #9a8f7c; --line: #352f27; --accent: #f0b43c; --accent-ink: #1a1408;
+  --art: #4a4335; --ink: #f0e3c4; --hit: #6cc4ad; --miss: #e07a5f; --band: rgba(240,180,60,.25); color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--f-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.col { max-width: 46rem; margin: 0 auto; }
+.wide { max-width: 64rem; margin: 0 auto; }
+header { padding-block: 3rem 1rem; }
+h1 { font: 400 clamp(1.8rem, 5vw, 2.6rem)/1.1 var(--f-display); margin: 0 0 1rem; letter-spacing: .01em; text-wrap: balance; }
+h1 span { color: var(--accent); }
+h2 { font: 400 1.15rem/1.3 var(--f-display); margin: 3rem 0 .75rem; letter-spacing: .03em; text-wrap: balance; }
+p { margin: 0 0 1rem; }
+a { color: var(--accent); }
+.lede { font-size: 1.1rem; }
+.meta { font: 12px/1.5 var(--f-mono); color: var(--muted); }
+kbd { font: 600 .85em var(--f-mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; padding: 0 .3em; }
+ul.pts { padding-left: 1.1rem; margin: 0 0 1rem; } ul.pts li { margin-bottom: .45rem; }
+.player { margin: 1.5rem 0 0; }
+.controls { display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; margin: 0 0 .75rem; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.seg button { font: 600 12px/1 var(--f-mono); background: transparent; color: var(--fg); border: 0; padding: .55rem .7rem; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.seg button:disabled { opacity: .35; cursor: default; }
+.seg kbd { border: 0; padding: 0; opacity: .55; margin-left: .3em; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hold { font: 600 12px/1 var(--f-mono); background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 4px; padding: .6rem .8rem; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: none; }
+.hold[aria-pressed="true"] { filter: brightness(.85); }
+.stagebox { background: var(--panel); border-radius: 4px; padding: 8px; }
+.panes { display: grid; gap: 8px; }
+.pane { margin: 0; min-width: 0; }
+.pane canvas { display: block; width: 100%; image-rendering: pixelated; cursor: grab; touch-action: none; border-radius: 2px; }
+.pane canvas.drag { cursor: grabbing; }
+.pane figcaption { font: 600 11px/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-top: .35rem; display: flex; justify-content: space-between; gap: .5rem; }
+.pane figcaption b { color: var(--accent); font-weight: 600; }
+.cap { font: 12px/1.5 var(--f-mono); color: var(--muted); margin-top: .5rem; }
+.diagram { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0 1.25rem; }
+@media (max-width: 640px) { .diagram { grid-template-columns: minmax(0, 1fr); } }
+.diagram figure { margin: 0; background: var(--panel); border-radius: 4px; padding: .75rem; min-width: 0; }
+.diagram svg { display: block; width: 100%; height: auto; }
+.diagram figcaption { font-size: .88rem; color: var(--muted); margin-top: .4rem; }
+.d-art { fill: var(--art); } .d-ink { fill: var(--ink); } .d-band { fill: var(--band); }
+.d-hit { fill: var(--hit); } .d-miss { fill: none; stroke: var(--miss); stroke-width: 1.3; } .d-grid { stroke: var(--line); stroke-width: .6; fill: none; }
+.d-lab { font: 600 9.5px var(--f-mono); fill: var(--muted); letter-spacing: .06em; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; margin-bottom: 1rem; }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+th, td { text-align: left; vertical-align: top; padding: .65rem .8rem; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font: 600 11px/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); background: var(--panel); }
+td:first-child { font-weight: 600; min-width: 7rem; }
+td.num { font-family: var(--f-mono); font-size: .85rem; white-space: nowrap; }
+.links { list-style: none; padding: 0; margin: 0; display: grid; gap: .7rem; }
+.links a { font-weight: 600; }
+.links span { display: block; color: var(--muted); font-size: .9rem; }
+footer { padding-block: 2rem 4rem; }
+</style>
+
+<div class="wrap"><div class="col">
+<header>
+  <p class="meta">experiments/spall-3d · 28 Oct 2026 · follows the texel-splat test</p>
+  <h1>Spall 3D, <span>lines at rest</span></h1>
+  <p class="lede">Two ways to keep the art's lines joined when the camera stops at an odd angle. cleanEdge keeps every pixel a colour from the art and redraws the stair-stepped diagonals as straight edges. Anti-aliasing renders each pixel from 3×3 samples and averages them. Both use the same sprites and need nothing per building type.</p>
+  <p class="meta">In the 3D view, <kbd>D</kbd> toggles cleanEdge and <kbd>A</kbd> cycles anti-aliasing off → 2× → 3× → 4×. Hold <kbd>Z</kbd> to see today's renderer while you hold it. <kbd>O</kbd> turns snap off so the camera stays at an odd angle.</p>
+</header>
+</div></div>
+
+<div class="wrap"><div class="wide">
+<div class="player" id="player">
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Camera angle" id="views"></div>
+  </div>
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Rendering" id="modes"></div>
+    <div class="seg" role="group" aria-label="Compare" id="cmps"></div>
+    <div class="seg" role="group" aria-label="Zoom" id="zooms"></div>
+    <button type="button" class="hold" id="hold" aria-pressed="false">Hold for today</button>
+  </div>
+  <div class="stagebox"><div class="panes" id="panes"></div></div>
+  <p class="cap" id="cap"></p>
+</div>
+</div></div>
+
+<div class="wrap"><div class="col">
+<p style="margin-top:1rem">The world is frozen at the game's default cut (L9), and only the rendering differs between frames. The white outlines round the cut tops are the same in every mode: they are drawn as real lines on top of the scene, so neither fix touches them. The dotted marks inside those tops, and the roof grids, are art, and those do change. Each one is a 480×330 art-pixel crop, one screen pixel per art pixel, which is how the game renders before scaling up. <b>Drag</b> any picture to pan; all panes move together. <b>Side by side</b> puts the chosen rendering beside today's. <b>All four</b> shows every 3D version at once. <b>Differences</b> greys the picture and marks in magenta every pixel that differs from today's. At the home view, <b>2D</b> is the 2D game's own frame. Keys: <kbd>1</kbd>–<kbd>4</kbd> pick a rendering, <kbd>←</kbd> <kbd>→</kbd> change the angle, and holding <kbd>Space</kbd> shows today's.</p>
+
+<h2>Why the lines break</h2>
+<p>Iso art draws a straight line as a staircase: two pixels across, one down. Neighbouring steps touch only at a corner. Today's renderer gives each screen pixel the colour of the art pixel under its centre. Turn the plane slightly and the screen grid no longer lines up with the art grid. Corners are the first thing a pixel centre misses, so the staircase falls apart into dashes. This is the roof-tile grid, the dotted marks on cut tops, and deck and rail edges. It happens at rest, not only while turning.</p>
+<div class="diagram">
+  <figure>
+    <svg id="dgA" viewBox="0 0 272 196" role="img" aria-label="A 2:1 line of art pixels sampled by a turned grid of screen pixels; several samples miss the line, leaving gaps."></svg>
+    <figcaption><b>Today.</b> Dots are screen-pixel centres on the same plane, turned 14°. A dot takes the colour of the art pixel it lands in. Filled dots land on the line and hollow red dots miss it. Follow the filled dots along the line: wherever a column of dots has no filled one, the line breaks. Here that happens 4 times in 18 art pixels.</figcaption>
+  </figure>
+  <figure>
+    <svg id="dgB" viewBox="0 0 272 196" role="img" aria-label="The same samples against the straight band cleanEdge reconstructs; every column of samples has a hit, so the line stays joined."></svg>
+    <figcaption><b>cleanEdge.</b> It sees that the staircase is a line and treats it as the straight band it stands for (shaded). The same dots, tested against the band, leave no gaps: the band is one pixel wide across the line, so a turned column of dots always crosses it. A dot that hits still takes a colour from the art: here the line's own.</figcaption>
+  </figure>
+</div>
+
+<h2>The two fixes</h2>
+<ul class="pts">
+  <li><b>cleanEdge</b> is <a href="https://gist.github.com/torcado194/e2794f5a4b22049ac0a41f972d14c329">torcado's shader</a> (MIT), the usual tool for rotating pixel art cleanly. For the point being drawn, it reads the art pixels around it (21 of them) and looks for 45° and 2:1 staircases. Where it finds one, it decides which side of the straight edge the point is on and shows that side's art pixel. The output is always one of the art's own pixels, never a blend. I ported it into the plane shader with 2:1 slopes on and white as the colour that wins ties, as in the original. At the home view it changes nothing: 0 pixels differ from today's renderer.</li>
+  <li><b>Anti-aliasing</b> renders the scene's colour again at 3× in each direction and averages each 3×3 block into one art pixel. Every edge in the scene gets partial coverage, so lines can't break, but edges come out in in-between colours that aren't in the art. It also changes the home view: about 5% of pixels, mostly where two faces of a cell meet and their tones now blend. Cables, people and the other overlays are drawn afterwards and stay crisp either way.</li>
+  <li><b>Both</b> runs cleanEdge for each of the 3×3 samples. The edges are smoother still, and just as soft.</li>
+</ul>
+
+<h2>What I see</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Rendering</th><th>At rest</th><th>Pixels changed</th><th>Scene pass</th></tr></thead>
+<tbody>
+<tr><td>Today</td><td>Light grid lines on roofs and the dotted marks on cut tops break up at most angles. Deck and rail edges step unevenly.</td><td class="num">—</td><td class="num">8 ms</td></tr>
+<tr><td>cleanEdge</td><td>The roof grid reads as continuous lines and rims stay joined. Pixels stay hard and in palette, and noisy textures are left alone because they hold no clean staircases. Some corners round off slightly, and a few small shapes, like single-pixel bumps, are reshaped.</td><td class="num" id="sCe"></td><td class="num">59 ms</td></tr>
+<tr><td>AA 3×</td><td>Nothing breaks, but the whole picture softens. Tile grids turn into faint smudges rather than lines, and the pixel-art feel weakens. At the home view, face edges blend too.</td><td class="num" id="sAa"></td><td class="num">14 ms (2×: 12)</td></tr>
+<tr><td>Both</td><td>The cleanest lines, at AA's softness. Mostly shows that cleanEdge already did the joining.</td><td class="num" id="sBoth"></td><td class="num">175 ms</td></tr>
+</tbody></table></div>
+<p class="meta">Pixels changed: share of the crop more than 8/255 from today's, at the home view and across the five turned views. Times are the 3D scene pass at 324×204 art pixels on an M1 Max (Metal), median of 11 frames. Cables and overlays come on top and are the same in every mode.</p>
+
+<h2>Cost, and how to fix it</h2>
+<p>cleanEdge as written is far too slow to leave on: 59 ms against 8. Profiling shows the 21 texture reads cost almost nothing. The cost is its decision logic, run three times for every fragment of every plane, including the many hidden behind others. Packing colours into integers already halved it from 127 ms.</p>
+<p>Almost all of that logic depends only on the art, not on where in the pixel the point falls. Which staircase is present, which side wins, and which neighbour to show are fixed for each art pixel and each quarter of it. Only the final test against the edge line depends on the point. So the plan is to work those decisions out once per atlas pixel, when a sprite is added, and store them in a small texture. The plane shader then does one lookup and up to three line tests. That should bring cleanEdge close to today's cost, and it gives exactly the same picture.</p>
+<p>AA is cheap here (+6 ms at 3×), because the scene shader is cheap. It is a question of look, not cost.</p>
+
+<h2>My read</h2>
+<p>cleanEdge is what you were asking for: continuous lines in the still image that look like the same game. It doesn't change the home view at all. Its changes elsewhere are small and land on the lines and edges that were breaking. AA fixes continuity too, but it trades the crisp pixel look for a softer one, and it alters the home view. It might suit the messier parts of the style, but as the default it reads as a different game. I'd make cleanEdge fast with the per-pixel precompute and turn it on by default. AA can stay as an option to judge in motion.</p>
+
+<h2>Reading</h2>
+<ul class="links">
+  <li><a href="https://gist.github.com/torcado194/e2794f5a4b22049ac0a41f972d14c329">cleanEdge shader source</a><span>torcado, MIT. Shadertoy GLSL and Godot versions. The port here follows the Shadertoy one, with SLOPE and CLEANUP on.</span></li>
+  <li><a href="https://krita-artists.org/t/cleanedge-for-pixel-art-rotation-upscaling/56466">cleanEdge for pixel-art rotation and upscaling</a><span>A thread on what it does and how it compares to nearest and RotSprite.</span></li>
+  <li><a href="https://astropulse.itch.io/clean-rotate-for-aseprite">Clean Rotate for Aseprite</a><span>A cleanEdge-based rotation tool for Aseprite.</span></li>
+  <li><a href="https://info.sonicretro.org/RotSprite">RotSprite</a><span>The older approach: upscale 8× with an edge-aware filter, rotate, then pick one source pixel per output pixel. Aseprite's built-in rotation.</span></li>
+  <li><a href="https://godotshaders.com/shader/rotsprite-like-algorithm-for-cleaner-pixel-art-rotation">A RotSprite-like Godot shader</a><span>The same idea done in one shader pass.</span></li>
+</ul>
+</div></div>
+<footer class="wrap"><div class="col"><p class="meta">Run it: the usual server on port 5190, open /spall-3d/spall3d.html, press 3, then D or A. Nothing in this study is committed.</p></div></footer>
+
+<script>
+const DATA = {"img":{"a20_aa":"media/26886d1987bd.webp","a20_ce":"media/88686d5f9718.webp","a20_ceaa":"media/20e145f12ae5.webp","a20_plain":"media/d82cd0927b7f.webp","a30e45_aa":"media/1daa55486f02.webp","a30e45_ce":"media/51058a538df2.webp","a30e45_ceaa":"media/161cde4aebd1.webp","a30e45_plain":"media/15b0122c702c.webp","a35low_aa":"media/d1340dddd18d.webp","a35low_ce":"media/769be9b9bfae.webp","a35low_ceaa":"media/5b758c931c29.webp","a35low_plain":"media/4a7905e5914a.webp","a60_aa":"media/c040c7b62a56.webp","a60_ce":"media/2570c233423e.webp","a60_ceaa":"media/64e369024b93.webp","a60_plain":"media/f62bef864c5b.webp","a70_aa":"media/f7c349af6204.webp","a70_ce":"media/06477aa1f96a.webp","a70_ceaa":"media/590e3d8df65f.webp","a70_plain":"media/c69c37e58504.webp","iso_2d":"media/49e90146fe4f.webp","iso_aa":"media/e80cfab81bb3.webp","iso_ce":"media/25d93bd7df41.webp","iso_ceaa":"media/21c9c78f1b27.webp","iso_plain":"media/25d93bd7df41.webp"},"stats":{"iso":{"ce":0.0,"aa":4.7,"ceaa":10.6},"a20":{"ce":4.9,"aa":19.3,"ceaa":20.2},"a30e45":{"ce":5.6,"aa":20.1,"ceaa":20.9},"a60":{"ce":4.7,"aa":18.7,"ceaa":19.3},"a70":{"ce":5.4,"aa":19.9,"ceaa":20.8},"a35low":{"ce":4.5,"aa":19.1,"ceaa":19.8}}};
+const FW = 480, FH = 330;
+const VIEWS = [['iso', 'Home 45°/30°'], ['a20', '20°/30°'], ['a30e45', '30°/45°'], ['a60', '60°/25°'], ['a70', '70°/35°'], ['a35low', '35°/18°']];
+const MODES = [['plain', 'Today'], ['ce', 'cleanEdge'], ['aa', 'AA 3×'], ['ceaa', 'Both'], ['2d', '2D']];
+const CMPS = [['one', 'Single'], ['side', 'Side by side'], ['all', 'All four'], ['diff', 'Differences']];
+const ZOOMS = [['1', '1×'], ['2', '2×'], ['3', '3×'], ['4', '4×']];
+const CAPS = { plain: 'Today: each screen pixel shows the art pixel under its centre.', ce: 'cleanEdge: art staircases read as straight edges; every pixel is still an art colour.', aa: 'AA 3×: each pixel is the mean of 3×3 samples.', ceaa: 'Both: cleanEdge on each of the 3×3 samples, then averaged.', '2d': '2D: the 2D game at the same spot (home view only).' };
+const st = { view: 'a20', mode: 'ce', cmp: 'side', zoom: 3, px: 70, py: 28, hold: false };
+const IM = {};
+for (const [k, u] of Object.entries(DATA.img)) { const i = new Image(); i.onload = () => draw(); i.src = u; IM[k] = i; }
+const panes = document.getElementById('panes'), cap = document.getElementById('cap'), holdB = document.getElementById('hold');
+const pct = v => v.toFixed(1).replace(/\.0$/, '') + '%';
+(() => { // the table's pixel counts, from the frames' own stats
+  const S = DATA.stats, t = Object.keys(S).filter(v => v !== 'iso');
+  const rng = m => { const a = t.map(v => S[v][m]); return pct(Math.min(...a)) + '–' + pct(Math.max(...a)); };
+  for (const [id, m] of [['sCe', 'ce'], ['sAa', 'aa'], ['sBoth', 'ceaa']]) document.getElementById(id).innerHTML = 'home ' + pct(S.iso[m]) + '<br>turned ' + rng(m);
+})();
+function mkSeg(el, items, key, num) {
+  el.innerHTML = '';
+  items.forEach(([k, l], i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.dataset.k = k;
+    b.innerHTML = l + (key === 'mode' && i < 4 ? '<kbd>' + (i + 1) + '</kbd>' : '');
+    b.addEventListener('click', () => { st[key] = num ? +k : k; sync(); });
+    el.appendChild(b);
+  });
+}
+const segs = { view: [document.getElementById('views'), VIEWS], mode: [document.getElementById('modes'), MODES], cmp: [document.getElementById('cmps'), CMPS], zoom: [document.getElementById('zooms'), ZOOMS] };
+for (const [k, [el, it]] of Object.entries(segs)) mkSeg(el, it, k, k === 'zoom');
+const label = m => MODES.find(x => x[0] === m)[1];
+function sync() {
+  if (st.mode === '2d' && st.view !== 'iso') st.mode = 'plain';
+  for (const [k, [el]] of Object.entries(segs)) for (const b of el.children) {
+    b.setAttribute('aria-pressed', String(b.dataset.k === String(st[k])));
+    if (k === 'mode') b.disabled = b.dataset.k === '2d' && st.view !== 'iso';
+  }
+  layout(); draw();
+}
+let built = '';
+function paneList() {
+  const m = st.mode;
+  if (st.cmp === 'one') return [st.hold ? 'plain' : m];
+  if (st.cmp === 'side') return ['plain', m === 'plain' ? 'ce' : m];
+  if (st.cmp === 'all') return ['plain', 'ce', 'aa', 'ceaa'];
+  return ['diff:' + (m === 'plain' ? 'ce' : m)];
+}
+function layout() {
+  const list = paneList(), cols = list.length > 1 ? 2 : 1, key = list.length + ':' + cols;
+  if (key === built) return; built = key;
+  panes.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`; panes.innerHTML = '';
+  list.forEach(() => {
+    const f = document.createElement('figure'); f.className = 'pane';
+    const c = document.createElement('canvas'); const fc = document.createElement('figcaption');
+    f.append(c, fc); panes.appendChild(f); hookDrag(c);
+  });
+}
+const scratch = document.createElement('canvas'); scratch.width = FW; scratch.height = FH;
+const sg = scratch.getContext('2d', { willReadFrequently: true });
+const pix = i => { sg.clearRect(0, 0, FW, FH); sg.drawImage(i, 0, 0); return sg.getImageData(0, 0, FW, FH); };
+const diffC = document.createElement('canvas'); diffC.width = FW; diffC.height = FH;
+let diffKey = '', diffN = 0;
+function diffOf(m) {
+  const k = st.view + m; if (k === diffKey) return diffC;
+  const A = IM[st.view + '_' + m], P = IM[st.view + '_plain'];
+  if (!A || !P || !A.complete || !P.complete) return null;
+  const a = pix(A), p = pix(P), o = diffC.getContext('2d').createImageData(FW, FH), d = o.data; diffN = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    const ch = Math.max(Math.abs(a.data[i] - p.data[i]), Math.abs(a.data[i + 1] - p.data[i + 1]), Math.abs(a.data[i + 2] - p.data[i + 2])) > 8;
+    if (ch) { d[i] = 255; d[i + 1] = 61; d[i + 2] = 200; diffN++; }
+    else { const y = (p.data[i] * .3 + p.data[i + 1] * .59 + p.data[i + 2] * .11) * .45 + 30; d[i] = d[i + 1] = d[i + 2] = y; }
+    d[i + 3] = 255;
+  }
+  diffC.getContext('2d').putImageData(o, 0, 0); diffKey = k; return diffC;
+}
+function viewSize(c) {   // the pane's size in art pixels at this zoom
+  const w = c.clientWidth || 300, rows = paneList().length > 2 ? 2 : 1;
+  const h = Math.min(Math.round(w * 0.62), Math.round((window.innerHeight * 0.7 - 40) / rows));
+  return [w, Math.max(120, h)];
+}
+function draw() {
+  const list = paneList(), figs = [...panes.children], dpr = window.devicePixelRatio || 1;
+  list.forEach((m, i) => {
+    const f = figs[i]; if (!f) return;
+    const c = f.querySelector('canvas'), [w, h] = viewSize(c), z = st.zoom;
+    const sw = Math.min(FW, w / z), sh = Math.min(FH, h / z);
+    st.px = Math.max(0, Math.min(FW - sw, st.px)); st.py = Math.max(0, Math.min(FH - sh, st.py));
+    if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+    c.style.height = h + 'px';
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+    g.fillStyle = getComputedStyle(document.body).backgroundColor; g.fillRect(0, 0, c.width, c.height);
+    let src = null, name;
+    if (m.startsWith('diff:')) { src = diffOf(m.slice(5)); name = 'Differences: ' + label(m.slice(5)) + ' vs today'; }
+    else { src = IM[st.view + '_' + m]; name = label(m); if (src && !src.complete) src = null; }
+    if (src) g.drawImage(src, st.px, st.py, sw, sh, 0, 0, sw * z * dpr, sh * z * dpr);
+    const fc = f.querySelector('figcaption');
+    const s = DATA.stats[st.view], extra = m.startsWith('diff:') ? pct(100 * diffN / (FW * FH)) + ' of the crop changed' : (s[m] !== undefined ? pct(s[m]) + ' changed' : '');
+    fc.innerHTML = `<span>${name}</span><b>${extra}</b>`;
+  });
+  cap.textContent = CAPS[st.cmp === 'one' && st.hold ? 'plain' : st.mode];
+}
+function hookDrag(c) {
+  let d = null;
+  c.addEventListener('pointerdown', e => { d = [e.clientX, e.clientY, st.px, st.py]; c.setPointerCapture(e.pointerId); c.classList.add('drag'); });
+  c.addEventListener('pointermove', e => { if (!d) return; st.px = d[2] - (e.clientX - d[0]) / st.zoom; st.py = d[3] - (e.clientY - d[1]) / st.zoom; draw(); });
+  const up = () => { d = null; c.classList.remove('drag'); };
+  c.addEventListener('pointerup', up); c.addEventListener('pointercancel', up);
+}
+const setHold = v => { if (st.hold !== v) { st.hold = v; holdB.setAttribute('aria-pressed', String(v)); if (st.cmp !== 'one') { st.cmp = 'one'; sync(); } else draw(); } };
+holdB.addEventListener('pointerdown', e => { e.preventDefault(); setHold(true); });
+for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) holdB.addEventListener(ev, () => setHold(false));
+window.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const i = '1234'.indexOf(e.key);
+  if (i >= 0) { st.mode = MODES[i][0]; sync(); }
+  else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const k = VIEWS.findIndex(v => v[0] === st.view), n = VIEWS.length; st.view = VIEWS[(k + (e.key === 'ArrowRight' ? 1 : n - 1)) % n][0]; sync(); }
+  else if (e.key === ' ') { e.preventDefault(); setHold(true); }
+  else return;
+});
+window.addEventListener('keyup', e => { if (e.key === ' ') setHold(false); });
+window.addEventListener('resize', () => draw());
+sync();
+
+// diagrams: a 2:1 art line sampled by a screen grid turned 14 degrees
+(function () {
+  const NS = 'http://www.w3.org/2000/svg', S = 14, ox = 10, oy = 22, NX = 18, NY = 12;
+  const el = (p, t, a) => { const e = document.createElementNS(NS, t); for (const k in a) if (a[k] !== undefined) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
+  const line = new Set(); for (let x = 0; x < NX; x++) line.add(x + ',' + (2 + Math.floor(x / 2)));
+  // the band cleanEdge reconstructs: through the midpoints of each two-pixel step
+  const lineY = x => 2 + (x - 0.5) / 2 + 0.25, half = 0.5;   // cleanEdge's line width 1, across the line
+  const onBand = (x, y) => Math.abs((y - lineY(x))) * Math.cos(Math.atan(0.5)) <= half;
+  const a = 14 * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
+  const samples = []; for (let j = -6; j < 16; j++) for (let i = -6; i < 26; i++) {
+    const u = i + 0.5, v = j + 0.5, x = 1.2 + u * ca - v * sa, y = 0.4 + u * sa + v * ca;
+    if (x > 0.2 && x < NX - 0.2 && y > 0.6 && y < NY - 0.2) samples.push([x, y, i]);
+  }
+  for (const [id, band] of [['dgA', false], ['dgB', true]]) {
+    const g = document.getElementById(id);
+    el(g, 'text', { class: 'd-lab', x: ox, y: 14 }).textContent = band ? 'THE SAME DOTS, TESTED AGAINST THE BAND' : 'ART PIXELS AND TURNED SCREEN-PIXEL CENTRES';
+    for (let y = 0; y < NY; y++) for (let x = 0; x < NX; x++) el(g, 'rect', { x: ox + x * S, y: oy + y * S, width: S - 1, height: S - 1, class: line.has(x + ',' + y) && !band ? 'd-ink' : 'd-art', opacity: line.has(x + ',' + y) && band ? 1 : undefined });
+    if (band) {
+      for (const k of line) { const [x, y] = k.split(',').map(Number); el(g, 'rect', { x: ox + x * S, y: oy + y * S, width: S - 1, height: S - 1, class: 'd-ink', opacity: .35 }); }
+      const x0 = 0, x1 = NX, d = half / Math.cos(Math.atan(0.5));
+      el(g, 'path', { class: 'd-band', d: `M${ox + x0 * S} ${oy + (lineY(x0) - d) * S}L${ox + x1 * S} ${oy + (lineY(x1) - d) * S}L${ox + x1 * S} ${oy + (lineY(x1) + d) * S}L${ox + x0 * S} ${oy + (lineY(x0) + d) * S}Z` });
+    }
+    for (const [x, y] of samples) {
+      const hit = band ? onBand(x, y) : line.has(Math.floor(x) + ',' + Math.floor(y));
+      const near = Math.abs(y - lineY(x)) < 1.6;
+      if (!near) continue;
+      el(g, 'circle', { cx: ox + x * S, cy: oy + y * S, r: 2.6, class: hit ? 'd-hit' : 'd-miss' });
+    }
+  }
+})();
+</script>
+
+</body></html>

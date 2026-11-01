@@ -57,7 +57,6 @@ h2{font:700 15px/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;col
 .meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:10.5px;color:var(--faint)}
 .meta code{color:var(--dim)}
 .tag{font:600 9.5px/1 var(--mono);padding:2px 4px;box-shadow:inset 0 0 0 1px var(--line);color:var(--faint);text-transform:uppercase;letter-spacing:.04em}
-.tag.local{color:#c9a54a;box-shadow:inset 0 0 0 1px #5a4a22}
 .tag.miss{color:var(--agent);box-shadow:inset 0 0 0 1px #6a3020}
 .upd{color:var(--faint)}
 .upd.fresh{color:var(--ink)}
@@ -99,34 +98,29 @@ footer a{color:var(--you);text-decoration:none}
 </div>
 
 <script>
-// kind: main | build | study | archive. href is relative to this page; also: extra links; ext marks claude.ai pages,
-// local a page in a local/ folder, optionally followed by its claude.ai copy for where the local page isn't
+// kind: main | build | study | archive. href is relative to this page; also: extra links; ext marks an outside page.
+// Everything linked here is in the repo, so it works for anyone: built report pages go in via home/unpack.py
 const ENTRIES = [
   { kind: 'main', id: 'spall', title: 'Spall', href: 'spall/', shots: ['spall-light', 'spall-dark'],
     also: [['Highlight styles', 'spall/mockups/highlight.html'], ['UI chrome concepts', 'spall/mockups/ui.html'], ['Talking to claude', 'spall/mockups/talk.html']] },
 
   { kind: 'build', id: 'spall-3d', title: 'Spall 3D', href: 'spall-3d/',
     desc: 'The main build in WebGL with a free camera. 3 switches views.',
-    also: [['Report', 'https://claude.ai/artifact/BnYRQXxWg4BXG3AA9VcCCY', 'ext'], ['Report (local)', 'spall-3d/local/report.html', 'local']] },
+    also: [['Report', 'spall-3d/reports/report.html']] },
   { kind: 'build', id: 'spall-multimodal', title: 'Talk, point, sketch', href: 'spall-multimodal/',
     desc: 'The main build plus speech, pointing and sketching on one timeline.',
     also: [['Notes', 'spall-multimodal/notes.html']] },
 
   { kind: 'study', id: 'notes-multimodal', title: 'Talk, point, sketch: notes', href: 'spall-multimodal/notes.html',
     desc: 'Ink anchoring, speech engines, the stream an agent reads.' },
-  { kind: 'study', id: 'placement', title: 'Placement depth', href: 'spall/mockups/placement/local/placement.html', local: true,
-    desc: 'Depth from a 2D pointer in the iso view, with sandboxes.',
-    also: [['Report', 'https://claude.ai/artifact/NV4kcEYwLMGwQEfzrX2A5m', 'ext']] },
-  { kind: 'study', id: 'zine', title: 'Sublevel (gameplay zine)', href: 'spall/mockups/zine/local/spall-zine.html', local: true,
-    desc: 'A mock games magazine pitching the gameplay.',
-    also: [['Report', 'https://claude.ai/artifact/LyseCFDxEWfSGBxTLFEZSA', 'ext']] },
-  { kind: 'study', id: 'backdrop', title: 'Backdrop', href: 'spall-backdrop/local/undercity.html', local: true,
+  { kind: 'study', id: 'placement', title: 'Placement depth', href: 'spall/mockups/placement/reports/placement.html',
+    desc: 'Depth from a 2D pointer in the iso view, with sandboxes.' },
+  { kind: 'study', id: 'zine', title: 'Sublevel (gameplay zine)', href: 'spall/mockups/zine/reports/spall-zine.html',
+    desc: 'A mock games magazine pitching the gameplay.' },
+  { kind: 'study', id: 'backdrop', title: 'Backdrop', href: 'spall-backdrop/reports/undercity.html',
     desc: 'The world past the edge. Now in the main build.',
-    also: [['Report', 'https://claude.ai/artifact/Qcst7FaxXF51rfd9bKoXmT', 'ext'],
-      ['Five worlds', 'spall-backdrop/local/backdrops.html', 'local', 'https://claude.ai/artifact/DgxkYoB58bQFi61fkLXoFW'],
-      ['Round three', 'spall-backdrop/local/backdrops3.html', 'local', 'https://claude.ai/artifact/MmzmSu1vnkzoKL5VmLRtia'],
-      ['Round four', 'spall-backdrop/local/backdrop4.html', 'local', 'https://claude.ai/artifact/1ZHgGkzwf3qdjYVpomePPi'],
-      ['Round five', 'spall-backdrop/local/backdrop5.html', 'local', 'https://claude.ai/artifact/6WVijp1bFPutFLQ1QMsVsK']] },
+    also: [['Five worlds', 'spall-backdrop/reports/backdrops.html'], ['Round three', 'spall-backdrop/reports/backdrops3.html'],
+      ['Round four', 'spall-backdrop/reports/backdrop4.html'], ['Round five', 'spall-backdrop/reports/backdrop5.html']] },
   { kind: 'study', id: 'chatter', title: 'Bot chatter reference', href: 'agent-chat-reference/',
     desc: 'Art reference for the band.' },
   { kind: 'study', id: 'light', title: 'Light studies', href: 'spall/mockups/light.html',
@@ -136,25 +130,19 @@ const ENTRIES = [
   { kind: 'study', id: 'wires', title: 'Wire looks', href: 'spall/mockups/index.html',
     desc: 'Cable and bundle looks, round four.',
     also: [['v1', 'spall/mockups/v1/'], ['v2', 'spall/mockups/v2/'], ['v3', 'spall/mockups/v3/']] },
-  { kind: 'study', id: '3d-passes', title: '3D: second and third pass', href: 'spall-3d/local/compare.html', local: true,
-    desc: 'The 2D overlays ported to the 3D view, side by side with 2D.',
-    also: [['Report', 'https://claude.ai/artifact/Gpw8QbPfBescSQbQhoqqFt', 'ext']] },
-  { kind: 'study', id: '3d-splats', title: '3D: texel splats', href: 'spall-3d/local/splats.html', local: true,
-    desc: 'Each art pixel sent to the screen, to stop thin lines crawling.',
-    also: [['Report', 'https://claude.ai/artifact/EuwftuP4eESug8iFEf29dm', 'ext']] },
-  { kind: 'study', id: '3d-edges', title: '3D: edges at rest', href: 'spall-3d/local/edges.html', local: true,
-    desc: 'cleanEdge vs anti-aliasing when the camera stops at an odd angle.',
-    also: [['Report', 'https://claude.ai/artifact/H2ogbXk1ECS4GGAMBf9Dka', 'ext']] },
-  { kind: 'study', id: '3d-outlines', title: '3D: cut outlines', href: 'spall-3d/local/outlines.html', local: true,
-    desc: 'Why the white cut outlines lost pixels in 3D, and the fix.',
-    also: [['Report', 'https://claude.ai/artifact/YSAUatYxzkYJyjiLdac24b', 'ext']] },
-  { kind: 'study', id: '3d-outline-options', title: '3D: outline options', href: 'spall-3d/local/outline-options.html', local: true,
-    desc: 'Four ways to draw the cut outline; cleanEdge made cheap enough to leave on.',
-    also: [['Report', 'https://claude.ai/artifact/Huho7T5eR6ABpxHqFxWTAd', 'ext']] },
+  { kind: 'study', id: '3d-passes', title: '3D: second and third pass', href: 'spall-3d/reports/compare.html',
+    desc: 'The 2D overlays ported to the 3D view, side by side with 2D.' },
+  { kind: 'study', id: '3d-splats', title: '3D: texel splats', href: 'spall-3d/reports/splats.html',
+    desc: 'Each art pixel sent to the screen, to stop thin lines crawling.' },
+  { kind: 'study', id: '3d-edges', title: '3D: edges at rest', href: 'spall-3d/reports/edges.html',
+    desc: 'cleanEdge vs anti-aliasing when the camera stops at an odd angle.' },
+  { kind: 'study', id: '3d-outlines', title: '3D: cut outlines', href: 'spall-3d/reports/outlines.html',
+    desc: 'Why the white cut outlines lost pixels in 3D, and the fix.' },
+  { kind: 'study', id: '3d-outline-options', title: '3D: outline options', href: 'spall-3d/reports/outline-options.html',
+    desc: 'Four ways to draw the cut outline; cleanEdge made cheap enough to leave on.' },
 
   { kind: 'archive', id: 'layers', title: 'Stratum layer study', href: 'megastructure-layers/stratum.html',
-    desc: 'The original layer-view prototype, the touchstone for the look.',
-    also: [['Report', 'https://claude.ai/artifact/LXihXRsFk6rGHCcRc6hut6', 'ext']] },
+    desc: 'The original layer-view prototype, the touchstone for the look.' },
   { kind: 'archive', id: 'renders', title: 'Concept renders', href: 'concept-renders/',
     desc: 'Blender kit-of-parts renders: five looks, level views, lighting, a time-lapse, sprites.' },
   { kind: 'archive', id: 'agent-buildings', title: 'Agent buildings', href: 'agent-buildings/',
@@ -163,14 +151,10 @@ const ENTRIES = [
     desc: 'Round two of the kit renders: bevels, new part families, a stylised look.' },
   { kind: 'archive', id: 'scale', title: 'Megastructure scale', href: 'aesthetics/scale/',
     desc: 'Round three: megaforms ten to a thousand times building size, as ground.' },
-  { kind: 'archive', id: 'ui-mockups', title: 'UI mock-ups', href: 'ui-mockups/src/m1_level_hud.html',
-    desc: 'Eight early game screens over renders.',
-    also: [['Level HUD', 'ui-mockups/src/m1_level_hud.html'], ['Section and services', 'ui-mockups/src/m2_section_services.html'],
-      ['Pattern book', 'ui-mockups/src/m3_pattern_book.html'], ['Agent co-building', 'ui-mockups/src/m4_agent_cobuild.html'],
-      ['Mod request', 'ui-mockups/src/m5_mod_request.html'], ['Accretion timeline', 'ui-mockups/src/m6_accretion_timeline.html'],
-      ['Sound map', 'ui-mockups/src/m7_sound_map.html'], ['Pixel mode', 'ui-mockups/src/m8_pixel_mode.html']] },
-  { kind: 'archive', id: 'multiscale', title: 'Multiscale toy', href: 'https://claude.ai/artifact/8XDMu1CpULUgBSBCA5CvSN',
-    desc: 'A city simulated coarsely per block and in detail where you zoom. In notes/.' },
+  { kind: 'archive', id: 'ui-mockups', title: 'UI mock-ups', href: 'ui-mockups/',
+    desc: 'Eight early game screens over renders, on one page.' },
+  { kind: 'archive', id: 'multiscale', title: 'Multiscale toy', href: 'multiscale-toy/',
+    desc: 'A city simulated coarsely per block and in detail where you zoom.' },
   { kind: 'archive', id: 'lines', title: 'Lines and voids', href: 'lines-and-voids/',
     desc: 'A rejected renderer study.' },
 ];
@@ -182,11 +166,11 @@ const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
 const go = (h, cls) => `href="${esc(h)}"${cls ? ` class="${cls}"` : ''}${isExt(h) ? ' target="_blank" rel="noopener"' : ''}`;
 function links(e) {
   const L = e.also || [];
-  return L.length ? `<span class="links">${L.map(([n, h, k, alt]) => `<a ${go(h, k === 'ext' ? 'ext' : '')} data-chk="${k === 'ext' ? '' : esc(h)}"${alt ? ` data-alt="${esc(alt)}"` : ''}>${esc(n)}</a>`).join('')}</span>` : '';
+  return L.length ? `<span class="links">${L.map(([n, h, k]) => `<a ${go(h, k === 'ext' ? 'ext' : '')} data-chk="${k === 'ext' ? '' : esc(h)}">${esc(n)}</a>`).join('')}</span>` : '';
 }
 function thumb(e, img) { return `<span class="th none" data-k="${esc(e.kind)}" data-img="home/${esc(img || e.id)}.jpg"></span>`; }
 function meta(e) {
-  return `<span class="meta">${e.local ? '<span class="tag local" title="in a local/ folder: on this machine, not in git">local</span>' : ''}<span class="upd" data-upd="${esc(e.href || '')}"></span></span>`;
+  return `<span class="meta"><span class="upd" data-upd="${esc(e.href || '')}"></span></span>`;
 }
 function card(e) {
   return `<div class="card pn" data-id="${esc(e.id)}"><a ${go(e.href)} data-main>${thumb(e)}</a><div class="tx"><h3><a ${go(e.href)} data-main style="text-decoration:none">${esc(e.title)}</a></h3><p>${esc(e.desc)}</p>${meta(e)}${links(e)}</div></div>`;
@@ -214,20 +198,9 @@ if (LOCAL) for (const el of document.querySelectorAll('[data-upd]')) {
     const d = Date.now() - new Date(lm).getTime(); el.textContent = 'updated ' + ago(d); if (d < 864e5) el.classList.add('fresh');
   });
 }
-// a local/ page that isn't here (always, deployed): the card opens its report instead
-for (const e of ENTRIES.filter(e => e.local)) here(e.href).then(r => {
-  const rep = (e.also || []).find(l => l[2] === 'ext'), c = document.querySelector(`.card[data-id="${e.id}"]`);
-  if (r || !rep || !c) return;
-  c.querySelectorAll('a[data-main]').forEach(a => { a.href = rep[1]; a.target = '_blank'; a.rel = 'noopener'; });
-  c.querySelectorAll('.tag, .upd').forEach(t => t.remove());
-});
-// extra links to pages that aren't here open their claude.ai copy, or are dropped
+// extra links to pages that aren't here are dropped
 for (const a of document.querySelectorAll('a[data-chk]')) {
-  const h = a.dataset.chk; if (h) here(h).then(r => {
-    if (r) return;
-    if (!a.dataset.alt) return a.remove();
-    a.href = a.dataset.alt; a.target = '_blank'; a.rel = 'noopener'; a.classList.add('ext');
-  });
+  const h = a.dataset.chk; if (h) here(h).then(r => { if (!r) a.remove(); });
 }
 </script>
 </body>

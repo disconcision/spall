@@ -1,0 +1,199 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0">
+<title>Spall 3D Second Pass</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Chivo:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column for the answers, then a full-width bench of switchable frames under a sticky control bar */
+:root {
+  --bg: #f3efe6; --panel: #e8e2d4; --fg: #26211b; --muted: #6c6355; --line: #cfc6b4; --accent: #b0761a; --accent-ink: #fff8ea;
+  --ok: #3f7a4a; --bug: #a8452e; --open: #6c6355;
+  --f-display: "Silkscreen", "Courier New", monospace;
+  --f-body: "Chivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15130f; --panel: #1f1b16; --fg: #e4dccb; --muted: #9a8f7c; --line: #352f27; --accent: #f0b43c; --accent-ink: #1a1408;
+  --ok: #79b783; --bug: #e07a5f; --open: #9a8f7c; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15130f; --panel: #1f1b16; --fg: #e4dccb; --muted: #9a8f7c; --line: #352f27; --accent: #f0b43c; --accent-ink: #1a1408;
+  --ok: #79b783; --bug: #e07a5f; --open: #9a8f7c; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--f-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.col { max-width: 46rem; margin: 0 auto; }
+header { padding-block: 3rem 1.5rem; }
+h1 { font: 400 clamp(1.8rem, 5vw, 2.6rem)/1.1 var(--f-display); margin: 0 0 1rem; letter-spacing: .01em; text-wrap: balance; }
+h1 span { color: var(--accent); }
+h2 { font: 400 1.15rem/1.3 var(--f-display); margin: 3rem 0 .75rem; letter-spacing: .03em; text-wrap: balance; }
+p { margin: 0 0 1rem; }
+.lede { font-size: 1.1rem; color: var(--fg); }
+.meta { font: 12px/1.5 var(--f-mono); color: var(--muted); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+th, td { text-align: left; vertical-align: top; padding: .7rem .8rem; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font: 600 11px/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); background: var(--panel); }
+td:first-child { font-weight: 600; min-width: 9rem; }
+.tag { display: inline-block; font: 600 10.5px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .07em; padding: .3em .5em; border-radius: 3px; border: 1px solid currentColor; white-space: nowrap; }
+.t-inc { color: var(--ok); } .t-bug { color: var(--bug); } .t-open { color: var(--open); }
+.now { color: var(--muted); font-size: .88rem; margin-top: .35rem; }
+ul.opts { list-style: none; padding: 0; margin: 0; display: grid; gap: .9rem; }
+ul.opts li { border-left: 2px solid var(--line); padding: .1rem 0 .1rem .9rem; }
+ul.opts li.pick { border-left-color: var(--accent); }
+ul.opts b { font-weight: 700; }
+.nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; margin: 0 0 1rem; }
+.num { background: var(--panel); border-radius: 4px; padding: .8rem .9rem; }
+.num .v { font: 600 1.35rem/1.2 var(--f-mono); font-variant-numeric: tabular-nums; }
+.num .k { font-size: .82rem; color: var(--muted); }
+/* the bench */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); padding-block: .6rem; margin-top: 2rem; }
+.bar .row { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; max-width: 76rem; margin: 0 auto; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.seg button { font: 600 12px/1 var(--f-mono); background: transparent; color: var(--fg); border: 0; padding: .55rem .75rem; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.seg button:focus-visible, .chk input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.seg kbd { font: inherit; opacity: .55; margin-left: .35em; }
+.chk { font: 12px/1 var(--f-mono); display: inline-flex; gap: .4rem; align-items: center; cursor: pointer; }
+.hint { font: 11px/1.4 var(--f-mono); color: var(--muted); }
+.bench { max-width: 76rem; margin: 0 auto; padding-block: 1rem 4rem; display: grid; gap: 2.5rem; }
+.view h3 { font: 700 1.05rem/1.3 var(--f-body); margin: 0; }
+.view .note { color: var(--muted); font-size: .9rem; margin: .15rem 0 .7rem; }
+.frames { display: grid; gap: .5rem; }
+.frames.side { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 760px) { .frames.side { grid-template-columns: minmax(0, 1fr); } }
+figure { margin: 0; min-width: 0; }
+figure img { display: block; width: 100%; height: auto; image-rendering: pixelated; border-radius: 3px; background: var(--panel); }
+figcaption { font: 600 11px/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-top: .35rem; }
+figcaption em { font-style: normal; color: var(--accent); }
+footer { padding-block: 0 4rem; }
+</style>
+
+<div class="wrap">
+<div class="col">
+<header>
+  <p class="meta">experiments/spall-3d · 28 Oct 2026 · follow-up to the first 3D study</p>
+  <h1>Spall 3D, <span>third pass</span></h1>
+  <p class="lede"><b>Third pass:</b> the remaining overlays are ported (light-well beam, people, pods, lift cars, steam, beacons, the cut outline and label, ghost-above, builds in progress, window flicker), there is a Well light slider in both views, and the cut outlines on the core columns are now real lines. The new views are first in the bench below. <b>Second pass:</b> none of the differences you spotted are essential to 3D. Two were bugs, and the rest were 2D effects I hadn't ported yet. I fixed both bugs and ported the water glints, daytime haze, night bloom and the missing night windows. I also found and fixed the cause of the half-second stalls. The thin-line aliasing is the real cost of free rotation; there's a section on that below.</p>
+  <p class="meta">Every frame below is from the same world, seed and camera, in three builds: 2D, the first 3D version, and the new one. "New" is the third-pass build in the first six views and the second-pass build in the rest. Switch with 1 2 3 4, or show them side by side.</p>
+</header>
+
+<h2>What was different, and why</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>What you saw</th><th>Cause</th><th>Kind</th></tr></thead>
+<tbody>
+<tr><td>Water sparkle gone</td><td>The glints are an animated overlay the 2D view paints after each level. I hadn't ported it.<div class="now">Now: ported. Same four dots per cell and colour cycle, painted on the water surface, so they stay put while you orbit.</div></td><td><span class="tag t-inc">Incidental</span></td></tr>
+<tr><td>Haze and fog gone by day</td><td>Most of that haze is the 2D "sunlit air" overlay. It marches from each surface toward the viewer through the soft-sun volume and adds up the lit air. Mist below the cut was already ported; this wasn't.<div class="now">Now: ported, on the GPU. It marches along the real camera direction, so it's correct from any angle.</div></td><td><span class="tag t-inc">Incidental</span></td></tr>
+<tr><td>Bloom gone at night</td><td>2D bloom blurs every visible lit window and adds it back. Not ported.<div class="now">Now: ported. Lit windows go to their own buffer and are blurred twice at half size, as in 2D.</div></td><td><span class="tag t-inc">Incidental</span></td></tr>
+<tr><td>Window lights going out when switching</td><td>By day, the lit windows matched pixel for pixel. After dark, about one lit face in eight is a flickering window or TV. Those are drawn by the same animated overlay, so they were missing. Bloom also made the 2D windows read brighter.<div class="now">Now: flickering windows and TVs are lit, held steady (no flicker yet).</div></td><td><span class="tag t-inc">Incidental</span></td></tr>
+<tr><td>Cage on the modular cubes faint</td><td>The cage's four open sides were painted with the empty frame's whole sprite, floor slab included. From the front, that slab covered the capsule's body in dark triangles. This happened even at the home view.<div class="now">Now: fixed. The sides carry only the cage.</div></td><td><span class="tag t-bug">Bug</span></td></tr>
+<tr><td>Road-edge fence invisible</td><td>A wall seen from behind shows its front face mirrored, which is right for a solid box. A railing isn't a box, and from behind it looked up the opposite edge's railing. A one-cell bridge has rails on both edges, so it worked. A road's edge rail has nothing opposite, so it vanished.<div class="now">Now: fixed. Each rail plane carries its own edge's rail and shows it from both sides.</div></td><td><span class="tag t-bug">Bug</span></td></tr>
+<tr><td>Still missing (second pass)</td><td>The light-well beam, lift cars and people, labels and the cut outline, and window flicker.<div class="now">Now (third pass): ported. The beam is the well's column drawn as real faces in the 2D view's stripes, so buildings in front now hide it (2D paints it over them). People, pods, lift cars, steam, motes and mast beacons are the 2D drawing, each pixel tested against the scene depth. Flicker runs in the shader, one rhythm per face of a cell. Builds in progress show as dashed boxes in the builder's colour.</div></td><td><span class="tag t-inc">Incidental</span></td></tr>
+<tr><td>White squares on the core columns</td><td>The cut outline is a one-pixel line painted into the cut top's art. In 3D that art is resampled, so the line steps and breaks at any angle but iso, and a little even at iso.<div class="now">Now: drawn as real lines. The 3D view strips the outline from the art and draws each run of edge as a one-pixel line in the world, tested against depth. It stays one clean pixel at every angle. This is the "real lines" option, tried on one feature.</div></td><td><span class="tag t-inc">Incidental</span></td></tr>
+</tbody></table></div>
+<p style="margin-top:1rem">The differences that do come with 3D are the angle-dependent ones. Thin lines alias as you turn. Roof props are painted flat. Trees and the crane turn with the camera. Top faces show diamond-shaped pixels from steep angles.</p>
+</div>
+</div>
+
+<div class="bar wrap" id="bar">
+  <div class="row">
+    <div class="seg" role="group" aria-label="Build" id="kinds"></div>
+    <div class="seg" role="group" aria-label="Time of day" id="tods">
+      <button type="button" data-tod="day" aria-pressed="true">Day<kbd>D</kbd></button><button type="button" data-tod="night" aria-pressed="false">Night<kbd>N</kbd></button>
+    </div>
+    <label class="chk" for="side"><input type="checkbox" id="side"> Side by side<kbd class="hint">S</kbd></label>
+  </div>
+</div>
+<div class="wrap"><div class="bench" id="bench"></div></div>
+
+<div class="wrap"><div class="col">
+<h2>Thin diagonal lines</h2>
+<p>The art is drawn as one-pixel lines for one projection. Off that projection, each screen pixel samples one point of the art. A one-pixel rail foreshortened to 0.7 pixels gets hit by some screen pixels and missed by others, and which ones change as the angle moves. That's the crawl. Plain point sampling can't avoid it. The options:</p>
+<ul class="opts">
+<li class="pick"><b>Thin lines (built, press K).</b> When a pixel misses but its footprint covers an opaque art pixel, it takes that pixel, so lines never break up. Lines get slightly bolder at steep angles. The crawl gets smaller but doesn't go away. Compare "New 3D" with "New + thin lines" on the turned views below. Cheap; could be on by default.</li>
+<li><b>Snap the angle.</b> Rotate in steps (15°, or Kody King's 9°) and ease between them. The crawl only happens during the tween, and every resting view is one of a few known states. You lose truly free angles. The prototype already eases home to iso on release; stepped orbit is a small change.</li>
+<li><b>Supersample while moving.</b> Render at 2–4× and average down while the camera turns, then go crisp when it stops. The crawl becomes a soft blur in motion. It costs 4–16× the fill, and the pixel look softens for a moment each turn.</li>
+<li class="pick"><b>Thin features as real lines.</b> Model rails, posts, cage edges and truss members as GPU lines at least one pixel wide. A rasterised line is always unbroken and steady as it turns. This means restating each type's line art as geometry: moderate work, but the most robust option, and these are exactly the structures cables hang from.</li>
+<li><b>Rotation-stable texels.</b> The 2026 texel-splatting work fixes texels in world space so they don't swim. It's research-grade, aimed at perspective cameras, and the costliest to adopt.</li>
+</ul>
+<p style="margin-top:1rem"><b>Revised after trying it:</b> thin lines (K) isn't the answer. It thickens every line that crosses a foreshortened plane, including the ones that were fine, and still crawls. It stays off by default. To compare it at a fixed odd angle, press O to turn snap off first. Otherwise the view eases back to iso on release.</p>
+<h3>Real lines: what becomes one, and what it costs</h3>
+<p>The cut outlines are the test case. The rule I'd use: a feature becomes a line when it is a line in the world, a thing you'd model as a rod or an edge. That covers rails and posts, cage and frame edges, truss members, masts and lamp posts, cut outlines, and the cables themselves. Pattern on a surface stays art: windows, mullions, brick, poché hatching. Surface pattern aliases too, but it moves with its surface and doesn't break into dashes the way a lone rail does.</p>
+<p>Maintenance: each such type gets a short line list (rail height, post spacing, which edges) beside its sprite. The 3D view strips those pixels from the art and draws the lines, as it now does for the cut outline. The risk is two descriptions of one rail drifting apart. The fix is to have the 2D sprite draw its rails from the same list, projected the iso way, so there's one source. That's about eight types. It's a contained, one-time cost, not an ongoing one.</p>
+<p>Where to draw them: the cut outlines go through the 2D cable overlay, which is fine for a few hundred segments. Rails across the city are thousands, and they need lighting. Those belong on the GPU, as one-pixel-wide strips in the scene pass. That is the same renderer GPU cables would use. So "real lines" and "GPU cables" are one feature: a line renderer.</p>
+<h3>Rotation-stable texels</h3>
+<p>Today each screen pixel asks the art which texel lies under its centre. When a plane turns away, several texels crowd into one pixel and some are never asked, so a one-pixel line drops out in a pattern that changes every frame. Splatting runs the other way: every opaque texel is a small point in the world, projected and rounded to a screen pixel. Nothing drops out, because every texel lands somewhere, and a line of texels stays a connected staircase at any angle. As you turn, texels hop one pixel at a time, which reads like a hand-animated sprite turning rather than like crawl. The costs: it replaces the core of the renderer (points instead of textured planes); magnified faces, such as tops seen from above, need bigger splats or they open holes; and texels tied at the same depth need a stable order. It is general, though: no per-type line lists. It's worth a small isolated test before choosing between it and per-type lines.</p>
+<h3>Smooth while moving</h3>
+<p>During a drag, render at two or three times the resolution and average down. Lines become soft grey-ish strokes that slide smoothly instead of crawling. When you let go, the view snaps back to crisp pixels. It's cheap to try and generic, but every turn briefly loses the pixel look, which I think undercuts the point.</p>
+
+<h2>Performance</h2>
+<p><b>The stalls.</b> The construction drones finish a job about once a second. Each world change made the 3D view rebuild its light volumes on the CPU in one go. That was about 95 ms for the volumes the 2D game also uses, plus about 250 ms for the hard-sun volume, which only the 3D view fills in for every voxel. Now the hard sun is marched on the GPU, and the rest is spread across frames at no more than 4 ms each. The old light stays on screen until the new light is ready.</p>
+<div class="nums">
+  <div class="num"><div class="v">416 → 64 ms</div><div class="k">slowest frame after a world change (headless, where an ordinary frame is ~50 ms)</div></div>
+  <div class="num"><div class="v">~25 ms</div><div class="k">steady frame while orbiting, zoom 1 on a 2× display (first build, in the app browser)</div></div>
+  <div class="num"><div class="v">15–20 ms</div><div class="k">of that is the cables, drawn on the CPU</div></div>
+</div>
+<p><b>The steady rate.</b> Every frame, the 2D cable code redraws every cable, pixel by pixel, on the CPU: about 40,000 single-pixel fills. To depth-test them, it waits for the GPU to finish and reads back the depth buffer. The GPU's own work, including the new haze and bloom, is a few milliseconds. The fix is to draw cables on the GPU as strips with the same palettes and ties. That removes both the fills and the wait. It's the largest remaining job, and it's what will make rotation smooth. It isn't essential to 3D; it's a port.</p>
+</div></div>
+
+<footer class="wrap"><div class="col"><p class="meta">Run it: the usual server on port 5190, open /spall-3d/spall3d.html and press 3. The first 3D build is kept at /spall-3d/local/v1/spall3d.html for comparison.</p></div></footer>
+
+<script>
+const DATA = [{"key": "xiso", "tod": "day", "title": "Home view (third pass)", "note": "Cut at the default level. Cut outlines, label, people, beam and flicker in the newest build.", "imgs": {"2d": "media/c837eedd2cc3.webp", "v1": "media/ff9fe6b5cff4.webp", "new": "media/8944125b0247.webp"}}, {"key": "xiso", "tod": "night", "title": "Home view (third pass)", "note": "Cut at the default level. Cut outlines, label, people, beam and flicker in the newest build.", "imgs": {"2d": "media/bcb0b9182fdd.webp", "v1": "media/b7fcac7a80f3.webp", "new": "media/aaba27c8e744.webp"}}, {"key": "xwell", "tod": "day", "title": "Light well", "note": "The well beam and motes, iso. In 3D the beam is real faces: buildings in front hide it.", "imgs": {"2d": "media/24879e59162b.webp", "v1": "media/e046c5463e27.webp", "new": "media/39754b5d5bd9.webp"}}, {"key": "xwell", "tod": "night", "title": "Light well", "note": "The well beam and motes, iso. In 3D the beam is real faces: buildings in front hide it.", "imgs": {"2d": "media/025ba0af45ba.webp", "v1": "media/96672dccadfe.webp", "new": "media/0993a1c07f55.webp"}}, {"key": "xwell_off", "tod": "day", "title": "Light well, turned", "note": "Azimuth 10\u00b0, tilt 25\u00b0. 2D at its nearest rotation.", "imgs": {"2d": "media/ec000cdbd576.webp", "v1": "media/888bc3daaf86.webp", "new": "media/4a491f304ebb.webp"}}, {"key": "xwell_off", "tod": "night", "title": "Light well, turned", "note": "Azimuth 10\u00b0, tilt 25\u00b0. 2D at its nearest rotation.", "imgs": {"2d": "media/c1b647bb517c.webp", "v1": "media/1f3fefdab3ad.webp", "new": "media/9bdce93b7019.webp"}}, {"key": "xcore", "tod": "day", "title": "Core column at the cut", "note": "The white squares: the core's cut outline, with the lift shaft's inside it.", "imgs": {"2d": "media/198d9e0dadc1.webp", "v1": "media/539104c27e1b.webp", "new": "media/2d0417de5044.webp"}}, {"key": "xcore", "tod": "night", "title": "Core column at the cut", "note": "The white squares: the core's cut outline, with the lift shaft's inside it.", "imgs": {"2d": "media/3b9e2a565443.webp", "v1": "media/2981a5a1f958.webp", "new": "media/468cd9b16c66.webp"}}, {"key": "xcore_off", "tod": "day", "title": "Core column, turned", "note": "Azimuth 20\u00b0, tilt 50\u00b0. Real lines in the newest build; resampled art in the first.", "imgs": {"2d": "media/a24eb58e75be.webp", "v1": "media/bad3f333fc1d.webp", "new": "media/9b7e0d44fae8.webp"}}, {"key": "xcore_off", "tod": "night", "title": "Core column, turned", "note": "Azimuth 20\u00b0, tilt 50\u00b0. Real lines in the newest build; resampled art in the first.", "imgs": {"2d": "media/2b13ef755992.webp", "v1": "media/9e17deff05a3.webp", "new": "media/acc5dbce9b1f.webp"}}, {"key": "xcore_low", "tod": "day", "title": "Core column, low", "note": "Azimuth \u221230\u00b0, tilt 22\u00b0.", "imgs": {"2d": "media/8c56587be211.webp", "v1": "media/29a31be2b3de.webp", "new": "media/bf8ef8a3b68f.webp"}}, {"key": "xcore_low", "tod": "night", "title": "Core column, low", "note": "Azimuth \u221230\u00b0, tilt 22\u00b0.", "imgs": {"2d": "media/985572fee07c.webp", "v1": "media/1a995b841bac.webp", "new": "media/d2b045c80a36.webp"}}, {"key": "iso", "tod": "day", "title": "Home view", "note": "The default camera: iso, 45\u00b0, zoom 2. The 2D and 3D frames should match here.", "imgs": {"2d": "media/05b65e9f4641.webp", "v1": "media/4da43adc215a.webp", "new": "media/08df620b1214.webp"}}, {"key": "iso", "tod": "night", "title": "Home view", "note": "The default camera: iso, 45\u00b0, zoom 2. The 2D and 3D frames should match here.", "imgs": {"2d": "media/da0bdcdf7e3c.webp", "v1": "media/72c3fca024be.webp", "new": "media/deb3e568001e.webp"}}, {"key": "orbit", "tod": "day", "title": "Orbit 15\u00b0, tilt 40\u00b0", "note": "A free angle over the canal. 2D shown at its nearest rotation for reference.", "imgs": {"2d": "media/4be915503ab9.webp", "v1": "media/f35432a927a6.webp", "new": "media/5a707db759bf.webp", "cons": "media/2e09a2e5e51b.webp"}}, {"key": "orbit", "tod": "night", "title": "Orbit 15\u00b0, tilt 40\u00b0", "note": "A free angle over the canal. 2D shown at its nearest rotation for reference.", "imgs": {"2d": "media/cb6459d580c1.webp", "v1": "media/2512009e09e0.webp", "new": "media/fb13c4da21d0.webp", "cons": "media/f44f9c89d7a9.webp"}}, {"key": "low", "tod": "day", "title": "Low, from the side", "note": "Azimuth \u221260\u00b0, tilt 16\u00b0: the cable-hanging angle. 2D at its nearest rotation.", "imgs": {"2d": "media/d01b7e8748df.webp", "v1": "media/4d180795d8ed.webp", "new": "media/039a4d198798.webp", "cons": "media/698ba44434be.webp"}}, {"key": "low", "tod": "night", "title": "Low, from the side", "note": "Azimuth \u221260\u00b0, tilt 16\u00b0: the cable-hanging angle. 2D at its nearest rotation.", "imgs": {"2d": "media/eaf702fe24e2.webp", "v1": "media/895a2c09887c.webp", "new": "media/32e011834b3c.webp", "cons": "media/24cb211be380.webp"}}, {"key": "caps", "tod": "day", "title": "Modular cubes, iso", "note": "Close on a cluster of capsules, with the cut just above them.", "imgs": {"2d": "media/2ff771230451.webp", "v1": "media/d054f7d00657.webp", "new": "media/df42959bf3f4.webp"}}, {"key": "caps", "tod": "night", "title": "Modular cubes, iso", "note": "Close on a cluster of capsules, with the cut just above them.", "imgs": {"2d": "media/784166258c45.webp", "v1": "media/4632910c4aa9.webp", "new": "media/da9f1a5bf5e7.webp"}}, {"key": "caps_off", "tod": "day", "title": "Modular cubes, turned", "note": "The same cluster at 20\u00b0, tilt 40\u00b0.", "imgs": {"2d": "media/3a9255de252c.webp", "v1": "media/f589bae55541.webp", "new": "media/b600f59fe2c0.webp", "cons": "media/19b7f0fb8cae.webp"}}, {"key": "caps_off", "tod": "night", "title": "Modular cubes, turned", "note": "The same cluster at 20\u00b0, tilt 40\u00b0.", "imgs": {"2d": "media/47d1e4163ef4.webp", "v1": "media/e8bb2789cb59.webp", "new": "media/451667ddd2b3.webp", "cons": "media/f43a44a1bae2.webp"}}, {"key": "rails", "tod": "day", "title": "Bridge rails", "note": "A one-cell deck seen at 25\u00b0, tilt 35\u00b0.", "imgs": {"2d": "media/04aebea7c476.webp", "v1": "media/d39ff84e886b.webp", "new": "media/22810db43de2.webp", "cons": "media/d43f8c8f2733.webp"}}, {"key": "rails", "tod": "night", "title": "Bridge rails", "note": "A one-cell deck seen at 25\u00b0, tilt 35\u00b0.", "imgs": {"2d": "media/c27a8531b28e.webp", "v1": "media/de2d2c5a0b3c.webp", "new": "media/ca321e1f1f57.webp", "cons": "media/e40a7fa55fb3.webp"}}, {"key": "road", "tod": "day", "title": "Road edge, iso", "note": "A wide deck: rails on one side only.", "imgs": {"2d": "media/f5a1ed88a890.webp", "v1": "media/8231c2787337.webp", "new": "media/c882ff9df93d.webp"}}, {"key": "road", "tod": "night", "title": "Road edge, iso", "note": "A wide deck: rails on one side only.", "imgs": {"2d": "media/03327f9a2e45.webp", "v1": "media/f32e58d67555.webp", "new": "media/d0743f72962a.webp"}}, {"key": "road_back", "tod": "day", "title": "Road edge, from behind", "note": "The same deck at 230\u00b0. The first 3D version lost this rail.", "imgs": {"2d": "media/b3f6f0061bb2.webp", "v1": "media/74ef061d6bbd.webp", "new": "media/d19c26a89c4a.webp", "cons": "media/d228cc73452c.webp"}}, {"key": "road_back", "tod": "night", "title": "Road edge, from behind", "note": "The same deck at 230\u00b0. The first 3D version lost this rail.", "imgs": {"2d": "media/a4df977a05b3.webp", "v1": "media/34d1c29cdba3.webp", "new": "media/feb2e936f5db.webp", "cons": "media/8ca55eb626c3.webp"}}];
+const KINDS = [["2d", "2D"], ["v1", "First 3D"], ["new", "New 3D"], ["cons", "New + thin lines"]];
+const st = { kind: 'new', tod: 'day', side: false };
+try { const s = JSON.parse(localStorage.getItem('spall3d-cmp') || '{}'); Object.assign(st, s); } catch (e) { /* defaults */ }
+const save = () => { try { localStorage.setItem('spall3d-cmp', JSON.stringify(st)); } catch (e) { /* not kept */ } };
+const kindsEl = document.getElementById('kinds'), bench = document.getElementById('bench');
+KINDS.forEach(([k, label], i) => {
+  const b = document.createElement('button'); b.type = 'button'; b.dataset.kind = k;
+  b.innerHTML = label + '<kbd>' + (i + 1) + '</kbd>';
+  b.addEventListener('click', () => { st.kind = k; render(); });
+  kindsEl.appendChild(b);
+});
+document.querySelectorAll('#tods button').forEach(b => b.addEventListener('click', () => { st.tod = b.dataset.tod; render(); }));
+const side = document.getElementById('side');
+side.addEventListener('change', () => { st.side = side.checked; render(); });
+const labelOf = k => (KINDS.find(x => x[0] === k) || [k, k])[1];
+const views = [...new Set(DATA.map(d => d.key))].map(key => {
+  const sec = document.createElement('section'); sec.className = 'view';
+  const d0 = DATA.find(d => d.key === key);
+  sec.innerHTML = '<h3></h3><p class="note"></p><div class="frames"></div>';
+  sec.querySelector('h3').textContent = d0.title; sec.querySelector('.note').textContent = d0.note;
+  bench.appendChild(sec);
+  return { key, frames: sec.querySelector('.frames') };
+});
+function fig(src, cap) {
+  const f = document.createElement('figure'), img = document.createElement('img');
+  img.src = src; img.alt = cap; img.loading = 'lazy'; img.decoding = 'async';
+  const c = document.createElement('figcaption'); c.innerHTML = cap;
+  f.append(img, c); return f;
+}
+function render() {
+  kindsEl.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.kind === st.kind && !st.side)));
+  document.querySelectorAll('#tods button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tod === st.tod)));
+  side.checked = st.side;
+  for (const v of views) {
+    const d = DATA.find(x => x.key === v.key && x.tod === st.tod), F = v.frames;
+    F.replaceChildren(); F.classList.toggle('side', st.side);
+    if (st.side) { for (const k of ['2d', 'v1', 'new']) if (d.imgs[k]) F.appendChild(fig(d.imgs[k], labelOf(k))); continue; }
+    let k = st.kind, cap = labelOf(k);
+    if (!d.imgs[k]) { k = 'new'; cap = labelOf('new') + ' <em>· no thin-lines shot for this view</em>'; }
+    if (k === '2d' && v.key !== 'iso' && !v.key.startsWith('caps') && v.key !== 'road') cap += ' <em>· nearest of the four 2D rotations</em>';
+    F.appendChild(fig(d.imgs[k], cap));
+  }
+  save();
+}
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey || e.target.closest('input, textarea')) return;
+  const n = parseInt(e.key, 10);
+  if (n >= 1 && n <= KINDS.length) { st.kind = KINDS[n - 1][0]; st.side = false; render(); }
+  else if (e.key === 'd') { st.tod = 'day'; render(); }
+  else if (e.key === 'n') { st.tod = 'night'; render(); }
+  else if (e.key === 's') { st.side = !st.side; render(); }
+});
+render();
+</script>
+
+</body></html>

@@ -1,0 +1,162 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0">
+<title>Spall Undercity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+/* Round two of the backdrop folio: same plates and palette as round one; motion first, since agreement is the point. */
+:root {
+  --bg: #0e0f11; --plate: #16171a; --rule: #2a2a2c; --ink: #e6dfcf; --dim: #a39c8e; --faint: #7a746a; --accent: #e8a83c; --accent-ink: #1b1305;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 var(--body); }
+.wrap { max-width: 1140px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; display: grid; gap: 44px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: .02em; text-wrap: balance; margin: 0; line-height: 1.05; }
+h1 { font-size: clamp(34px, 6vw, 56px); text-transform: uppercase; letter-spacing: .06em; }
+h2 { font-size: 30px; text-transform: uppercase; letter-spacing: .05em; }
+h3 { font-size: 15px; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--dim); font-size: 16px; }
+.cap { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+img, video { display: block; max-width: 100%; image-rendering: pixelated; }
+header { display: grid; gap: 14px; }
+.eyebrow { font: 600 13px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+.answer { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; display: grid; gap: 10px; }
+.answer p b { color: var(--ink); }
+
+.plate { display: grid; gap: 16px; padding-top: 22px; border-top: 1px solid var(--rule); }
+.plate-head { display: grid; gap: 8px; }
+.plate-head .k { font: 500 12px var(--mono); color: var(--accent); }
+figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
+figure img, figure video { width: 100%; height: auto; background: #000; }
+.row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 760px) { .row2, .row3 { grid-template-columns: minmax(0, 1fr); } }
+.figcap { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }
+.seg { display: flex; flex-wrap: wrap; gap: 2px; }
+.seg button { font: 600 13px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); background: var(--plate); border: 1px solid var(--rule); padding: 8px 11px; cursor: pointer; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.seg button:focus-visible, .shots button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.shots button { all: unset; cursor: zoom-in; display: block; width: 100%; }
+
+.notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; }
+@media (max-width: 760px) { .notes { grid-template-columns: minmax(0, 1fr); } }
+.notes section { display: grid; gap: 10px; align-content: start; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; max-width: 68ch; }
+.pick { border: 1px solid var(--accent); padding: 18px 20px; display: grid; gap: 10px; background: var(--plate); }
+code { font: 13px var(--mono); color: var(--ink); background: var(--plate); padding: 1px 5px; }
+.lb { position: fixed; inset: 0; background: rgba(5,5,6,.94); display: grid; place-items: center; z-index: 20; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
+.lb img { max-height: 92vh; width: auto; max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Spall · concept · backdrop · round two</div>
+    <h1>A city on a pedestal</h1>
+    <p class="lede">The city is now the top of a tower miles high. Below and around it lies an endless city of blocks built from blocks, sinking into haze, with a few monoliths standing up out of it. All of it is real geometry, drawn through the same camera as the city, so it turns, tilts and pans exactly as the city does in both views. Every image and clip here came out of the game.</p>
+  </header>
+
+  <section class="answer" aria-label="Why round one swam">
+    <h3>Why round one swam, and the horizon question</h3>
+    <p>Both views are <b>orthographic</b>: every ray is parallel. A painted sphere at infinity can't agree with that. In true ortho the sky would be one flat colour, so I faked a perspective lens for it, and the city never moved that way. That mismatch is the swim.</p>
+    <p>You're right about the horizon. With an ortho camera tilted down, every ray eventually hits an endless floor, so <b>you never see a horizon or sky</b>. You'd just see the floor fading into haze as it gets farther away. The other catch is that nothing in ortho shrinks with distance, so a city far below would look as big as ours.</p>
+    <p>So the city and the pedestal stay strictly ortho, and only what lies <b>past the city's far side</b> gets a gentle perspective: it shrinks toward the centre of the view, and slides less when you pan. The horizon then sits about 30° above the view's centre, far off-screen at the normal tilt, and only shows when you tilt the 3D camera down near level.</p>
+  </section>
+
+  <section class="plate" aria-label="In motion">
+    <div class="plate-head"><span class="k">IN MOTION</span><h2>Does it agree?</h2>
+      <p>A full 3D orbit, with the tilt rising and falling. Then the 2D view scrolling from mid-city to well above its top, and turning through all four rotations.</p></div>
+    <figure><video src="media/118dc73e03b4.mp4" controls muted loop autoplay playsinline aria-label="3D orbit at dusk"></video><span class="cap">3D · orbit · dusk</span></figure>
+    <div class="row2">
+      <figure><video src="media/ea98433de2e1.mp4" controls muted loop autoplay playsinline aria-label="2D view scrolling up past the city, then rotating"></video><span class="cap">2D · scroll up past the top, then the four rotations · dusk</span></figure>
+      <figure><video src="media/79cb63744773.mp4" controls muted loop autoplay playsinline aria-label="3D orbit at night"></video><span class="cap">3D · orbit · night</span></figure>
+    </div>
+  </section>
+
+  <section class="plate" aria-label="2D view">
+    <div class="plate-head"><span class="k">2D</span><h2>From the main view</h2>
+      <p>Scrolled to the top of the city, the sprawl shows through the haze far below, with a monolith off to the right. Scroll past the bottom and you see the pedestal going down.</p></div>
+    <figure>
+      <div class="shots"><button type="button" aria-label="Enlarge"><img id="top" src="media/42f11d9f96ae.webp" alt="2D view at the top of the city, dusk"></button></div>
+      <div class="figcap"><span class="cap">2D · top of the city · 2×</span>
+        <div class="seg" id="todSeg" role="group" aria-label="Time of day">
+          <button type="button" data-k="dusk" aria-pressed="true">Dusk</button><button type="button" data-k="day" aria-pressed="false">Day</button><button type="button" data-k="night" aria-pressed="false">Night</button>
+        </div></div>
+    </figure>
+    <div class="row3">
+      <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/2c3acfafe9f9.webp" alt="2D, zoomed out, dusk" loading="lazy"></button></div><span class="cap">2D · 1× · dusk</span></figure>
+      <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/f0bef701d135.webp" alt="2D, zoomed out, night" loading="lazy"></button></div><span class="cap">2D · 1× · night</span></figure>
+      <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/f7845ad98849.webp" alt="2D scrolled below the city: the pedestal" loading="lazy"></button></div><span class="cap">2D · scrolled below · the pedestal</span></figure>
+    </div>
+  </section>
+
+  <section class="plate" aria-label="3D view">
+    <div class="plate-head"><span class="k">3D</span><h2>From the study</h2>
+      <p>At a low tilt you're looking across the haze, and the monoliths stand up in it. From higher up, you see the pedestal under the city's edge.</p></div>
+    <div class="row3">
+      <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/c36592b97bbd.webp" alt="3D low angle, dusk" loading="lazy"></button></div><span class="cap">3D · low · dusk</span></figure>
+      <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/bcdd28f29590.webp" alt="3D low angle, day" loading="lazy"></button></div><span class="cap">3D · low · day</span></figure>
+      <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/3ae120c1e632.webp" alt="3D low angle, night" loading="lazy"></button></div><span class="cap">3D · low · night</span></figure>
+    </div>
+    <figure><div class="shots"><button type="button" aria-label="Enlarge"><img src="media/476c199ffc7f.webp" alt="3D zoomed out over the pedestal's edge, dusk" loading="lazy"></button></div><span class="cap">3D · zoomed out · the city on its pedestal · dusk</span></figure>
+  </section>
+
+  <section class="notes" aria-label="Notes">
+    <section class="pick">
+      <h3>Where this stands</h3>
+      <p>The agreement problem is solved by construction: there is no picture, only a world, and both cameras look at it. What's left is art direction. I think day is closest to what you described: abstract, contiguous, and mostly air. Night has the best bones (a lit grid, monoliths with galleries) but needs more and denser light.</p>
+      <p>The smoke plumes are gone. At this scale they'd be invisible.</p>
+    </section>
+    <section>
+      <h3>How it is made</h3>
+      <ul>
+        <li>About 49,000 boxes: superblocks of blocks of lots and towers, ten tiered monoliths and a tiered pedestal, generated in about 40 ms. Heights are tied to footprints, so roofs dominate from above, the way a real city does from miles up.</li>
+        <li>One WebGL pass, about 12 ms, re-run only when the camera moves. The 2D view reads its camera straight off <code>projIso</code>, and the 3D view uses its own. In both, the city's far side marks where the perspective starts.</li>
+        <li>Facades come from the shader: windows, ribs, decks and lit galleries. Detail fades out once a storey is a pixel or two tall, so distance reads as calm haze, not noise.</li>
+        <li>Air: haze with distance, plus a smog layer the low city sinks into, all stepped and dithered with the game's Bayer pattern.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Try it</h3>
+      <ul>
+        <li><code>experiments/spall-backdrop/backdrop.html</code> now opens on the undercity. <b>3</b> switches to the 3D view, and <b>B</b> still cycles through round one's panoramas.</li>
+        <li>Knobs, as URL hash parameters: <code>uz</code> depth to the floor (levels, 600), <code>ue</code> perspective (150; lower is stronger), <code>uf</code> haze distance, <code>uzs</code> and <code>ufl</code> smog height and thickness.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Next</h3>
+      <ul>
+        <li><b>Fidelity:</b> the geometry and lighting are now right, so a diffusion or transformer pass could paint facade and monolith textures in the game's pixel style. The renderer would map them onto the boxes, keeping the agreement.</li>
+        <li>Give the city's own mist the backdrop's haze colour, so the city's edge sinks into the same air.</li>
+        <li>Design the pedestal properly: it's the most visible new thing, and it's a plain stepped column for now.</li>
+        <li>Make night denser, and add slow motion: traffic along the avenues, aircraft lights, and smog drifting.</li>
+      </ul>
+    </section>
+  </section>
+</div>
+
+<script>
+const SHOTS = {"day":"media/e1dfbd703c6a.webp","night":"media/cff17afda9c5.webp"};
+SHOTS.dusk = document.getElementById("top").src;
+for (const b of document.querySelectorAll('#todSeg button')) b.addEventListener('click', () => {
+  for (const o of document.querySelectorAll('#todSeg button')) o.setAttribute('aria-pressed', String(o === b));
+  const i = document.getElementById('top'); i.src = SHOTS[b.dataset.k]; i.alt = '2D view at the top of the city, ' + b.dataset.k;
+});
+for (const btn of document.querySelectorAll('.shots button')) btn.addEventListener('click', () => {
+  const img = btn.querySelector('img'), lb = document.createElement('div');
+  lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-label', img.alt); lb.tabIndex = -1;
+  const big = document.createElement('img'); big.src = img.src; big.alt = img.alt; lb.appendChild(big);
+  const close = () => { lb.remove(); document.removeEventListener('keydown', esc); btn.focus(); };
+  const esc = e => { if (e.key === 'Escape') close(); };
+  lb.addEventListener('click', close); document.addEventListener('keydown', esc);
+  document.body.appendChild(lb); lb.focus();
+});
+</script>
+
+</body></html>

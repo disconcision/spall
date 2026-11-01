@@ -1,0 +1,253 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0">
+<meta charset="utf-8">
+<title>Spall Cut Outlines</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Chivo:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg: #f3efe6; --panel: #e8e2d4; --fg: #26211b; --muted: #6c6355; --line: #cfc6b4; --accent: #b0761a; --accent-ink: #fff8ea;
+  --art: #cbbf9f; --ink: #3a2f22; --hit: #2f7d6b; --miss: #a8452e; --band: rgba(176,118,26,.28);
+  --f-display: "Silkscreen", "Courier New", monospace;
+  --f-body: "Chivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15130f; --panel: #1f1b16; --fg: #e4dccb; --muted: #9a8f7c; --line: #352f27; --accent: #f0b43c; --accent-ink: #1a1408;
+  --art: #4a4335; --ink: #f0e3c4; --hit: #6cc4ad; --miss: #e07a5f; --band: rgba(240,180,60,.25); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15130f; --panel: #1f1b16; --fg: #e4dccb; --muted: #9a8f7c; --line: #352f27; --accent: #f0b43c; --accent-ink: #1a1408;
+  --art: #4a4335; --ink: #f0e3c4; --hit: #6cc4ad; --miss: #e07a5f; --band: rgba(240,180,60,.25); color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--f-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.col { max-width: 46rem; margin: 0 auto; }
+.wide { max-width: 64rem; margin: 0 auto; }
+header { padding-block: 3rem 1rem; }
+h1 { font: 400 clamp(1.8rem, 5vw, 2.6rem)/1.1 var(--f-display); margin: 0 0 1rem; letter-spacing: .01em; text-wrap: balance; }
+h1 span { color: var(--accent); }
+h2 { font: 400 1.15rem/1.3 var(--f-display); margin: 3rem 0 .75rem; letter-spacing: .03em; text-wrap: balance; }
+p { margin: 0 0 1rem; }
+a { color: var(--accent); }
+.lede { font-size: 1.1rem; }
+.meta { font: 12px/1.5 var(--f-mono); color: var(--muted); }
+kbd { font: 600 .85em var(--f-mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; padding: 0 .3em; }
+ul.pts { padding-left: 1.1rem; margin: 0 0 1rem; } ul.pts li { margin-bottom: .45rem; }
+.player { margin: 1.5rem 0 0; }
+.controls { display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; margin: 0 0 .75rem; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.seg button { font: 600 12px/1 var(--f-mono); background: transparent; color: var(--fg); border: 0; padding: .55rem .7rem; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.seg button:disabled { opacity: .35; cursor: default; }
+.seg kbd { border: 0; padding: 0; opacity: .55; margin-left: .3em; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hold { font: 600 12px/1 var(--f-mono); background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 4px; padding: .6rem .8rem; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: none; }
+.hold[aria-pressed="true"] { filter: brightness(.85); }
+.stagebox { background: var(--panel); border-radius: 4px; padding: 8px; }
+.panes { display: grid; gap: 8px; }
+.pane { margin: 0; min-width: 0; }
+.pane canvas { display: block; width: 100%; image-rendering: pixelated; cursor: grab; touch-action: none; border-radius: 2px; }
+.pane canvas.drag { cursor: grabbing; }
+.pane figcaption { font: 600 11px/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-top: .35rem; display: flex; justify-content: space-between; gap: .5rem; }
+.pane figcaption b { color: var(--accent); font-weight: 600; }
+.cap { font: 12px/1.5 var(--f-mono); color: var(--muted); margin-top: .5rem; }
+.diagram { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0 1.25rem; }
+@media (max-width: 640px) { .diagram { grid-template-columns: minmax(0, 1fr); } }
+.diagram figure { margin: 0; background: var(--panel); border-radius: 4px; padding: .75rem; min-width: 0; }
+.diagram svg { display: block; width: 100%; height: auto; }
+.diagram figcaption { font-size: .88rem; color: var(--muted); margin-top: .4rem; }
+.d-art { fill: var(--art); } .d-ink { fill: var(--ink); } .d-band { fill: var(--band); }
+.d-hit { fill: var(--hit); } .d-miss { fill: none; stroke: var(--miss); stroke-width: 1.3; } .d-grid { stroke: var(--line); stroke-width: .6; fill: none; }
+.d-lab { font: 600 9.5px var(--f-mono); fill: var(--muted); letter-spacing: .06em; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; margin-bottom: 1rem; }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+th, td { text-align: left; vertical-align: top; padding: .65rem .8rem; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font: 600 11px/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); background: var(--panel); }
+td:first-child { font-weight: 600; min-width: 7rem; }
+td.num { font-family: var(--f-mono); font-size: .85rem; white-space: nowrap; }
+.links { list-style: none; padding: 0; margin: 0; display: grid; gap: .7rem; }
+.links a { font-weight: 600; }
+.links span { display: block; color: var(--muted); font-size: .9rem; }
+footer { padding-block: 2rem 4rem; }
+</style>
+
+<div class="wrap"><div class="col">
+<header>
+  <p class="meta">experiments/spall-3d · 29 Oct 2026 · follows “lines at rest”</p>
+  <h1>Spall 3D, <span>the white cut outlines</span></h1>
+  <p class="lede">The white outlines round cut tops were losing pixels in the 3D view, most of all on the far edges. Here is why, the fix, and the outline drawn the way the first 3D build drew it, as part of the art, for comparison.</p>
+  <p class="meta">In the 3D view, <kbd>L</kbd> switches the outline between real lines (now fixed) and in the art. <kbd>D</kbd> is cleanEdge. Hold <kbd>Z</kbd> for plain planes.</p>
+</header>
+</div></div>
+
+<div class="wrap"><div class="wide">
+<div class="player" id="player">
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Camera angle" id="views"></div>
+  </div>
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Rendering" id="modes"></div>
+    <div class="seg" role="group" aria-label="Compare" id="cmps"></div>
+    <div class="seg" role="group" aria-label="Zoom" id="zooms"></div>
+    <button type="button" class="hold" id="hold" aria-pressed="false">Hold for today</button>
+  </div>
+  <div class="stagebox"><div class="panes" id="panes"></div></div>
+  <p class="cap" id="cap"></p>
+</div>
+</div></div>
+
+<div class="wrap"><div class="col">
+<p style="margin-top:1rem">The world is frozen at the game's default cut (L9); the player opens on the pillar at 60°/25° whose far-left edge was mostly missing. Each frame is a 480×330 art-pixel crop. <b>Drag</b> to pan, all panes together. <b>Differences</b> marks in magenta every pixel that differs from today's; today's frames come from an earlier run, so a scatter of water glints and window flicker shows up there too. Keys: <kbd>1</kbd>–<kbd>4</kbd> pick a version, <kbd>←</kbd> <kbd>→</kbd> change the angle, hold <kbd>Space</kbd> for today's.</p>
+
+<h2>What was wrong</h2>
+<p>Since the third pass, the outline isn't part of the cut block's art. It's taken out of the sprite and drawn afterwards as a one-pixel line on top of the scene, and each of its pixels is checked against the scene's depth so things in front can hide it. That check allowed a fixed 0.12 of depth. On a level surface seen at a slant, one screen pixel spans more depth than that: 0.18 at 70°/35°, 0.37 at 60°/25°, 0.72 at 35°/18°. The line's pixels also landed half a pixel off its true position, because it rounded where the surface's own pixels round down.</p>
+<p>So a pixel just inside the top face, nearer the camera than the edge, failed the check. On the near edges that inside is behind the line, so they mostly survived. On the far edges it's in front, so they lost most of their pixels. Across the six angles, 22–64% of all outline pixels were dropped, none of them actually hidden.</p>
+<p>At the home view this happened to look almost right. The 2D art draws far edges dotted, one pixel in two, and the dropouts left about that much. That's why the bug didn't show until the camera turned.</p>
+
+<h2>The fix</h2>
+<ul class="pts">
+  <li>The line now rounds the way the surface does, and the depth check allows one and a half pixels' worth of the surface's own depth slope. No outline pixel fails at any of the six angles unless something really is in front.</li>
+  <li>Far edges are drawn dotted on purpose and near edges solid, as the 2D art draws them. Which edges are far depends on the camera, so it's decided every frame.</li>
+  <li>Edges along a lift shaft are left to the shaft's own ring in the art. As real lines they doubled it.</li>
+</ul>
+
+<h2>Lines or art</h2>
+<p><b>In art</b> is how the first 3D build drew it: the outline is just more sprite pixels, turned with the plane like everything else. It matches the art around it exactly, so it never looks drawn on. But it breaks up at angles the way the roof grids do, and cleanEdge joins it about as well as it joins them. <b>Real lines</b> never break and stay one pixel at any angle and zoom, but they're perfectly regular, which next to turned art can read as an overlay. With the fix, the two are close: at the home view both match the 2D frame, and turned, <b>in art + cleanEdge</b> comes out much like <b>lines fixed</b>, only rougher in places.</p>
+
+<h2>Everything else drawn outside the art</h2>
+<p>The cut outline is the only case where something painted into the sprites was taken out and replaced with geometry. The rest of the 3D view's special handling:</p>
+<ul class="pts">
+  <li><b>Split into their own planes</b>, still painted with the original art: deck railings (one plane per edge), frame cages (separate from the floor slab), and whatever stands on a floor (separate from the floor).</li>
+  <li><b>Billboards</b>, flat sprites that always face the camera: trees, masts, risers, tanks and the crane.</li>
+  <li><b>Drawn on top by the 2D code itself</b>, through the 3D camera, as they are in 2D: cables, ties, girders, birds, people, pods, steam, dust, lift cars and beacons. People and the other small things use the same kind of depth check. They stand upright, so the flat-surface problem shouldn't hit them, but I haven't measured it.</li>
+  <li><b>Interface</b>: the amber cut plane and its label, ghost outlines of the levels above, build boxes and the light well's beam.</li>
+  <li><b>Experiments, off by default</b>: thin lines (K), splats (U), cleanEdge (D), anti-aliasing (A).</li>
+</ul>
+<p>One more mismatch: in 2D, cut tops carry a faint dark diamond grid, which the 3D view doesn't show (compare 2D at the home view). I haven't traced it yet.</p>
+</div></div>
+<footer class="wrap"><div class="col"><p class="meta">Run it: the usual server on port 5190, open /spall-3d/spall3d.html, press 3, then L or D. Nothing in this study is committed.</p></div></footer>
+
+<script>
+const DATA = {"img":{"iso_plain":"media/ccf545981e64.webp","iso_lines":"media/eca065b7874a.webp","iso_art":"media/ceb374ff8d4e.webp","iso_artce":"media/ceb374ff8d4e.webp","a20_plain":"media/099820bc1477.webp","a20_lines":"media/41c30d873747.webp","a20_art":"media/dc41a9e7c277.webp","a20_artce":"media/b1c7532adab4.webp","a30e45_plain":"media/458cfd0c9fce.webp","a30e45_lines":"media/233ed7ccc748.webp","a30e45_art":"media/993273501b36.webp","a30e45_artce":"media/bd7c2b4701f1.webp","a60_plain":"media/d04328659512.webp","a60_lines":"media/9f05d706b004.webp","a60_art":"media/dfc21fe9dd8a.webp","a60_artce":"media/63b5e1864e1a.webp","a70_plain":"media/e7abcb0d5458.webp","a70_lines":"media/f183c607b870.webp","a70_art":"media/62afd9bd8e79.webp","a70_artce":"media/b4decd9dd6bd.webp","a35low_plain":"media/e5dccad843a5.webp","a35low_lines":"media/b76ace62fb09.webp","a35low_art":"media/f6ccc641812e.webp","a35low_artce":"media/ca0013bff48e.webp","iso_2d":"media/ab12aa109eaa.webp"},"stats":{"iso":{"lines":1.56,"art":1.55,"artce":1.55},"a20":{"lines":1.94,"art":1.86,"artce":6.72},"a30e45":{"lines":2.29,"art":2.41,"artce":7.81},"a60":{"lines":1.32,"art":1.34,"artce":5.94},"a70":{"lines":1.31,"art":1.31,"artce":6.68},"a35low":{"lines":1.52,"art":1.38,"artce":5.88}}};
+const FW = 480, FH = 330;
+const VIEWS = [['iso', 'Home 45°/30°'], ['a20', '20°/30°'], ['a30e45', '30°/45°'], ['a60', '60°/25°'], ['a70', '70°/35°'], ['a35low', '35°/18°']];
+const MODES = [['plain', 'Today'], ['lines', 'Lines fixed'], ['art', 'In art'], ['artce', 'In art + cleanEdge'], ['2d', '2D']];
+const CMPS = [['one', 'Single'], ['side', 'Side by side'], ['all', 'All four'], ['diff', 'Differences']];
+const ZOOMS = [['1', '1×'], ['2', '2×'], ['3', '3×'], ['4', '4×']];
+const CAPS = { plain: 'Today: real lines, each pixel tested against the scene depth at a fixed tolerance. Far edges drop out.', lines: 'Lines fixed: the tolerance follows the surface’s depth per pixel; near edges solid and far edges dotted, as in the 2D art.', art: 'In art: the outline left in the cut block’s sprite and turned with it, as the first 3D build had it.', artce: 'In art + cleanEdge: the same, with cleanEdge joining its staircases.', '2d': '2D: the 2D game at the same spot (home view only).' };
+const st = { view: 'a60', mode: 'lines', cmp: 'side', zoom: 3, px: 165, py: 10, hold: false };
+const IM = {};
+for (const [k, u] of Object.entries(DATA.img)) { const i = new Image(); i.onload = () => draw(); i.src = u; IM[k] = i; }
+const panes = document.getElementById('panes'), cap = document.getElementById('cap'), holdB = document.getElementById('hold');
+const pct = v => v.toFixed(1).replace(/\.0$/, '') + '%';
+
+function mkSeg(el, items, key, num) {
+  el.innerHTML = '';
+  items.forEach(([k, l], i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.dataset.k = k;
+    b.innerHTML = l + (key === 'mode' && i < 4 ? '<kbd>' + (i + 1) + '</kbd>' : '');
+    b.addEventListener('click', () => { st[key] = num ? +k : k; sync(); });
+    el.appendChild(b);
+  });
+}
+const segs = { view: [document.getElementById('views'), VIEWS], mode: [document.getElementById('modes'), MODES], cmp: [document.getElementById('cmps'), CMPS], zoom: [document.getElementById('zooms'), ZOOMS] };
+for (const [k, [el, it]] of Object.entries(segs)) mkSeg(el, it, k, k === 'zoom');
+const label = m => MODES.find(x => x[0] === m)[1];
+function sync() {
+  if (st.mode === '2d' && st.view !== 'iso') st.mode = 'plain';
+  for (const [k, [el]] of Object.entries(segs)) for (const b of el.children) {
+    b.setAttribute('aria-pressed', String(b.dataset.k === String(st[k])));
+    if (k === 'mode') b.disabled = b.dataset.k === '2d' && st.view !== 'iso';
+  }
+  layout(); draw();
+}
+let built = '';
+function paneList() {
+  const m = st.mode;
+  if (st.cmp === 'one') return [st.hold ? 'plain' : m];
+  if (st.cmp === 'side') return ['plain', m === 'plain' ? 'lines' : m];
+  if (st.cmp === 'all') return ['plain', 'lines', 'art', 'artce'];
+  return ['diff:' + (m === 'plain' ? 'lines' : m)];
+}
+function layout() {
+  const list = paneList(), cols = list.length > 1 ? 2 : 1, key = list.length + ':' + cols;
+  if (key === built) return; built = key;
+  panes.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`; panes.innerHTML = '';
+  list.forEach(() => {
+    const f = document.createElement('figure'); f.className = 'pane';
+    const c = document.createElement('canvas'); const fc = document.createElement('figcaption');
+    f.append(c, fc); panes.appendChild(f); hookDrag(c);
+  });
+}
+const scratch = document.createElement('canvas'); scratch.width = FW; scratch.height = FH;
+const sg = scratch.getContext('2d', { willReadFrequently: true });
+const pix = i => { sg.clearRect(0, 0, FW, FH); sg.drawImage(i, 0, 0); return sg.getImageData(0, 0, FW, FH); };
+const diffC = document.createElement('canvas'); diffC.width = FW; diffC.height = FH;
+let diffKey = '', diffN = 0;
+function diffOf(m) {
+  const k = st.view + m; if (k === diffKey) return diffC;
+  const A = IM[st.view + '_' + m], P = IM[st.view + '_plain'];
+  if (!A || !P || !A.complete || !P.complete) return null;
+  const a = pix(A), p = pix(P), o = diffC.getContext('2d').createImageData(FW, FH), d = o.data; diffN = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    const ch = Math.max(Math.abs(a.data[i] - p.data[i]), Math.abs(a.data[i + 1] - p.data[i + 1]), Math.abs(a.data[i + 2] - p.data[i + 2])) > 8;
+    if (ch) { d[i] = 255; d[i + 1] = 61; d[i + 2] = 200; diffN++; }
+    else { const y = (p.data[i] * .3 + p.data[i + 1] * .59 + p.data[i + 2] * .11) * .45 + 30; d[i] = d[i + 1] = d[i + 2] = y; }
+    d[i + 3] = 255;
+  }
+  diffC.getContext('2d').putImageData(o, 0, 0); diffKey = k; return diffC;
+}
+function viewSize(c) {   // the pane's size in art pixels at this zoom
+  const w = c.clientWidth || 300, rows = paneList().length > 2 ? 2 : 1;
+  const h = Math.min(Math.round(w * 0.62), Math.round((window.innerHeight * 0.7 - 40) / rows));
+  return [w, Math.max(120, h)];
+}
+function draw() {
+  const list = paneList(), figs = [...panes.children], dpr = window.devicePixelRatio || 1;
+  list.forEach((m, i) => {
+    const f = figs[i]; if (!f) return;
+    const c = f.querySelector('canvas'), [w, h] = viewSize(c), z = st.zoom;
+    const sw = Math.min(FW, w / z), sh = Math.min(FH, h / z);
+    st.px = Math.max(0, Math.min(FW - sw, st.px)); st.py = Math.max(0, Math.min(FH - sh, st.py));
+    if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+    c.style.height = h + 'px';
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+    g.fillStyle = getComputedStyle(document.body).backgroundColor; g.fillRect(0, 0, c.width, c.height);
+    let src = null, name;
+    if (m.startsWith('diff:')) { src = diffOf(m.slice(5)); name = 'Differences: ' + label(m.slice(5)) + ' vs today'; }
+    else { src = IM[st.view + '_' + m]; name = label(m); if (src && !src.complete) src = null; }
+    if (src) g.drawImage(src, st.px, st.py, sw, sh, 0, 0, sw * z * dpr, sh * z * dpr);
+    const fc = f.querySelector('figcaption');
+    const s = DATA.stats[st.view], extra = m.startsWith('diff:') ? pct(100 * diffN / (FW * FH)) + ' of the crop changed' : (s[m] !== undefined ? pct(s[m]) + ' changed' : '');
+    fc.innerHTML = `<span>${name}</span><b>${extra}</b>`;
+  });
+  cap.textContent = CAPS[st.cmp === 'one' && st.hold ? 'plain' : st.mode];
+}
+function hookDrag(c) {
+  let d = null;
+  c.addEventListener('pointerdown', e => { d = [e.clientX, e.clientY, st.px, st.py]; c.setPointerCapture(e.pointerId); c.classList.add('drag'); });
+  c.addEventListener('pointermove', e => { if (!d) return; st.px = d[2] - (e.clientX - d[0]) / st.zoom; st.py = d[3] - (e.clientY - d[1]) / st.zoom; draw(); });
+  const up = () => { d = null; c.classList.remove('drag'); };
+  c.addEventListener('pointerup', up); c.addEventListener('pointercancel', up);
+}
+const setHold = v => { if (st.hold !== v) { st.hold = v; holdB.setAttribute('aria-pressed', String(v)); if (st.cmp !== 'one') { st.cmp = 'one'; sync(); } else draw(); } };
+holdB.addEventListener('pointerdown', e => { e.preventDefault(); setHold(true); });
+for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) holdB.addEventListener(ev, () => setHold(false));
+window.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const i = '1234'.indexOf(e.key);
+  if (i >= 0) { st.mode = MODES[i][0]; sync(); }
+  else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const k = VIEWS.findIndex(v => v[0] === st.view), n = VIEWS.length; st.view = VIEWS[(k + (e.key === 'ArrowRight' ? 1 : n - 1)) % n][0]; sync(); }
+  else if (e.key === ' ') { e.preventDefault(); setHold(true); }
+  else return;
+});
+window.addEventListener('keyup', e => { if (e.key === ' ') setHold(false); });
+window.addEventListener('resize', () => draw());
+sync();
+
+
+</script>
+
+</body></html>

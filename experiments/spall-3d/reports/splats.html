@@ -1,0 +1,300 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0">
+<meta charset="utf-8">
+<title>Spall Texel Splats</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Chivo:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* One reading column; the player sits in it at 2x, with a sticky-free control row under the frame */
+:root {
+  --bg: #f3efe6; --panel: #e8e2d4; --fg: #26211b; --muted: #6c6355; --line: #cfc6b4; --accent: #b0761a; --accent-ink: #fff8ea;
+  --art: #cbbf9f; --art2: #b4a685; --post: #3a2f22; --scr: #f8f5ee; --gone: #a8452e;
+  --f-display: "Silkscreen", "Courier New", monospace;
+  --f-body: "Chivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15130f; --panel: #1f1b16; --fg: #e4dccb; --muted: #9a8f7c; --line: #352f27; --accent: #f0b43c; --accent-ink: #1a1408;
+  --art: #6d6450; --art2: #5a523f; --post: #f0e3c4; --scr: #2a251e; --gone: #e07a5f; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15130f; --panel: #1f1b16; --fg: #e4dccb; --muted: #9a8f7c; --line: #352f27; --accent: #f0b43c; --accent-ink: #1a1408;
+  --art: #6d6450; --art2: #5a523f; --post: #f0e3c4; --scr: #2a251e; --gone: #e07a5f; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--f-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.col { max-width: 46rem; margin: 0 auto; }
+header { padding-block: 3rem 1rem; }
+h1 { font: 400 clamp(1.8rem, 5vw, 2.6rem)/1.1 var(--f-display); margin: 0 0 1rem; letter-spacing: .01em; text-wrap: balance; }
+h1 span { color: var(--accent); }
+h2 { font: 400 1.15rem/1.3 var(--f-display); margin: 3rem 0 .75rem; letter-spacing: .03em; text-wrap: balance; }
+p { margin: 0 0 1rem; }
+a { color: var(--accent); }
+td:last-child { white-space: nowrap; }
+.lede { font-size: 1.1rem; }
+.meta { font: 12px/1.5 var(--f-mono); color: var(--muted); }
+kbd { font: 600 .85em var(--f-mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; padding: 0 .3em; }
+ul.pts { padding-left: 1.1rem; margin: 0 0 1rem; } ul.pts li { margin-bottom: .45rem; }
+/* player */
+.player { margin: 1.5rem 0 0; }
+.stagebox { background: var(--panel); border-radius: 4px; padding: 8px; overflow: auto; max-height: 78vh; }
+.panes { display: flex; gap: 8px; width: max-content; margin: 0 auto; }
+.pane { margin: 0; }
+.pane canvas { display: block; image-rendering: pixelated; }
+.pane figcaption { font: 600 11px/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-top: .35rem; }
+.hold { font: 600 12px/1 var(--f-mono); background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 4px; padding: .6rem .8rem; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: none; }
+.hold[aria-pressed="true"] { filter: brightness(.85); }
+.stat { font: 600 12px/1.4 var(--f-mono); color: var(--accent); }
+.controls { display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; margin-top: .75rem; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.seg button { font: 600 12px/1 var(--f-mono); background: transparent; color: var(--fg); border: 0; padding: .55rem .7rem; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.seg kbd { border: 0; padding: 0; opacity: .55; margin-left: .3em; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.scrub { display: flex; gap: .6rem; align-items: center; flex: 1 1 16rem; min-width: 0; }
+.scrub input { flex: 1; min-width: 0; accent-color: var(--accent); }
+.scrub output { font: 600 12px/1 var(--f-mono); font-variant-numeric: tabular-nums; min-width: 8.5rem; color: var(--muted); }
+.play { font: 600 12px/1 var(--f-mono); background: transparent; color: var(--fg); border: 1px solid var(--line); border-radius: 4px; padding: .55rem .7rem; cursor: pointer; }
+.cap { font: 12px/1.5 var(--f-mono); color: var(--muted); margin-top: .5rem; }
+/* diagram */
+.diagram { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0 1.25rem; }
+@media (max-width: 640px) { .diagram { grid-template-columns: minmax(0, 1fr); } }
+.diagram figure { margin: 0; background: var(--panel); border-radius: 4px; padding: .75rem; min-width: 0; }
+.diagram svg { display: block; width: 100%; height: auto; }
+.diagram figcaption { font-size: .88rem; color: var(--muted); margin-top: .4rem; }
+.d-art { fill: var(--art); } .d-art2 { fill: var(--art2); } .d-post { fill: var(--post); } .d-scr { fill: var(--scr); stroke: var(--line); }
+.d-arrow { stroke: var(--muted); stroke-width: 1.2; fill: none; } .d-miss { stroke: var(--gone); stroke-width: 1.4; fill: none; stroke-dasharray: 3 2; }
+.d-lab { font: 600 9.5px var(--f-mono); fill: var(--muted); letter-spacing: .06em; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; margin-bottom: 1rem; }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+th, td { text-align: left; vertical-align: top; padding: .65rem .8rem; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font: 600 11px/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); background: var(--panel); }
+td:first-child { font-weight: 600; min-width: 8rem; }
+.links { list-style: none; padding: 0; margin: 0; display: grid; gap: .7rem; }
+.links a { color: var(--accent); font-weight: 600; }
+.links span { display: block; color: var(--muted); font-size: .9rem; }
+footer { padding-block: 2rem 4rem; }
+</style>
+
+<div class="wrap"><div class="col">
+<header>
+  <p class="meta">experiments/spall-3d · 28 Oct 2026 · follows the third-pass comparison</p>
+  <h1>Spall 3D, <span>texel splats</span></h1>
+  <p class="lede">An experiment in the 3D view. Normally each screen pixel looks up the art under it, and that's what makes thin lines crawl. Here every art pixel is sent to the screen instead. It uses the same sprites as the rest of the game; there's no new art and nothing to describe per building type.</p>
+  <p class="meta">In the 3D view, <kbd>U</kbd> cycles planes → planes + points → points only. Hold <kbd>Z</kbd> to see plain planes while you hold it. <kbd>O</kbd> turns snap off so you can hold an odd angle.</p>
+</header>
+
+<h2>Turn it and compare</h2>
+<p>The same 20 frames of a turn, rendered four ways at one frozen instant, so only the rendering differs. Pick a mode, then compare it with plain <b>Planes</b> (today's renderer) in one of three ways. <b>Hold</b> flips to Planes while you press it; you can also hold <kbd>Space</kbd>. <b>Side by side</b> shows both. <b>Differences</b> greys out the picture and marks every pixel that differs from Planes in magenta. The changes are mostly single pixels on rails and edges, so zoom in. Step through the angles with <kbd>←</kbd> <kbd>→</kbd> or the slider, and press <kbd>P</kbd> to play.</p>
+<div class="player" id="player">
+  <div class="controls" style="margin:0 0 .75rem">
+    <div class="seg" role="group" aria-label="Sequence" id="seqs"></div>
+    <div class="seg" role="group" aria-label="Mode" id="modes"></div>
+  </div>
+  <div class="controls" style="margin:0 0 .75rem">
+    <div class="seg" role="group" aria-label="Compare" id="views"></div>
+    <div class="seg" role="group" aria-label="Zoom" id="zooms"></div>
+    <button type="button" class="hold" id="hold" aria-pressed="false">Hold for Planes</button>
+  </div>
+  <div class="stagebox"><div class="panes" id="panes"></div></div>
+  <div class="controls">
+    <button type="button" class="play" id="play" aria-pressed="false">Play <kbd>P</kbd></button>
+    <div class="scrub"><input type="range" id="scrub" min="0" max="19" value="0" aria-label="Camera angle"><output id="angle"></output></div>
+  </div>
+  <p class="cap"><span id="cap"></span> <span class="stat" id="stat"></span></p>
+</div>
+
+<h2>How it works</h2>
+<p>Every art pixel already has a fixed place in the world: the spot on its plane that it covers in the iso view. The two methods differ in which way they go between that place and the screen.</p>
+<div class="diagram">
+  <figure>
+    <svg viewBox="0 0 300 150" role="img" aria-label="Sampling: seven screen pixels look up ten foreshortened art pixels; three are never looked up, including the dark post.">
+      <text class="d-lab" x="10" y="14">ART ON A TURNED PLANE</text>
+      <g id="artA"></g>
+      <g id="arrA"></g>
+      <text class="d-lab" x="10" y="140">SCREEN PIXELS</text>
+      <g id="scrA"></g>
+    </svg>
+    <figcaption><b>Sampling (today).</b> Each screen pixel looks at the art under its centre. Ten art pixels squeezed into seven screen pixels means three are never looked at. This turn, one of them is the dark post. A degree later it's a different three.</figcaption>
+  </figure>
+  <figure>
+    <svg viewBox="0 0 300 150" role="img" aria-label="Splatting: each of ten art pixels is sent to the nearest screen pixel; every art pixel lands, the post included.">
+      <text class="d-lab" x="10" y="14">ART ON A TURNED PLANE</text>
+      <g id="artB"></g>
+      <g id="arrB"></g>
+      <text class="d-lab" x="10" y="140">SCREEN PIXELS</text>
+      <g id="scrB"></g>
+    </svg>
+    <figcaption><b>Splatting.</b> Each art pixel is sent to the screen pixel nearest its place. Every one lands somewhere, so the post can't vanish. When two land on one screen pixel, the nearer one wins. On a cut-out plane like a rail, the pixels beside the post are empty and send nothing, so the post always wins.</figcaption>
+  </figure>
+</div>
+<ul class="pts">
+  <li><b>Rotation stability.</b> Nothing is re-derived from the screen, so art pixels move as whole units as you turn. They hop one pixel at a time instead of blinking in and out. The stability comes from the art's grid being fixed to the world.</li>
+  <li><b>Gaps.</b> When a plane is seen more face-on than in the iso view, for example roofs from above or facades from low down, its art pixels are more than one screen pixel apart. One-pixel points leave holes there. The paper widens each splat to cover them. That's "points only", and it's why lines get chunkier in that mode, much like thin lines (K).</li>
+  <li><b>The hybrid.</b> "Planes + points" draws the planes as before and then lays a one-pixel point for every art pixel just in front of its plane. The planes fill any holes, and the points put back pixels the planes skipped.</li>
+</ul>
+
+<h2>How this relates to the research</h2>
+<p>The technique comes from Dylan Ebert's <a href="https://arxiv.org/abs/2603.14587">Texel Splatting</a> (March 2026). It is written for 3D models under a perspective camera. A model has no pixel grid of its own, so the paper makes one. It renders the scene into a cubemap from a fixed point (the "probe") and shades each cubemap texel once. Then it draws every texel on screen as a small quad in the world, widened to cover gaps. Texels are indexed by their direction from the probe, which makes them independent of where the camera faces. The probe also snaps to a world grid as the camera moves, with a dithered crossfade when it jumps. The limitation the paper names is disocclusion: surfaces the probe can't see are filled from a camera-centred probe, and those areas shimmer again.</p>
+<p>Spall has the grid already: it's the sprites. The "probe" is the iso camera, orthographic and infinitely far away. So we take only the second half of the paper, the splatting. That means:</p>
+<ul class="pts">
+  <li><b>Same assets.</b> The points come straight from the existing sprite atlas: no new art, no per-type data.</li>
+  <li><b>No probe hops.</b> The probe never moves, so turning and panning are stable with nothing to crossfade.</li>
+  <li><b>No disocclusion.</b> Every plane carries its own art, back faces included (mirrored), so nothing has to be borrowed from the camera's view.</li>
+</ul>
+
+<h2>What I see</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Mode</th><th>Turning</th><th>Cost</th></tr></thead>
+<tbody>
+<tr><td>Planes</td><td>The baseline. Rail posts and the yellow top rail break up and re-form as you turn, worst at low tilt.</td><td>2 ms</td></tr>
+<tr><td>Thin lines (K)</td><td>Fewer breaks, but posts merge into a dark band and everything thickens.</td><td>2 ms</td></tr>
+<tr><td>Planes + points</td><td>Matches the iso view. Turned, it changes 3–7% of pixels at 35° and 5–13% at 18°. Almost all of them are single pixels: rail posts, edges, and the vertical lines in facades, the ones the planes skipped. The look stays the same and the dropouts go. Too small to notice at 1×; use Differences at 3–4× to see where.</td><td>+10 ms*</td></tr>
+<tr><td>Points only</td><td>Changes 10–37% of pixels: a visibly different image. The most interesting. At low tilt, posts land as evenly spaced single columns and the rail reads as if drawn at that angle. Where points widen to two pixels (most turned views at 35°), everything gets chunkier.</td><td>+9 ms*</td></tr>
+</tbody></table></div>
+<p class="meta">* Headless Chrome on a software GPU, so these times are pessimistic. This view has 41,000 planes, and each runs 448 vertex slots (one per pixel of its sprite) whether or not they land. Sizing each plane's slots to its sprite and skipping planes that face away would cut most of that. The home view is pixel-identical in all modes but points-only at 35°.</p>
+<p>My read: the hybrid is a safe default with no downside except cost. Points only is the more promising look, but it needs a better gap rule than "cover the footprint". Holes only matter on solid surfaces, so the next step is points sized per surface: one pixel along a rail, just enough to close gaps on a roof. If that works, it would replace both thin lines and the per-type real lines for anything drawn in the sprites.</p>
+
+<h2>Reading and examples</h2>
+<ul class="links">
+  <li><a href="https://arxiv.org/abs/2603.14587">Texel Splatting: Perspective-Stable 3D Pixel Art</a><span>Dylan Ebert, arXiv 2603.14587, March 2026. The method, its limits, and timings (about 40 fps on an iPhone 15, under 4 ms on an RTX 4090).</span></li>
+  <li><a href="https://github.com/dylanebert/texel-splatting">dylanebert/texel-splatting</a><span>MIT-licensed source. TypeScript and WebGPU.</span></li>
+  <li><a href="https://dylanebert.com/texel-splatting/">Live demo</a><span>Runs in the browser; needs WebGPU.</span></li>
+  <li><a href="https://ke3dassets.itch.io/texel-splatting-toolkit">Retro Texel Splatting Toolkit</a><span>An experimental Unity URP version by KE3DAssets, based on the paper.</span></li>
+  <li><a href="https://80.lv/articles/interview-how-project-shadowglass-creates-its-impossible-fully-3d-pixel-art-look">Project Shadowglass interview</a><span>A Godot game with a stable perspective camera in fully 3D pixel art. The paper cites its approach as related work.</span></li>
+  <li><a href="https://medium.com/@elliotbentine/pixelizing-3d-objects-b55ec33328f1">Pixelizing 3D objects</a> and <a href="https://sites.google.com/view/propixelizer/home">ProPixelizer</a><span>Elliot Bentine's work on pixel creep, which the paper cites for the point that grid snapping only fixes orthographic views.</span></li>
+  <li><a href="https://davidholland.netlify.app/articles/3d-pixel-art-rendering">3D pixel art rendering</a><span>David Holland's write-up of a Godot renderer in the t3ssel8r style.</span></li>
+  <li><a href="https://80.lv/articles/tips-on-convincing-animations-for-3d-pixel-art-games">t3ssel8r on 3D pixel art</a><span>The Unity work that started much of this; the paper cites it for camera grid-snapping.</span></li>
+</ul>
+</div></div>
+<footer class="wrap"><div class="col"><p class="meta">Run it: the usual server on port 5190, open /spall-3d/spall3d.html, press 3, then U.</p></div></footer>
+
+<script>
+const DATA = {"mid": {"el": 35, "az": [45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26], "frames": {"proj": ["media/e93c7ac1dff6.webp", "media/530f0b18ba07.webp", "media/a04715b43370.webp", "media/330524e6b70c.webp", "media/3e10a10d3898.webp", "media/5c3914aa1830.webp", "media/6295bf52ab8a.webp", "media/1c04430ee44b.webp", "media/8220d3637377.webp", "media/5035ab8a01ba.webp", "media/ba76efd5450c.webp", "media/64bada777dce.webp", "media/3affde7807f9.webp", "media/dab44bbd0db7.webp", "media/aca78590b92a.webp", "media/fb280127b702.webp", "media/a7bba112c985.webp", "media/baac816d634e.webp", "media/e0703e42b6c1.webp", "media/fed7a09033ff.webp"], "cons": ["media/0f34f9b602f0.webp", "media/5bfe4197cfd6.webp", "media/0837220d51be.webp", "media/8c85774edfd4.webp", "media/f66cf7472327.webp", "media/f4252310ed30.webp", "media/e466e915cfe0.webp", "media/cec78fe4722c.webp", "media/33883594b795.webp", "media/595b669f8ce6.webp", "media/3859c00ea459.webp", "media/8a3afe3d9ec6.webp", "media/03497fbc6127.webp", "media/90d1f1e19467.webp", "media/16fbb3c8c842.webp", "media/ff2e09cd340f.webp", "media/db7987e04dcb.webp", "media/3016cf9533d0.webp", "media/3165fe9ec74c.webp", "media/f4bce5e67f8a.webp"], "hyb": ["media/65782a49fb8e.webp", "media/9dfce5813432.webp", "media/ffcfa87627c3.webp", "media/95740ef75fc6.webp", "media/0ee0437632db.webp", "media/2760a3247e07.webp", "media/af2fb537562d.webp", "media/5a101b7e4b09.webp", "media/32d99d7a6576.webp", "media/351c07553663.webp", "media/bf2b085ce4ae.webp", "media/97f2e909f2d5.webp", "media/850cc417b4f9.webp", "media/b59c76ae4c45.webp", "media/baee5e79342d.webp", "media/b583c014328f.webp", "media/79130d75a383.webp", "media/5cb8b2ba8ee9.webp", "media/e5fa6cae6263.webp", "media/8a4003320fd4.webp"], "pts": ["media/3665638ecc31.webp", "media/49910bce2050.webp", "media/0ce247fda365.webp", "media/8ae63036d942.webp", "media/b4bd23234c5a.webp", "media/c943ef6cc663.webp", "media/1f17cf82c8eb.webp", "media/fdeda848be8e.webp", "media/7c646effdf67.webp", "media/d246cbc01036.webp", "media/79cdfa38875f.webp", "media/16e3db27aec1.webp", "media/01b8ff5a2145.webp", "media/9e72de94218a.webp", "media/e82f1748c8b5.webp", "media/966bb293f807.webp", "media/7e740ceba168.webp", "media/549b1248e38c.webp", "media/432db765eef5.webp", "media/22bed48c3e8f.webp"]}}, "low": {"el": 18, "az": [45, 43, 41, 39, 37, 35, 33, 31, 29, 27, 25, 23, 21, 19, 17, 15, 13, 11, 9, 7], "frames": {"proj": ["media/30ff792ae13e.webp", "media/e32e16565844.webp", "media/2557709892ba.webp", "media/6ee6dc5727e9.webp", "media/8374259ef0eb.webp", "media/bf6d6f8fc411.webp", "media/9589feb657fc.webp", "media/b573193ca1cc.webp", "media/f12e03d495c3.webp", "media/75823235b853.webp", "media/752f0db53dc0.webp", "media/3874f087ccc2.webp", "media/9e68e0c35bae.webp", "media/5bb5b44ec7a0.webp", "media/70d52241a363.webp", "media/f7a84f4d550f.webp", "media/e339e1d4437a.webp", "media/c1e850980ad8.webp", "media/8f87625becf3.webp", "media/1b3487b58232.webp"], "cons": ["media/fcb2bc419707.webp", "media/b988e8c30036.webp", "media/504ea10b7a6d.webp", "media/cea2f35f4987.webp", "media/4bed13cf874e.webp", "media/0cd545650648.webp", "media/2497ddb5c6f3.webp", "media/e21c7a00bedd.webp", "media/cf056eedd821.webp", "media/19fbbd105842.webp", "media/87715a479a5c.webp", "media/9a28650b5d05.webp", "media/555abe18135e.webp", "media/ebce5ce68aea.webp", "media/e4ad07100bec.webp", "media/ce4d183a33d7.webp", "media/950d1fccc3a8.webp", "media/ebbbe8785397.webp", "media/17b7fdadc860.webp", "media/ea4166676d2d.webp"], "hyb": ["media/4570f5599c78.webp", "media/f8febf35a9fc.webp", "media/277c1c7b9375.webp", "media/ce02fbfe868f.webp", "media/e6562c5808bf.webp", "media/444c9a949481.webp", "media/ed304b43c7df.webp", "media/1ec60c58e9bc.webp", "media/2aeaa4499f8a.webp", "media/dee31d62790a.webp", "media/eb7b46a1397e.webp", "media/e1185b09ecb8.webp", "media/79e619dbe7e1.webp", "media/0b36a8fb7c7c.webp", "media/9522d9ced14a.webp", "media/02765c496d7b.webp", "media/aa11700aaaa6.webp", "media/606c11955c45.webp", "media/eb13e2b27689.webp", "media/5b3373fae793.webp"], "pts": ["media/9f9e687ef1aa.webp", "media/a9fceb17e4fb.webp", "media/245dc203a42d.webp", "media/598616d20b3d.webp", "media/2e6f8f415ddb.webp", "media/5c57d85981fe.webp", "media/6682e50f6e5d.webp", "media/51afd3c43d57.webp", "media/d73c9850757d.webp", "media/1a4d3fcbf89e.webp", "media/d301e3015442.webp", "media/0e0feb0cea69.webp", "media/b7386dde8a2c.webp", "media/6868007e33cc.webp", "media/5be58b49e65a.webp", "media/68bf09bea83b.webp", "media/674fbb06046b.webp", "media/3ebbb6bdeff6.webp", "media/448f728ae637.webp", "media/b02d2707e569.webp"]}}};
+const MODES = [['proj', 'Planes'], ['cons', 'Thin lines'], ['hyb', 'Planes + points'], ['pts', 'Points only']];
+const SEQS = [['low', 'Tilt 18°'], ['mid', 'Tilt 35°']];
+const CAPS = { proj: 'Each screen pixel samples the art under it (the current renderer).', cons: 'Sampling, plus K: a pixel that misses takes an opaque art pixel inside its footprint.', hyb: 'Planes as usual, then every art pixel as a one-pixel point just in front.', pts: 'Points only, each sized to cover its art pixel’s footprint.' };
+const VIEWS = [['one', 'Single'], ['side', 'Side by side'], ['diff', 'Differences']];
+const ZOOMS = [['2', '2×'], ['3', '3×'], ['4', '4×']];
+const st = { seq: 'low', mode: 'hyb', view: 'diff', zoom: '3', f: 10, play: null, dir: 1, hold: false };
+const FW = 360, FH = 288;
+const scrub = document.getElementById('scrub'), out = document.getElementById('angle'), cap = document.getElementById('cap'), stat = document.getElementById('stat'), playB = document.getElementById('play'), panes = document.getElementById('panes'), holdB = document.getElementById('hold');
+// every frame decoded up front, so switching never flashes
+const IM = {};
+for (const [sk, s] of Object.entries(DATA)) for (const [m, L] of Object.entries(s.frames)) L.forEach((u, f) => { const i = new Image(); i.onload = () => { if (sk === st.seq && f === st.f) draw(); }; i.src = u; IM[sk + m + f] = i; });
+const imOf = m => IM[st.seq + m + st.f];
+const scratch = document.createElement('canvas'); scratch.width = FW; scratch.height = FH;
+const sg = scratch.getContext('2d', { willReadFrequently: true });
+const pix = i => { sg.clearRect(0, 0, FW, FH); sg.drawImage(i, 0, 0); return sg.getImageData(0, 0, FW, FH); };
+function mkSeg(el, items, key, keyHint) {
+  items.forEach(([k, label], i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.dataset.k = k;
+    b.innerHTML = label + (keyHint ? '<kbd>' + (i + 1) + '</kbd>' : '');
+    b.addEventListener('click', () => { st[key] = k; draw(); });
+    el.appendChild(b);
+  });
+}
+mkSeg(document.getElementById('seqs'), SEQS, 'seq', false);
+mkSeg(document.getElementById('modes'), MODES, 'mode', true);
+mkSeg(document.getElementById('views'), VIEWS, 'view', false);
+mkSeg(document.getElementById('zooms'), ZOOMS, 'zoom', false);
+let paneKey = '';
+function pane(n, labels) {   // (re)build the canvases only when their number or size changes
+  // two panes share the width (so both stay in view); one pane takes the chosen zoom
+  const box = panes.parentElement.clientWidth - 16, sc = n > 1 ? Math.min(+st.zoom, (box - 8) / 2 / FW) : +st.zoom;
+  const key = n + ':' + sc.toFixed(3);
+  if (key !== paneKey) {
+    panes.innerHTML = '';
+    for (let k = 0; k < n; k++) {
+      const f = document.createElement('figure'); f.className = 'pane';
+      const c = document.createElement('canvas'); c.width = FW; c.height = FH; c.style.width = FW * sc + 'px'; c.style.height = FH * sc + 'px';
+      f.appendChild(c); f.appendChild(document.createElement('figcaption')); panes.appendChild(f);
+    }
+    paneKey = key;
+  }
+  const figs = [...panes.children];
+  figs.forEach((f, k) => { f.querySelector('figcaption').textContent = labels[k]; });
+  return figs.map(f => f.querySelector('canvas').getContext('2d'));
+}
+const label = m => MODES.find(x => x[0] === m)[1];
+function draw() {
+  const s = DATA[st.seq], n = s.az.length; st.f = Math.max(0, Math.min(n - 1, st.f));
+  scrub.max = n - 1; scrub.value = st.f;
+  out.textContent = 'az ' + s.az[st.f] + '° · tilt ' + s.el + '°';
+  cap.textContent = CAPS[st.mode];
+  for (const [id, key] of [['seqs', 'seq'], ['modes', 'mode'], ['views', 'view'], ['zooms', 'zoom']]) document.querySelectorAll('#' + id + ' button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === st[key]));
+  playB.setAttribute('aria-pressed', !!st.play); playB.firstChild.textContent = st.play ? 'Pause ' : 'Play ';
+  holdB.setAttribute('aria-pressed', st.hold);
+  const A = imOf(st.mode), P = imOf('proj');
+  if (!A.complete || !P.complete) return;   // drawn again from onload
+  const a = pix(A), p = pix(P);
+  let diff = 0;
+  for (let i = 0; i < a.data.length; i += 4) if (Math.max(Math.abs(a.data[i] - p.data[i]), Math.abs(a.data[i + 1] - p.data[i + 1]), Math.abs(a.data[i + 2] - p.data[i + 2])) > 8) diff++;
+  stat.textContent = st.mode === 'proj' ? '' : '· ' + (diff / (FW * FH) * 100).toFixed(1) + '% of pixels differ from Planes';
+  const shown = st.hold ? 'proj' : st.mode;
+  if (st.view === 'side') {
+    const [g0, g1] = pane(2, ['Planes', st.hold ? 'Planes (held)' : label(st.mode)]);
+    g0.drawImage(P, 0, 0); g1.drawImage(imOf(shown), 0, 0);
+  } else if (st.view === 'diff' && !st.hold && st.mode !== 'proj') {
+    const [g] = pane(1, [label(st.mode) + ': pixels that differ from Planes in magenta']);
+    const o = g.createImageData(FW, FH), d = o.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const ch = Math.max(Math.abs(a.data[i] - p.data[i]), Math.abs(a.data[i + 1] - p.data[i + 1]), Math.abs(a.data[i + 2] - p.data[i + 2])) > 8;
+      if (ch) { d[i] = 255; d[i + 1] = 61; d[i + 2] = 200; }
+      else { const y = (a.data[i] * 0.3 + a.data[i + 1] * 0.59 + a.data[i + 2] * 0.11) * 0.45 + 30; d[i] = d[i + 1] = d[i + 2] = y; }
+      d[i + 3] = 255;
+    }
+    g.putImageData(o, 0, 0);
+  } else {
+    const [g] = pane(1, [st.hold ? 'Planes (held)' : label(shown)]);
+    g.drawImage(imOf(shown), 0, 0);
+  }
+}
+scrub.addEventListener('input', () => { st.f = +scrub.value; draw(); });
+function togglePlay() {
+  if (st.play) { clearInterval(st.play); st.play = null; }
+  else st.play = setInterval(() => { const n = DATA[st.seq].az.length; if (st.f + st.dir >= n || st.f + st.dir < 0) st.dir = -st.dir; st.f += st.dir; draw(); }, 110);
+  draw();
+}
+playB.addEventListener('click', togglePlay);
+const setHold = v => { if (st.hold !== v) { st.hold = v; draw(); } };
+holdB.addEventListener('pointerdown', e => { holdB.setPointerCapture(e.pointerId); setHold(true); });
+for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) holdB.addEventListener(ev, () => setHold(false));
+holdB.addEventListener('keydown', e => { if (e.key === 'Enter') setHold(true); });
+holdB.addEventListener('keyup', e => { if (e.key === 'Enter') setHold(false); });
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const i = '1234'.indexOf(e.key);
+  if (i >= 0) { st.mode = MODES[i][0]; draw(); }
+  else if (e.key === ' ') { e.preventDefault(); setHold(true); }
+  else if (e.key === 'ArrowRight') { st.f++; draw(); e.preventDefault(); }
+  else if (e.key === 'ArrowLeft') { st.f--; draw(); e.preventDefault(); }
+  else if (e.key === 'p' || e.key === 'P') togglePlay();
+});
+document.addEventListener('keyup', e => { if (e.key === ' ') setHold(false); });
+// the diagram: ten art pixels at 0.7 of a screen pixel each, over seven screen pixels
+(function () {
+  const NS = 'http://www.w3.org/2000/svg', x0 = 10, aw = 28, sw = 40, ay = 24, sy = 108, POST = 4;
+  const R = (g, x, y, w, h, cls) => { const r = document.createElementNS(NS, 'rect'); Object.entries({ x, y, width: w, height: h, class: cls }).forEach(([k, v]) => r.setAttribute(k, v)); g.appendChild(r); };
+  const P = (g, d, cls) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('class', cls); g.appendChild(p); };
+  const artCls = j => j === POST ? 'd-post' : (j % 2 ? 'd-art2' : 'd-art');
+  for (const id of ['A', 'B']) {
+    const art = document.getElementById('art' + id), scr = document.getElementById('scr' + id), arr = document.getElementById('arr' + id);
+    for (let j = 0; j < 10; j++) R(art, x0 + j * aw, ay, aw - 1, 22, artCls(j));
+    // what each screen pixel ends up showing
+    const shown = new Array(7).fill(null);
+    if (id === 'A') {
+      for (let i = 0; i < 7; i++) { const cx = x0 + i * sw + sw / 2, j = Math.floor((cx - x0) / aw); shown[i] = j; P(arr, `M${cx} ${sy - 2}L${cx} ${ay + 26}`, 'd-arrow'); }
+      for (let j = 0; j < 10; j++) if (!shown.includes(j)) { const cx = x0 + j * aw + aw / 2 - .5; P(arr, `M${cx - 6} ${ay + 30}l12 12m0 -12l-12 12`, 'd-miss'); }
+    } else {
+      for (let j = 0; j < 10; j++) { const cx = x0 + j * aw + aw / 2 - .5, i = Math.floor((cx - x0) / sw), tx = x0 + i * sw + sw / 2; if (shown[i] == null || j === POST) shown[i] = j; P(arr, `M${cx} ${ay + 26}L${tx} ${sy - 2}`, 'd-arrow'); }
+    }
+    for (let i = 0; i < 7; i++) { R(scr, x0 + i * sw, sy, sw - 2, 20, 'd-scr'); if (shown[i] != null) R(scr, x0 + i * sw + 8, sy + 4, sw - 18, 12, artCls(shown[i])); }
+  }
+})();
+window.addEventListener('resize', () => { paneKey = ''; draw(); });
+draw();
+</script>
+
+</body></html>
