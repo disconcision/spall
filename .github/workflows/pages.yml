@@ -1,0 +1,30 @@
+# Publishes experiments/ (the front page, the builds, the studies) to GitHub Pages on every push to main.
+# It shows up at https://andrewblinn.com/spall/ because the user site (disconcision.github.io) has that
+# custom domain. The Blender render folders have no pages and are left out; local/ folders aren't in git.
+name: pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble the site
+        run: rsync -a --exclude concept-renders --exclude agent-buildings experiments/ _site/ && du -sh _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

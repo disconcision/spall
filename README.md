@@ -10,7 +10,7 @@ A pixel-art isometric megastructure builder. The setting is an ancient arcology 
 python3 -m http.server 5190 --bind 127.0.0.1 --directory experiments
 ```
 
-Then open http://127.0.0.1:5190/. The front page lists the main build, the builds in flight, the studies and the archive. The main build is http://127.0.0.1:5190/spall/: plain JavaScript in `experiments/spall/src/`, joined into `index.html` by `experiments/spall/build.sh`.
+Then open http://127.0.0.1:5190/. The same pages are published at https://andrewblinn.com/spall/ on every push to `main` (`.github/workflows/pages.yml`), minus anything in a `local/` folder. The front page lists the main build, the builds in flight, the studies and the archive. The main build is http://127.0.0.1:5190/spall/: plain JavaScript in `experiments/spall/src/`, joined into `index.html` by `experiments/spall/build.sh`.
 
 ## What's where
 

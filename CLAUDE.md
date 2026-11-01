@@ -4,7 +4,7 @@ Spall is a pixel-art isometric megastructure builder (working title; it was "Str
 
 ## Layout
 
-`experiments/` is served on port 5190; `experiments/index.html` is the front page and the map of everything.
+`experiments/` is served on port 5190; `experiments/index.html` is the front page and the map of everything. Every push to `main` also publishes `experiments/` to https://andrewblinn.com/spall/ (`.github/workflows/pages.yml`); `local/` folders and the Blender render folders stay off it.
 
 - **Main build:** `experiments/spall/`. The game. Sources in `src/`, joined into `index.html` by `build.sh`. Everything else is measured against it.
 - **Builds:** folders that open as one interactive game, each the main build plus something. They read main's sources rather than keeping copies:
@@ -36,7 +36,7 @@ Spall is a pixel-art isometric megastructure builder (working title; it was "Str
 
 - Commit your own work as you go, in small, well-scoped commits. The message says what changed and why.
 - Commit only the files you changed. Other sessions' uncommitted work may be in the tree. Check `git status` and don't sweep it into your commit; mention it to the user instead.
-- Never stash, reset, rebase or check out over others' work. Don't push without the user's OK.
+- Never stash, reset, rebase or check out over others' work. Don't push without the user's OK: a push to `main` publishes the site.
 - Branches or worktrees are welcome for large or risky changes, but not required.
 - The pre-commit hook refuses files over 20 MB. Enable it in a fresh clone with `git config core.hooksPath .githooks`.
 
