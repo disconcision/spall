@@ -20,7 +20,7 @@ const GAUGES = [
 ];
 const DARK = ['#3c3f45', '#33302d', '#45484f', '#2c2f33'];
 const GIRDER_HEX = '#a9b6bf', MOUNT_HEX = '#c9a54a', GLEAM = '#f4f8fa', SLEEVE_HEX = '#4a4540', TIE_HEX = '#eeeae0', ROD_HEX = '#5c646b', POST_HEX = '#8a9298';
-const WIRES = { cables: [], ties: [], posts: [], girders: [], mounts: [], gauge: 1, sleeve: false, outline: true, round: true, tieStyle: 'band', palette: 'bright', sockets: true, bundleLook: 'wires', feel: 'weighty', nextId: 1, hue: [0, 0, 0, 0], stage: null };
+const WIRES = { hl: 'amber', only: null, cables: [], ties: [], posts: [], girders: [], mounts: [], gauge: 1, sleeve: false, outline: true, round: true, tieStyle: 'band', palette: 'bright', sockets: true, bundleLook: 'wires', feel: 'weighty', nextId: 1, hue: [0, 0, 0, 0], stage: null };
 const FEEL = { springy: { stretch: 6, bend: 3, drag: 1.002, grab: 0.3 }, weighty: { stretch: 1, bend: 1, drag: 1, grab: 1 }, taut: { stretch: 0.2, bend: 0.5, drag: 1, grab: 1 } };
 const v3 = {
   sub: (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]],
@@ -384,7 +384,7 @@ function stepWires(dt) {
     }
     // dragging is a soft spring whose give grows with the mass being dragged
     if (WGRAB.on && WGRAB.target) {
-      if (WGRAB.tie && !WGRAB.hung) {
+      if (WGRAB.tie && !WGRAB.hung && WGRAB.mode !== 'slide') {
         const t = WGRAB.tie, f = 1 / (1 + tieMass(t) * 0.2 * fe.grab), d = v3.sub(WGRAB.target, tieCenter(t));
         for (const m of t.m) if (m.c.W[m.i] > 0) for (let k = 0; k < 3; k++) m.c.X[m.i * 3 + k] += d[k] * f;
       } else if (WGRAB.c && WGRAB.c.W[WGRAB.i] > 0) {
@@ -397,14 +397,14 @@ function stepWires(dt) {
       if (!window.__nocohere && !(it & 1)) cohere(runs, 0.7);     // every other pass, a little stiffer
       for (const c of CS) {
         if (c.asleep) continue;
-        const X = c.X, Wt = c.W, r = c.rest, bs = c.g.stretch * fe.stretch, bb = c.g.bend * fe.bend;   // a cable in hand is the same cable as one attached
+        const X = c.X, Wt = c.W, LS = c.lamS, LB = c.lamB, r = c.rest, bs = c.g.stretch * fe.stretch, bb = c.g.bend * fe.bend;   // a cable in hand is the same cable as one attached
         // alternate the sweep direction so a pull travels both ways along the cable in a few passes
         const fwd = !(it & 1);
         for (let q = 0; q < c.n - 1; q++) {
           const i = fwd ? q : c.n - 2 - q;
           const a = i * 3, b = a + 3, wa = Wt[i], wb = Wt[i + 1], ws = wa + wb; if (!ws) continue;
           const dx = X[b] - X[a], dy = X[b + 1] - X[a + 1], dz = X[b + 2] - X[a + 2], len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1e-9;
-          const at = bs * ws, dl = (r - len - at * c.lamS[i]) / (ws + at); c.lamS[i] += dl;
+          const at = bs * ws, dl = (r - len - at * LS[i]) / (ws + at); LS[i] += dl;
           const nx = dx / len * dl, ny = dy / len * dl, nz = dz / len * dl;
           X[a] -= nx * wa; X[a + 1] -= ny * wa; X[a + 2] -= nz * wa; X[b] += nx * wb; X[b + 1] += ny * wb; X[b + 2] += nz * wb;
         }
@@ -412,7 +412,7 @@ function stepWires(dt) {
           const a = i * 3, b = a + 6, wa = Wt[i], wb = Wt[i + 2], ws = wa + wb; if (!ws) continue;
           const dx = X[b] - X[a], dy = X[b + 1] - X[a + 1], dz = X[b + 2] - X[a + 2], len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1e-9;
           if (len >= 2 * r) continue;
-          const at = bb * ws, dl = (2 * r - len - at * c.lamB[i]) / (ws + at); c.lamB[i] += dl;
+          const at = bb * ws, dl = (2 * r - len - at * LB[i]) / (ws + at); LB[i] += dl;
           const nx = dx / len * dl, ny = dy / len * dl, nz = dz / len * dl;
           X[a] -= nx * wa; X[a + 1] -= ny * wa; X[a + 2] -= nz * wa; X[b] += nx * wb; X[b + 1] += ny * wb; X[b + 2] += nz * wb;
         }
@@ -601,7 +601,7 @@ function moveSlack(by) {
 }
 function endSlack() {
   const c = SLACK.c, d = cableLen(c) - SLACK.L0; SLACK.on = false; SLACK.c = null;
-  if (Math.abs(d) > 0.02) log('you', `${d > 0 ? 'Paid out' : 'Took in'} ${Math.abs(d).toFixed(1)} cells of ${c.g.name} (now ${cableLen(c).toFixed(1)})`, 'sys');
+  if (Math.abs(d) > 0.02) log('you', `${d > 0 ? 'Paid out' : 'Took in'} ${Math.abs(d).toFixed(1)} cells of ${c.g.name} (now ${cableLen(c).toFixed(1)})`, 'sys', { ic: 'cable', s: `${d > 0 ? 'pay out' : 'take in'} ${Math.abs(d).toFixed(1)} · ${c.g.name}` });
 }
 // ---------- girder tool ----------
 // Girders run along grid lines at the working height: drag to lay one along x or y (it snaps
@@ -696,6 +696,29 @@ function pickWire(bx, by, rad) {
   }
   return best;
 }
+// where a tie member may go: between the next ties on its cable, clear of the ends
+function tieRange(t, m) {
+  const c = m.c; let lo = 1, hi = c.n - 2;
+  for (const o of WIRES.ties) if (o !== t) for (const n of o.m) if (n.c === c) { if (n.i < m.i) lo = Math.max(lo, n.i + 3); else if (n.i > m.i) hi = Math.min(hi, n.i - 3); }
+  return [lo, hi];
+}
+// dragging a tie slides it along its bundle to the point nearest the pointer, stopping at the
+// next tie either side. Returns false once the pointer is pulled well off the cables: the
+// drag then lifts the bundle instead (to drop it on a post, a girder or a ledge).
+function slideTieTo(t, bx, by) {
+  const ref = t.m[0], c = ref.c, [lo, hi] = tieRange(t, ref), lim = Math.max(6, 24 / S.zoom);
+  let best = ref.i, bd = 1e9;
+  for (let i = lo; i <= hi; i++) { const q = projIso(c.X[i * 3], c.X[i * 3 + 1], c.X[i * 3 + 2] + c.g.r * 0.6), d = (q[0] - bx) ** 2 + (q[1] - by) ** 2; if (d < bd) { bd = d; best = i; } }
+  if (bd > lim * lim) return false;
+  if (best === ref.i) return true;
+  const p = xAt(c, best);
+  for (const m of t.m) {
+    const [l, h] = tieRange(t, m); let bi = m.i, bdd = 1e9;
+    for (let i = l; i <= h; i++) { const d = v3.dist(xAt(m.c, i), p); if (d < bdd) { bdd = d; bi = i; } }
+    m.i = bi; wake(m.c);
+  }
+  return true;
+}
 function grabTie(t) {
   // picking up a clamped head leaves a clamp behind and carries the head on
   if (t.hang && isHead(t)) {
@@ -705,7 +728,8 @@ function grabTie(t) {
     t.hang = null; t.top = null;
   }
   const p = tieCenter(t);
-  Object.assign(WGRAB, { on: true, tie: t, c: null, i: -1, end: false, hung: !!t.hang, head: isHead(t), ref: p, goal: p.slice(), target: p.slice() });
+  // a free tie slides along its cables; a clamped one or a bundle head is carried
+  Object.assign(WGRAB, { on: true, tie: t, c: null, i: -1, end: false, hung: !!t.hang, head: isHead(t), ref: p, goal: p.slice(), target: p.slice(), mode: t.hang || isHead(t) ? 'carry' : 'slide' });
   t.m.forEach(m => wake(m.c));
 }
 // pointer hooks, called from input; return true when the wire layer took the gesture
@@ -714,6 +738,7 @@ function wireDown(bx, by, e) {
   birdsStartle(bx, by);
   pushUndo();
   if (e.altKey) { const pc = pickWire(bx, by, 5); if (pc) { pc.tie ? removeTie(pc.tie) : removeCable(pc.c); return true; } }
+  if (S.tool === 'tie' && !e.shiftKey) { const pt = pickWire(bx, by, 5); if (pt && pt.tie) { if (e.detail >= 2) { pt.tie.hang ? (pt.tie.hang = null, pt.tie.top = null, pt.tie.m.forEach(m => wake(m.c))) : hangTie(pt.tie); return true; } grabTie(pt.tie); return true; } }
   if (S.tool === 'tie' || (e.shiftKey && S.tool !== 'inspect' && S.tool !== 'demolish')) { WIRES.stroke = { x0: bx, y0: by, x1: bx, y1: by }; return true; }
   if (S.tool === 'girder') {
     if (e.altKey) { const gn = girderNear(bx, by, 6); if (gn) { WIRES.girders = WIRES.girders.filter(g => g !== gn.g); WIRES.cables.forEach(wake); sfx.click(); } return true; }
@@ -725,7 +750,7 @@ function wireDown(bx, by, e) {
     if (x < 0 || y < 0 || x >= W || y >= D || wsolid(x, y, top)) { toast('A post needs open air at the working height'); return true; }
     let z0 = top; while (z0 > 0 && !wsolid(x, y, z0 - 0.05)) z0 -= 0.05;
     addPost(x, y, z0, top); sfx.click();
-    log('you', `Post at ${x},${y}: ${lvCode(Math.floor(z0))} up to ${lvCode(Math.floor(top))}, ${(top - z0).toFixed(1)} levels`, 'sys');
+    log('you', `Post at ${x},${y}: ${lvCode(Math.floor(z0))} up to ${lvCode(Math.floor(top))}, ${(top - z0).toFixed(1)} levels`, 'sys', { ic: 'post', s: `post · ${(top - z0).toFixed(1)} levels`, at: [x, y, Math.floor(z0)] });
     return true;
   }
   const pc = pickWire(bx, by, 5);
@@ -759,6 +784,7 @@ function wireMove(bx, by) {
   if (LAY.on) { LAY.hint = wireAnchor(bx, by, LAY.c.gi); LAY.target = LAY.hint || screenAtZ(bx, by, LAY.a[2]); return true; }
   if (SLACK.on) { moveSlack(by); return true; }
   if (GDRAG.on) { const p = gridPointAt(bx, by, GDRAG.a[2]), a = GDRAG.a; GDRAG.b = Math.abs(p[0] - a[0]) >= Math.abs(p[1] - a[1]) ? [p[0], a[1], a[2]] : [a[0], p[1], a[2]]; return true; }
+  if (WGRAB.on && WGRAB.tie && WGRAB.mode === 'slide') { if (slideTieTo(WGRAB.tie, bx, by)) return true; WGRAB.mode = 'carry'; }
   if (WGRAB.on) {
     const post = WGRAB.tie && postNear(bx, by, 7), gn = WGRAB.tie && !post && girderNear(bx, by, 7);
     WGRAB.goal = post ? [post.x, post.y, post.z1 + WGRAB.tie.R] : gn ? [gn.p[0], gn.p[1], gn.p[2] - GIRDER_HANG] : (WGRAB.end && wireAnchor(bx, by, WGRAB.c.gi)) || screenAtDepthOf(bx, by, WGRAB.ref);
@@ -767,11 +793,11 @@ function wireMove(bx, by) {
   return false;
 }
 function wireUp(bx, by) {
-  if (WIRES.stroke) { const s = WIRES.stroke; WIRES.stroke = null; if (Math.hypot(s.x1 - s.x0, s.y1 - s.y0) <= 2) { const pc = pickWire(bx, by, 5); if (pc && pc.tie) { removeTie(pc.tie); log('you', 'Snipped a tie', 'sys'); } return true; } if (true) { const t = tieStroke(s.x0, s.y0, s.x1, s.y1); if (t) log('you', `Tied ${t.m.length} cable${t.m.length > 1 ? 's' : ''} into a ${t.round ? 'round bundle' : 'ribbon'} (${tieMass(t).toFixed(1)} t/m)`, 'sys'); } return true; }
+  if (WIRES.stroke) { const s = WIRES.stroke; WIRES.stroke = null; if (Math.hypot(s.x1 - s.x0, s.y1 - s.y0) <= 2) { const pc = pickWire(bx, by, 5); if (pc && pc.tie) { removeTie(pc.tie); log('you', 'Snipped a tie', 'sys', { ic: 'tie', s: 'snip a tie' }); } return true; } if (true) { const t = tieStroke(s.x0, s.y0, s.x1, s.y1); if (t) log('you', `Tied ${t.m.length} cable${t.m.length > 1 ? 's' : ''} into a ${t.round ? 'round bundle' : 'ribbon'} (${tieMass(t).toFixed(1)} t/m)`, 'sys', { ic: 'tie', s: `tie ${t.m.length} into a ${t.round ? 'bundle' : 'ribbon'}` }); } return true; }
   if (SLACK.on) { endSlack(); return true; }
   if (GDRAG.on) {
     GDRAG.on = false; const a = GDRAG.a, b = GDRAG.b;
-    if (v3.dist(a, b) >= 1) { addGirder(a, b); log('you', `Girder ${v3.dist(a, b)} cells along ${a[0] === b[0] ? 'y' : 'x'} at ${lvCode(Math.floor(a[2]))}`, 'sys'); }
+    if (v3.dist(a, b) >= 1) { addGirder(a, b); log('you', `Girder ${v3.dist(a, b)} cells along ${a[0] === b[0] ? 'y' : 'x'} at ${lvCode(Math.floor(a[2]))}`, 'sys', { ic: 'girder', s: `girder · ${v3.dist(a, b)} along ${a[0] === b[0] ? 'y' : 'x'}`, at: [Math.floor(a[0]), Math.floor(a[1]), Math.floor(a[2])] }); }
     else {   // a column: from whatever is below up to the working height
       let z0 = a[2]; while (z0 > 0 && !wsolid(a[0] + 0.01, a[1] + 0.01, z0 - 0.05)) z0 -= 0.05;
       if (a[2] - z0 > 0.3) addGirder([a[0], a[1], z0], a);
@@ -794,7 +820,7 @@ function wireUp(bx, by) {
       else { if (atA) c.pinA = null; else c.pinB = null; c.W[WGRAB.i] = 1 / c.g.mass; }
       wake(c);
     }
-    if (WGRAB.tie) {
+    if (WGRAB.tie && WGRAB.mode !== 'slide') {
       const t = WGRAB.tie, post = postNear(bx, by, 7), gn = !post && girderNear(bx, by, 7), ctr = tieCenter(t);
       if (post) { clampTie(t, postTop(post)); sfx.click(); }
       else if (gn) { hangFromGirder(t, gn); sfx.click(); }
@@ -812,7 +838,7 @@ function wireUp(bx, by) {
 function wireHover(bx, by) {
   if (S.mode !== 'cut' || LAY.on || WGRAB.on || WIRES.stroke) return null;
   const pc = pickWire(bx, by, 5);
-  if (pc && pc.tie) return `<b>${isHead(pc.tie) ? 'bundle head' : pc.tie.round ? 'tie' : 'ribbon tie'}</b> · ${pc.tie.m.length} cable${pc.tie.m.length > 1 ? 's' : ''} · ${tieMass(pc.tie).toFixed(1)} t/m${pc.tie.hang ? ' · clamped' : ''}${isHead(pc.tie) ? ' · drag to pay out' : ''}`;
+  if (pc && pc.tie) return `<b>${isHead(pc.tie) ? 'bundle head' : pc.tie.round ? 'tie' : 'ribbon tie'}</b> · ${pc.tie.m.length} cable${pc.tie.m.length > 1 ? 's' : ''} · ${tieMass(pc.tie).toFixed(1)} t/m${pc.tie.hang ? ' · clamped' : ''}${isHead(pc.tie) ? ' · drag to pay out' : pc.tie.hang ? '' : ' · drag to slide, pull off to lift · ⌥-click removes'}`;
   if (pc) return `<b>${pc.c.g.name}</b> · ${cableLen(pc.c).toFixed(1)} cells${(pc.i === 0 || pc.i === pc.c.n - 1) ? ' · end' : ''} · ⌘-drag ↑↓ slack`;
   if (S.tool === 'post') return '<b>post</b> · click a floor to stand a support up to the working height';
   if (S.tool === 'girder') return '<b>girder</b> · drag along a grid line · click for a column · Option-click removes';
@@ -878,10 +904,17 @@ function presetTrunk(st) {
 }
 function settle(n) { for (let s = 0; s < (n || 400); s++) stepWires(1 / 60); }
 function clearWires() { spineCache.key = -1; WIRES.cables = []; WIRES.ties = []; WIRES.posts = []; WIRES.girders = []; WIRES.mounts = []; WIRES.hue = [0, 0, 0, 0]; }
-function seedWires() {
+// defer: lay the cables out but leave the settling (that many steps of stepWires, then
+// seedWiresDone) to the caller; boot does it in slices so the loading screen keeps moving
+function seedWires(defer) {
   clearWires();
   WIRES.stage = buildStageGeometry();
-  if (typeof defaultScene === 'function') { defaultScene(WIRES.stage); settle(150); } else { presetTrunk(WIRES.stage); settle(400); }
+  let n;
+  if (typeof defaultScene === 'function') { defaultScene(WIRES.stage); n = 150; } else { presetTrunk(WIRES.stage); n = 400; }
+  if (defer) return n;
+  settle(n); seedWiresDone();
+}
+function seedWiresDone() {
   if (typeof initBirds === 'function') initBirds();
   markAllDirty(); skyDirty = true; stripDirty = true;
 }
@@ -1018,12 +1051,177 @@ function tubeRows(ctx, a, b, w, colAt) {
   }
 }
 const RW = (ctx, x, y, w, h, c) => { ctx.fillStyle = c; for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) if (wdt(xx, yy)) ctx.fillRect(xx, yy, 1, 1); };
+// ---------- highlight: making what's under the pointer (or in hand) unmistakable ----------
+// 'amber' recolours it in place (the original). The others draw just that cable or tie into an
+// overlay each frame and treat it: a soft glow, a 1-px outline, a brightening, a pulsing
+// outline, or dimming everything else.
+const HL_STYLES = ['amber', 'glow', 'outline', 'outline-amber', 'bright', 'pulse', 'dim', 'glow-outline'];
+const HLC = { c: null, g: null, t: null, tg: null };
+function hlTarget() {
+  if (WIRES.hover) return WIRES.hover.tie ? { tie: WIRES.hover.tie } : { c: WIRES.hover.c };
+  if (WGRAB.on) return WGRAB.tie ? { tie: WGRAB.tie } : WGRAB.c ? { c: WGRAB.c } : null;
+  if (LAY.on && LAY.c) return { c: LAY.c };
+  return null;
+}
+function hlMatch(sg) {
+  const O = WIRES.only;
+  if (O.c) return sg.c === O.c || sg.sock === O.c || (sg.tube && sg.tube.r.pairs.some(pr => pr.c === O.c));
+  return !!O.tie && sg.band === O.tie;
+}
+function drawWireHighlight(ctx, floor, t) {
+  const style = WIRES.hl || 'amber', target = hlTarget();
+  if (style === 'amber' || !target) return;
+  const w = S.bw, h = S.bh;
+  if (!HLC.c || HLC.c.width !== w || HLC.c.height !== h) { HLC.c = mk(w, h); HLC.g = HLC.c.getContext('2d'); HLC.t = mk(w, h); HLC.tg = HLC.t.getContext('2d'); }
+  const g = HLC.g; g.clearRect(0, 0, w, h);
+  WIRES.only = target;
+  try { wpxHold(g, () => { for (let z = floor || 0; z < NL; z++) drawWiresLevel(g, z); }); } finally { WIRES.only = null; }
+  const tint = col => { const tg = HLC.tg; tg.globalCompositeOperation = 'source-over'; tg.clearRect(0, 0, w, h); tg.drawImage(HLC.c, 0, 0); tg.globalCompositeOperation = 'source-in'; tg.fillStyle = col; tg.fillRect(0, 0, w, h); tg.globalCompositeOperation = 'source-over'; return HLC.t; };
+  const outline = (col, a) => { const o = tint(col); ctx.globalAlpha = a; for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) ctx.drawImage(o, dx, dy); ctx.globalAlpha = 1; ctx.drawImage(HLC.c, 0, 0); };
+  const glow = (a) => { const o = tint('#ffc062'); ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.filter = 'blur(2px)'; ctx.globalAlpha = 0.85 * a; ctx.drawImage(o, 0, 0); ctx.filter = 'blur(5px)'; ctx.globalAlpha = 0.55 * a; ctx.drawImage(o, 0, 0); ctx.restore(); };
+  ctx.save();
+  if (style === 'glow') glow(1);
+  else if (style === 'outline') outline('#fff4dc', 1);
+  else if (style === 'outline-amber') outline('#f0b43c', 1);
+  else if (style === 'bright') { ctx.filter = 'brightness(1.45) saturate(1.35)'; ctx.drawImage(HLC.c, 0, 0); }
+  else if (style === 'pulse') outline('#fff4dc', 0.35 + 0.65 * (0.5 + 0.5 * Math.sin((t || 0) * 7)));
+  else if (style === 'dim') { ctx.fillStyle = 'rgba(8,9,11,0.42)'; ctx.fillRect(0, 0, w, h); ctx.drawImage(HLC.c, 0, 0); glow(0.5); }
+  else if (style === 'glow-outline') { outline('#2a1a08', 1); glow(0.8); }
+  ctx.restore();
+}
+// Every cable segment, bundle step, socket and band, bucketed by the level its midpoint is
+// in and sorted back to front: built once per frame (or wire change) for all the levels
+// instead of each level walking every cable. oz is the height the cut-plane test uses.
+let WSEG = { key: null };
+function wireSegs() {
+  const SP = spines(), key = [S.time, WIRES.ver || 0, WIRES.nextId, WIRES.cables.length, WIRES.ties.length, WIRES.sockets, WIRES.bundleLook, S.rot].join('|');
+  if (WSEG.key === key && WSEG.sp === SP) return WSEG;
+  const hidden = new Map(), override = new Map(), lv = new Map();
+  const put = (zz, sg) => { const k = Math.floor(zz); let a = lv.get(k); if (!a) lv.set(k, a = []); a.push(sg); };
+  for (const sp of SP) sp.r.pairs.forEach((pr, j) => {
+    if (!hidden.has(pr.c)) hidden.set(pr.c, []);
+    hidden.get(pr.c).push([pr.a.i, pr.b.i]);
+    if (!override.has(pr.c)) override.set(pr.c, new Map());
+    override.get(pr.c).set(pr.a.i, sp.pos(j, 0)); override.get(pr.c).set(pr.b.i, sp.pos(j, sp.N));
+  });
+  // loose wire: drawn from its own particles, joined seamlessly to the bundles it enters
+  for (const c of WIRES.cables) {
+    const hid = hidden.get(c) || [], ov = override.get(c);
+    const P = i => (ov && ov.get(i)) || xAt(c, i);
+    for (let i = 0; i < c.n - 1; i++) {
+      if (hid.some(([a, b]) => i >= a && i < b)) continue;
+      const pa = P(i), pb = P(i + 1), zm = (pa[2] + pb[2]) / 2;
+      put(zm, { c, i, pa, pb, k: depthKey((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2, zm), zm, oz: zm });
+    }
+    if (WIRES.sockets) for (const pin of [c.pinA, c.pinB]) {
+      if (!pin) continue;
+      put(pin[2], { sock: c, p: pin, k: depthKey(pin[0], pin[1], pin[2]) + 0.05, oz: pin[2] });
+    }
+  }
+  // bundled runs
+  const tube = WIRES.bundleLook === 'tube';
+  for (const sp of SP) {
+    for (let s = 0; s < sp.N; s++) {
+      const a = sp.pts[s], b = sp.pts[s + 1], zm = (a[2] + b[2]) / 2;
+      const k = depthKey((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, zm);
+      if (tube && sp.round) put(zm, { tube: sp, s, k, oz: zm });
+      else {
+        if (sp.round) put(zm, { core: sp, s, k: k - 0.4, d: k, oz: zm });
+        sp.r.pairs.forEach((pr, j) => { const pa = sp.pos(j, s), pb = sp.pos(j, s + 1); put(zm, { c: pr.c, i: -1, pa, pb, k: depthKey((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2, zm), zm, oz: zm }); });
+      }
+    }
+  }
+  // ties: a band wrapped tight round the bundle where a run starts or ends; a clip on a ribbon
+  const banded = new Set();
+  for (const sp of SP) for (const [t, s] of [[sp.r.t1, 0], [sp.r.t2, sp.N]]) {
+    if (banded.has(t)) continue; banded.add(t);
+    const p = sp.pts[s];
+    put(p[2], { band: t, sp, s, k: depthKey(p[0], p[1], p[2]) + 0.6, d: depthKey(p[0], p[1], p[2]) + 0.3, oz: p[2] });
+  }
+  for (const a of lv.values()) a.sort((a, b) => a.k - b.k);
+  WSEG = { key, sp: SP, lv, loneTies: WIRES.ties.filter(t => !banded.has(t)) };
+  return WSEG;
+}
+// ---------- pixel batching ----------
+// A cable is drawn a pixel at a time, and a canvas call per pixel cost more than the rest of
+// the wire pass. So the wires are written into a pixel buffer (WPXC stands in for the canvas)
+// and the rectangle they touched goes onto the real canvas in one putImageData + drawImage:
+// the same pixels in the same order. wpxHold() keeps one batch open over several levels.
+const WPX = { bufs: [], b: null, ctx: null, depth: 0, cols: new Map(), probe: null };
+function wpxColor(s) {
+  let v = WPX.cols.get(s);
+  if (v !== undefined) return v;
+  let r, g, b, a = 255;
+  if (s[0] === '#' && s.length === 7) { r = parseInt(s.slice(1, 3), 16); g = parseInt(s.slice(3, 5), 16); b = parseInt(s.slice(5, 7), 16); }
+  else if (/^rgb\(/.test(s)) [r, g, b] = s.match(/\d+/g).map(Number);
+  else {   // anything else (named, short hex, rgba): let the canvas parse it
+    if (!WPX.probe) WPX.probe = mk(1, 1).getContext('2d', { willReadFrequently: true });
+    const p = WPX.probe; p.clearRect(0, 0, 1, 1); p.fillStyle = s; p.fillRect(0, 0, 1, 1); [r, g, b, a] = p.getImageData(0, 0, 1, 1).data;
+  }
+  v = ((a << 24) | (b << 16) | (g << 8) | r) >>> 0;
+  WPX.cols.set(s, v);
+  return v;
+}
+const WPXC = {
+  col: 0, str: '',
+  get fillStyle() { return this.str; },
+  set fillStyle(s) { this.str = s; this.col = wpxColor(s); },
+  fillRect(x, y, w, h) {
+    const B = WPX.b, bw = B.w, bh = B.h, u = B.u;
+    let x0 = Math.max(0, x | 0), y0 = Math.max(0, y | 0); const x1 = Math.min(bw, (x + w) | 0), y1 = Math.min(bh, (y + h) | 0);
+    if (x1 <= x0 || y1 <= y0) return;
+    if (x0 < B.x0) B.x0 = x0; if (y0 < B.y0) B.y0 = y0; if (x1 > B.x1) B.x1 = x1; if (y1 > B.y1) B.y1 = y1;
+    const c = this.col, sa = c >>> 24;
+    for (let yy = y0; yy < y1; yy++) {
+      const row = yy * bw;
+      if (sa === 255) { for (let xx = x0; xx < x1; xx++) u[row + xx] = c; continue; }
+      for (let xx = x0; xx < x1; xx++) u[row + xx] = wpxOver(c, u[row + xx]);
+    }
+  }
+};
+function wpxOver(s, d) {   // source-over, unpremultiplied
+  const sa = (s >>> 24) / 255, da = (d >>> 24) / 255, oa = sa + da * (1 - sa);
+  if (oa <= 0) return 0;
+  const ch = k => Math.round((((s >>> k) & 255) * sa + ((d >>> k) & 255) * da * (1 - sa)) / oa);
+  return ((Math.round(oa * 255) << 24) | (ch(16) << 16) | (ch(8) << 8) | ch(0)) >>> 0;
+}
+function wpxBegin(ctx) {
+  if (window.__nowpx) return false;   // debug: draw straight to the canvas
+  if (WPX.depth > 0) { if (WPX.ctx !== ctx) return false; WPX.depth++; return true; }
+  const cv = ctx.canvas, w = cv && cv.width, h = cv && cv.height;
+  if (!w || !h || !ctx.getTransform().isIdentity) return false;
+  let B = WPX.bufs.find(q => q.w === w && q.h === h);
+  if (!B) {
+    const c = mk(w, h), u8 = new Uint8ClampedArray(w * h * 4);
+    B = { w, h, c, g: c.getContext('2d'), u: new Uint32Array(u8.buffer), img: new ImageData(u8, w, h), x0: w, y0: h, x1: 0, y1: 0 };
+    WPX.bufs.unshift(B); if (WPX.bufs.length > 3) WPX.bufs.pop();
+  }
+  WPX.b = B; WPX.ctx = ctx; WPX.depth = 1;
+  return true;
+}
+function wpxEnd() {
+  if (--WPX.depth > 0) return;
+  const B = WPX.b, ctx = WPX.ctx; WPX.b = WPX.ctx = null; WPX.depth = 0;
+  if (B.x1 <= B.x0) return;
+  const { x0, y0 } = B, w = B.x1 - x0, h = B.y1 - y0;
+  B.g.putImageData(B.img, 0, 0, x0, y0, w, h);
+  ctx.drawImage(B.c, x0, y0, w, h, x0, y0, w, h);
+  for (let y = y0; y < B.y1; y++) B.u.fill(0, y * B.w + x0, y * B.w + B.x1);
+  B.x0 = B.w; B.y0 = B.h; B.x1 = B.y1 = 0;
+}
+// several drawWiresLevel calls onto one canvas, nothing else drawn between them: one batch
+function wpxHold(ctx, fn) { const on = wpxBegin(ctx); try { fn(); } finally { if (on) wpxEnd(); } }
 function drawWiresLevel(ctx, z) {
+  if (!wpxBegin(ctx)) { drawWiresLevelTo(ctx, z); return; }
+  try { drawWiresLevelTo(WPXC, z); } finally { wpxEnd(); }
+}
+function drawWiresLevelTo(ctx, z) {
   WIRES.mist = wireMist(z);
   const cutTop = S.level + HT / LH, inLv = p => Math.floor(p) === z;
   const cutting = S.mode === 'cut' && S.level < NL - 1;
   const ok = p => !cutting || p <= cutTop;
-  for (const p of WIRES.posts) {                              // posts first: bundles rest on them
+  const all = !WIRES.only;                                    // WIRES.only: draw just one cable or tie (the highlight pass)
+  if (all) for (const p of WIRES.posts) {                    // posts first: bundles rest on them
     const a = Math.max(p.z0, z), b = Math.min(p.z1, z + 1);
     if (b <= a || !ok(a)) continue;
     const q = wq(p.x, p.y, a), pal = wpal(POST_HEX, q); WDT.D = depthKey(p.x, p.y, Math.min(b, p.z1));
@@ -1032,7 +1230,7 @@ function drawWiresLevel(ctx, z) {
   }
   // girders: slim gleaming steel along grid lines, a small bulb where they join
   const joints = new Map();
-  for (const g of WIRES.girders) {
+  if (all) for (const g of WIRES.girders) {
     const za = Math.min(g.a[2], g.b[2]), zb = Math.max(g.a[2], g.b[2]), vert = zb - za > 0.5;
     for (const e of [g.a, g.b]) joints.set(e.map(v => v.toFixed(2)).join(), e);
     const pa = vert ? (g.a[2] < g.b[2] ? g.a : g.b) : g.a, pb = vert ? (g.a[2] < g.b[2] ? g.b : g.a) : g.b;
@@ -1044,66 +1242,22 @@ function drawWiresLevel(ctx, z) {
     const pal = wpal(GIRDER_HEX, Math.max(3, wq(A[0], A[1], A[2]))); WDT.D = Math.max(depthKey(...A), depthKey(...B));
     tubeSeg(ctx, projIso(...A), projIso(...B), [0, 2], [mixHex(rgbHex(pal[0]), GLEAM, 0.35), pal[1], pal[2], pal[3]]);
   }
-  for (const e of joints.values()) {
+  if (all) for (const e of joints.values()) {
     if (!inLv(e[2]) || !ok(e[2])) continue;
     const q = projIso(...e), X = Math.round(q[0]), Y = Math.round(q[1]), pal = wpal(GIRDER_HEX, 4); WDT.D = depthKey(...e) + 0.2;
     if (WIRES.joint === 'plate') { RW(ctx, X - 2, Y - 2, 5, 5, pal[3]); RW(ctx, X - 1, Y - 1, 3, 3, pal[1]); RW(ctx, X, Y - 1, 1, 3, pal[2]); RW(ctx, X - 1, Y, 3, 1, pal[2]); }
     else if (WIRES.joint === 'ring') { RW(ctx, X - 2, Y - 1, 5, 3, pal[2]); RW(ctx, X - 1, Y - 2, 3, 5, pal[2]); RW(ctx, X - 1, Y - 1, 3, 3, pal[0]); RW(ctx, X, Y, 1, 1, pal[3]); }
     else { RW(ctx, X - 1, Y - 1, 3, 3, pal[2]); RW(ctx, X - 1, Y - 1, 2, 2, pal[0]); }
   }
-  for (const m of WIRES.mounts) {
+  if (all) for (const m of WIRES.mounts) {
     if (!inLv(m.p[2]) || !ok(m.p[2])) continue;
     const q = projIso(...m.p), X = Math.round(q[0]), Y = Math.round(q[1]), pal = wpal(GIRDER_HEX, 4); WDT.D = depthKey(...m.p) + 0.2;
     RW(ctx, X - 1, Y, 3, 2, pal[2]); RW(ctx, X - 1, Y, 2, 1, pal[0]); RW(ctx, X, Y, 1, 1, GLEAM);
   }
-  const SP = spines(), hidden = new Map(), override = new Map();
-  for (const sp of SP) sp.r.pairs.forEach((pr, j) => {
-    if (!hidden.has(pr.c)) hidden.set(pr.c, []);
-    hidden.get(pr.c).push([pr.a.i, pr.b.i]);
-    if (!override.has(pr.c)) override.set(pr.c, new Map());
-    override.get(pr.c).set(pr.a.i, sp.pos(j, 0)); override.get(pr.c).set(pr.b.i, sp.pos(j, sp.N));
-  });
-  const segs = [];
-  // loose wire: drawn from its own particles, joined seamlessly to the bundles it enters
-  for (const c of WIRES.cables) {
-    const hid = hidden.get(c) || [], ov = override.get(c);
-    const P = i => (ov && ov.get(i)) || xAt(c, i);
-    for (let i = 0; i < c.n - 1; i++) {
-      if (hid.some(([a, b]) => i >= a && i < b)) continue;
-      const pa = P(i), pb = P(i + 1), zm = (pa[2] + pb[2]) / 2;
-      if (!inLv(zm) || !ok(zm)) continue;
-      segs.push({ c, i, pa, pb, k: depthKey((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2, zm), zm });
-    }
-    if (WIRES.sockets) for (const pin of [c.pinA, c.pinB]) {
-      if (!pin || !inLv(pin[2]) || !ok(pin[2])) continue;
-      segs.push({ sock: c, p: pin, k: depthKey(pin[0], pin[1], pin[2]) + 0.05 });
-    }
-  }
-  // bundled runs
-  const tube = WIRES.bundleLook === 'tube';
-  for (const sp of SP) {
-    for (let s = 0; s < sp.N; s++) {
-      const a = sp.pts[s], b = sp.pts[s + 1], zm = (a[2] + b[2]) / 2;
-      if (!inLv(zm) || !ok(zm)) continue;
-      const k = depthKey((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, zm);
-      if (tube && sp.round) segs.push({ tube: sp, s, k });
-      else {
-        if (sp.round) segs.push({ core: sp, s, k: k - 0.4, d: k });
-        sp.r.pairs.forEach((pr, j) => { const pa = sp.pos(j, s), pb = sp.pos(j, s + 1); segs.push({ c: pr.c, i: -1, pa, pb, k: depthKey((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2, zm), zm }); });
-      }
-    }
-  }
-  // ties: a band wrapped tight round the bundle where a run starts or ends; a clip on a ribbon
-  const banded = new Set();
-  for (const sp of SP) for (const [t, s] of [[sp.r.t1, 0], [sp.r.t2, sp.N]]) {
-    if (banded.has(t)) continue; banded.add(t);
-    const p = sp.pts[s]; if (!inLv(p[2]) || !ok(p[2])) continue;
-    segs.push({ band: t, sp, s, k: depthKey(p[0], p[1], p[2]) + 0.6, d: depthKey(p[0], p[1], p[2]) + 0.3 });
-  }
-  const loneTies = WIRES.ties.filter(t => !banded.has(t));
-  segs.sort((a, b) => a.k - b.k);
+  const WS = wireSegs(), segs = (WS.lv.get(z) || []).filter(sg => ok(sg.oz)), loneTies = WS.loneTies;
   const light = p => wq(p[0], p[1], p[2]);
   for (const sg of segs) {
+    if (!all && !hlMatch(sg)) continue;
     WDT.D = sg.d != null ? sg.d : sg.k;
     if (sg.core) {
       const sp = sg.core, a = sp.pts[sg.s], b = sp.pts[sg.s + 1], w = Math.max(2, sp.Wpx[sg.s] - 1), pal = wpal('#2c2925', light(a));
@@ -1126,7 +1280,7 @@ function drawWiresLevel(ctx, z) {
       continue;
     }
     if (sg.band) {
-      const t = sg.band, sp = sg.sp, s = sg.s, p = sp.pts[s], hov = WIRES.hover && WIRES.hover.tie === t;
+      const t = sg.band, sp = sg.sp, s = sg.s, p = sp.pts[s], hov = WIRES.hl === 'amber' && WIRES.hover && WIRES.hover.tie === t;
       const pal = wpal(hov ? '#f0b43c' : TIE_HEX, light(p));
       const q0 = projIso(...sp.pts[Math.max(0, s - 1)]), q1 = projIso(...sp.pts[Math.min(sp.N, s + 1)]), qp = projIso(...p);
       let tx = q1[0] - q0[0], ty = q1[1] - q0[1]; const tl = Math.hypot(tx, ty) || 1; tx /= tl; ty /= tl;
@@ -1154,21 +1308,23 @@ function drawWiresLevel(ctx, z) {
       continue;
     }
     const c = sg.c, w = c.g.px, prof = tubeProfile(w, WIRES.outline && w >= 3);
-    const hov = WIRES.hover && WIRES.hover.c === c;
+    const hov = WIRES.hl === 'amber' && WIRES.hover && WIRES.hover.c === c;
     const a = projIso(sg.pa[0], sg.pa[1], sg.pa[2] + c.g.r * 0.6), b = projIso(sg.pb[0], sg.pb[1], sg.pb[2] + c.g.r * 0.6);
     const pal = wpal(hov ? '#f0b43c' : cableHex(c), light(sg.pa));
     tubeSeg(ctx, a, b, prof, c.gi >= 2 && sg.i >= 0 && sg.i % (c.gi === 3 ? 5 : 7) === 0 ? [pal[2], pal[2], pal[3], pal[3]] : pal);
   }
   for (const t of WIRES.ties) {                               // hanger rods
+    if (!all && WIRES.only.tie !== t) continue;
     const c = tieCenter(t); if (!t.top || !inLv(c[2]) || !ok(c[2])) continue; WDT.D = depthKey(...c);
     tubeSeg(ctx, projIso(c[0], c[1], c[2] + t.R), projIso(t.top[0], t.top[1], t.top[2]), [1, 3], wpal(ROD_HEX, wq(c[0], c[1], c[2])));
   }
   for (const t of loneTies) {                                 // a tie with no bundle on either side
+    if (!all && WIRES.only.tie !== t) continue;
     const c = tieCenter(t); if (!inLv(c[2]) || !ok(c[2])) continue; WDT.D = depthKey(...c) + 0.3;
     const cc = [0, 0, 0]; for (const m of t.m) for (let k = 0; k < 3; k++) cc[k] += m.c.X[m.i * 3 + k] / t.m.length;
     if (t.round) {
       // a band square to the run, wrapped round the cables where they actually are; front half only
-      const T = t.T || [0, 0, 1], A = t.axis, U = v3.norm(v3.cross(T, A)), hov = WIRES.hover && WIRES.hover.tie === t, pal = wpal(hov ? '#f0b43c' : TIE_HEX, wq(...cc));
+      const T = t.T || [0, 0, 1], A = t.axis, U = v3.norm(v3.cross(T, A)), hov = WIRES.hl === 'amber' && WIRES.hover && WIRES.hover.tie === t, pal = wpal(hov ? '#f0b43c' : TIE_HEX, wq(...cc));
       let rr = 0; for (const m of t.m) { const q = v3.sub(xAt(m.c, m.i), cc), dt = v3.dot(q, T); rr = Math.max(rr, Math.hypot(q[0] - T[0] * dt, q[1] - T[1] * dt, q[2] - T[2] * dt) + m.c.g.r); }
       rr += 0.01;
       const k0 = depthKey(...cc), q0 = projIso(cc[0] - T[0] * 0.1, cc[1] - T[1] * 0.1, cc[2] - T[2] * 0.1), q1 = projIso(cc[0] + T[0] * 0.1, cc[1] + T[1] * 0.1, cc[2] + T[2] * 0.1);
@@ -1202,6 +1358,6 @@ function drawWireOverlay(ctx) {
   if (S.tool === 'girder' && WIRES.ptr && !WGRAB.on) { const gn = WIRES.ptr && girderNear(WIRES.ptr[0], WIRES.ptr[1], 6); mark(gridPointAt(WIRES.ptr[0], WIRES.ptr[1], workHeight()), 'rgba(240,180,60,0.85)'); if (gn) { const A = projIso(...gn.g.a), B = projIso(...gn.g.b); pline(ctx, A[0], A[1], B[0], B[1], 'rgba(240,180,60,0.6)'); } }
   if (LAY.on) { mark(LAY.a, '#f0b43c'); mark(LAY.hint || LAY.target, LAY.hint ? '#e6dfcf' : 'rgba(230,223,207,0.5)'); }
   else if (WGRAB.on && WGRAB.end) mark(WGRAB.goal, '#e6dfcf');
-  else if (WGRAB.on && WGRAB.tie && WIRES.ptr) { const p = postNear(WIRES.ptr[0], WIRES.ptr[1], 7), gn = !p && girderNear(WIRES.ptr[0], WIRES.ptr[1], 7); if (p) mark(postTop(p), '#f0b43c'); else if (gn) mark(gn.p, '#f0b43c'); }
+  else if (WGRAB.on && WGRAB.tie && WGRAB.mode !== 'slide' && WIRES.ptr) { const p = postNear(WIRES.ptr[0], WIRES.ptr[1], 7), gn = !p && girderNear(WIRES.ptr[0], WIRES.ptr[1], 7); if (p) mark(postTop(p), '#f0b43c'); else if (gn) mark(gn.p, '#f0b43c'); }
   else if ((S.tool === 'cable' || S.tool === 'post') && WIRES.ptr && !WIRES.hover) mark(wireAnchor(WIRES.ptr[0], WIRES.ptr[1], WIRES.gauge), 'rgba(240,180,60,0.85)');
 }

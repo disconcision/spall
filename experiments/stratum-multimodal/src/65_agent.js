@@ -50,7 +50,7 @@ function startSurvey() {
   AGENT.cands = c; AGENT.ci = 0;
   setAgentState('survey', 'surveying');
   agentSay(`Surveying ${c.length} bays for a capsule stack (light, fill cap, bridge).`, 3);
-  log('claude', `Survey started: ${c.length} candidate bays`, 'sys');
+  log('claude', `Survey started: ${c.length} candidate bays`, 'sys', { ic: 'survey', s: `survey · ${c.length} bays` });
   goLook(c[0]);
 }
 function goLook(s) { moveAgent(s.x + 2.4, s.y + 0.5, s.z + 3.2); AGENT.looking = false; AGENT.gaze = null; AGENT.level = s.z; }
@@ -98,6 +98,7 @@ function startRequest() {
   moveAgent(s.x + 2.4, s.y + 0.5, s.z + 2.2); AGENT.level = s.z; AGENT.looking = false; AGENT.gaze = null;
 }
 function proposeSite(site, kind, pieces, name, note) {
+  if (S.propMute) { AGENT.job = null; setAgentState('idle', 'proposals paused'); return; }   // muted: nothing pops up
   const j = makeJob('claude', kind, pieces, { x: site.x, y: site.y, z: site.z }, name);
   AGENT.job = j; AGENT.last = { site, note, name };
   setAgentState('propose', 'awaiting approval');
@@ -105,7 +106,7 @@ function proposeSite(site, kind, pieces, name, note) {
   AGENT.gaze = { x0: Math.min(...xs), y0: Math.min(...ys), x1: Math.max(...xs) + 1, y1: Math.max(...ys) + 1, z0: Math.min(...zs), z1: Math.max(...zs) + 1 };
   showCard(j);
   agentSay(`Proposal ${pad2(j.no)}: ${name} at ${lvCode(site.z)}. Ghost is down — approve?`, 9);
-  log('claude', `Proposed ${name} at (${site.x},${site.y},${lvCode(site.z)}) · ¤${j.m.cost} · +${j.m.res} residents`, 'sys');
+  log('claude', `Proposed ${name} at (${site.x},${site.y},${lvCode(site.z)}) · ¤${j.m.cost} · +${j.m.res} residents`, 'sys', { ic: 'propose', s: `propose ${name} · ¤${j.m.cost} · +${j.m.res}`, at: [site.x, site.y, site.z] });
   sfx.ghost();
 }
 function phaseSpeech(j, ph) {
@@ -185,7 +186,7 @@ function agentUpdate(dt) {
         A.looking = true; A.lookT = S.time + lookDur;
         A.gaze = { x0: c.x, y0: c.y, x1: c.x + 2, y1: c.y + 2, z0: c.z, z1: c.z + 3 };
         agentSay('Looking at ' + siteNote(c), lookDur + 0.6);
-        log('claude', 'Looked at ' + siteNote(c), 'sys');
+        log('claude', 'Looked at ' + siteNote(c), 'sys', { ic: 'look', s: `look · ${Math.round(c.light * 100)}% sky, ${Math.round(c.fill * 100)}% fill`, at: [c.x, c.y, c.z], sub: `${Math.round(c.light * 100)}% sky · ${Math.round(c.fill * 100)}% fill`, key: 'look' });
         sfx.look();
       } else if (A.looking && S.time >= A.lookT) {
         A.looking = false; A.ci++;

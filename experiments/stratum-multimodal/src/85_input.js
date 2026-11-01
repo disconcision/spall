@@ -8,21 +8,28 @@ function setLevel(z, o) {
   z = clamp(z | 0, 0, NL - 1);
   if (z === S.level) return;
   S.cutFrom = S.cutAnim; S.cutT = 0; S.level = z;
+  if (S.floor > z) S.floor = z > 0 ? z : -1;   // the floor cutoff never sits above the cut: it follows it down
   if (REDUCED || (o && o.snap)) { S.cutAnim = z; S.cutT = 1; }
   GHC.dirty = true; planDirty = true; secDirty = true; stripDirty = true;
   if (!o || !o.silent) sfx.level(z);
   S.hover = null;
+}
+// the floor cutoff (levels panel grabber, Shift+arrows in the list): S.floor is the lowest level still shown,
+// everything below it is cut away; -1 = no floor. Clamped to the cut. (The renderer reads S.floor.)
+function setFloor(z) {
+  z = z == null || z <= 0 ? -1 : clamp(z | 0, 1, S.level);
+  if (z === S.floor) return;
+  S.floor = z;
+  GHC.dirty = true; planDirty = true; secDirty = true; stripDirty = true;
 }
 function setMode(m) {
   if (m === S.mode || !MODES.includes(m)) return;
   const prev = S.mode;
   S.mode = m; S.modeT = 0;
   const lf = m === 'exploded' ? 2 : 0;   // strata are seen from above when exploded: lift baked occlusion so plates read
-  if (lf !== (S.lightFloor || 0)) { S.lightFloor = lf; markAllDirty(); }
+  if (lf !== (S.lightFloor || 0)) { S.lightFloor = lf; markAllDirty(true); }   // a subtle lift: let it arrive during the move instead of stalling it
   S.explodeTarget = m === 'exploded' ? 1 : 0;
-  const overlayTools = getComputedStyle($('tools')).position === 'absolute';
-  $('tools').classList.toggle('collapsed', overlayTools && (m === 'exploded' || m === 'section'));
-  $('toolsHead').setAttribute('aria-expanded', !$('tools').classList.contains('collapsed'));
+  toolsForMode(m);
   if (m === 'plan') S.zoom = fitZoomFor(...planSize());
   else if (m === 'section') S.zoom = fitZoomFor(...secSize());
   else if (m === 'exploded') S.zoom = S.cssH >= 560 && S.cssW >= 760 ? 1 : S.isoZoom;
@@ -62,9 +69,12 @@ function regenerateWorld() {
   log('sys', `World generated · seed ${S.seed}`, 'sys');
 }
 function resize() {
-  const st = $('stage'), r = st.getBoundingClientRect();
+  const st = $('stage'), r = st.getBoundingClientRect(), bw0 = S.bw, bh0 = S.bh, had = !!VIEW.ctx, sameZoom = resize.zoom === S.zoom;
+  resize.zoom = S.zoom;
   S.cssW = Math.max(1, Math.floor(r.width)); S.cssH = Math.max(1, Math.floor(r.height));
   S.bw = Math.ceil(S.cssW / S.zoom); S.bh = Math.ceil(S.cssH / S.zoom);
+  // keep the view's top-left where it was, so a panel opening or closing beside it doesn't shift the city
+  if (had && sameZoom && bw0 && S.mode !== 'plan' && S.mode !== 'section') { S.cam.x += (S.bw - bw0) / 2; S.cam.y += (S.bh - bh0) / 2; }
   const cv = $('view');
   cv.width = S.bw; cv.height = S.bh;
   cv.style.width = S.bw * S.zoom + 'px'; cv.style.height = S.bh * S.zoom + 'px';
@@ -73,6 +83,8 @@ function resize() {
   const over = getComputedStyle($('tools')).position === 'absolute';
   S.safeL = over ? Math.max(0, tr.right - r.left + 6) : 0; S.safeR = over ? Math.max(0, r.right - sr.left + 6) : 0;
   skyDirty = true;
+  sizeLevels();
+  if (had) render();   // redraw at once: a resized canvas is blank until the next frame otherwise
 }
 const VIEW = { ctx: null };
 function pickAt(bx, by) {
@@ -107,7 +119,7 @@ function finishCapture() {
   if (!P.length) { toast('Nothing to capture there (cores and ground are excluded)'); return; }
   const u = { name: 'Unit ' + String.fromCharCode(65 + UNITS.length % 26), size: [x1 - x0 + 1, y1 - y0 + 1, h], pieces: P };
   UNITS.push(u); addUnitButton(u); setTool('unit', u);
-  log('you', `Captured blueprint ${u.name}: ${u.size.join('×')}, ${P.length} parts (supports excluded)`, 'sys');
+  log('you', `Captured blueprint ${u.name}: ${u.size.join('×')}, ${P.length} parts (supports excluded)`, 'sys', { ic: 'capture', s: `capture ${u.name} · ${u.size.join('×')} · ${P.length} parts` });
   toast(`Captured ${u.name} — click to stamp copies; drones build them`); sfx.ghost();
 }
 function setupInput() {
@@ -121,6 +133,7 @@ function setupInput() {
     try { st.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
     P.down = true; P.moved = false; P.sx = P.lx = e.clientX; P.sy = P.ly = e.clientY; P.alt = e.altKey;
     const [bx, by] = toBuf(e); S.hover = pickAt(bx, by);
+    if (S.tool === 'cable' && UI.hue[WIRES.gauge] != null) WIRES.hue[WIRES.gauge] = UI.hue[WIRES.gauge];   // a colour picked in the cable flyout
     P.ink = e.button === 0 && inkDown(bx, by, e);
     if (P.ink) { clearTimeout(P.lp); return; }
     P.wire = e.button === 0 && wireDown(bx, by, e);
@@ -183,6 +196,7 @@ function setupInput() {
     if (Math.abs(wheelAcc) > step) { setZoom(S.zoom + (wheelAcc < 0 ? 1 : -1)); wheelAcc = 0; sfx.click(); }
   }, { passive: false });
   window.addEventListener('keydown', e => {
+    if (!BOOT.done) return;   // still loading
     if (e.target.closest && e.target.closest('input, textarea, select')) return;
     if ((e.metaKey || e.ctrlKey) && k_lower(e) === 'z') { undoWires(e.shiftKey); e.preventDefault(); return; }
     if ((e.metaKey || e.ctrlKey) && k_lower(e) === 'y') { undoWires(true); e.preventDefault(); return; }
@@ -206,6 +220,7 @@ function setupInput() {
     else if (lk === 'l') setTool('cable');
     else if (lk === 'y') setTool('tie');
     else if (lk === 'k') setTool('post');
+    else if (lk === 'h' && e.shiftKey) { WIRES.hl = HL_STYLES[(HL_STYLES.indexOf(WIRES.hl) + 1) % HL_STYLES.length]; try { localStorage.setItem('spall.hl', WIRES.hl); } catch (err) { /* not remembered */ } toast('Highlight: ' + WIRES.hl); }
     else if (lk === 'h') setTool('girder');
     else if (lk === 'r' && S.tool === 'tie') { WIRES.round = !WIRES.round; setTool('tie'); }
     else if (lk === 'j') jolt();
@@ -221,7 +236,10 @@ function setupInput() {
       else if (WIRES.hover) { pushUndo(); WIRES.hover.tie ? removeTie(WIRES.hover.tie) : removeCable(WIRES.hover.c); WIRES.hover = null; sfx.click(); }
       else used = false;
     }
-    else if (k === 'Escape') { DEMO.box = null; if (LAY.on) { removeCable(LAY.c); LAY.on = false; LAY.c = null; } WIRES.stroke = null; setTool('inspect'); S.capture = null; }
+    else if (k === 'Escape') { DEMO.box = null; if (LAY.on) { removeCable(LAY.c); LAY.on = false; LAY.c = null; } WIRES.stroke = null; S.capture = null; if (!closeLayers()) setTool('inspect'); }
+    else if (k === '?') toggleHelp();
+    else if (k === '`') setToolsState(tbState() + 1);
+    else if (k === '\\') setSidebar(document.body.classList.contains('sb-off'));
     else if (k === '+' || k === '=') setZoom(S.zoom + 1);
     else if (k === '-' || k === '_') setZoom(S.zoom - 1);
     else if (['arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'a', 'd', 'w', 's', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(lk)) HELD.add(lk.toLowerCase().replace('arrow', ''));

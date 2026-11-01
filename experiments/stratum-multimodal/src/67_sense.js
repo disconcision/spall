@@ -10,18 +10,22 @@
 // Voice: Web Speech, or Moonshine running in the page, both with interim text;
 // a local level meter marks voice on and off so the lag to the first partial
 // and to the final can be measured per engine.
-// Activity groups into turns, shown in the chat as a collapsible "you" entry
+// View: the camera and cut, logged whenever they change, so every screen-space
+// sample (pointer, pen) can be re-projected later; the 3D reading is ours, the
+// screen input and the view are what you actually did.
+// Activity groups into turns, shown in the feed as a collapsible "you" entry
 // (words interleaved with what you pointed at or drew), exported as JSON.
+// The fork's sync.py copies the game and adds the hooks this file needs.
 // ==========================================================================
 const MM = {
-  strokes: [], ink: null, anchor: 'paint', sid: 0, hi: 0,
+  strokes: [], ink: null, anchor: 'paint', sid: 0, hi: 0, hiPt: null, hiEl: null,
   ptr: [], dwells: [], css: null, key: '', dw: null,
   turn: null, turns: [], tid: 0, marks: [], vad: [], typed: [],
-  lat: {}, auto: true
+  lat: {}, auto: true, views: [], vid: 0, vkey: ''
 };
 const mmNow = () => Math.round(performance.now());
 const TURN_GAP = 1400, LEAD = 1500;
-const INK = '#5fd3f2', INK_DK = '#04222b', INK_HI = '#f2fdff';
+const INK = '#5fd3f2', INK_DK = '#04222b', INK_HI = '#f2fdff', PT = '#e8a83c';
 const whatOf = t => t ? TI[t].name : 'open air';
 const median = a => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y); return s[s.length >> 1]; };
 
@@ -74,7 +78,7 @@ function inkDown(bx, by, e) {
   if (S.mode !== 'cut') { toast('Sketching works in the Cut plane view (1)'); return true; }
   const h = worldAt(bx, by), t = mmNow();
   MM.ink = { id: ++MM.sid, mode: MM.anchor, t0: t, t1: t, rot: S.rot, level: S.level, z0: h ? h.p[2] : Math.min(S.level + HT / LH, NL),
-    pts: [], ts: [], brk: [], scr: [], cs: [], under: new Map(), start: h, end: null, last: null, gap: false, lastD: null };
+    pts: [], ts: [], brk: [], scr: [], cs: [], under: new Map(), start: h, end: null, last: null, gap: false, lastD: null, view: viewId(), zoom: S.zoom };
   inkAdd(bx, by);
   turnTouch('ink');
   return true;
@@ -84,6 +88,7 @@ function inkAdd(bx, by) {
   const l = k.last, n = l ? Math.max(1, Math.ceil(Math.hypot(bx - l[0], by - l[1]))) : 1, ds = depthSampler(), t = mmNow();
   for (let i = 1; i <= n; i++) inkSample(k, l ? lerp(l[0], bx, i / n) : bx, l ? lerp(l[1], by, i / n) : by, t, ds);
   k.last = [bx, by]; k.t1 = t;
+  if (viewId() !== k.view) k.views = [...new Set([...(k.views || [k.view]), MM.vid])];   // the view moved mid-stroke (keys, wheel)
   if (MM.turn) MM.turn.last = t;
 }
 function inkSample(k, x, y, t, ds) {
@@ -113,7 +118,7 @@ function inkUp() {
   k.from = refOf(k.start); k.to = refOf(k.end);
   k.crosses = [...k.under.values()].sort((a, b) => b.n - a.n).slice(0, 8);
   k.encloses = k.shape === 'loop' ? inkEncloses(k.scr) : [];
-  delete k.under; delete k.last; delete k.gap; delete k.lastD; delete k.scr;
+  delete k.under; delete k.last; delete k.gap; delete k.lastD;
   MM.strokes.push(k);
   if (MM.turn) { MM.turn.strokes.push(k); MM.turn.last = mmNow(); renderTurn(MM.turn); }
   sfx.click();
@@ -272,15 +277,20 @@ function drawInkPlan(ctx) {
     }
   }
 }
-// spoken "here" / "this" land on what they refer to, for a moment
+const markH = (x, y, z) => { const tt = cell(x, y, z); return tt ? (CUTTABLE[tt] && S.level < NL - 1 && z === S.level ? HT / LH : TI[tt].slab ? 0.25 : 1) : 0.02; };
+// spoken "here" / "this" land on what they refer to, for a moment; a point hovered in the chat shows where it was
 function drawMarks(ctx) {
   const now = mmNow();
   MM.marks = MM.marks.filter(m => now - m.t < 2600);
-  const sliced = S.level < NL - 1;
+  if (MM.hiEl && !MM.hiEl.isConnected) { MM.hi = 0; MM.hiPt = null; MM.hiEl = null; }   // the entry re-rendered under the mouse
+  if (MM.hiPt) {
+    const [x, y, z] = MM.hiPt.cell, c = isoQuad(ctx, x, y, x + 1, y + 1, z + markH(x, y, z), PT), left = c.reduce((a, p) => p[0] < a[0] ? p : a, c[0]);
+    if (MM.hiPt.tag) plate(ctx, MM.hiPt.tag, Math.round(left[0]) - ptextW(MM.hiPt.tag) - 8, Math.round(left[1]) - 4, PT, '#17130b');
+  }
   for (const m of MM.marks) {
-    const [x, y, z] = m.cell, tt = cell(x, y, z), hh = tt ? (CUTTABLE[tt] && sliced && z === S.level ? HT / LH : TI[tt].slab ? 0.25 : 1) : 0.02;
+    const [x, y, z] = m.cell;
     const k = (now - m.t) / 2600, col = k < 0.7 ? INK : 'rgba(95,211,242,0.5)';
-    const c = isoQuad(ctx, x, y, x + 1, y + 1, z + hh, col, (now >> 7) & 1 ? null : [2, 1]);
+    const c = isoQuad(ctx, x, y, x + 1, y + 1, z + markH(x, y, z), col, (now >> 7) & 1 ? null : [2, 1]);
     const left = c.reduce((a, p) => p[0] < a[0] ? p : a, c[0]);
     plate(ctx, m.word, Math.round(left[0]) - ptextW(m.word) - 8, Math.round(left[1]) - 4, INK, INK_DK);
   }
@@ -293,29 +303,52 @@ function inkIcon(g) {
   g.fillStyle = INK; for (let j = 0; j < q.length; j += 3) g.fillRect(q[j], q[j + 1], 1, 1);
   R_(g, 24, 3, 3, 3, '#e6dfcf'); R_(g, 23, 5, 2, 2, '#e8a83c');
 }
-function inkHelp() {
-  return 'Draw over the city (a pen always draws). Strokes stay put as you pan, zoom, rotate (Q E) and cut. Anchor: <button type="button" id="bInkP" aria-pressed="' + (MM.anchor === 'paint') + '">on surfaces</button> <button type="button" id="bInkF" aria-pressed="' + (MM.anchor === 'float') + '">in the air</button> <button type="button" id="bInkU">undo</button> <button type="button" id="bInkC">clear</button> Hold <b>Space</b> to talk while you draw; say “here” or “this” to point.';
+// the sketch tool's options (toolOpts in 80_ui.js): where strokes anchor, undo, clear
+let INKSW = null;
+function inkOpts() {
+  INKSW = INKSW || [inkSwatch(false), inkSwatch(true)];
+  return { rows: [{ n: 'Anchor', vals: [{ n: 'On surfaces', img: INKSW[0] }, { n: 'In the air', img: INKSW[1] }], get: () => MM.anchor === 'float' ? 1 : 0, set: i => { MM.anchor = i ? 'float' : 'paint'; } }],
+    acts: [{ n: 'Undo', k: '⌫', fn: () => inkUndo() }, { n: 'Clear', k: '⇧⌫', fn: () => inkClear() }],
+    note: 'Draw over the city (a pen always draws). Strokes stay put as you pan, zoom, rotate and cut. Hold Space to talk as you draw; say “here” or “this” to point.' };
 }
-function inkWire() {
-  if ($('bInkP')) $('bInkP').onclick = () => { MM.anchor = 'paint'; setTool('sketch'); };
-  if ($('bInkF')) $('bInkF').onclick = () => { MM.anchor = 'float'; setTool('sketch'); };
-  if ($('bInkU')) $('bInkU').onclick = () => inkUndo();
-  if ($('bInkC')) $('bInkC').onclick = () => inkClear();
+// 20×12 swatches: a stroke lying on a tile, or arcing over it
+function inkSwatch(air) {
+  return uiMk(20, 12, P => { uiIso(P, 10, 8, 8, '#8d877a'); for (let x = 3; x < 17; x++) P(x, air ? Math.round(5 - Math.sin((x - 3) / 13 * Math.PI) * 4) : 8 + ((x >> 2) & 1) - 1, 1, 1, INK); });
 }
 
+// ---------- the view ----------
+// what you were looking at: a new entry whenever the camera, zoom, rotation, cut or mode changes (checked at
+// 10 Hz and on every pen sample); pointer samples, dwells and strokes carry the id of their view, so the
+// screen input can be re-projected (or re-read by something better than worldAt) later
+function viewNow() {
+  return { mode: S.mode, level: S.level, cut: r2(S.cutAnim), floor: S.floor, rot: S.rot, zoom: S.zoom, cam: [r2(S.cam.x), r2(S.cam.y)], buf: [S.bw, S.bh], explode: r2(S.explode), ghost: S.ghost,
+    ...(S.mode === 'plan' ? { planCam: [r2(S.planCam.x), r2(S.planCam.y)] } : S.mode === 'section' ? { section: [S.secAxis, S.secIdx] } : {}) };
+}
+function viewId() {
+  const v = viewNow(), k = JSON.stringify(v);
+  if (k !== MM.vkey) { MM.vkey = k; MM.views.push({ id: ++MM.vid, t: mmNow(), ...v }); if (MM.views.length > 4000) MM.views.splice(0, 1000); }
+  return MM.vid;
+}
+const PROJECTION = 'buffer px = (round(buf[0]/2 - cam[0]) + (u - v)*8, round(buf[1]/2 - cam[1]) + (u + v)*4 - z*12), plus a per-level offset while exploded; css px = buffer px * zoom, from the top-left of the view canvas. (u, v) is the world point (x, y) turned rot quarter-turns: rot 0 (x, y), 1 (D - y, x), 2 (W - x, D - y), 3 (y, W - x), with [W, D] = size. The cut view draws levels up to the cut, its own level sliced 7/12 of the way up.';
+
 // ---------- pointer context ----------
+// a dwell keeps when the pointer left it (t1), so the "you" entry can say how long you pointed
 function samplePtr() {
-  if (!MM.css || (S.mode !== 'cut' && S.mode !== 'plan')) { MM.dw = null; return; }
+  if (!MM.css || (S.mode !== 'cut' && S.mode !== 'plan')) { if (MM.dw && MM.dw.d) MM.dw.d.t1 = mmNow(); MM.dw = null; return; }
   const t = mmNow(), bx = MM.css[0] / S.zoom, by = MM.css[1] / S.zoom;
   const h = S.mode === 'cut' ? worldAt(bx, by) : null, pk = S.hover, wc = S.mode === 'cut' ? pickWire(bx, by, 4) : null;
-  const s = { t, x: Math.round(MM.css[0]), y: Math.round(MM.css[1]),
+  const s = { t, x: Math.round(MM.css[0]), y: Math.round(MM.css[1]), v: viewId(),
     w: h ? h.p.map(r2) : null, see: h ? [...h.c, whatOf(h.t)] : null,
     pick: pk ? [pk.x, pk.y, pk.z, whatOf(pk.t)] : null, cable: wc ? (wc.tie ? 'tie' + wc.tie.id : 'cable' + wc.c.id) : null };
   const key = [s.see && s.see.join(), s.pick && s.pick.join(), s.cable].join('|'), last = MM.ptr[MM.ptr.length - 1];
-  if (key !== MM.key || !last || Math.hypot(s.x - last.x, s.y - last.y) > 6) { MM.ptr.push(s); if (MM.ptr.length > 6000) MM.ptr.splice(0, 1000); }
-  if (key !== MM.key) { MM.key = key; MM.dw = { t, s, sent: false }; return; }
+  if (key !== MM.key || !last || s.v !== last.v || Math.hypot(s.x - last.x, s.y - last.y) > 6) { MM.ptr.push(s); if (MM.ptr.length > 6000) MM.ptr.splice(0, 1000); }
+  if (key !== MM.key) { if (MM.dw && MM.dw.d) MM.dw.d.t1 = t; MM.key = key; MM.dw = { t, s, sent: false }; return; }
   const dw = MM.dw;
-  if (dw && !dw.sent && t - dw.t >= 450 && (dw.s.see || dw.s.cable)) { dw.sent = true; MM.dwells.push({ t: dw.t, see: dw.s.see, pick: dw.s.pick, cable: dw.s.cable, w: dw.s.w }); if (MM.dwells.length > 600) MM.dwells.shift(); }
+  if (dw && !dw.sent && t - dw.t >= 450 && (dw.s.see || dw.s.cable)) {
+    dw.sent = true; dw.d = { t: dw.t, see: dw.s.see, pick: dw.s.pick, cable: dw.s.cable, w: dw.s.w, scr: [dw.s.x, dw.s.y], v: dw.s.v };
+    MM.dwells.push(dw.d); if (MM.dwells.length > 600) MM.dwells.shift();
+    if (MM.turn) renderTurn(MM.turn);
+  }
 }
 
 // ---------- voice ----------
@@ -646,13 +679,19 @@ function turnTick() {
   MM.turn = null; tn.t1 = tn.last;
   if (!tn.segs.some(s => s.text) && !tn.strokes.length && !tn.typed.length) { if (tn.li) tn.li.remove(); MM.turns.splice(MM.turns.indexOf(tn), 1); return; }
   tn.text = turnWords(tn).map(w => w.w).join(' ');
-  const tw = turnWords(tn), nw = tw.map(w => norm(w.w));
-  tn.refs = orderRefs(tw.filter((w, k) => deictic(nw, k)).map(w => ({ word: norm(w.w), t: w.t, target: resolveAt(w.t) })));
+  tn.refs = turnRefs(tn);
   tn.intent = intentOf(tn.text);
   renderTurn(tn, true);
   if (MM.auto && tn.text && S.agentOn) turnToClaude(tn);
 }
 const turnWords = tn => tn.segs.flatMap(s => s.words).sort((a, b) => a.t - b.t);
+// each pointing word and what it meant; while the turn is open the last word waits for the next
+// one (unless it is "here"), the same as the marks in the city
+function turnRefs(tn, live) {
+  const tw = turnWords(tn), nw = tw.map(w => norm(w.w));
+  return orderRefs(tw.filter((w, k) => deictic(nw, k) && !(live && k === nw.length - 1 && nw[k] !== 'here'))
+    .map(w => ({ word: norm(w.w), t: w.t, target: resolveAt(w.t) })));
+}
 // the keyword family mentioned first (the deeper agent re-reads the words anyway)
 const INTENTS = [['garden', /garden|tree|green|park|plant/], ['bridge', /bridge|connect|link|cross/], ['well', /light ?well|daylight|dark|sun|void/],
   ['stack', /stack|capsule|hous|home|resid|unit|flat/], ['remove', /remove|demolish|tear|clear|get rid|knock/], ['cable', /cable|wire|route/]];
@@ -662,25 +701,26 @@ function intentOf(s) {
   for (const [k, re] of INTENTS) { const m = s.search(re); if (m >= 0 && m < at) { at = m; best = k; } }
   return best;
 }
-// what a pointing word at time t meant: a stroke drawn around then, else where the pointer rested, else where it was
+// what a pointing word at time t meant: a stroke drawn around then, else where the pointer rested, else where it was;
+// `when` is the moment it matched (the pen sample, the stroke's start or end, the dwell, the pointer sample)
 function resolveAt(t) {
   let best = null, bd = 1600;
   for (const k of [...MM.strokes, ...(MM.ink ? [MM.ink] : [])]) { const d = t < k.t0 ? k.t0 - t : t > k.t1 ? t - k.t1 : 0; if (d < bd) { bd = d; best = k; } }
   if (best) {
-    const k = best, sr = (via, c) => c ? { kind: 'stroke', stroke: k.id, via, cell: c.cell, what: c.what } : null;
-    if (k.shape === 'loop' && k.encloses.length) return sr('loop', k.encloses[0]);
-    if (k.shape === 'scribble' && k.crosses.length) return sr('scribble', k.crosses[0]);
-    if (t < k.t0 || !k.cs.length) return sr('stroke start', refOf(k.start));
-    if (t > k.t1 && k.end) return sr('stroke end', refOf(k.end));
+    const k = best, sr = (via, c, when) => c ? { kind: 'stroke', stroke: k.id, via, cell: c.cell, what: c.what, when } : null;
+    if (k.shape === 'loop' && k.encloses.length) return sr('loop', k.encloses[0], k.t0);
+    if (k.shape === 'scribble' && k.crosses.length) return sr('scribble', k.crosses[0], k.t0);
+    if (t < k.t0 || !k.cs.length) return sr('stroke start', refOf(k.start), k.t0);
+    if (t > k.t1 && k.end) return sr('stroke end', refOf(k.end), k.t1);
     let c = k.cs[0]; for (const e of k.cs) { if (e.t > t) break; c = e; }   // where the pen was as the word was said
-    return sr('pen', c);
+    return sr('pen', c, c.t);
   }
   const dw = MM.dwells.filter(d => d.see && d.t <= t + 300 && d.t >= t - 2500).pop();
-  if (dw) return { kind: 'cell', via: 'dwell', cell: dw.see.slice(0, 3), what: dw.see[3], cable: dw.cable || undefined };
+  if (dw) return { kind: 'cell', via: 'dwell', cell: dw.see.slice(0, 3), what: dw.see[3], cable: dw.cable || undefined, when: dw.t };
   // else whatever the pointer was over then (a sample is kept only when that changes)
   let ps = null;
   for (let i = MM.ptr.length - 1; i >= 0; i--) { const s = MM.ptr[i]; if (s.t <= t + 150) { ps = s; break; } }
-  return ps && ps.see && t - ps.t < 30000 ? { kind: 'cell', via: 'pointer', cell: ps.see.slice(0, 3), what: ps.see[3], cable: ps.cable || undefined } : null;
+  return ps && ps.see && t - ps.t < 30000 ? { kind: 'cell', via: 'pointer', cell: ps.see.slice(0, 3), what: ps.see[3], cable: ps.cable || undefined, when: ps.t } : null;
 }
 // several pointing words on one arrow: the first means where it starts, the last where it ends
 function orderRefs(refs) {
@@ -729,29 +769,44 @@ function strokeTxt(k) {
 }
 function renderTurn(tn, closing) {
   if (!tn.li) {
-    const li = tn.li = document.createElement('li'); li.className = 'me turn live';
-    li.innerHTML = '<details open><summary><span class="th"><b>you</b><time></time><span class="mods"></span></span><span class="pv"></span></summary><div class="rt"></div><canvas class="tl" width="272" height="22"></canvas><div class="tf"><span class="ins"></span><button type="button" class="cj" title="Copy this turn as JSON">copy json</button></div></details>';
-    li.querySelector('.cj').onclick = () => { const s = JSON.stringify(turnJSON(tn), null, 1); try { navigator.clipboard.writeText(s); toast('Turn ' + tn.id + ' copied as JSON'); } catch (e) { console.log(s); } };
-    $('msgs').appendChild(li);
+    const li = tn.li = document.createElement('li'); li.className = 'm me turn live';
+    li.innerHTML = '<details open><summary><span class="th"><b>you</b><time></time><span class="mods"></span></span><span class="pv"></span></summary><div class="rt"></div><div class="wins"></div><canvas class="tl" width="272" height="22"></canvas><div class="tf"><span class="ins"></span><button type="button" class="cj" data-tip="Copy this turn as JSON, with its views">copy json</button></div></details>';
+    li.querySelector('.cj').onclick = () => { const s = JSON.stringify({ size: [W, D, NL], projection: PROJECTION, pointerKey: PTR_KEY, ...turnJSON(tn) }, null, 1); try { navigator.clipboard.writeText(s); toast('Turn ' + tn.id + ' copied as JSON'); } catch (e) { console.log(s); } };
+    feedAppend(li);
+    const cv = li.querySelector('canvas.tl'); if (cv.clientWidth > 60) cv.width = Math.round(cv.clientWidth);   // one canvas pixel per css pixel
   }
-  const li = tn.li, words = turnWords(tn), dur = ((tn.t1 || mmNow()) - tn.t0) / 1000;
+  const li = tn.li, words = turnWords(tn), dur = ((tn.t1 || mmNow()) - tn.t0) / 1000, items = turnItems(tn);
+  const refs = tn.t1 ? tn.refs : turnRefs(tn, true), npt = items.filter(it => it.d).length;
   li.querySelector('time').textContent = fmtTime(S.time);
   const spk = tn.segs.length ? (tn.segs.reduce((a, s) => a + (s.words.length ? (s.tFinal || s.tUpd) - s.words[0].t : 0), 0) / 1000).toFixed(1) + 's voice' : '';
-  li.querySelector('.mods').textContent = [spk, tn.strokes.length ? tn.strokes.length + ' ink' : '', dwellsIn(tn).length ? dwellsIn(tn).length + ' pts' : '', dur.toFixed(1) + 's'].filter(Boolean).join(' · ');
-  // words interleaved by time with strokes, typed text, and what each pointing word resolved to
+  li.querySelector('.mods').textContent = [spk, tn.strokes.length ? tn.strokes.length + ' ink' : '', npt ? npt + ' pointed' : '', dur.toFixed(1) + 's'].filter(Boolean).join(' · ');
+  // words interleaved by time with strokes, places you pointed at, typed text, and what each pointing word resolved to
   const rt = li.querySelector('.rt'); rt.textContent = '';
-  const items = [...words.map(w => ({ t: w.t, w })), ...tn.strokes.map(k => ({ t: k.t0, k })), ...tn.typed.map(x => ({ t: x.t, x }))].sort((a, b) => a.t - b.t);
-  const live = new Set(tn.segs.filter(s => !s.final).flatMap(s => s.words));
+  // places you rested on are lettered A, B, C…, and a pointing word that used one says which
+  const live = new Set(tn.segs.filter(s => !s.final).flatMap(s => s.words)), used = new Set(refs.map(r => r.target && r.target.via === 'dwell' ? r.target.when : null)), tag = new Map();
+  items.filter(it => it.d).forEach((it, n) => { for (const t of it.ts) tag.set(t, String.fromCharCode(65 + n % 26) + (n >= 26 ? (n / 26 | 0) : '')); });
   for (const it of items) {
     if (it.w) {
-      const s = document.createElement('span'); s.textContent = it.w.w + ' ';
+      const s = document.createElement('span'); s.textContent = it.w.w + ' '; s.title = relT(tn, it.t);
       if (live.has(it.w)) s.className = 'int';
       rt.appendChild(s);
-      const ref = tn.refs.find(r => r.t === it.w.t && r.word === norm(it.w.w));
-      if (ref && ref.target) { const c = document.createElement('span'); c.className = 'rf'; c.textContent = '→ ' + ref.target.what + ' ' + ref.target.cell.slice(0, 2).join(',') + ' ' + lvCode(ref.target.cell[2]); c.title = 'resolved by ' + ref.target.via; if (ref.target.stroke) inkHover(c, ref.target.stroke); rt.appendChild(c); }
+      const ref = refs.find(r => r.t === it.w.t && r.word === norm(it.w.w)), g = ref && ref.target;
+      if (g) {
+        const tg = g.via === 'dwell' && tag.get(g.when), c = document.createElement('span'); c.className = 'rf' + (tg ? ' to-pt' : ''); c.textContent = '→ ' + (tg || cellTxt(g));
+        c.title = `“${ref.word}” resolved by ${g.via}` + (g.when != null ? ` (${relT(tn, g.when)})` : '') + (tg ? ': ' + cellTxt(g) : '');
+        if (g.stroke) inkHover(c, g.stroke, tn); else ptHover(c, { cell: g.cell, ts: [g.when], tag: tg || ref.word.toUpperCase() }, tn);
+        if (g.cell) placeChip(c, tn, g.cell, tg || ref.word.toUpperCase());
+        rt.appendChild(c);
+      }
+    } else if (it.d) {
+      const u = it.ts.some(t => used.has(t)), c = document.createElement('span'); c.className = 'pt' + (u ? ' used' : ''); c.innerHTML = '<b></b> '; c.firstChild.textContent = tag.get(it.t); c.append(ptTxt(it.d));
+      c.title = `pointed ${relT(tn, it.t)}, ` + (it.t1 ? `stayed ${((it.t1 - it.t) / 1000).toFixed(1)} s` : 'still there') + (u ? ' · a pointing word used this' : '')
+        + (it.d.scr ? `\nscreen ${it.d.scr.join(',')} px · world ${(it.d.w || []).join(', ')} · view ${it.d.v}` : '') + '\nclick: a live window on it';
+      if (it.d.see) { ptHover(c, { cell: it.d.see.slice(0, 3), ts: it.ts, tag: tag.get(it.t) }, tn); placeChip(c, tn, it.d.see.slice(0, 3), tag.get(it.t)); }
+      rt.appendChild(c);
     } else if (it.k) {
-      const c = document.createElement('span'); c.className = 'tk'; c.textContent = '#' + it.k.id + ' ' + strokeTxt(it.k); inkHover(c, it.k.id); rt.appendChild(c);
-    } else { const c = document.createElement('span'); c.className = 'ty'; c.textContent = '⌨ ' + it.x.text; rt.appendChild(c); }
+      const c = document.createElement('span'); c.className = 'tk'; c.textContent = '#' + it.k.id + ' ' + strokeTxt(it.k); c.title = 'drawn ' + relT(tn, it.t); inkHover(c, it.k.id, tn); rt.appendChild(c);
+    } else { const c = document.createElement('span'); c.className = 'ty'; c.textContent = '⌨ ' + it.x.text; c.title = 'typed ' + relT(tn, it.t); rt.appendChild(c); }
   }
   if (MM.ink && tn === MM.turn) { const c = document.createElement('span'); c.className = 'tk int'; c.textContent = '#' + MM.ink.id + ' drawing…'; rt.appendChild(c); }
   const text = words.map(w => w.w).join(' ');
@@ -759,21 +814,92 @@ function renderTurn(tn, closing) {
   const lat = tn.segs.filter(s => s.latFirst != null || s.latFinal != null).pop();
   li.querySelector('.ins').textContent = [tn.intent ? 'intent: ' + tn.intent : '', lat && lat.latFirst != null ? 'first partial ' + lat.latFirst + ' ms' : '', lat && lat.latFinal != null ? 'final +' + lat.latFinal + ' ms' : ''].filter(Boolean).join(' · ');
   if (closing) { li.classList.remove('live'); if (text.length > 140) li.querySelector('details').open = false; }
-  drawTurnStrip(li.querySelector('canvas'), tn);
-  $('msgs').scrollTop = $('msgs').scrollHeight;
+  drawTurnStrip(li.querySelector('canvas.tl'), tn);
+  if (tn === MM.turn || closing) turnDock(li);
 }
-function inkHover(el, id) { el.onmouseenter = () => { MM.hi = id; }; el.onmouseleave = () => { if (MM.hi === id) MM.hi = 0; }; }
+// the band keeps talking below a turn: while it's live it stays at the bottom of the feed, in view if you were there
+function turnDock(li) {
+  const fd = $('feed'), atEnd = fd.scrollHeight - fd.scrollTop - fd.clientHeight < 60;
+  if (fd.lastElementChild !== li) fd.appendChild(li);
+  if (atEnd) fd.scrollTop = fd.scrollHeight;
+}
+// ---------- a place, live ----------
+// click a place in a turn (a lettered rest, or what a pointing word meant) for a small live window on it,
+// drawn the way the band's windows are (bnWinRender, 88_band.js); click the window to go there
+const WIN_W = 128, WIN_H = 60;
+function placeChip(c, tn, cellv, tag) {
+  c.classList.toggle('open', !!tn.li.querySelector(`.wins [data-at="${cellv.join(',')}"]`));
+  c.onclick = () => placeWin(tn, cellv, tag);
+}
+function placeWin(tn, cellv, tag) {
+  const box = tn.li.querySelector('.wins'), key = cellv.join(','), had = box.querySelector(`[data-at="${key}"]`);
+  if (had) had.remove();
+  else if (typeof bnWinRender !== 'function') { placeGo(cellv); return; }
+  else {
+    if (box.children.length >= 2) box.firstElementChild.remove();
+    const w = document.createElement('div'), cv = document.createElement('canvas'), g = cv.getContext('2d');
+    w.className = 'win'; w.dataset.at = key; w.dataset.tip = 'Go there';
+    cv.width = WIN_W; cv.height = WIN_H; cv.style.width = WIN_W * 2 + 'px'; cv.style.height = WIN_H * 2 + 'px'; g.imageSmoothingEnabled = false;
+    w.appendChild(cv); box.appendChild(w);
+    w._F = { tg: { at: [cellv[0] + 0.5, cellv[1] + 0.5, cellv[2] + 0.5] }, off: cv, og: g, cell: cellv, tag };
+    w.onclick = () => placeGo(cellv);
+    winDraw(w._F); sfx.click();
+  }
+  renderTurn(tn);
+}
+function placeGo(c) { setLevel(c[2]); centerOn(c[0] + 0.5, c[1] + 0.5, c[2]); sfx.click(); }
+function winDraw(F) {
+  bnWinRender(F, WIN_W, WIN_H);
+  if (F.stale) return;
+  // the cell outlined on its top, and its letter (the window's camera centres the middle of the cell)
+  const g = F.og, [x, y, z] = F.cell, p = F.tg.at, rp = toRotF(p[0], p[1]), tt = cell(x, y, z), top = z + (tt ? (TI[tt].slab ? 0.25 : 1) : 0.02);
+  const Q = (qx, qy) => { const r = toRotF(qx, qy); return [Math.round(WIN_W / 2 + (r[0] - r[1] - rp[0] + rp[1]) * 8), Math.round(WIN_H / 2 + (r[0] + r[1] - rp[0] - rp[1]) * 4 - (top - p[2]) * LH)]; };
+  const c = [Q(x, y), Q(x + 1, y), Q(x + 1, y + 1), Q(x, y + 1)];
+  for (let i = 0; i < 4; i++) pline(g, c[i][0], c[i][1], c[(i + 1) % 4][0], c[(i + 1) % 4][1], PT);
+  if (F.tag) { const left = c.reduce((a, q) => q[0] < a[0] ? q : a, c[0]); plate(g, F.tag, left[0] - ptextW(F.tag) - 6, left[1] - 3, PT, '#17130b'); }
+}
+// open windows stay live (bots move) at ~3 Hz while you can see them
+function winsTick() { for (const w of document.querySelectorAll('#feed .m.turn .win')) if (w._F && w.offsetParent) winDraw(w._F); }
+const relT = (tn, t) => { const s = (t - tn.t0) / 1000; return (s < 0 ? '−' : '+') + Math.abs(s).toFixed(1) + ' s'; };
+const ptTxt = d => d.see ? cellTxt({ what: d.see[3], cell: d.see.slice(0, 3) }) + (d.cable ? ' · ' + d.cable : '') : d.cable;
+// the turn on one clock: words, strokes, typed text, and the places you rested the pointer on
+// (back-to-back rests on the same thing are one, from the first arrival to the last departure)
+function turnItems(tn) {
+  const items = [...turnWords(tn).map(w => ({ t: w.t, w })), ...tn.strokes.map(k => ({ t: k.t0, k })), ...tn.typed.map(x => ({ t: x.t, x })),
+    ...dwellsIn(tn).map(d => ({ t: d.t, d, t1: d.t1, ts: [d.t] }))].sort((a, b) => a.t - b.t), out = [];
+  for (const it of items) {
+    const p = out[out.length - 1];
+    if (it.d && p && p.d && ptTxt(p.d) === ptTxt(it.d)) { p.t1 = it.t1; p.ts.push(it.t); continue; }
+    out.push(it);
+  }
+  return out;
+}
+const stripOf = tn => { if (tn && tn.li) drawTurnStrip(tn.li.querySelector('canvas.tl'), tn); };
+function inkHover(el, id, tn) { el.onmouseenter = () => { MM.hi = id; MM.hiEl = el; stripOf(tn); }; el.onmouseleave = () => { if (MM.hi === id) MM.hi = 0; stripOf(tn); }; }
+function ptHover(el, p, tn) { el.onmouseenter = () => { MM.hiPt = p; MM.hiEl = el; stripOf(tn); }; el.onmouseleave = () => { if (MM.hiPt === p) MM.hiPt = null; stripOf(tn); }; }
 const dwellsIn = tn => MM.dwells.filter(d => d.t >= tn.t0 - LEAD && d.t <= (tn.t1 || mmNow()));
-// one strip per turn: voice (level-meter spans, words as ticks), ink spans, pointer dwells, on one clock
+// one strip per turn on one clock: voice (level-meter spans, words as ticks), ink spans, pointer rests (how long
+// each lasted), and a line from each pointing word down to the moment it matched
 function drawTurnStrip(cv, tn) {
-  const g = cv.getContext('2d'), w = cv.width, t0 = tn.t0 - LEAD, t1 = Math.max(tn.t1 || mmNow(), t0 + 3000), X = t => Math.round(clamp((t - t0) / (t1 - t0), 0, 1) * (w - 1));
+  const g = cv.getContext('2d'), w = cv.width, now = mmNow(), t0 = tn.t0 - LEAD, t1 = Math.max(tn.t1 || now, t0 + 3000), X = t => Math.round(clamp((t - t0) / (t1 - t0), 0, 1) * (w - 1));
   g.clearRect(0, 0, w, cv.height);
   g.fillStyle = '#1b1c1f'; g.fillRect(0, 0, w, cv.height);
   g.fillStyle = '#2c2e32'; g.fillRect(X(tn.t0), 0, 1, cv.height);
-  for (const [a, b] of MM.vad) if ((b || mmNow()) > t0 && a < t1) { g.fillStyle = 'rgba(95,211,242,0.28)'; g.fillRect(X(a), 2, Math.max(1, X(b || mmNow()) - X(a)), 5); }
-  g.fillStyle = INK; for (const wd of turnWords(tn)) g.fillRect(X(wd.t), 2, 1, 5);
+  for (const [a, b] of MM.vad) if ((b || now) > t0 && a < t1) { g.fillStyle = 'rgba(95,211,242,0.28)'; g.fillRect(X(a), 2, Math.max(1, X(b || now) - X(a)), 5); }
+  const refs = tn.t1 ? tn.refs : turnRefs(tn, true);
+  for (const r of refs) {
+    const gt = r.target; if (!gt || gt.when == null) continue;
+    const lit = (gt.stroke && MM.hi === gt.stroke) || (MM.hiPt && MM.hiPt.ts.includes(gt.when)), p = [];
+    linePx(p, X(r.t), 7, 0, X(gt.when), gt.stroke ? 10 : 16, 0, true);
+    g.fillStyle = lit ? INK_HI : 'rgba(159,230,246,0.45)'; for (let j = 0; j < p.length; j += 3) g.fillRect(p[j], p[j + 1], 1, 1);
+  }
+  for (const wd of turnWords(tn)) { g.fillStyle = refs.some(r => r.t === wd.t) ? INK_HI : INK; g.fillRect(X(wd.t), 2, 1, 5); }
   for (const k of [...tn.strokes, ...(MM.ink && tn === MM.turn ? [MM.ink] : [])]) { g.fillStyle = MM.hi === k.id ? INK_HI : '#9fe6f6'; g.fillRect(X(k.t0), 10, Math.max(2, X(k.t1) - X(k.t0)), 3); }
-  g.fillStyle = '#e8a83c'; for (const d of dwellsIn(tn)) g.fillRect(X(d.t), 16, 2, 3);
+  for (const d of dwellsIn(tn)) {
+    const lit = MM.hiPt && MM.hiPt.ts.includes(d.t);
+    g.fillStyle = lit ? '#fff1d6' : 'rgba(232,168,60,0.45)'; g.fillRect(X(d.t), 17, Math.max(1, X(d.t1 || Math.min(now, t1)) - X(d.t)), 1);
+    g.fillStyle = lit ? '#fff1d6' : PT; g.fillRect(X(d.t), 16, 2, 3);
+  }
   g.fillStyle = '#716c62'; for (const s of MM.ptr) if (s.t >= t0 && s.t <= t1) g.fillRect(X(s.t), 20, 1, 1);
 }
 
@@ -793,7 +919,7 @@ function micDom() {
   const b = $('bMic'); if (!b) return;
   b.setAttribute('aria-pressed', MIC.on ? 'true' : 'false');
   b.classList.toggle('stopping', MIC.stopping);
-  b.title = MIC.on ? (MIC.ptt ? 'Talking (release Space)' : 'Open mic: click to stop') : 'Talk: click for an open mic, or hold Space';
+  b.dataset.tip = MIC.on ? (MIC.ptt ? 'Talking (release Space)' : 'Open mic: click to stop') : 'Talk: click for an open mic, or hold Space';
   caption();
 }
 function micMeter() {
@@ -809,30 +935,46 @@ function strokeJSON(k) {
     const p = [r2(k.pts[i * 3]), r2(k.pts[i * 3 + 1]), r2(k.pts[i * 3 + 2])];
     if (!last || k.brk[i] || i === n - 1 || Math.hypot(p[0] - last[0], p[1] - last[1], p[2] - last[2]) > 0.2) { pts.push(k.brk[i] ? [...p, k.ts[i], 'lift'] : [...p, k.ts[i]]); last = p; }
   }
-  return { id: k.id, t0: k.t0, t1: k.t1, anchor: k.mode, shape: strokeName(k), from: k.from, to: k.to, encloses: k.encloses, crosses: k.crosses, drawnAt: { level: lvCode(k.level), rot: k.rot }, over: k.cs.map(e => [e.t, ...e.cell, e.what]), points: pts };
+  // what the hand did: the pen in css px on the view canvas, every 2 px and every lift, with its time
+  const scr = []; let ls = null;
+  for (let i = 0; i < n; i++) {
+    const q = [Math.round(k.scr[i * 2] * k.zoom), Math.round(k.scr[i * 2 + 1] * k.zoom)];
+    if (!ls || k.brk[i] || i === n - 1 || Math.hypot(q[0] - ls[0], q[1] - ls[1]) >= 2) { scr.push([...q, k.ts[i]]); ls = q; }
+  }
+  return { id: k.id, t0: k.t0, t1: k.t1, anchor: k.mode, shape: strokeName(k), from: k.from, to: k.to, encloses: k.encloses, crosses: k.crosses, drawnAt: { level: lvCode(k.level), rot: k.rot },
+    view: k.view, ...(k.views ? { views: k.views } : {}), over: k.cs.map(e => [e.t, ...e.cell, e.what]), points: pts, screen: scr };
+}
+// the views in effect over [t0, t1]: the one already up at t0, and every change after
+function viewsIn(t0, t1) {
+  let i = MM.views.length - 1; while (i > 0 && MM.views[i].t > t0) i--;
+  return MM.views.slice(Math.max(0, i)).filter(v => v.t <= t1);
 }
 function turnJSON(tn) {
   const t1 = tn.t1 || mmNow();
   return {
     id: tn.id, t0: tn.t0, t1, text: tn.text != null ? tn.text : turnWords(tn).map(w => w.w).join(' '), intent: tn.intent || null,
     words: turnWords(tn).map(w => [w.w, w.t]),
+    timeline: turnItems(tn).map(it => it.w ? { t: it.t, say: it.w.w }
+      : it.d ? { t: it.t, until: it.t1 || null, point: it.d.see ? it.d.see[3] : null, cell: it.d.see ? it.d.see.slice(0, 3) : null, at: it.d.w, screen: it.d.scr, view: it.d.v, ...(it.d.cable ? { cable: it.d.cable } : {}) }
+      : it.k ? { t: it.t, ink: it.k.id, shape: strokeName(it.k) } : { t: it.t, typed: it.x.text }),
     segments: tn.segs.map(s => ({ text: s.text, engine: s.eng, firstPartial: s.tFirst, final: s.tFinal || null, confidence: s.conf, latFirstMs: s.latFirst != null ? s.latFirst : null, latFinalMs: s.latFinal != null ? s.latFinal : null, ...(s.span ? { audio: s.span, engineMs: s.engMs } : {}) })),
     refs: tn.refs, strokes: tn.strokes.map(k => k.id), typed: tn.typed,
     voice: MM.vad.filter(([a, b]) => (b || t1) >= tn.t0 - LEAD && a <= t1),
-    dwells: dwellsIn(tn), pointer: MM.ptr.filter(s => s.t >= tn.t0 - LEAD && s.t <= t1).map(s => [s.t, s.w, s.see, s.pick, s.cable])
+    dwells: dwellsIn(tn), pointer: MM.ptr.filter(s => s.t >= tn.t0 - LEAD && s.t <= t1).map(ptrRow), views: viewsIn(tn.t0 - LEAD, t1)
   };
 }
+const ptrRow = s => [s.t, [s.x, s.y], s.v, s.w, s.see, s.pick, s.cable];
+const PTR_KEY = ['t', 'screen [x, y] css px', 'view id', 'world point', 'visible cell + type', 'active-level cell + type', 'cable'];
 function streamJSON() {
   return {
-    schema: 'stratum.stream/0.1',
-    about: 'You talking, pointing and sketching over the city, on one clock (ms since page load). Word times are estimated from when each word first appeared in a partial transcript, less the measured lag (Moonshine segments also give the audio span the engine heard, segments[].audio). Cells are [x, y, z] with z the level index (L0 = 2); points are continuous world coordinates in cells and levels.',
+    schema: 'stratum.stream/0.2',
+    about: 'You talking, pointing and sketching over the city, on one clock (ms since page load). Word times are estimated from when each word first appeared in a partial transcript, less the measured lag (Moonshine segments also give the audio span the engine heard, segments[].audio). Each turn’s timeline interleaves what you said, drew, typed and rested the pointer on (point, from t until `until`); refs[].target.when is the moment a pointing word matched. Screen input is kept as it happened (pointer[].screen, strokes[].screen, dwells[].scr, in css px on the view canvas) with the view it happened in (views[], by id; see projection), so the world reading (worldAt) can be checked or redone. Cells are [x, y, z] with z the level index (L0 = 2); points are continuous world coordinates in cells and levels.',
     now: mmNow(), seed: S.seed, size: [W, D, NL],
-    view: { mode: S.mode, level: lvCode(S.level), rot: S.rot, zoom: S.zoom },
+    projection: PROJECTION, viewNow: viewNow(), views: MM.views,
     engine: ENGINES[MIC.eng].name, moonshinePassMs: median(MOON.pass),
     latency: Object.fromEntries(Object.entries(MM.lat).map(([e, l]) => [e, { firstPartialMs: median(l.first), finalMs: median(l.final), n: [l.first.length, l.final.length] }])),
     turns: MM.turns.map(turnJSON), strokes: MM.strokes.map(strokeJSON),
-    pointerKey: ['t', 'world point', 'visible cell + type', 'active-level cell + type', 'cable'],
-    pointer: MM.ptr.slice(-1200).map(s => [s.t, s.w, s.see, s.pick, s.cable]), dwells: MM.dwells.slice(-200)
+    pointerKey: PTR_KEY, pointer: MM.ptr.slice(-1200).map(ptrRow), dwells: MM.dwells.slice(-200)
   };
 }
 function exportStream() {
@@ -841,12 +983,10 @@ function exportStream() {
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 
-const MIC_ICON = ['..XXXXX..', '.XWWWWWX.', '.XWWWWWX.', '.XWWWWWX.', '.XWWWWWX.', 'X.XWWWX.X', 'X..XXX..X', '.X.....X.', '..XXXXX..', '....X....', '....X....', '..XXXXX..'];
 function setupSense() {
-  const st = $('stage'), mg = $('bMic').querySelector('canvas').getContext('2d');
-  MIC_ICON.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== '.') { mg.fillStyle = ch === 'W' ? '#5a5f66' : '#e6dfcf'; mg.fillRect(x, y, 1, 1); } }));
+  const st = $('stage');
   st.addEventListener('pointermove', e => { const r = st.getBoundingClientRect(); MM.css = [e.clientX - r.left, e.clientY - r.top]; });
-  st.addEventListener('pointerleave', () => { MM.css = null; MM.key = ''; MM.ptr.push({ t: mmNow(), x: -1, y: -1, w: null, see: null, pick: null, cable: null }); });
+  st.addEventListener('pointerleave', () => { MM.css = null; MM.key = ''; MM.ptr.push({ t: mmNow(), x: -1, y: -1, v: MM.vid, w: null, see: null, pick: null, cable: null }); });
   $('bMic').onclick = () => { if (MIC.on) micStop(); else micStart(false); };
   $('bExport').onclick = () => exportStream();
   const sel = $('micEng').querySelector('select');
@@ -858,13 +998,13 @@ function setupSense() {
   if (isMoon()) engPick(MIC.eng, true);   // a remembered Moonshine choice starts loading at once
   engDom();
   window.addEventListener('keydown', e => {
-    if (e.target.closest && e.target.closest('input, textarea, select')) return;
+    if (!BOOT.done || (e.target.closest && e.target.closest('input, textarea, select'))) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.code === 'Space') { e.preventDefault(); if (!e.repeat && !MIC.on) micStart(true); return; }
     if (k_lower(e) === 'n') { setTool('sketch'); e.preventDefault(); }
-    else if ((e.key === 'Backspace' || e.key === 'Delete') && S.tool === 'sketch' && !CARDJOB && !WIRES.hover) { inkUndo(); e.preventDefault(); }
+    else if ((e.key === 'Backspace' || e.key === 'Delete') && S.tool === 'sketch' && !CARDJOB && !WIRES.hover) { if (e.shiftKey) inkClear(); else inkUndo(); e.preventDefault(); }
   });
   window.addEventListener('keyup', e => { if (e.code === 'Space' && MIC.on && MIC.ptt) micStop(); });
-  setInterval(() => { samplePtr(); turnTick(); if (MM.turn && MM.turn.li) drawTurnStrip(MM.turn.li.querySelector('canvas'), MM.turn); caption(); }, 100);
+  setInterval(() => { viewId(); samplePtr(); turnTick(); if (MM.turn && MM.turn.li) stripOf(MM.turn); if ((MM.wt = (MM.wt || 0) + 1) % 3 === 0) winsTick(); caption(); }, 100);
   (function meter() { micMeter(); requestAnimationFrame(meter); })();
 }

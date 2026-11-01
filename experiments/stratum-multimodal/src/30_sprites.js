@@ -365,7 +365,8 @@ function getSprite(t, v, q, m, mask) {
   let s = SPR.get(key);
   if (s) return s;
   const E = EXTRA[t] || 0, w = t === T.CRANE ? 48 : 16;
-  const c = mk(w, 20 + E), g = c.getContext('2d');
+  // read back once for its depth mask (spriteMask): kept on the CPU, so that read costs no GPU sync
+  const c = mk(w, 20 + E), g = c.getContext('2d', { willReadFrequently: true });
   (DRAW[t] || DRAW_MISSING)(g, v, E, painter(q), m, mask, t);
   s = { c, ox: -(w >> 1), oy: -12 - E, E };
   SPR.set(key, s);

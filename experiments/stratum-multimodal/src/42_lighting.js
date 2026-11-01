@@ -10,7 +10,7 @@
 const LIT = {
   on: true,
   sunOn: true, sky: true, ao: true,   // baked into the level images (changing them relights)
-  mist: true, shafts: true, bloom: true, mistA: 0.035, shaftK: 1, bloomK: 1,   // drawn per frame
+  mist: true, shafts: true, bloom: true, well: true, mistA: 0.035, shaftK: 1, bloomK: 1, wellK: 1,   // drawn per frame
   sun: 'noon',                        // 'morning' | 'noon' | 'evening' | 'night'
   tkey: '', skey: '', tr: null, skyV: null, sunSoft: null, sunHard: null, sv: null,
   shaftC: null, shKey: '', bloomC: null, blKey: ''
@@ -242,33 +242,38 @@ function toggleLight(v) {
   if (LIT.on) setLightTime(LIT.sun); else { $('todv').textContent = TODS[S.tod].name; relight(); }
   syncLightPanel(); sfx.click();
 }
-// the settings popover: what is baked into the levels (relights) and what is drawn per frame
-const LIGHT_PARTS = [['sunOn', 'Sun & shadows', 1], ['sky', 'Sky light', 1], ['ao', 'Occlusion', 1], ['mist', 'Mist', 0, 'mistA', 0, 0.08, 0.005], ['shafts', 'Shafts', 0, 'shaftK', 0, 2, 0.1], ['bloom', 'Night glow', 0, 'bloomK', 0, 2, 0.1]];
+// the settings popover (LT1): what is baked into the levels (relights) and what is drawn per frame.
+// Built with the shared chrome controls (groove toggles, groove sliders, segmented times; see 80_ui.js).
+const LIGHT_PARTS = [['sunOn', 'Sun & shadows', 1], ['sky', 'Sky light', 1], ['ao', 'Occlusion', 1], ['mist', 'Mist', 0, 'mistA', 0, 0.08, 0.005], ['shafts', 'Shafts', 0, 'shaftK', 0, 2, 0.1], ['bloom', 'Night glow', 0, 'bloomK', 0, 2, 0.1], ['well', 'Well light', 0, 'wellK', 0, 4, 0.1]];
+const LIGHT_DEFAULTS = { sunOn: true, sky: true, ao: true, mist: true, shafts: true, bloom: true, mistA: 0.035, shaftK: 1, bloomK: 1, well: true, wellK: 1 };
 let relightT = 0;
 function setupLightPanel() {
-  const pop = document.createElement('div'); pop.id = 'lightPop'; pop.className = 'popm'; pop.hidden = true;
-  pop.innerHTML = `<div class="lp-h"><span>Lighting</span><label class="lp-sw"><input type="checkbox" data-k="on"> on</label></div>
-    <div class="lp-times">${LIGHT_TIMES.map(t => `<button data-t="${t}">${t}</button>`).join('')}</div>` +
-    LIGHT_PARTS.map(([k, name, , pk, lo, hi, st]) => `<div class="lp-row"><label><input type="checkbox" data-k="${k}"> ${name}</label>${pk ? `<input type="range" data-p="${pk}" min="${lo}" max="${hi}" step="${st}">` : ''}</div>`).join('') +
-    `<div class="lp-foot">I toggles · T time of day</div>`;
+  const pop = document.createElement('div'); pop.id = 'lightPop'; pop.className = 'popm pn'; pop.hidden = true;
   document.body.appendChild(pop);
-  pop.addEventListener('input', e => {
-    const t = e.target, k = t.dataset.k, p = t.dataset.p;
-    if (k === 'on') { toggleLight(t.checked); return; }
-    if (k) { LIT[k] = t.checked; const part = LIGHT_PARTS.find(q => q[0] === k); if (part[2]) { clearTimeout(relightT); relightT = setTimeout(relight, 60); } }
-    if (p) LIT[p] = +t.value;
+  pop.addEventListener('click', e => {
+    const t = e.target.closest('[data-lk],[data-t],[data-lreset]'); if (!t) return;
+    if (t.dataset.lk === 'on') { toggleLight(); return; }
+    if (t.dataset.lk) {
+      if (!LIT.on) return;
+      const k = t.dataset.lk; LIT[k] = !LIT[k];
+      if (LIGHT_PARTS.find(q => q[0] === k)[2]) { clearTimeout(relightT); relightT = setTimeout(relight, 60); }
+      syncLightPanel(); sfx.click(); return;
+    }
+    if (t.dataset.t) { if (LIT.on) { setLightTime(t.dataset.t); sfx.click(); } return; }
+    if (t.dataset.lreset) { Object.assign(LIT, LIGHT_DEFAULTS); relight(); syncLightPanel(); sfx.click(); }
   });
-  pop.addEventListener('click', e => { const t = e.target.closest('[data-t]'); if (t && LIT.on) { setLightTime(t.dataset.t); syncLightPanel(); sfx.click(); } });
-  const open = () => { const r = $('bLight').getBoundingClientRect(); pop.style.left = r.left + 'px'; pop.style.top = r.bottom + 4 + 'px'; pop.hidden = false; syncLightPanel(); };
+  const open = () => { const r = $('bLight').getBoundingClientRect(); pop.hidden = false; syncLightPanel(); pop.style.left = clamp(r.left, 4, innerWidth - pop.offsetWidth - 4) + 'px'; pop.style.top = r.bottom + 6 + 'px'; syncBar(); };
+  const close = () => { pop.hidden = true; syncBar(); };
   $('bLight').addEventListener('contextmenu', e => { e.preventDefault(); open(); });
   $('bLight').addEventListener('click', e => { if (e.ctrlKey || e.metaKey) { e.stopImmediatePropagation(); e.preventDefault(); open(); } }, true);
-  $('bLightMenu').onclick = e => { e.stopPropagation(); pop.hidden ? open() : (pop.hidden = true); };
-  document.addEventListener('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target) && e.target !== $('bLightMenu') && e.target !== $('bLight')) pop.hidden = true; });
-  window.addEventListener('keydown', e => { if (e.key === 'Escape') pop.hidden = true; });
+  $('bLightMenu').onclick = e => { e.stopPropagation(); pop.hidden ? open() : close(); };
+  document.addEventListener('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target) && !$('bLightMenu').contains(e.target) && !$('bLight').contains(e.target)) close(); });
 }
 function syncLightPanel() {
-  const pop = $('lightPop'); if (!pop) return;
-  pop.querySelector('[data-k="on"]').checked = LIT.on;
-  for (const [k, , , pk] of LIGHT_PARTS) { const c = pop.querySelector(`[data-k="${k}"]`); c.checked = LIT[k]; c.disabled = !LIT.on; if (pk) { const r = pop.querySelector(`[data-p="${pk}"]`); r.value = LIT[pk]; r.disabled = !LIT.on || !LIT[k]; } }
-  pop.querySelectorAll('[data-t]').forEach(b => b.setAttribute('aria-pressed', LIT.on && b.dataset.t === LIT.sun));
+  const pop = $('lightPop'); if (!pop || pop.hidden) return;
+  const off = !LIT.on, ti = Math.max(0, LIGHT_TIMES.indexOf(LIT.sun));
+  pop.innerHTML = `<div class="lp-h ttl"><span>Lighting</span><span class="lp-sw" data-lk="on" role="switch" aria-checked="${LIT.on}" aria-label="Lighting on/off">${LIT.on ? 'on' : 'off'}<span class="tgl ${LIT.on ? 'on' : ''}"></span></span></div>` +
+    `<span class="sgc ${off ? 'dis' : ''}" role="radiogroup" aria-label="Time of day" style="--n:4;--i:${ti}">${LIGHT_TIMES.map(t => `<button type="button" class="${LIT.sun === t ? 'on' : ''}" data-t="${t}" data-tip="${t[0].toUpperCase() + t.slice(1)}" role="radio" aria-checked="${LIT.sun === t}" aria-label="${t}">${glyph(t)}</button>`).join('')}<i class="ind"></i></span>` +
+    `<div class="rows">` + LIGHT_PARTS.map(([k, name, , pk]) => `<div class="row ${LIT[k] && !off ? 'on' : ''}"><span class="rt" data-lk="${k}">${glyph(k)}<span>${name}</span></span>${pk ? slHTML(pk, off || !LIT[k]) : '<span></span>'}<span data-lk="${k}" role="switch" aria-checked="${LIT[k]}" aria-label="${name}"><span class="tgl ${LIT[k] ? 'on' : ''} ${off ? 'dis' : ''}"></span></span></div>`).join('') +
+    `</div><div class="foot"><span>I on/off · T time</span><button type="button" class="btn sm" data-lreset="1">Reset</button></div>`;
 }

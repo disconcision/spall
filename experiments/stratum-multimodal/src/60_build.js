@@ -142,7 +142,7 @@ function dispatch(j, p) {
 function bez(a, b, t, lift) { const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, Math.max(a[2], b[2]) + lift]; const u = 1 - t; return [u * u * a[0] + 2 * u * t * m[0] + t * t * b[0], u * u * a[1] + 2 * u * t * m[1] + t * t * b[1], u * u * a[2] + 2 * u * t * m[2] + t * t * b[2]]; }
 function land(d) {
   const p = d.p, j = d.j;
-  if (!pieceOK(p)) { p.state = 'blocked'; log(j.owner, `Skipped ${p.lab} at (${p.x},${p.y},${lvCode(p.z)}) — occupied`, 'sys'); return; }
+  if (!pieceOK(p)) { p.state = 'blocked'; log(j.owner, `Skipped ${p.lab} at (${p.x},${p.y},${lvCode(p.z)}) — occupied`, 'sys', { ic: 'skip', s: `skip ${p.lab} · occupied`, at: [p.x, p.y, p.z], key: 'skip' + j.no + p.lab }); return; }
   if (p.op === 'remove') setC(p.x, p.y, p.z, 0); else setC(p.x, p.y, p.z, p.t, p.v);
   p.state = 'placed';
   markDirty(p.z);
@@ -151,7 +151,8 @@ function land(d) {
   for (let z = 0; z < p.z - 1; z++) lazyLv.add(z);
   computeFill(); stripDirty = true;
   const verb = p.op === 'remove' ? 'Removing' : 'Placing';
-  log(j.owner, `${verb} ${p.lab} ${p.li}/${p.lt} at (${p.x},${p.y},${lvCode(p.z)})`, 'p' + p.ph);
+  log(j.owner, `${verb} ${p.lab} ${p.li}/${p.lt} at (${p.x},${p.y},${lvCode(p.z)})`, 'p' + p.ph,
+    { ic: { t: p.t, v: p.v }, rm: p.op === 'remove', s: (p.op === 'remove' ? 'remove ' : 'place ') + p.lab, at: [p.x, p.y, p.z], sub: p.li + '/' + p.lt, key: j.no + (p.op || 'add') + p.lab });
   sfx.tick(p.op === 'remove' ? 3 : p.ph, p.z);
   for (let k = 0; k < 6; k++) PUFFS.push({ x: p.x + 0.5, y: p.y + 0.5, z: p.z + 0.4, vx: (rr() - 0.5) * 1.2, vy: (rr() - 0.5) * 1.2, life: 0, max: 0.5 + rr() * 0.3, col: OWN[j.owner].col });
 }
@@ -185,7 +186,7 @@ function finishJob(j) {
     for (let z = j.site.z; z < NL; z++) for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++) if (inb(j.site.x + dx, j.site.y + dy, z)) flags[idx(j.site.x + dx, j.site.y + dy, z)] |= F_WELL;
     for (let k = 0; k < 10; k++) MOTES.push({ w: WORLD.wells[WORLD.wells.length - 1], x: j.site.x + rr() * 2, y: j.site.y + rr() * 2, z: rr() * NL, ph: rr() * 6 });
   }
-  log(j.owner, `${j.name} complete — ${placed} parts placed`, 'sys');
+  log(j.owner, `${j.name} complete — ${placed} parts placed`, 'sys', { ic: 'done', s: `${j.name} done · ${placed} parts`, at: j.site && j.site.z != null ? [j.site.x, j.site.y, j.site.z] : null });
   sfx.done();
   if (j.owner === 'claude') agentJobDone(j);
   else toast(`${j.name} built · ${placed} parts`);
@@ -193,14 +194,14 @@ function finishJob(j) {
 function approveJob(j, auto) {
   if (j.status !== 'proposed') return;
   j.status = 'building'; hideCard();
-  log(j.owner, `Proposal ${String(j.no).padStart(2, '0')} ${auto ? 'auto-approved' : 'approved by you'}`, 'sys');
+  log(j.owner, `Proposal ${String(j.no).padStart(2, '0')} ${auto ? 'auto-approved' : 'approved by you'}`, 'sys', { ic: 'ok', s: `proposal ${String(j.no).padStart(2, '0')} ${auto ? 'auto-approved' : 'approved by you'}` });
   sfx.approve();
   if (j.owner === 'claude') agentApproved(j);
 }
 function rejectJob(j) {
   if (j.status !== 'proposed') return;
   j.status = 'rejected'; hideCard();
-  log('you', `Rejected proposal ${String(j.no).padStart(2, '0')}`, 'sys');
+  log('you', `Rejected proposal ${String(j.no).padStart(2, '0')}`, 'sys', { ic: 'no', s: `reject proposal ${String(j.no).padStart(2, '0')}` });
   sfx.reject();
   if (j.owner === 'claude') agentRejected(j);
 }
@@ -211,7 +212,7 @@ function placeTool(x, y, z) {
   if (!ok) { toast('Blocked — nothing placeable here on ' + lvCode(z)); sfx.reject(); return; }
   const names = { stack: 'Capsule stack', bridge: 'Sky bridge', garden: 'Garden terrace', well: 'Light well', unit: S.unit ? S.unit.name : 'Unit' };
   const j = makeJob('you', S.tool, P, { x, y, z }, names[S.tool]);
-  log('you', `Placed ${j.name} ghost at (${x},${y},${lvCode(z)}) — ${ok} parts queued for drones`, 'sys');
+  log('you', `Placed ${j.name} ghost at (${x},${y},${lvCode(z)}) — ${ok} parts queued for drones`, 'sys', { ic: 'ghost', s: `${j.name} ghost · ${ok} parts queued`, at: [x, y, z] });
   sfx.ghost();
 }
 
@@ -264,6 +265,17 @@ function drawBuildIso(ctx, t, sliced, ex) {
   drawAgentIso(ctx, t, sliced, ex);
 }
 function drawPinsIso(ctx, t, sliced) {
+  // a place picked out from the log: a wire box round the cell, pulsing (while hovered, or a moment after a click)
+  const B = S.beacon;
+  if (B && (B.hov || performance.now() < B.until)) {
+    const P = (dx, dy, dz) => projIso(B.x + dx, B.y + dy, B.z + dz).map(Math.round), C = [[0, 0], [1, 0], [1, 1], [0, 1]];
+    ctx.globalAlpha = 0.6 + 0.4 * Math.sin(performance.now() / 110);
+    for (const dz of [0, 1]) C.forEach((c, i) => { const a = P(c[0], c[1], dz), b = P(C[(i + 1) % 4][0], C[(i + 1) % 4][1], dz); pline(ctx, a[0], a[1], b[0], b[1], '#fffbf2'); });
+    for (const c of C) { const a = P(c[0], c[1], 0), b = P(c[0], c[1], 1); pline(ctx, a[0], a[1], b[0], b[1], '#fffbf2'); }
+    ctx.globalAlpha = 1;
+    const [X, Y] = P(0.5, 0.5, 1), bob = Math.round(Math.sin(performance.now() / 180) * 1.5);   // a pin in the poster's colour
+    R_(ctx, X, Y - 12 + bob, 1, 10, '#fffbf2'); R_(ctx, X - 2, Y - 16 + bob, 5, 4, '#0b0c0e'); R_(ctx, X - 1, Y - 15 + bob, 3, 2, B.col);
+  } else if (B) S.beacon = null;
   S.pins.forEach((p, k) => {
     const [bx, by] = projIso(p.x + 0.5, p.y + 0.5, p.z + (p.t && !TI[p.t].slab ? (sliced && p.z === S.level ? HT / LH : 1) : 0.25));
     const X = Math.round(bx), Y = Math.round(by), faint = sliced && p.z > S.level;

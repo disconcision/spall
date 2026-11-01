@@ -1,6 +1,6 @@
 'use strict';
 /* ==========================================================================
-   STRATUM — layer-view study for an isometric megastructure builder.
+   SPALL (working title; was Stratum) — layer-view study for an isometric megastructure builder.
    Single-file prototype: canvas 2D, procedural pixel sprites, Web Audio.
    ========================================================================== */
 
@@ -160,7 +160,7 @@ const S = {
   seed: 1729, mode: 'cut', level: 6, cutAnim: 6, cutFrom: 6, cutT: 1,
   explode: 0, explodeTarget: 0, ghost: false, shade: true, follow: false, tod: 'dusk', rot: 0, zoom: 2,
   cam: { x: 0, y: 120 }, camTarget: null, planCam: { x: 0, y: 0 }, secCam: { x: 0, y: 0 },
-  hover: null, hoverStratum: -1, isoZoom: 2, safeL: 0, safeR: 0, cssW: 800, cssH: 600, tool: 'inspect', toolRot: 0, unit: null, captureH: 2, capture: null,
+  floor: -1, hover: null, hoverStratum: -1, isoZoom: 2, safeL: 0, safeR: 0, cssW: 800, cssH: 600, tool: 'inspect', toolRot: 0, unit: null, captureH: 2, capture: null,
   secAxis: 'x', secIdx: 24, pins: [], time: 0, paused: false, bw: 400, bh: 300
 };
 

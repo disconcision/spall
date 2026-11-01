@@ -155,7 +155,7 @@ function buildChasm() {
 
 // ---------- presets ----------
 function resetWorldState() {
-  JOBS = []; DRONES = []; PUFFS = []; S.pins = []; renderChips(); hideCard(); agentReset();
+  JOBS = []; DRONES = []; PUFFS = []; S.pins = []; renderChips(); hideCard(); agentReset(); setFloor(-1);
   UNDO.past = []; UNDO.future = [];
 }
 function loadPreset(id) {
@@ -216,34 +216,39 @@ function loadSlot(k) {
   restoreState(d); toast(`Loaded slot ${k}`); log('sys', `Loaded slot ${k} · ${d.name}`, 'sys');
 }
 
-// ---------- the world menu (click the wordmark) ----------
+// ---------- the world menu (click the wordmark text): the sheet, presets, save slots, new seed, interface, keys ----------
 function setupWorldMenu() {
-  const pop = document.createElement('div'); pop.id = 'worldPop'; pop.className = 'popm'; pop.hidden = true;
+  const pop = document.createElement('div'); pop.id = 'worldPop'; pop.className = 'popm pn'; pop.hidden = true;
   document.body.appendChild(pop);
-  const name = document.querySelector('.tb-name');
-  name.setAttribute('role', 'button'); name.tabIndex = 0; name.title = 'World: presets and save slots';
-  const open = () => { const r = name.getBoundingClientRect(); pop.style.left = r.left + 6 + 'px'; pop.style.top = r.bottom + 4 + 'px'; syncWorldMenu(); pop.hidden = false; };
-  name.addEventListener('click', () => pop.hidden ? open() : (pop.hidden = true));
-  name.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pop.hidden ? open() : (pop.hidden = true); } });
+  const name = $('wmText');
+  const open = () => { const r = name.getBoundingClientRect(); syncWorldMenu(); pop.hidden = false; pop.style.left = clamp(r.left, 4, innerWidth - pop.offsetWidth - 4) + 'px'; pop.style.top = r.bottom + 6 + 'px'; name.setAttribute('aria-expanded', 'true'); };
+  const close = () => { pop.hidden = true; name.setAttribute('aria-expanded', 'false'); };
+  name.addEventListener('click', () => pop.hidden ? open() : close());
   pop.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.preset) { pop.hidden = true; loadPreset(b.dataset.preset); }
+    if (b.dataset.preset) { close(); loadPreset(b.dataset.preset); }
     else if (b.dataset.save) saveSlot(+b.dataset.save);
-    else if (b.dataset.load) { pop.hidden = true; loadSlot(+b.dataset.load); }
-    else if (b.dataset.seed) { pop.hidden = true; S.seed += 1; loadPreset(S.preset || 'voids'); }
+    else if (b.dataset.load) { close(); loadSlot(+b.dataset.load); }
+    else if (b.dataset.seed) { close(); S.seed += 1; loadPreset(S.preset || 'voids'); }
+    else if (b.dataset.tone) { setUiTone(b.dataset.tone === 'dark'); syncWorldMenu(); }
+    else if (b.dataset.keys) { close(); openKeys(); }
+    else return;
     sfx.click();
   });
-  document.addEventListener('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target) && !name.contains(e.target)) pop.hidden = true; });
-  window.addEventListener('keydown', e => { if (e.key === 'Escape') pop.hidden = true; });
+  document.addEventListener('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target) && !name.contains(e.target)) close(); });
 }
 function syncWorldMenu() {
   const pop = $('worldPop'); if (!pop) return;
   const when = t => { const d = new Date(t); return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' ' + d.toTimeString().slice(0, 5); };
-  pop.innerHTML = `<div class="lp-h"><span>World</span><span class="lp-dim">seed ${S.seed}</span></div>
+  const dark = UICFG.MT === 10 || UICFG.MT === 16;
+  pop.innerHTML = `<div class="lp-h ttl"><span>Spall</span><span class="lp-dim">wires study · sheet 02 · seed ${S.seed}</span></div>
     <div class="lp-sub">Presets <span class="lp-dim">replace the scene</span></div>` +
-    PRESETS.map(p => `<div class="lp-row"><button data-preset="${p.id}" aria-pressed="${S.preset === p.id}">${p.name}</button><span class="lp-note">${p.note}</span></div>`).join('') +
+    PRESETS.map(p => `<div class="lp-row"><button type="button" class="btn" data-preset="${p.id}" aria-pressed="${S.preset === p.id}">${p.name}</button><span class="lp-note">${p.note}</span></div>`).join('') +
     `<div class="lp-sub">Save slots <span class="lp-dim">in this browser</span></div>` +
     Array.from({ length: SLOTS }, (_, j) => { const k = j + 1, s = slotInfo(k);
-      return `<div class="lp-row"><span class="lp-slot">${k}</span><span class="lp-note">${s ? `${s.name} · ${s.cables} cables · ${when(s.at)}` : 'empty'}</span><span class="lp-btns"><button data-save="${k}">Save</button>${s ? `<button data-load="${k}">Load</button>` : ''}</span></div>`; }).join('') +
-    `<div class="lp-row"><button data-seed="1">New seed</button><span class="lp-note">regenerate the current preset</span></div>`;
+      return `<div class="lp-row"><span class="lp-slot">${k}</span><span class="lp-note">${s ? `${s.name} · ${s.cables} cables · ${when(s.at)}` : 'empty'}</span><span class="lp-btns"><button type="button" class="btn" data-save="${k}">Save</button>${s ? `<button type="button" class="btn" data-load="${k}">Load</button>` : ''}</span></div>`; }).join('') +
+    `<div class="lp-row"><button type="button" class="btn" data-seed="1">New seed</button><span class="lp-note">regenerate the current preset</span></div>
+    <div class="lp-sub">Interface</div>
+    <div class="lp-row"><span class="sgc" role="radiogroup" aria-label="Interface tone" style="--n:2;--i:${dark ? 1 : 0}"><button type="button" class="${dark ? '' : 'on'}" data-tone="light" role="radio" aria-checked="${!dark}">Light</button><button type="button" class="${dark ? 'on' : ''}" data-tone="dark" role="radio" aria-checked="${dark}">Dark</button><i class="ind"></i></span><span class="lp-note">the chrome only; the scene keeps its time of day</span></div>
+    <div class="lp-row"><button type="button" class="btn" data-keys="1">Keys</button><span class="lp-note">every shortcut</span></div>`;
 }

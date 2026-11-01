@@ -1,0 +1,54 @@
+/* ---- talk, point, sketch (67_sense.js): the mic, the speech row, the caption, the "you" turn entries ----
+   sync.py puts this at the end of the page's styles. Ink is the "you" colour, pointing the accent. */
+body{--ink-you:var(--you);--ink-pt:var(--acct)}
+body[data-mt="11"],body[data-mt="15"]{--ink-you:#1279a0}
+#chatf #bMic{position:relative;width:30px;color:var(--faint);overflow:hidden}
+#chatf #bMic svg{display:block}
+#chatf #bMic:hover{color:var(--ink-you)}
+#chatf #bMic i{position:absolute;left:3px;right:3px;bottom:3px;height:2px;background:var(--ink-you);transform:scaleX(0);transform-origin:left}
+#chatf #bMic[aria-pressed="true"]{color:var(--ink-you);background:rgba(95,211,242,.12)}
+#chatf #bMic[aria-pressed="true"].voice{color:var(--you-ink);background:var(--you)}
+#chatf #bMic[aria-pressed="true"].voice i{background:var(--you-ink)}
+#chatf #bMic.stopping{opacity:.6}
+#micEng{display:flex;align-items:center;gap:6px;padding:2px 10px 0;font-size:10px;color:var(--faint);min-width:0}
+#micEng select{font:500 10px/1.2 var(--mono);background:var(--field);color:var(--dim);border:0;box-shadow:inset 0 0 0 1px var(--well);padding:1px 2px;min-width:0;flex:none}
+#micEng .st{font-style:normal;color:var(--ink-you);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+#micEng button{flex:none;color:var(--faint);padding:1px 4px;white-space:nowrap}
+#micEng button:hover{color:var(--ink);background:var(--hov)}
+#cap{position:absolute;left:50%;bottom:38px;transform:translateX(-50%);max-width:min(620px,calc(100% - 300px));min-width:220px;z-index:5;background:var(--pxf);box-shadow:0 0 0 var(--p) var(--pxo),inset var(--p) var(--p) 0 var(--pxl),var(--p) var(--p) 0 0 rgba(0,0,0,.4);padding:4px 8px 5px;font:500 12px/1.35 var(--mono);color:var(--ink)}
+#cap[hidden]{display:none}
+#cap .who{font-weight:600;color:var(--ink-you);margin-right:6px}
+#cap .int{color:var(--dim);font-style:normal}
+#cap .lat{display:block;font-size:9.5px;color:var(--faint);margin-top:1px}
+#cap .lat:empty{display:none}
+#feed .m.turn{max-width:100%;width:100%;align-self:stretch;padding:0}
+#feed .m.turn.live{box-shadow:inset 0 0 0 var(--p) var(--you)}
+#feed .m.turn summary{list-style:none;cursor:pointer;padding:4px 7px 3px;display:block}
+#feed .m.turn summary::-webkit-details-marker{display:none}
+#feed .m.turn .th{display:flex;gap:6px;align-items:baseline;font-size:10px;color:var(--faint)}
+#feed .m.turn .th b{color:var(--ink-you);font-weight:600;font-size:11px}
+#feed .m.turn .th b::before{content:"▾ ";font-size:9px}
+#feed .m.turn details:not([open]) .th b::before{content:"▸ "}
+#feed .m.turn .mods{margin-left:auto;white-space:nowrap}
+#feed .m.turn .pv{display:none;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+#feed .m.turn details:not([open]) .pv{display:block}
+#feed .m.turn .rt{padding:0 7px 4px;line-height:1.55}
+#feed .m.turn .rt .int{color:var(--dim)}
+#feed .m.turn .rt .rf,#feed .m.turn .rt .tk,#feed .m.turn .rt .ty,#feed .m.turn .rt .pt{display:inline-block;font-size:9.5px;line-height:1.2;padding:1px 4px;margin:0 4px 1px 0;box-shadow:inset 0 0 0 1px rgba(95,211,242,.4);color:var(--ink-you);background:rgba(95,211,242,.06);cursor:default}
+#feed .m.turn .rt .tk{background:var(--you);color:var(--you-ink);box-shadow:none}
+#feed .m.turn .rt .tk.int{background:transparent;color:var(--ink-you);box-shadow:inset 0 0 0 1px var(--you)}
+#feed .m.turn .rt .ty{color:var(--ink)}
+#feed .m.turn .rt .pt,#feed .m.turn .rt .rf.to-pt{color:var(--ink-pt);box-shadow:inset 0 0 0 1px rgba(232,168,60,.35);background:rgba(232,168,60,.07);cursor:pointer}
+#feed .m.turn .rt .pt b{font-weight:700;color:var(--ink)}
+#feed .m.turn .rt .pt.used{box-shadow:inset 0 0 0 1px var(--acct)}
+#feed .m.turn .rt .pt.open{background:var(--acct);color:var(--accent-ink)}
+#feed .m.turn .rt .pt.open b{color:var(--accent-ink)}
+#feed .m.turn .rt .rf:not(.to-pt){cursor:pointer}
+#feed .m.turn canvas.tl{display:block;width:calc(100% - 14px);height:22px;margin:0 7px 3px;image-rendering:pixelated}
+#feed .m.turn .wins{display:flex;flex-wrap:wrap;gap:6px;padding:0 7px 4px}
+#feed .m.turn .wins:empty{display:none}
+#feed .m.turn .win{position:relative;cursor:pointer;line-height:0;box-shadow:0 0 0 1px var(--pxo)}
+#feed .m.turn .win canvas{display:block;image-rendering:pixelated}
+#feed .m.turn .tf{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:0 7px 5px;font-size:9.5px;color:var(--faint)}
+#feed .m.turn .tf button{font-size:9.5px;padding:1px 5px;color:var(--dim);white-space:nowrap;box-shadow:inset 0 0 0 1px var(--well)}
+#feed .m.turn .tf button:hover{color:var(--ink)}
