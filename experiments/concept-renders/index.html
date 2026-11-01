@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stratum Concept Renders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../home/gallery.css">
+<!-- The images are web copies in web/, made from out/ by ./web.sh. Captions follow CAPTIONS in post.py. -->
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="crumb"><a href="../">Spall</a> / archive / concept-renders</div>
+  <h1>Concept renders</h1>
+  <p class="intro">A kit-of-parts megastructure renderer in Blender. <b>One JSON spec</b>, a list of parts on a 3D grid, drives
+    everything below: concept art in five looks, cutaways, sections and plans, lighting, a phased construction time-lapse,
+    and palette-locked 2:1 pixel sprites. None of it was modelled by hand.</p>
+  <div class="meta">Stratum era · 30 Sep 2026 · Blender 5.0 EEVEE · rebuild with <code>./run_all.sh</code> (about 2 min) · the six agent-designed buildings that came next are on <a href="../agent-buildings/">their own page</a></div>
+</header>
+<div id="gallery"></div>
+<footer><code>kit.py</code> is the renderer (43 part builders, materials, views); <code>gen.py</code> the seeded generators; <code>agent_check.py</code> the spec validator; <code>sprites.py</code> the sprite pipeline; <code>post.py</code> the captions and sheets.</footer>
+</div>
+<script>
+const W = f => 'web/' + f, O = f => 'out/' + f;
+const it = (f, title, text, more) => ({ img: W(f.replace(/\.png$/, '.jpg')), out: O(f), title, text, ...more });
+const px = (f, title, text, more) => ({ img: W(f), out: O(f), title, text, px: true, ...more });
+window.GALLERY = [
+  { id: 'looks', title: 'Five looks', note: 'Seeded generators, one per direction, all on the same parts and renderer. Each has a wide view and a close-up.', items: [
+    it('a_blame.png', 'BLAME! · the void', 'Megablocks around a bottomless void; lit settlements on sheer walls, bridges at every depth, light shafts, far floor slab.'),
+    it('a_blame_close.png', 'BLAME! · settlement', 'A capsule settlement bolted to a wall ledge between light shafts; scale comes from the tiny lit windows.'),
+    it('b_glt.png', "Girls' Last Tour · strata", 'Three stacked city strata; the silent top layer under snow, broken slab edges, pipes, a stalled train, haze below.'),
+    it('b_glt_close.png', "Girls' Last Tour · top layer", 'Snow on every upward face (shader), ruins with empty windows, derelict crane, pipes along the streets.'),
+    it('c_kowloon.png', 'Kowloon accretion · dusk', 'Lot-by-lot accretion with floor-by-floor overhangs, add-on rooms, neon blade signs, antenna forest, low-rise context.'),
+    it('c_kowloon_close.png', 'Kowloon · facade', 'Window grids, AC boxes, window cages, blade signs, roof shacks and the rooftop passage network.'),
+    it('d_solarpunk.png', 'Solarpunk arcology · golden hour', 'Terraced timber-and-glass hill: gardens on every step, blossoms, cascades to a lake, solar and wind towers, tram.'),
+    it('d_solarpunk_close.png', 'Solarpunk · terraces', 'Low-poly trees and flowering canopies on each terrace; units with ribbon glazing along the step risers.'),
+    it('e_mixed.png', 'Mixed directions', 'Inner corner of a shaft: towers grow sideways off both walls, hang from a ceiling, stand on ledges.'),
+    it('f_arcology.png', 'Canonical arcology · overcast', 'Supports (megacolumn grid, 4 decks, trusses) plus capsule infill capped at 50% per level, atria, tube, viaduct, roof garden.'),
+  ] },
+  { id: 'views', title: 'Level views', note: 'The canonical arcology shown the ways a builder needs to see a stack: cut, ghosted, pulled apart, sectioned, from above.', items: [
+    it('v1_full.png', 'Full', 'Cropped to its site like an architectural model; poché on the crop faces.'),
+    it('v2_cutaway_L8.png', 'Cutaway at level 8', 'Everything above L8 removed; cut faces capped with hatched poché; capsule interiors and the tube train exposed.'),
+    it('v2b_cutaway_L14.png', 'Cutaway at level 14', 'Same, one stratum higher.'),
+    it('v3_ghost_L8.png', 'Ghosted upper levels', 'Below L8 solid; above L8 as translucent blueprint massing, one box per part.'),
+    it('v4_exploded.png', 'Exploded axonometric', 'Strata split at the deck soffits and lifted apart; dashed leader lines at the site corners.'),
+    it('v5_section_x13.png', 'Vertical section', 'Plane cut at x = 13 cells through a megacolumn line; decks, columns and the tube in poché.'),
+    it('v6_plan_L12_annotated.png', 'Plan at level 12', 'Top-down cut 1.75 m above the L12 deck; lower levels fade with depth; 4 m grid.', { wide: true }),
+  ] },
+  { id: 'light', title: 'Lighting', cols: 3, items: [
+    it('l_arcology_overcast.png', 'Overcast day', 'Soft sun, grey sky fill, light height and depth haze.'),
+    it('l_arcology_dusk.png', 'Dusk', 'Low warm sun from the back left, violet sky, warm windows, bloom.'),
+    it('l_arcology_night.png', 'Night', 'Moonlight fill only; windows, lamps and trains carry the image.'),
+    it('l_kowloon_night.png', 'Kowloon night', 'Neon and windows; the context city recedes.'),
+    it('l_blame_night.png', 'BLAME! night', 'The void at night: settlements and bridge lamps only.'),
+    it('l_solarpunk_dusk.png', 'Solarpunk dusk', 'The terraces at dusk; warm windows through the gardens.'),
+  ] },
+  { id: 'accretion', title: 'Accretion time-lapse', note: 'Parts carry phase tags, so the same spec plays back as construction: supports, then transit, infill, gardens, lights, with the next blueprint ghosted in.', items: [
+    { video: W('accretion_timelapse.mp4'), out: O('accretion_timelapse.gif'), title: 'Time-lapse', text: 'Ten phases of the canonical arcology.' },
+    it('sheet_4_timelapse.png', 'Frames', 'The phases side by side.'),
+  ] },
+  { id: 'sprites', title: 'Sprite pipeline', note: 'EEVEE with no pixel filter gives hard 2:1 edges at 32 px per tile; locking to one 64-colour master palette (kit64) brings each sprite down to 22–37 colours.', items: [
+    px('p1_sprite_strip.png', 'Strip', '3D render, then aliased 32 px/tile sprite, then the kit64 palette-locked sprite, at 4×.'),
+    px('p2_sprite_rotations.png', 'Four rotations', 'The model turned under a fixed camera and sun; 3 stages × 4 rotations.'),
+    px('p3_sprite_sheet.png', 'Sheet', 'Palette-locked sprites for two buildings × 4 rotations, kit buildings, ground tiles.'),
+    px('p4_ingame_mock.png', 'In-game mock', 'A tile map composed only from kit64 sprites, the farm placed twice.'),
+    px('p5_agent_loop.png', 'Agent loop', 'A spec excerpt; validator output for the flawed first draft (8 errors) and the fixed second (pass).'),
+    px('p6_palette_compare.png', 'Palettes', 'Raw vs adaptive 64 (median cut) vs the kit64 master palette.'),
+  ] },
+  { id: 'catalog', title: 'Kit of parts', items: [
+    it('catalog_sheet.png', 'Catalogue', 'One of each part type, same camera and light.', { wide: true }),
+  ] },
+];
+</script>
+<script src="../home/gallery.js"></script>
+</body>
+</html>

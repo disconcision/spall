@@ -4,14 +4,14 @@ Spall is a pixel-art isometric megastructure builder (working title; it was "Str
 
 ## Layout
 
-`experiments/` is served on port 5190; `experiments/index.html` is the front page and the map of everything. Every push to `main` also publishes `experiments/` to https://andrewblinn.com/spall/ (`.github/workflows/pages.yml`); `local/` folders and the Blender render folders stay off it.
+`experiments/` is served on port 5190; `experiments/index.html` is the front page and the map of everything. Every push to `main` also publishes `experiments/` to https://andrewblinn.com/spall/ (`.github/workflows/pages.yml`); `local/` folders and the Blender render dumps (`out/` in the archive folders) stay off it.
 
 - **Main build:** `experiments/spall/`. The game. Sources in `src/`, joined into `index.html` by `build.sh`. Everything else is measured against it.
 - **Builds:** folders that open as one interactive game, each the main build plus something. They read main's sources rather than keeping copies:
   - `spall-3d/build.sh` reads `../spall/src` in the order `../spall/build.sh` lists it.
   - `spall-multimodal/sync.py` copies main's sources and applies its hooks. Re-run it after main changes; never hand-edit the copied files.
 - **Studies:** documents (findings, comparisons, concept pages), some with live parts. Examples: `spall-multimodal/notes.html`, `agent-chat-reference/`, `spall/mockups/`.
-- **Archive:** the Stratum-era prototypes and retired tools (`megastructure-layers/`, `ui-mockups/`, `lines-and-voids/`, `concept-renders/`, `agent-buildings/`). Leave them as they are.
+- **Archive:** the Stratum-era prototypes and retired tools (`megastructure-layers/`, `ui-mockups/`, `lines-and-voids/`, `concept-renders/`, `agent-buildings/`, `aesthetics/`). Leave them as they are. `concept-renders/` and `agent-buildings/` have gallery pages that show web copies of `out/` (`web.sh` makes them).
 
 ## Names
 
@@ -31,6 +31,7 @@ Spall is a pixel-art isometric megastructure builder (working title; it was "Str
 - Keep changes to `experiments/spall/` scoped.
 - After changing it, run `./build.sh`, then check that the builds reading it still build: `spall-3d/build.sh` and `spall-multimodal/sync.py`.
 - If an anchor in `sync.py` moved, fix the anchor in `sync.py`, not the game.
+- Build UI from the shared parts listed at the top of `src/00_head.html`: tokens for every colour, `.pn`/`.bar`/`.ttl`/`.float` surfaces, the shared controls, and the one feed row. Canvas drawing takes colours from `ROLE` (`10_util.js`). `build.sh` lists colours written straight into CSS; fix them, or mark a deliberate one with a `raw-colour` comment.
 
 ## Commits
 

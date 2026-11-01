@@ -1,6 +1,6 @@
 # Publishes experiments/ (the front page, the builds, the studies) to GitHub Pages on every push to main.
 # It shows up at https://andrewblinn.com/spall/ because the user site (disconcision.github.io) has that
-# custom domain. The Blender render folders have no pages and are left out; local/ folders aren't in git.
+# custom domain. The Blender render dumps (out/) are left out: their pages show the web/ copies; local/ folders aren't in git.
 name: pages
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Assemble the site
-        run: rsync -a --exclude concept-renders --exclude agent-buildings experiments/ _site/ && du -sh _site
+        run: rsync -a --exclude /concept-renders/out --exclude /agent-buildings/out --exclude /aesthetics/out --exclude /aesthetics/scale/out experiments/ _site/ && du -sh _site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stratum Agent Buildings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../home/gallery.css">
+<!-- The images are web copies in web/, made from out/ by ./web.sh. Briefs are from logic/*.json. -->
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="crumb"><a href="../">Spall</a> / archive / agent-buildings</div>
+  <h1>Agent buildings</h1>
+  <p class="intro">Six building types an agent designed from <b>one-line player briefs</b>: it wrote each spec and its game
+    logic, ran the validator, rendered with the unmodified <a href="../concept-renders/">concept-render</a> kit, looked at the
+    result and redrafted. 22 drafts in 36 minutes. The finding: spec, validator and fixed renderer give consistency and sound
+    game logic for free, but not, by themselves, a good look; that took kit extensions.</p>
+  <div class="meta">Stratum era · 30 Sep 2026 · Blender 5.0 EEVEE · rebuild with <code>./run_all.sh</code> (about 1 min)</div>
+</header>
+<div id="gallery"></div>
+<footer><code>specs/</code> the building specs; <code>logic/</code> their game definitions (footprint, placement, needs, provides); <code>log/</code> every validator run; <code>kitx.py</code> the kit extensions.</footer>
+</div>
+<script>
+const W = f => 'web/' + f, O = f => 'out/' + f;
+const it = (f, title, text, more) => ({ img: W(f.replace(/\.png$/, '.jpg')), out: O(f), title, text, ...more });
+const px = (f, title, text, more) => ({ img: W(f), out: O(f), title, text, px: true, ...more });
+// id, title, brief, the drafts that got a concept render (the last is the accepted one)
+const B = [
+  ['hydro_stack', 'Hydroponic capsule stack', 'a hydroponic capsule stack that feeds its stratum - fits in the undercroft and needs water from a riser', [2, 3, 4]],
+  ['bridge_market', 'Sky-bridge market', 'a sky-bridge market spanning two cores, with stalls and lanterns', [1, 2, 3]],
+  ['hanging_garden', 'Hanging garden', 'a hanging garden that grows off a shaft wall (mixed directions)', [1, 3, 4]],
+  ['tube_interchange', 'Tube interchange', 'a transit interchange where two elevated tube lines cross at different levels', [3, 4, 5]],
+  ['solar_chimney', 'Solar chimney light well', 'a light well / solar chimney that brings daylight down six levels', [2, 3, 4]],
+  ['rooftop_village', 'Rooftop squatter village', 'a Kowloon-style rooftop squatter village', [1, 2]],
+];
+window.GALLERY = [
+  { id: 'district', title: 'The district', note: 'All six placed into one megastructure scene, with no extra work beyond the specs.', items: [
+    it('scene_dusk_labelled.png', 'District at dusk', 'Each building where its logic says it goes: the stack in the undercroft on a water riser, the market between two cores, the garden on a shaft wall.', { wide: true }),
+    it('scene_golden.png', 'Golden hour', 'The same scene, warm light.'),
+    it('scene_dusk_close.png', 'Close at dusk', 'Market, village and chimney.'),
+    it('scene_vs_stock.png', 'Against the stock kit', 'Same renderer, kit and camera: the canonical arcology (left) and the district built round the six buildings (right).', { wide: true }),
+  ] },
+  { id: 'buildings', title: 'Six buildings', note: 'Each sheet has the concept view, the four sprite rotations at three stages (render, 32 px/tile, kit64 palette lock) and the game logic. The strip under it is the drafts that got a render.',
+    items: B.map(([id, title, brief, vs]) => ({ ...it('sheets/' + id + '.png', title, '“' + brief + '”'), img: W('sheet_' + id + '.jpg'),
+      drafts: vs.map((v, k) => [k === vs.length - 1 ? 'v' + v + ' · accepted' : 'v' + v, W(`iter_${id}_v${v}_concept.jpg`)]) })) },
+  { id: 'sprites', title: 'Sprites', items: [
+    px('agent_sprite_sheet.png', 'Sprite sheet', 'All six buildings × 4 rotations, palette-locked, same camera, sun and scale as the stock kit.', { wide: true }),
+    px('extensions_before_after.png', 'Where the stock kit limited the look', 'Last draft on the stock kit (top) and the final with its extension (bottom): grow pods, lanterns, vines, sprite-safe glass, a sun pipe.', { wide: true }),
+    px('ingame_mock.png', 'In-game mock', 'The new sprites dropped into a tile map next to the stock kit sprites.', { wide: true }),
+  ] },
+  { id: 'log', title: 'Authoring log', items: [
+    it('log_panel.png', '6 briefs → 22 drafts', 'Validator runs, render rounds and reviews per building; every mistake the agent made, and which check caught it; where the validator was blind and the kit fell short.', { wide: true }),
+  ] },
+];
+</script>
+<script src="../home/gallery.js"></script>
+</body>
+</html>

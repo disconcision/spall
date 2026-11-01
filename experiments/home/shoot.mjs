@@ -30,10 +30,34 @@ const SHOTS = {
   light: [{ url: U + 'spall/mockups/light.html', load: 3500 }],
   hires: [{ url: U + 'spall/mockups/hires.html', load: 3500 }],
   wires: [{ url: U + 'spall/mockups/index.html', load: 3500 }],
+  '3d-passes': [{ url: U + 'spall-3d/local/compare.html', load: 3000 }],
+  '3d-splats': [{ url: U + 'spall-3d/local/splats.html', load: 3000 }],
+  '3d-edges': [{ url: U + 'spall-3d/local/edges.html', load: 3000 }],
+  '3d-outlines': [{ url: U + 'spall-3d/local/outlines.html', load: 3000 }],
+  '3d-outline-options': [{ url: U + 'spall-3d/local/outline-options.html', load: 3000 }],
+  layers: [{ url: U + 'megastructure-layers/stratum.html', load: 3500 }],
+  aesthetics: [{ url: U + 'aesthetics/', load: 3000 }],
+  scale: [{ url: U + 'aesthetics/scale/', load: 3000 }],
+  lines: [{ url: U + 'lines-and-voids/', load: 3500 }],
+  // not served: the toy lives in notes/, beside its write-up
+  multiscale: [{ url: 'file://' + join(HERE, '..', '..', 'notes', 'multiscale-toy.html'), load: 2500 }],
 };
-const ids = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(SHOTS);
+// archive cards whose best picture is one of their own renders: cropped to the card's 16:10
+const STILLS = {
+  renders: 'concept-renders/out/c_kowloon.png',
+  'agent-buildings': 'agent-buildings/out/scene_dusk_labelled.png',
+  'ui-mockups': 'ui-mockups/out/m1_level_hud.png',
+};
+const ids = process.argv.slice(2).length ? process.argv.slice(2) : [...Object.keys(SHOTS), ...Object.keys(STILLS)];
 const tmp = mkdtempSync(join(tmpdir(), 'home-')), steps = [{ size: [1280, 800], dpr: 1 }];
-for (const id of ids) { if (!SHOTS[id]) { console.error('no shot for', id); continue; } steps.push(...SHOTS[id], { shot: join(tmp, id + '.png') }); }
+for (const id of ids) {
+  if (STILLS[id]) {
+    const out = join(HERE, id + '.jpg');
+    spawnSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '78', '--resampleWidth', '1140', join(HERE, '..', STILLS[id]), '--out', out], { stdio: 'ignore' });
+    spawnSync('sips', ['--cropToHeightWidth', '712', '1140', out], { stdio: 'ignore' });
+    console.log('home/' + id + '.jpg'); continue;
+  }
+  if (!SHOTS[id]) { console.error('no shot for', id); continue; } steps.push(...SHOTS[id], { shot: join(tmp, id + '.png') }); }
 writeFileSync(join(tmp, 'steps.json'), JSON.stringify(steps));
 spawnSync('node', ['--experimental-websocket', join(HERE, '..', 'lines-and-voids', 'tools', 'cdp.mjs'), join(tmp, 'steps.json')], { stdio: 'inherit' });
 for (const id of ids) {

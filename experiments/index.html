@@ -61,12 +61,6 @@ h2{font:700 15px/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;col
 .tag.miss{color:var(--agent);box-shadow:inset 0 0 0 1px #6a3020}
 .upd{color:var(--faint)}
 .upd.fresh{color:var(--ink)}
-/* archive: a list */
-.arch{margin-top:12px;display:flex;flex-direction:column;gap:2px}
-.arch .row{display:grid;grid-template-columns:200px minmax(0,1fr) auto;gap:14px;align-items:baseline;padding:7px 10px;background:var(--panel)}
-.arch .row b{font:700 15px/1.1 var(--cond);letter-spacing:.05em;text-transform:uppercase}
-.arch .row span{color:var(--dim);font-size:12px}
-.arch .row .links{margin:0;padding:0}
 footer{margin-top:44px;color:var(--faint);font-size:11.5px;border-top:2px solid var(--lo);box-shadow:0 -2px 0 var(--line);padding-top:16px}
 footer code{color:var(--dim)}
 footer a{color:var(--you);text-decoration:none}
@@ -75,7 +69,6 @@ footer a{color:var(--you);text-decoration:none}
   header>div{flex:1;min-width:0}
   header .wm{width:100%;height:auto}
   .main .shots,.grid{grid-template-columns:1fr}
-  .arch .row{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -98,7 +91,7 @@ footer a{color:var(--you);text-decoration:none}
 <div class="grid" id="studyGrid"></div>
 
 <h2 id="archive">Archive</h2>
-<div class="arch" id="archList"></div>
+<div class="grid" id="archGrid"></div>
 
 <footer>
   <a href="https://github.com/disconcision/spall">github.com/disconcision/spall</a> · entries: <code>ENTRIES</code> in <code>experiments/index.html</code> · thumbnails: <code>home/shoot.mjs</code> · conventions: <code>CLAUDE.md</code>
@@ -106,10 +99,11 @@ footer a{color:var(--you);text-decoration:none}
 </div>
 
 <script>
-// kind: main | build | study | archive. href is relative to this page; also: extra links; ext marks claude.ai pages
+// kind: main | build | study | archive. href is relative to this page; also: extra links; ext marks claude.ai pages,
+// local a page in a local/ folder, optionally followed by its claude.ai copy for where the local page isn't
 const ENTRIES = [
   { kind: 'main', id: 'spall', title: 'Spall', href: 'spall/', shots: ['spall-light', 'spall-dark'],
-    also: [['Highlight styles', 'spall/mockups/highlight.html'], ['UI chrome concepts', 'spall/mockups/ui.html']] },
+    also: [['Highlight styles', 'spall/mockups/highlight.html'], ['UI chrome concepts', 'spall/mockups/ui.html'], ['Talking to claude', 'spall/mockups/talk.html']] },
 
   { kind: 'build', id: 'spall-3d', title: 'Spall 3D', href: 'spall-3d/',
     desc: 'The main build in WebGL with a free camera. 3 switches views.',
@@ -128,7 +122,11 @@ const ENTRIES = [
     also: [['Report', 'https://claude.ai/artifact/LyseCFDxEWfSGBxTLFEZSA', 'ext']] },
   { kind: 'study', id: 'backdrop', title: 'Backdrop', href: 'spall-backdrop/local/undercity.html', local: true,
     desc: 'The world past the edge. Now in the main build.',
-    also: [['Report', 'https://claude.ai/artifact/6WVijp1bFPutFLQ1QMsVsK', 'ext'], ['Round five', 'spall-backdrop/local/backdrop5.html', 'local']] },
+    also: [['Report', 'https://claude.ai/artifact/Qcst7FaxXF51rfd9bKoXmT', 'ext'],
+      ['Five worlds', 'spall-backdrop/local/backdrops.html', 'local', 'https://claude.ai/artifact/DgxkYoB58bQFi61fkLXoFW'],
+      ['Round three', 'spall-backdrop/local/backdrops3.html', 'local', 'https://claude.ai/artifact/MmzmSu1vnkzoKL5VmLRtia'],
+      ['Round four', 'spall-backdrop/local/backdrop4.html', 'local', 'https://claude.ai/artifact/1ZHgGkzwf3qdjYVpomePPi'],
+      ['Round five', 'spall-backdrop/local/backdrop5.html', 'local', 'https://claude.ai/artifact/6WVijp1bFPutFLQ1QMsVsK']] },
   { kind: 'study', id: 'chatter', title: 'Bot chatter reference', href: 'agent-chat-reference/',
     desc: 'Art reference for the band.' },
   { kind: 'study', id: 'light', title: 'Light studies', href: 'spall/mockups/light.html',
@@ -138,15 +136,43 @@ const ENTRIES = [
   { kind: 'study', id: 'wires', title: 'Wire looks', href: 'spall/mockups/index.html',
     desc: 'Cable and bundle looks, round four.',
     also: [['v1', 'spall/mockups/v1/'], ['v2', 'spall/mockups/v2/'], ['v3', 'spall/mockups/v3/']] },
+  { kind: 'study', id: '3d-passes', title: '3D: second and third pass', href: 'spall-3d/local/compare.html', local: true,
+    desc: 'The 2D overlays ported to the 3D view, side by side with 2D.',
+    also: [['Report', 'https://claude.ai/artifact/Gpw8QbPfBescSQbQhoqqFt', 'ext']] },
+  { kind: 'study', id: '3d-splats', title: '3D: texel splats', href: 'spall-3d/local/splats.html', local: true,
+    desc: 'Each art pixel sent to the screen, to stop thin lines crawling.',
+    also: [['Report', 'https://claude.ai/artifact/EuwftuP4eESug8iFEf29dm', 'ext']] },
+  { kind: 'study', id: '3d-edges', title: '3D: edges at rest', href: 'spall-3d/local/edges.html', local: true,
+    desc: 'cleanEdge vs anti-aliasing when the camera stops at an odd angle.',
+    also: [['Report', 'https://claude.ai/artifact/H2ogbXk1ECS4GGAMBf9Dka', 'ext']] },
+  { kind: 'study', id: '3d-outlines', title: '3D: cut outlines', href: 'spall-3d/local/outlines.html', local: true,
+    desc: 'Why the white cut outlines lost pixels in 3D, and the fix.',
+    also: [['Report', 'https://claude.ai/artifact/YSAUatYxzkYJyjiLdac24b', 'ext']] },
+  { kind: 'study', id: '3d-outline-options', title: '3D: outline options', href: 'spall-3d/local/outline-options.html', local: true,
+    desc: 'Four ways to draw the cut outline; cleanEdge made cheap enough to leave on.',
+    also: [['Report', 'https://claude.ai/artifact/Huho7T5eR6ABpxHqFxWTAd', 'ext']] },
 
   { kind: 'archive', id: 'layers', title: 'Stratum layer study', href: 'megastructure-layers/stratum.html',
-    desc: 'The original layer-view prototype.' },
+    desc: 'The original layer-view prototype, the touchstone for the look.',
+    also: [['Report', 'https://claude.ai/artifact/LXihXRsFk6rGHCcRc6hut6', 'ext']] },
+  { kind: 'archive', id: 'renders', title: 'Concept renders', href: 'concept-renders/',
+    desc: 'Blender kit-of-parts renders: five looks, level views, lighting, a time-lapse, sprites.' },
+  { kind: 'archive', id: 'agent-buildings', title: 'Agent buildings', href: 'agent-buildings/',
+    desc: 'Six building types an agent designed from one-line briefs.' },
+  { kind: 'archive', id: 'aesthetics', title: 'Megastructure aesthetics', href: 'aesthetics/',
+    desc: 'Round two of the kit renders: bevels, new part families, a stylised look.' },
+  { kind: 'archive', id: 'scale', title: 'Megastructure scale', href: 'aesthetics/scale/',
+    desc: 'Round three: megaforms ten to a thousand times building size, as ground.' },
   { kind: 'archive', id: 'ui-mockups', title: 'UI mock-ups', href: 'ui-mockups/src/m1_level_hud.html',
-    desc: 'Early game screens over renders.' },
+    desc: 'Eight early game screens over renders.',
+    also: [['Level HUD', 'ui-mockups/src/m1_level_hud.html'], ['Section and services', 'ui-mockups/src/m2_section_services.html'],
+      ['Pattern book', 'ui-mockups/src/m3_pattern_book.html'], ['Agent co-building', 'ui-mockups/src/m4_agent_cobuild.html'],
+      ['Mod request', 'ui-mockups/src/m5_mod_request.html'], ['Accretion timeline', 'ui-mockups/src/m6_accretion_timeline.html'],
+      ['Sound map', 'ui-mockups/src/m7_sound_map.html'], ['Pixel mode', 'ui-mockups/src/m8_pixel_mode.html']] },
+  { kind: 'archive', id: 'multiscale', title: 'Multiscale toy', href: 'https://claude.ai/artifact/8XDMu1CpULUgBSBCA5CvSN',
+    desc: 'A city simulated coarsely per block and in detail where you zoom. In notes/.' },
   { kind: 'archive', id: 'lines', title: 'Lines and voids', href: 'lines-and-voids/',
     desc: 'A rejected renderer study.' },
-  { kind: 'archive', id: 'renders', title: 'Concept renders', href: null,
-    desc: 'Blender renders (concept-renders/, agent-buildings/). No page.' },
 ];
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -156,7 +182,7 @@ const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
 const go = (h, cls) => `href="${esc(h)}"${cls ? ` class="${cls}"` : ''}${isExt(h) ? ' target="_blank" rel="noopener"' : ''}`;
 function links(e) {
   const L = e.also || [];
-  return L.length ? `<span class="links">${L.map(([n, h, k]) => `<a ${go(h, k === 'ext' ? 'ext' : '')} data-chk="${k === 'ext' ? '' : esc(h)}">${esc(n)}</a>`).join('')}</span>` : '';
+  return L.length ? `<span class="links">${L.map(([n, h, k, alt]) => `<a ${go(h, k === 'ext' ? 'ext' : '')} data-chk="${k === 'ext' ? '' : esc(h)}"${alt ? ` data-alt="${esc(alt)}"` : ''}>${esc(n)}</a>`).join('')}</span>` : '';
 }
 function thumb(e, img) { return `<span class="th none" data-k="${esc(e.kind)}" data-img="home/${esc(img || e.id)}.jpg"></span>`; }
 function meta(e) {
@@ -169,8 +195,7 @@ const M = ENTRIES.find(e => e.kind === 'main');
 document.getElementById('mainCard').innerHTML = `<div class="main pn"><div class="shots">${M.shots.map(s => `<a ${go(M.href)}>${thumb(M, s)}</a>`).join('')}</div><div class="tx"><h3>${esc(M.title)}</h3>${meta(M)}${links(M)}<a class="play" ${go(M.href)}>Play ▸</a></div></div>`;
 document.getElementById('buildGrid').innerHTML = ENTRIES.filter(e => e.kind === 'build').map(card).join('');
 document.getElementById('studyGrid').innerHTML = ENTRIES.filter(e => e.kind === 'study').map(card).join('');
-document.getElementById('archList').innerHTML = ENTRIES.filter(e => e.kind === 'archive').map(e =>
-  `<div class="row"><b>${e.href ? `<a href="${esc(e.href)}" style="text-decoration:none">${esc(e.title)}</a>` : esc(e.title)}</b><span>${esc(e.desc)}</span><span class="upd" data-upd="${esc(e.href || '')}"></span></div>`).join('');
+document.getElementById('archGrid').innerHTML = ENTRIES.filter(e => e.kind === 'archive').map(card).join('');
 
 // thumbnails, if made
 for (const el of document.querySelectorAll('.th[data-img]')) {
@@ -196,9 +221,13 @@ for (const e of ENTRIES.filter(e => e.local)) here(e.href).then(r => {
   c.querySelectorAll('a[data-main]').forEach(a => { a.href = rep[1]; a.target = '_blank'; a.rel = 'noopener'; });
   c.querySelectorAll('.tag, .upd').forEach(t => t.remove());
 });
-// extra links to pages that aren't here are dropped
+// extra links to pages that aren't here open their claude.ai copy, or are dropped
 for (const a of document.querySelectorAll('a[data-chk]')) {
-  const h = a.dataset.chk; if (h) here(h).then(r => { if (!r) a.remove(); });
+  const h = a.dataset.chk; if (h) here(h).then(r => {
+    if (r) return;
+    if (!a.dataset.alt) return a.remove();
+    a.href = a.dataset.alt; a.target = '_blank'; a.rel = 'noopener'; a.classList.add('ext');
+  });
 }
 </script>
 </body>

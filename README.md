@@ -31,11 +31,11 @@ Conventions for agents and people working here (names, folders, commits, testing
 | `experiments/agent-chat-reference/` | Study: art reference for the band, a sidebar of agents and bots talking in symbolic languages. |
 | `experiments/megastructure-layers/` | Archive: the original layer-view prototype, the touchstone for the look. |
 | `experiments/lines-and-voids/` | Archive: a rejected renderer study. `tools/cdp.mjs` is the headless-Chrome tool the tests use. |
-| `experiments/concept-renders/` | Archive: Blender kit-of-parts renderer, concept renders and the accretion time-lapse (needs Blender). |
-| `experiments/agent-buildings/` | Archive: building types an agent designed from requests. Uses `concept-renders/`. |
+| `experiments/concept-renders/` | Archive: Blender kit-of-parts renderer, concept renders and the accretion time-lapse (needs Blender). `index.html` is a gallery of them. |
+| `experiments/agent-buildings/` | Archive: building types an agent designed from requests. Uses `concept-renders/`. `index.html` is a gallery of them. |
+| `experiments/aesthetics/` | Archive: aesthetic studies built from the kit renders, round two (`index.html`) and round three, scale (`scale/index.html`). Was `concepts/aesthetics/`. |
 | `experiments/ui-mockups/` | Archive: early game-screen mock-ups composited over renders. |
-| `concepts/aesthetics/` | Aesthetic studies built from the kit renders. |
-| `notes/` | Design notes: megastructure, multiscale simulation, creative brief. |
+| `notes/` | Design notes: megastructure, multiscale simulation, creative brief; `multiscale-toy.html`, the toy the multiscale note describes. |
 
 ## Not in git
 
