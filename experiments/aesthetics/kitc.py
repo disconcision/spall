@@ -1,7 +1,7 @@
 """
 kitc.py - the aesthetics-study renderer (Blender 5.0, headless).
 
-Imports the UNMODIFIED kit-of-parts renderer ../../experiments/concept-renders/kit.py as a module and extends it in
+Imports the UNMODIFIED kit-of-parts renderer ../concept-renders/kit.py as a module and extends it in
 memory only (nothing is written into concept-renders; bytecode writing is disabled):
 
   * bevel / chamfer as a first-class option on EVERY part: params.bevel (number or dict) or a style-level
@@ -19,7 +19,7 @@ import json, math, os, random, sys, time
 
 sys.dont_write_bytecode = True
 HERE = os.path.dirname(os.path.abspath(__file__))
-CR = os.path.normpath(os.path.join(HERE, '..', '..', 'experiments', 'concept-renders'))
+CR = os.path.normpath(os.path.join(HERE, '..', 'concept-renders'))
 sys.path.insert(0, HERE)
 sys.path.insert(0, CR)
 

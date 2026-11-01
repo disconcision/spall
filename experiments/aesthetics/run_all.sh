@@ -1,6 +1,6 @@
 #!/bin/sh
 # Rebuild every render, sprite, strip and the page.  Blender 5.0 at /Applications/Blender.app, python3 + Pillow + numpy.
-# Reads ../../experiments/concept-renders (kit.py, sprites.py) without modifying it.
+# Reads ../concept-renders (kit.py, sprites.py) without modifying it.
 set -e
 cd "$(dirname "$0")"
 export PYTHONDONTWRITEBYTECODE=1

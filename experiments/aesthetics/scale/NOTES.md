@@ -9,7 +9,7 @@ The user corrected two things mid-round, and both are applied:
 ## Rebuild
 
 ```sh
-cd stratum/concepts/aesthetics/scale/gen
+cd spall/experiments/aesthetics/scale/gen
 python3 g_powers.py && python3 g_mega2.py && python3 g_pixel_scale.py
 cd ../..
 B=/Applications/Blender.app/Contents/MacOS/Blender

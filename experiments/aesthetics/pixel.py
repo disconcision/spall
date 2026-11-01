@@ -9,7 +9,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.normpath(os.path.join(HERE, '..', '..', 'experiments', 'concept-renders')))
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, '..', 'concept-renders')))
 import sprites as SP   # noqa: E402  (read-only reuse: srgb_to_lab, palette_lock, KIT64)
 
 RAW = os.path.join(HERE, 'out', 'h', 'raw')

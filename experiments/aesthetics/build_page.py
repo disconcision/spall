@@ -152,7 +152,7 @@ linings with palette slots; tunnels; walkways; pendants; cable spans; hangars wi
 <li><b>City and landscape:</b> procedural window facades, towers, superblocks in three styles with detail levels, terrain tiles, forests, villages.</li>
 <li><b>Renderer:</b> section caps chosen by the material they cut, perspective cameras, spot and extra lights, stylised materials with no grime,
 new light presets, and a palette-locked sprite pipeline at any density.</li></ul>
-<p class="intro small">Code, specs and the per-render notes: <code>stratum/concepts/aesthetics/</code> (see <code>NOTES.md</code>; rebuild everything
+<p class="intro small">Code, specs and the per-render notes: <code>spall/experiments/aesthetics/</code> (see <code>NOTES.md</code>; rebuild everything
 with <code>./run_all.sh</code>).</p></section>"""
 
 NAV = ''.join('<a href="#%s">%s</a>' % (a, b) for a, b in (('edges', 'Hewn edges'), ('green', 'Plants'), ('diag', 'Diagonals'),

@@ -12,13 +12,13 @@ Pixel art uses a Stratum palette built from the layer prototype (`experiments/me
 ## Rebuild
 
 ```sh
-cd stratum/concepts/aesthetics
+cd spall/experiments/aesthetics
 ./run_all.sh      # generators -> Blender renders -> sprites -> strips -> index.html
 ```
 
 - **Requirements:** Blender 5.0 at `/Applications/Blender.app`, plus python3 with Pillow and numpy.
 - **Run time:** about 5 minutes on the M1 Max. That covers about 70 EEVEE renders at 16–40 samples, each 0.3–5 s, while another GPU job was running. Writing the WebP page takes about 1 minute of that.
-- **Read-only dependency:** the renderer imports `../../experiments/concept-renders/kit.py` and `sprites.py` read-only. Bytecode writing is disabled, and nothing is written into `concept-renders/`.
+- **Read-only dependency:** the renderer imports `../concept-renders/kit.py` and `sprites.py` read-only. Bytecode writing is disabled, and nothing is written into `concept-renders/`.
 
 ## Files
 

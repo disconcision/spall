@@ -111,7 +111,7 @@ Nested megaforms are just more tiers under the same invariants.</li>
 on a slot, which becomes the ground, with breadcrumbs back (World › Hub › Rib 12 › Terrace 5 › Town). Tools change with the tier (region:
 megaforms and trunks; block: slots and zoning; lot: building). Cloud-deck, night and street-peek toggles help read scale.</li></ul>
 <p class="intro small">Details, per-render notes and what the kit gained (geometry-nodes instancing, LOD prototypes, megaform materials, fog bands,
-clouds): <code>stratum/concepts/aesthetics/scale/NOTES.md</code>.</p></section>"""
+clouds): <code>spall/experiments/aesthetics/scale/NOTES.md</code>.</p></section>"""
 
 NAV = ''.join('<a href="#%s">%s</a>' % (a, b) for a, b in (('powers', 'Powers of Ten'), ('mega', 'Megaforms'), ('cues', 'Scale cues'),
                                                           ('pixel', 'Nested pixels'), ('game', 'In the game')))
