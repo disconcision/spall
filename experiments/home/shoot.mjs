@@ -17,7 +17,9 @@ const turn = `(async () => { const st = $('stage'), r = st.getBoundingClientRect
   for (let k = 1; k <= 30; k++) { st.dispatchEvent(new PointerEvent('pointermove', { clientX: r.left + 330 + k * 9, clientY: r.top + 420 - Math.sin(k / 30 * Math.PI) * 60, pointerId: 1, pointerType: 'mouse', isPrimary: true, buttons: 1, bubbles: true })); await sl(30); }
   at(600, 420, 'pointerup'); at(700, 520); await sl(3200); return 1; })()`;
 const SHOTS = {
-  spall: [{ url: U + 'spall/', load: 1500 }, { eval: booted }, { wait: 2500 }],
+  // the main build twice: light chrome at noon on Four voids, dark chrome at evening on Chasm (cut at L5)
+  'spall-light': [{ url: U + 'spall/', load: 1500 }, { eval: booted }, { eval: "setUiTone(false); loadPreset('voids'); if (LIT.on) setLightTime('noon'); 1" }, { wait: 6000 }],
+  'spall-dark': [{ url: U + 'spall/', load: 1500 }, { eval: booted }, { eval: "setUiTone(true); loadPreset('chasm'); if (LIT.on) setLightTime('evening'); setLevel(7, { silent: true, snap: true }); 1" }, { wait: 6000 }],
   'spall-3d': [{ url: U + 'spall-3d/', load: 1500 }, { eval: booted }, { wait: 800 }, { eval: 'setG3(true); g3Go(68, 22, 0.01); 1' }, { wait: 3500 }],
   'spall-multimodal': [{ url: U + 'spall-multimodal/', load: 1500 }, { eval: booted }, { eval: 'BAND.cfg.traffic = 0.3; MM.auto = false; 1' }, { eval: turn }, { wait: 500 }],
   'notes-multimodal': [{ url: U + 'spall-multimodal/notes.html', load: 2500 }],
@@ -36,8 +38,8 @@ writeFileSync(join(tmp, 'steps.json'), JSON.stringify(steps));
 spawnSync('node', ['--experimental-websocket', join(HERE, '..', 'lines-and-voids', 'tools', 'cdp.mjs'), join(tmp, 'steps.json')], { stdio: 'inherit' });
 for (const id of ids) {
   const png = join(tmp, id + '.png'); if (!existsSync(png)) continue;
-  // the main build is shown large; the rest as cards
-  spawnSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '72', '--resampleWidth', id === 'spall' ? '960' : '560', png, '--out', join(HERE, id + '.jpg')], { stdio: 'ignore' });
+  // cards are two to a row, so 1140 px wide covers a 2× screen
+  spawnSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '78', '--resampleWidth', '1140', png, '--out', join(HERE, id + '.jpg')], { stdio: 'ignore' });
   console.log('home/' + id + '.jpg');
 }
 rmSync(tmp, { recursive: true, force: true });
