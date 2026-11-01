@@ -99,6 +99,9 @@ function ptext(g, s, x, y, col, shadow, sc) {
   }
   return cx - x;
 }
+// the role colours for canvas drawing (the chrome's are the CSS tokens --agent, --you, --accent)
+const ROLE = { agent: '#ff7a52', agentHi: '#ffb08f', agentInk: '#2a0f06', you: '#5fd3f2', accent: '#e8a83c', accentInk: '#1b1305',
+  plate: '#1c1b18', plateInk: '#d9d2c2', plateRim: '#4f4a41' };   // plate*: a neutral label in the scene, the dark chrome's warm greys
 const ptextW = (s, sc) => (String(s).length * 4 - 1) * (sc || 1);
 function plate(g, s, x, y, bg, fg, border) {   // pixel label on a plate
   const w = ptextW(s) + 4;
@@ -1481,7 +1484,7 @@ function drawStratumAnnot(ctx, s) {
   const label = (z0 === z1 ? lvCode(z0) : lvCode(z0) + '-' + lvCode(z1)) + ' ' + name;
   const lx = left[0] - 14 - ptextW(label) - 4;
   pline(ctx, left[0] - 2, left[1], left[0] - 13, left[1], hov ? '#e8a83c' : '#8d877b');
-  plate(ctx, label, lx, left[1] - 4, hov ? '#e8a83c' : '#1a1b1d', hov ? '#1b1305' : '#d8d0bf', hov ? null : '#44474c');
+  plate(ctx, label, lx, left[1] - 4, hov ? ROLE.accent : ROLE.plate, hov ? ROLE.accentInk : ROLE.plateInk, hov ? null : ROLE.plateRim);
 }
 
 function drawAfterWorld(ctx, t, sliced, ex) {
@@ -1502,7 +1505,7 @@ function drawAfterWorld(ctx, t, sliced, ex) {
     } else if (sliced) {
       const c = isoQuad(ctx, 0, 0, W, D, L + HT / LH, 'rgba(232,168,60,0.55)', [5, 3]);
       const left = c.reduce((m, p) => p[0] < m[0] ? p : m, c[0]), lab = 'CUT ' + lvCode(L) + ' ' + LEVELS[L].name, lw = ptextW(lab) + 4;
-      plate(ctx, lab, clamp(Math.round(left[0]) - 8 - lw, Math.round(S.safeL / S.zoom) + 2, S.bw - lw - 4), clamp(Math.round(left[1]) - 4, 4, S.bh - 30), '#e8a83c', '#1b1305');
+      plate(ctx, lab, clamp(Math.round(left[0]) - 8 - lw, Math.round(S.safeL / S.zoom) + 2, S.bw - lw - 4), clamp(Math.round(left[1]) - 4, 4, S.bh - 30), ROLE.accent, ROLE.accentInk);
     }
   }
   drawSteam(ctx, t, ex ? NL : (sliced ? L : NL));
@@ -1522,7 +1525,7 @@ function drawHoverIso(ctx, t, sliced, ex) {
   const eo = ex ? explodeOff(h.z) : 0;
   const tt = h.t;
   const hh = tt ? (CUTTABLE[tt] && sliced && !h.top ? HT / LH : TI[tt].slab ? 0.25 : 1) : 0.02;
-  const col = h.top ? '#d8d0bf' : '#f0b43c';
+  const col = h.top ? ROLE.plateInk : ROLE.accent;
   isoQuad(ctx, h.x, h.y, h.x + 1, h.y + 1, h.z + hh, col, null, eo);
   if (!tt && sliced && !ex) {   // plumb line to what you actually see below
     for (let z = h.z - 1; z >= 0; z--) {
@@ -1532,7 +1535,7 @@ function drawHoverIso(ctx, t, sliced, ex) {
       const p = projIso(h.x + 0.5, h.y + 0.5, h.z), q = projIso(h.x + 0.5, h.y + 0.5, z + ht);
       pline(ctx, p[0], p[1], q[0], q[1], 'rgba(240,180,60,0.8)', [2, 1]);
       isoQuad(ctx, h.x + 0.2, h.y + 0.2, h.x + 0.8, h.y + 0.8, z + ht, 'rgba(240,180,60,0.7)');
-      plate(ctx, lvCode(z), q[0] + 4, q[1] - 3, '#1a1b1d', '#f0b43c', '#5a4a2a');
+      plate(ctx, lvCode(z), q[0] + 4, q[1] - 3, ROLE.plate, ROLE.accent, ROLE.plateRim);
       break;
     }
   }
@@ -2017,7 +2020,7 @@ function syncLightPanel() {
   pop.innerHTML = `<div class="lp-h ttl"><span>Lighting</span><span class="lp-sw" data-lk="on" role="switch" aria-checked="${LIT.on}" aria-label="Lighting on/off">${LIT.on ? 'on' : 'off'}<span class="tgl ${LIT.on ? 'on' : ''}"></span></span></div>` +
     `<span class="sgc ${off ? 'dis' : ''}" role="radiogroup" aria-label="Time of day" style="--n:4;--i:${ti}">${LIGHT_TIMES.map(t => `<button type="button" class="${LIT.sun === t ? 'on' : ''}" data-t="${t}" data-tip="${t[0].toUpperCase() + t.slice(1)}" role="radio" aria-checked="${LIT.sun === t}" aria-label="${t}">${glyph(t)}</button>`).join('')}<i class="ind"></i></span>` +
     `<div class="rows">` + LIGHT_PARTS.map(([k, name, , pk]) => `<div class="row ${LIT[k] && !off ? 'on' : ''}"><span class="rt" data-lk="${k}">${glyph(k)}<span>${name}</span></span>${pk ? slHTML(pk, off || !LIT[k]) : '<span></span>'}<span data-lk="${k}" role="switch" aria-checked="${LIT[k]}" aria-label="${name}"><span class="tgl ${LIT[k] ? 'on' : ''} ${off ? 'dis' : ''}"></span></span></div>`).join('') +
-    `</div><div class="foot"><span>I on/off · T time</span><button type="button" class="btn sm" data-lreset="1">Reset</button></div>`;
+    `</div><div class="foot"><span><kbd>I</kbd> on/off · <kbd>T</kbd> time</span><button type="button" class="btn sm" data-lreset="1">Reset</button></div>`;
 }
 // ==========================================================================
 // Drawing views: PLAN (architect's floor plan on paper) and SECTION
@@ -2711,15 +2714,13 @@ function finishJob(j) {
 }
 function approveJob(j, auto) {
   if (j.status !== 'proposed') return;
-  j.status = 'building'; hideCard();
-  log(j.owner, `Proposal ${String(j.no).padStart(2, '0')} ${auto ? 'auto-approved' : 'approved by you'}`, 'sys', { ic: 'ok', s: `proposal ${String(j.no).padStart(2, '0')} ${auto ? 'auto-approved' : 'approved by you'}` });
+  j.status = 'building'; settleProposal(j, auto ? 'auto' : 'ok'); hideCard();   // the proposal's item in the feed keeps the verdict
   sfx.approve();
   if (j.owner === 'claude') agentApproved(j);
 }
 function rejectJob(j) {
   if (j.status !== 'proposed') return;
-  j.status = 'rejected'; hideCard();
-  log('you', `Rejected proposal ${String(j.no).padStart(2, '0')}`, 'sys', { ic: 'no', s: `reject proposal ${String(j.no).padStart(2, '0')}` });
+  j.status = 'rejected'; settleProposal(j, 'no'); hideCard();
   sfx.reject();
   if (j.owner === 'claude') agentRejected(j);
 }
@@ -2852,7 +2853,7 @@ function drawBuildSec(ctx, t) {
       cellBox(p.x, p.y, p.z, OWN[j.owner].col, rgba(OWN[j.owner].col, 0.3));
     }
   }
-  if (S.hover) cellBox(S.hover.x, S.hover.y, S.hover.z, '#f0b43c');
+  if (S.hover) cellBox(S.hover.x, S.hover.y, S.hover.z, ROLE.accent);
   for (const d of DRONES) { const [bx, by] = projSec(d.pos[0], d.pos[1], d.pos[2]); R_(ctx, Math.round(bx) - 1, Math.round(by) - 1, 3, 2, OWN[d.j.owner].col); }
   S.pins.forEach((p, k) => { if (Math.abs(secDepth(p.x + 0.5, p.y + 0.5)) > 0.5) return; const [bx, by] = projSec(p.x + 0.5, p.y + 0.5, p.z + 1); plate(ctx, String(k + 1), Math.round(bx) - 3, Math.round(by) - 9, '#5fd3f2', '#04222b'); });
   drawAgentSec(ctx, t);
@@ -4563,6 +4564,7 @@ function setupWorldMenu() {
     else if (b.dataset.load) { close(); loadSlot(+b.dataset.load); }
     else if (b.dataset.seed) { close(); S.seed += 1; loadPreset(S.preset || 'voids'); }
     else if (b.dataset.tone) { setUiTone(b.dataset.tone === 'dark'); syncWorldMenu(); }
+    else if (b.dataset.cursor) { setCursorStyle(+b.dataset.cursor); syncWorldMenu(); }
     else if (b.dataset.keys) { close(); openKeys(); }
     else return;
     sfx.click();
@@ -4573,7 +4575,7 @@ function syncWorldMenu() {
   const pop = $('worldPop'); if (!pop) return;
   const when = t => { const d = new Date(t); return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' ' + d.toTimeString().slice(0, 5); };
   const dark = UICFG.MT === 10 || UICFG.MT === 16;
-  pop.innerHTML = `<div class="lp-h ttl"><span>Spall</span><span class="lp-dim">wires study · sheet 02 · seed ${S.seed}</span></div>
+  pop.innerHTML = `<div class="lp-h ttl"><span>Spall</span><span class="lp-dim">seed ${S.seed}</span></div>
     <div class="lp-sub">Presets <span class="lp-dim">replace the scene</span></div>` +
     PRESETS.map(p => `<div class="lp-row"><button type="button" class="btn" data-preset="${p.id}" aria-pressed="${S.preset === p.id}">${p.name}</button><span class="lp-note">${p.note}</span></div>`).join('') +
     `<div class="lp-sub">Save slots <span class="lp-dim">in this browser</span></div>` +
@@ -4582,6 +4584,7 @@ function syncWorldMenu() {
     `<div class="lp-row"><button type="button" class="btn" data-seed="1">New seed</button><span class="lp-note">regenerate the current preset</span></div>
     <div class="lp-sub">Interface</div>
     <div class="lp-row"><span class="sgc" role="radiogroup" aria-label="Interface tone" style="--n:2;--i:${dark ? 1 : 0}"><button type="button" class="${dark ? '' : 'on'}" data-tone="light" role="radio" aria-checked="${!dark}">Light</button><button type="button" class="${dark ? 'on' : ''}" data-tone="dark" role="radio" aria-checked="${dark}">Dark</button><i class="ind"></i></span><span class="lp-note">the chrome only; the scene keeps its time of day</span></div>
+    <div class="lp-row"><span class="sgc" role="radiogroup" aria-label="claude's cursor" style="--n:6;--i:${UICFG.CU - 1}">${[1, 2, 3, 4, 5, 6].map(k => { const c = cursorSprite(0, k).c; return `<button type="button" class="${UICFG.CU === k ? 'on' : ''}" data-cursor="${k}" role="radio" aria-checked="${UICFG.CU === k}" data-tip="CU${k} · ${CU_NAMES[k]}" aria-label="${CU_NAMES[k]}"><img src="${c.toDataURL()}" width="${c.width}" height="${c.height}" alt="" style="image-rendering:pixelated"></button>`; }).join('')}<i class="ind"></i></span><span class="lp-note">claude’s cursor</span></div>
     <div class="lp-row"><button type="button" class="btn" data-keys="1">Keys</button><span class="lp-note">every shortcut</span></div>`;
 }
 // ==========================================================================
@@ -4690,9 +4693,8 @@ function proposeSite(site, kind, pieces, name, note) {
   setAgentState('propose', 'awaiting approval');
   const xs = pieces.map(p => p.x), ys = pieces.map(p => p.y), zs = pieces.map(p => p.z);
   AGENT.gaze = { x0: Math.min(...xs), y0: Math.min(...ys), x1: Math.max(...xs) + 1, y1: Math.max(...ys) + 1, z0: Math.min(...zs), z1: Math.max(...zs) + 1 };
-  showCard(j);
+  showCard(j);   // the proposal is its own item in the feed, so no log line
   agentSay(`Proposal ${pad2(j.no)}: ${name} at ${lvCode(site.z)}. Ghost is down — approve?`, 9);
-  log('claude', `Proposed ${name} at (${site.x},${site.y},${lvCode(site.z)}) · ¤${j.m.cost} · +${j.m.res} residents`, 'sys', { ic: 'propose', s: `propose ${name} · ¤${j.m.cost} · +${j.m.res}`, at: [site.x, site.y, site.z] });
   sfx.ghost();
 }
 function phaseSpeech(j, ph) {
@@ -4752,7 +4754,7 @@ function setAgentOn(v) {
   try { localStorage.setItem('stratum.agent', S.agentOn ? '1' : '0'); } catch (e) { /* storage unavailable: the switch just isn't remembered */ }
   resize();
 }
-function rejectQuiet(j) { j.status = 'rejected'; hideCard(); AGENT.job = null; }
+function rejectQuiet(j) { j.status = 'rejected'; settleProposal(j, 'gone'); hideCard(); AGENT.job = null; }
 function agentUpdate(dt) {
   const A = AGENT, k = REDUCED ? 1 : 1 - Math.exp(-dt * 3.4);
   A.x += (A.tx - A.x) * k; A.y += (A.ty - A.y) * k; A.z += (A.tz - A.z) * k;
@@ -4815,12 +4817,42 @@ function agentUpdate(dt) {
 
 // ---------------------------------------------------------------- drawing
 const ARROW = ['X.........', 'XX........', 'XWX.......', 'XWWX......', 'XWWWX.....', 'XWWWWX....', 'XWWWWWX...', 'XWWWWWWX..', 'XWWWWWWWX.', 'XWWWWXXXXX', 'XWXXWWX...', 'XX..XWWX..', 'X....XWX..', '.....XX...'];
-let ARROWC = null;
 function arrowSprite() {
   const c = mk(10, 14), g = c.getContext('2d');
-  ARROW.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === 'X') R_(g, x, y, 1, 1, '#2a0f06'); if (ch === 'W') R_(g, x, y, 1, 1, x <= 2 ? '#ffb08f' : '#ff7a52'); }));
+  ARROW.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === 'X') R_(g, x, y, 1, 1, ROLE.agentInk); if (ch === 'W') R_(g, x, y, 1, 1, x <= 2 ? ROLE.agentHi : ROLE.agent); }));
   return c;
 }
+// claude's cursor (CU in UICFG): 1 the arrow and a name tag, 2 the spark, 3 the spark and a name tag, 4 the arrow
+// with a spark at its heel, 5 the pixel crab, 6 the spark, turning while claude works (like the CLI's spinner).
+// Shapes get a dark rim so they read on any wall; centred ones sit on the point they mark, the arrow points at it.
+const SPARK = ['....#....', '.#..#..#.', '..#.#.#..', '...###...', '#########', '...###...', '..#.#.#..', '.#..#..#.', '....#....'];
+const SPARK_TURN = [['....#....', '....#....', '....#....', '...###...', '#########', '...###...', '....#....', '....#....', '....#....'], SPARK,
+  ['#.......#', '.#.....#.', '..#...#..', '...###...', '...###...', '...###...', '..#...#..', '.#.....#.', '#.......#'], SPARK];
+const SPARK_S = ['#.#.#', '.###.', '#####', '.###.', '#.#.#'];
+const CU = { 1: { tag: true }, 2: {}, 3: { tag: true }, 4: {}, 5: {}, 6: {} };
+const CURS = new Map();
+function rimSprite(rows, ox = 1, oy = 1, c) {   // rows of '#' in claude's colour, a rim round them, lit from the top left
+  const h = rows.length, w = Math.max(...rows.map(r => r.length));
+  if (!c) c = mk(w + 2, h + 2);
+  const g = c.getContext('2d'), on = (x, y) => y >= 0 && y < h && rows[y][x] === '#';
+  for (let y = -1; y <= h; y++) for (let x = -1; x <= w; x++) {
+    if (on(x, y)) R_(g, ox + x, oy + y, 1, 1, (x + y) * 2 < (w + h) / 2 ? ROLE.agentHi : ROLE.agent);
+    else if (on(x - 1, y) || on(x + 1, y) || on(x, y - 1) || on(x, y + 1)) R_(g, ox + x, oy + y, 1, 1, ROLE.agentInk);
+  }
+  return c;
+}
+const CU_NAMES = { 1: 'arrow + name', 2: 'spark', 3: 'spark + name', 4: 'arrow, spark heel', 5: 'crab', 6: 'spark, turns while working' };
+function cursorSprite(t, cu = UICFG.CU) {
+  const busy = AGENT.state !== 'idle';
+  const k = cu === 6 && busy && !REDUCED ? 60 + ((t * 5) | 0) % 4 : cu;
+  let s = CURS.get(k); if (s) return s;
+  if (cu === 1) s = { c: arrowSprite(), ax: 0, ay: 0 };
+  else if (cu === 4) { const c = mk(14, 16); c.getContext('2d').drawImage(arrowSprite(), 0, 0); rimSprite(SPARK_S, 8, 10, c); s = { c, ax: 0, ay: 0 }; }
+  else if (cu === 5) { const c = rimSprite(GLYPH.clawd); s = { c, ax: -6, ay: -5 }; }
+  else { const c = rimSprite(k >= 60 ? SPARK_TURN[k - 60] : SPARK); s = { c, ax: -5, ay: -5 }; }
+  CURS.set(k, s); return s;
+}
+function drawCursor(ctx, X, Y, t) { const s = cursorSprite(t); ctx.drawImage(s.c, X + s.ax, Y + s.ay); }
 function gazeBoxIso(ctx, gz, col, eo) {
   isoQuad(ctx, gz.x0, gz.y0, gz.x1, gz.y1, gz.z0 + 0.02, col, [3, 2], eo);
   isoQuad(ctx, gz.x0, gz.y0, gz.x1, gz.y1, gz.z1, col, [1, 2], eo);
@@ -4828,32 +4860,31 @@ function gazeBoxIso(ctx, gz, col, eo) {
 }
 function drawAgentIso(ctx, t, sliced, ex) {
   if (WIRES.agentOff) return;
-  if (!ARROWC) ARROWC = arrowSprite();
   const A = AGENT, bob = REDUCED ? 0 : Math.sin(t * 2.3) * 0.05;
   const [bx, by] = projIso(A.x, A.y, A.z + bob);
   const off = sliced && A.level > S.level;
   if (A.gaze) {
     const gz = A.gaze, gAbove = sliced && gz.z0 > S.level;
-    const col = gAbove ? 'rgba(255,122,82,0.4)' : '#ff7a52';
+    const col = gAbove ? 'rgba(255,122,82,0.4)' : ROLE.agent;
     gazeBoxIso(ctx, gz, col, ex ? explodeOff(gz.z0) : 0);
     const c = projIso((gz.x0 + gz.x1) / 2, (gz.y0 + gz.y1) / 2, gz.z0 + 0.5);
     pline(ctx, bx, by, c[0], c[1], gAbove ? 'rgba(255,122,82,0.35)' : 'rgba(255,122,82,0.85)', [2, 2]);
-    if (!REDUCED && Math.sin(t * 9) > 0) R_(ctx, Math.round(c[0]) - 1, Math.round(c[1]) - 1, 3, 3, '#ff7a52');
+    if (!REDUCED && Math.sin(t * 9) > 0) R_(ctx, Math.round(c[0]) - 1, Math.round(c[1]) - 1, 3, 3, ROLE.agent);
   }
   let X = Math.round(bx), Y = Math.round(by);
   const xl = Math.round(S.safeL / S.zoom) + 4, xr = Math.round((S.cssW - S.safeR) / S.zoom) - 70;
   const inView = X >= xl - 4 && Y >= 0 && X < xr + 60 && Y < S.bh - 20;
   if (!inView) { X = clamp(X, xl, Math.max(xl, xr)); Y = clamp(Y, 4, S.bh - 34); }
   ctx.globalAlpha = off ? 0.5 : 1;
-  ctx.drawImage(ARROWC, X, Y);
+  drawCursor(ctx, X, Y, t);
   ctx.globalAlpha = 1;
-  if (!inView) plate(ctx, 'OFF VIEW ' + lvCode(A.level), X + 12, Y, '#ff7a52', '#2a0f06');
-  else if (sliced && A.level !== S.level) plate(ctx, (A.level > S.level ? '↑ ' : '↓ ') + lvCode(A.level), X + 12, Y + 12, '#ff7a52', '#2a0f06');
+  if (CU[UICFG.CU].tag) { /* the name tag says where claude is */ }
+  else if (!inView) plate(ctx, 'OFF VIEW ' + lvCode(A.level), X + 12, Y, ROLE.agent, ROLE.agentInk);
+  else if (sliced && A.level !== S.level) plate(ctx, (A.level > S.level ? '↑ ' : '↓ ') + lvCode(A.level), X + 12, Y + 12, ROLE.agent, ROLE.agentInk);
   A.screen = [X, Y, inView, off || (sliced && A.level !== S.level)];
 }
 function drawAgentPlan(ctx, t) {
   if (WIRES.agentOff) return;
-  if (!ARROWC) ARROWC = arrowSprite();
   const A = AGENT, [bx, by] = projPlan(A.x, A.y), off = A.level !== S.level;
   if (A.gaze && A.gaze.z0 <= S.level && A.gaze.z1 > S.level) {
     const a = projPlan(A.gaze.x0, A.gaze.y0), b = projPlan(A.gaze.x1, A.gaze.y1);
@@ -4862,24 +4893,23 @@ function drawAgentPlan(ctx, t) {
     for (let y = y0; y < y1; y += 2) { R_(ctx, x0, y, 1, 1, '#d4502a'); R_(ctx, x1 - 1, y, 1, 1, '#d4502a'); }
   }
   const X = Math.round(bx), Y = Math.round(by);
-  ctx.globalAlpha = off ? 0.55 : 1; ctx.drawImage(ARROWC, X, Y); ctx.globalAlpha = 1;
-  if (off) plate(ctx, (A.level > S.level ? '↑ ' : '↓ ') + lvCode(A.level), X + 12, Y + 12, '#ff7a52', '#2a0f06');
+  ctx.globalAlpha = off ? 0.55 : 1; drawCursor(ctx, X, Y, t); ctx.globalAlpha = 1;
+  if (off && !CU[UICFG.CU].tag) plate(ctx, (A.level > S.level ? '↑ ' : '↓ ') + lvCode(A.level), X + 12, Y + 12, ROLE.agent, ROLE.agentInk);
   A.screen = [X, Y, true, off];
 }
 function drawAgentSec(ctx, t) {
   if (WIRES.agentOff) return;
-  if (!ARROWC) ARROWC = arrowSprite();
   const A = AGENT, [bx, by] = projSec(A.x, A.y, A.z), d = Math.abs(secDepth(A.x, A.y));
   if (A.gaze) {
     const a = projSec(A.gaze.x0, A.gaze.y0, A.gaze.z1), b = projSec(A.gaze.x1, A.gaze.y1, A.gaze.z0);
     const x0 = Math.round(Math.min(a[0], b[0])), x1 = Math.round(Math.max(a[0], b[0])), y0 = Math.round(a[1]), y1 = Math.round(b[1]);
-    const col = d < 3 ? '#ff7a52' : 'rgba(255,122,82,0.45)';
+    const col = d < 3 ? ROLE.agent : 'rgba(255,122,82,0.45)';
     for (let x = x0; x < x1; x += 2) { R_(ctx, x, y0, 1, 1, col); R_(ctx, x, y1 - 1, 1, 1, col); }
     for (let y = y0; y < y1; y += 2) { R_(ctx, x0, y, 1, 1, col); R_(ctx, x1 - 1, y, 1, 1, col); }
   }
   const X = Math.round(bx), Y = Math.round(by);
-  ctx.globalAlpha = d < 3 ? 1 : 0.5; ctx.drawImage(ARROWC, X, Y); ctx.globalAlpha = 1;
-  if (d >= 3) plate(ctx, (secDepth(A.x, A.y) > 0 ? 'BEHIND ' : 'IN FRONT ') + Math.round(d), X + 12, Y + 12, '#ff7a52', '#2a0f06');
+  ctx.globalAlpha = d < 3 ? 1 : 0.5; drawCursor(ctx, X, Y, t); ctx.globalAlpha = 1;
+  if (d >= 3) plate(ctx, (secDepth(A.x, A.y) > 0 ? 'BEHIND ' : 'IN FRONT ') + Math.round(d), X + 12, Y + 12, ROLE.agent, ROLE.agentInk);
   A.screen = [X, Y, true, d >= 3];
 }
 // ==========================================================================
@@ -6173,7 +6203,7 @@ const BUILD_TOOLS = ['stack', 'bridge', 'garden', 'well'];
 // MT tone (10 dark, 11 light; the UI light/dark switch flips these) · PX chrome pixel · BV bevel · OL outline ·
 // DT title dither · TX type · WF wordmark · LG logo · TB top bar · KH key hints · FO flyout · LT light popover ·
 // SL slider · SG segmented · BT button · BB status bar · SC sidebar collapse
-const UICFG = { MT: 10, PX: 1, BV: 1, OL: 1, DT: 1, TX: 1, WF: 24, LG: 2, TB: 3, KH: 2, FO: 2, LT: 1, SL: 3, SG: 1, BT: 2, BB: 3, SC: 1 };
+const UICFG = { CU: 1, MT: 10, PX: 1, BV: 1, OL: 1, DT: 1, TX: 1, WF: 24, LG: 2, TB: 3, KH: 2, FO: 2, LT: 1, SL: 3, SG: 1, BT: 2, BB: 3, SC: 1 };
 const UI = { tb: 1, open: new Set(), fo: null, hueOpen: false, hue: [null, null, null, null], sel: { select: 'inspect', build: 'stack', wires: 'cable', units: 'u0' },
   lvx: true, feed: 'all', unread: 0, help: false, helpP: null, helpSig: '', hoverPanel: null, logo: 0, modeFold: false, grabbing: false, lvSeen: false };
 const store = { get(k, d) { try { const v = localStorage.getItem('spall.' + k); return v == null ? d : v; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('spall.' + k, v); } catch (e) { /* storage unavailable */ } } };
@@ -6278,6 +6308,7 @@ function applyChrome() {
   st.setProperty('--p', p + 'px'); st.setProperty('--px9', fr.url); st.setProperty('--bs', fr.b); st.setProperty('--pb', fr.b * p + 'px');
   st.setProperty('--dtitle', pxDither(+c.DT, T.t, 1, p)); st.setProperty('--dith', pxDither(1, T.x[0], T.x[1], p));
   st.setProperty('--tbh', (34 + 3 * p) + 'px');
+  document.documentElement.style.background = getComputedStyle(b).getPropertyValue('--bg').trim();   // the page behind the app follows the tone too
   const dark = c.MT === 10 || c.MT === 16, bt = $('bUiTone');
   document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
   if (bt) { bt.innerHTML = glyph(dark ? 'noon' : 'night'); bt.dataset.tip = dark ? 'Interface: switch to light' : 'Interface: switch to dark'; }
@@ -6780,18 +6811,23 @@ function setupLog() {
   const el = $('feed');
   el.addEventListener('click', e => {
     const a = e.target.closest('.at'); if (a) { logGo(a, 'go'); return; }
+    const pb = e.target.closest('[data-pr]');
+    if (pb) { const j = CARDJOB; if (j && pb.closest('.pr') === j.li) { if (pb.dataset.pr === 'ok') approveJob(j, false); else rejectJob(j); } return; }
+    const pr = e.target.closest('.pr'); if (pr) { if (!pr.classList.contains('pending')) pr.classList.toggle('open'); return; }
     const g = e.target.closest('.lg.grp'); if (g && !e.target.closest('.sub')) g.classList.toggle('open');
   });
   el.addEventListener('keydown', e => { const a = e.target.closest && e.target.closest('.at'); if (a && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); logGo(a, 'go'); } });
   el.addEventListener('mouseover', e => { const a = e.target.closest('.at'); if (a) logGo(a, 'hover'); });
   el.addEventListener('mouseout', e => { const a = e.target.closest('.at'); if (a) logGo(a, 'off'); });
 }
-function addMsg(who, text, ctx) {
-  const li = document.createElement('li');
-  li.className = 'm ' + (who === 'me' ? 'me' : 'ai');
-  if (ctx) { const s = document.createElement('span'); s.className = 'ctx'; s.textContent = ctx; li.appendChild(s); }
-  if (who !== 'me') li.insertAdjacentHTML('beforeend', `<span class="who" title="claude">${glyph('clawd', 1)}</span>`);
-  li.appendChild(document.createTextNode(text));
+// a message: the log's row in the reading size (html only for our own markup, never for typed text)
+function addMsg(who, text, ctx, html) {
+  const li = document.createElement('li'), me = who === 'me';
+  li.className = 'm ' + (me ? 'me' : 'ai');
+  li.innerHTML = `<span class="who" title="${me ? 'you' : 'claude'}">${glyph(LOGWHO[me ? 'you' : 'claude'], 1)}</span><span class="tx"></span><time>${fmtTime(S.time)}</time>`;
+  const tx = li.querySelector('.tx');
+  if (ctx) { const s = document.createElement('span'); s.className = 'ctx'; s.textContent = ctx; tx.appendChild(s); }
+  if (html) tx.insertAdjacentHTML('beforeend', html); else tx.appendChild(document.createTextNode(text));
   feedAppend(li);
 }
 function setFeed(f) {
@@ -6814,25 +6850,40 @@ function setSidebar(open) {
   resize();
 }
 function toast(text) { const t = $('toast'); t.textContent = text; t.hidden = false; toastT = S.time + 2.6; }
+// ---------- proposals: an item in the feed that asks. It stays in view (sticky) until answered, then folds to one
+// line with the verdict (click to open it again). Enter and Del answer the open one from anywhere.
+const PR_V = { ok: 'approved by you', auto: 'auto-approved', no: 'rejected', gone: 'withdrawn' };
 function showCard(j) {
-  CARDJOB = j; $('card').hidden = false;
-  const ph = [0, 0, 0], zs = j.pieces.map(p => p.z);
+  hideCard(); CARDJOB = j;
+  const ph = [0, 0, 0], zs = j.pieces.map(p => p.z), m = j.m, z0 = Math.min(...zs), z1 = Math.max(...zs);
   j.pieces.forEach(p => { if (p.state !== 'blocked') ph[p.ph]++; });
-  const blocked = j.pieces.filter(p => p.state === 'blocked').length;
-  $('cNo').textContent = 'Proposal ' + pad2(j.no);
-  $('cBy').textContent = 'by ' + OWN[j.owner].name; $('cBy').className = 'by' + (j.owner === 'you' ? ' you' : '');
-  $('cTitle').textContent = j.name;
-  $('cSite').textContent = `(${j.site.x},${j.site.y}) · ${lvCode(Math.min(...zs))}–${lvCode(Math.max(...zs))}`;
-  $('cParts').textContent = `${ph[0]} structure · ${ph[1]} infill · ${ph[2]} fit-out${blocked ? ' · ' + blocked + ' blocked' : ''}`;
-  $('cCost').textContent = '¤ ' + j.m.cost.toLocaleString('en-US');
-  $('cRes').textContent = j.m.res ? '+' + j.m.res + ' households' : '—';
-  const drop = j.m.before - j.m.after;
-  $('cLight').textContent = j.m.probeZ >= 0 ? `${lvCode(j.m.probeZ)}: ${Math.round(j.m.before * 100)}% → ${Math.round(j.m.after * 100)}% sky` : '—';
-  $('cLight').className = drop > 0.12 ? 'warn' : '';
-  $('cFill').textContent = j.m.zf != null ? `${lvCode(j.m.zf)}: ${Math.round(j.m.fb * 100)}% → ${Math.round(j.m.fa * 100)}% (cap 50%)` : '—';
-  $('cFill').className = j.m.fa > 0.5 ? 'warn' : '';
+  const blocked = j.pieces.filter(p => p.state === 'blocked').length, pct = v => Math.round(v * 100) + '%';
+  const row = (k, v, warn) => `<dt>${k}</dt><dd${warn ? ' class="warn"' : ''}>${v}</dd>`;
+  const li = document.createElement('li'); li.className = 'pr pending ' + j.owner; j.li = li;
+  li.innerHTML = `<div class="prh"><span class="who">${glyph(LOGWHO[j.owner], 1)}</span><span class="ic">${logIcon({ ic: 'propose' })}</span>` +
+    `<span class="hd"><b>Proposal ${pad2(j.no)}</b>${logEsc(j.name)} <span class="v"></span></span><time>${fmtTime(S.time)}</time></div><dl>` +
+    row('site', logAt([j.site.x, j.site.y, z0]) + (z1 > z0 ? '–' + lvCode(z1) : '')) +
+    row('parts', `${ph[0]} structure · ${ph[1]} infill · ${ph[2]} fit-out${blocked ? ' · ' + blocked + ' blocked' : ''}`) +
+    row('cost', '¤ ' + m.cost.toLocaleString('en-US') + (m.res ? ` · +${m.res} households` : '')) +
+    row('light', m.probeZ >= 0 ? `${lvCode(m.probeZ)} ${pct(m.before)} → ${pct(m.after)} sky` : '—', m.before - m.after > 0.12) +
+    row('fill', m.zf != null ? `${lvCode(m.zf)} ${pct(m.fb)} → ${pct(m.fa)} (cap 50%)` : '—', m.fa > 0.5) +
+    `</dl><div class="pra"><button type="button" class="btn sm go" data-pr="ok">Approve <kbd>⏎</kbd></button><button type="button" class="btn sm" data-pr="no">Reject <kbd>Del</kbd></button><span class="auto"></span></div><i class="prt"></i>`;
+  feedAppend(li); railAsk();
 }
-function hideCard() { CARDJOB = null; $('card').hidden = true; }
+function settleProposal(j, v) {
+  const li = j.li; if (!li || !li.classList.contains('pending')) return;
+  li.classList.remove('pending'); li.classList.add(v === 'auto' ? 'ok' : v);
+  li.querySelector('.v').textContent = '· ' + PR_V[v];
+  li.querySelector('.pra').remove(); li.querySelector('.prt').remove();
+}
+function hideCard() { if (CARDJOB) settleProposal(CARDJOB, 'gone'); CARDJOB = null; railAsk(); }
+function setCursorStyle(k) { UICFG.CU = clamp(k, 1, 6); store.set('cursor', UICFG.CU); }
+// collapsed panel: the rail's claude button asks too
+function railAsk() {
+  const b = document.querySelector('.sb-rail .rb.cl'); if (!b) return;
+  b.classList.toggle('ask', !!CARDJOB);
+  b.dataset.tip = CARDJOB ? `claude: proposal ${pad2(CARDJOB.no)} is waiting (Enter approves, Del rejects)` : 'claude';
+}
 function renderChips() {
   const el = $('chips'); el.innerHTML = '';
   S.pins.forEach((p, k) => {
@@ -6916,8 +6967,8 @@ function updateAgentDom() {
   const A = AGENT, sc = A.screen, tag = $('agentTag'), bub = $('bubble');
   if (!sc) { tag.style.transform = bub.style.transform = 'translate(-9999px,0)'; return; }
   const X = sc[0] * S.zoom, Y = sc[1] * S.zoom, off = !!sc[3];
-  tag.classList.toggle('off', off);
-  const label = 'claude' + (off ? ' · ' + lvCode(A.level) : '');
+  tag.classList.toggle('off', off); tag.classList.toggle('none', !CU[UICFG.CU].tag);
+  const label = 'claude' + (!sc[2] ? ' · off view ' + lvCode(A.level) : off ? ' · ' + (A.level > S.level ? '↑ ' : A.level < S.level ? '↓ ' : '') + lvCode(A.level) : '');
   if (tag.textContent !== label) tag.textContent = label;
   tag.style.transform = `translate(${Math.round(clamp(X + 11 * S.zoom, S.safeL + 2, S.cssW - S.safeR - tag.offsetWidth - 4))}px,${Math.round(Math.min(Y + 13 * S.zoom, S.cssH - 44))}px)`;
   if (S.time < A.speechT) {
@@ -6932,7 +6983,11 @@ let helpAcc = 0;
 function uiTick() {
   if (stripDirty) updateStrip();
   updateStatus();
-  if (CARDJOB) { const r = clamp((CARDJOB.approveAt - S.time) / 8, 0, 1); $('cTimer').style.width = (r * 100).toFixed(1) + '%'; }
+  if (CARDJOB && CARDJOB.li) {
+    const li = CARDJOB.li, left = CARDJOB.approveAt - S.time, n = Math.max(0, Math.ceil(left));
+    li.querySelector('.prt').style.width = `calc(${(clamp(left / 8, 0, 1) * 100).toFixed(1)}% - var(--p))`;
+    if (li._n !== n) { li._n = n; li.querySelector('.auto').textContent = n ? `auto ${n} s` : ''; }
+  }
   if (toastT && S.time > toastT) { $('toast').hidden = true; toastT = 0; }
   if (UI.help && ++helpAcc % 3 === 0) layoutHelp();
 }
@@ -6949,14 +7004,18 @@ const KEYS = [
   ['Wires', [['L Y K H', 'cable · tie · post · girder'], ['Shift-drag', 'tie with any tool'], ['J', 'jolt'], ['⌥-click', 'remove'], ['⌘-drag', 'slack'], ['⌘Z · ⌘⇧Z', 'undo · redo']]],
   ['Agent + views', [['Alt-click · long-press', 'point for claude'], ['Enter · Del', 'approve · reject'], ['\\', 'claude panel'], [', . · X', 'section: move · axis'], ['?', 'help bubbles']]]
 ];
+// a key list as keys: '⌥-click' → ⌥ as a key, '-click' as words; words stay words
+const KEYLIKE = /^([A-Z0-9]|[\[\]\\`,.?+−-]|1–4|PgUp|PgDn|Enter|Del|Esc|Shift|⌘Z|⌘⇧Z)$/;
+const keysHTML = s => s.split(' · ').map(g => g.split(' ').map(w => { const m = /^(Shift|Alt|⌥|⌘)-(.+)$/.exec(w); return `<span class="kw">${m ? `<kbd>${m[1]}</kbd>-${m[2]}` : KEYLIKE.test(w) ? `<kbd>${logEsc(w)}</kbd>` : logEsc(w)}</span>`; }).join(' ')).join(' · ');
 function openKeys() {
   let pop = $('keysPop');
-  if (!pop) { pop = document.createElement('div'); pop.id = 'keysPop'; pop.className = 'popm pn'; pop.hidden = true; document.body.appendChild(pop); pop.innerHTML = `<div class="lp-h ttl"><span>Keys</span><span class="lp-dim">Esc closes</span></div>` + KEYS.map(([h, rows]) => `<div><h4>${h}</h4>${rows.map(r => `<div class="kr"><b>${r[0]}</b>${r[1]}</div>`).join('')}</div>`).join(''); document.addEventListener('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target)) pop.hidden = true; }); }
+  if (!pop) { pop = document.createElement('div'); pop.id = 'keysPop'; pop.className = 'popm pn'; pop.hidden = true; document.body.appendChild(pop); pop.innerHTML = `<div class="lp-h ttl"><span>Keys</span><span class="lp-dim">Esc closes</span></div>` + KEYS.map(([h, rows]) => `<div><h4>${h}</h4>${rows.map(r => `<div class="kr"><b>${keysHTML(r[0])}</b>${r[1]}</div>`).join('')}</div>`).join(''); document.addEventListener('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target)) pop.hidden = true; }); }
   pop.hidden = false; pop.style.left = Math.max(8, (innerWidth - pop.offsetWidth) / 2) + 'px'; pop.style.top = Math.max(50, (innerHeight - pop.offsetHeight) / 2) + 'px';
 }
 
 function setupUI() {
   const tone = store.get('tone', 'dark'); UICFG.MT = tone === 'dark' ? 10 : 11;
+  UICFG.CU = clamp(+store.get('cursor', 1) || 1, 1, 6);
   UI.logo = clamp(+store.get('logo', 0) || 0, 0, LOGOS.length - 1); UICFG.LG = LOGOS[UI.logo];
   UI.tb = clamp(+store.get('tools', 1), 0, 2);
   UI.lvx = store.get('levels', innerWidth < 860 ? 'c' : 'x') === 'x';
@@ -7007,8 +7066,6 @@ function setupUI() {
   $('bUiTone').onclick = () => setUiTone(UICFG.MT !== 10);
   $('bHelp').onclick = () => toggleHelp();
   $('zoomStep').addEventListener('click', e => { const b = e.target.closest('[data-zoom]'); if (b) { setZoom(S.zoom + +b.dataset.zoom); sfx.click(); updateStatus(); } });
-  $('bApprove').onclick = () => { if (CARDJOB) approveJob(CARDJOB, false); };
-  $('bReject').onclick = () => { if (CARDJOB) rejectJob(CARDJOB); };
   $('sbFold').onclick = () => setSidebar(false);
   $('sbMute').onclick = () => setProposalsMuted(!S.propMute);
   setProposalsMuted(store.get('propMute', '0') === '1', true);
@@ -7021,7 +7078,7 @@ function setupUI() {
   if (store.get('side', 'open') === 'rail') document.body.classList.add('sb-off');
   addEventListener('resize', () => { sizeLevels(); renderToolLayer(); UI.helpSig = ''; layoutHelp(); });
   syncSliders();
-  addMsg('ai', "I'm the coral cursor. I survey bays, drop a ghost with a proposal card, and build only once it's approved (auto after 8 s). Pin a spot with Alt-click, then ask for a garden, bridge, housing or a light well.");
+  addMsg('ai', '', null, 'On site. I walk the stack looking for bays worth building in. When one checks out I ghost a plan and ask you here before any drones fly. <kbd>⌥</kbd>-click to point me somewhere.');
   setTool('inspect');
 }
 // ==========================================================================

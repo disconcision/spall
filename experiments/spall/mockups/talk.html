@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spall · Talking to Claude</title>
+<style>
+:root{--bg:#0e0f11;--panel:#16171a;--line:#2c2e32;--text:#e6dfcf;--dim:#a39c8e;--faint:#80796d;--accent:#e8a83c;--agent:#ff7a52;--ok:#a3c46c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:13px/1.5 "IBM Plex Mono",ui-monospace,Menlo,monospace}
+main{max-width:1240px;margin:0 auto;padding:24px 16px 56px}
+h1{font:700 22px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;margin:0 0 10px}
+h2{font:700 14px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;margin:40px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+h2 .live{font-size:10px;letter-spacing:.1em;color:var(--ok);margin-left:8px;vertical-align:2px}
+h2 .pick{font-size:10px;letter-spacing:.1em;color:var(--accent);margin-left:8px;vertical-align:2px}
+p,li{color:var(--dim);max-width:820px}
+p{margin:0 0 12px}
+b,strong{color:var(--text);font-weight:600}
+code{color:var(--text)}
+kbd{border:1px solid var(--dim);padding:0 4px;color:var(--text);font:inherit}
+.code{color:var(--accent);font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:14px 0}
+figure{margin:0;display:flex;flex-direction:column;gap:6px}
+figure img{display:block;image-rendering:pixelated;border:1px solid var(--line);max-width:100%;height:auto}
+figcaption{font-size:11px;color:var(--faint);max-width:302px}
+figcaption b{color:var(--accent);font-weight:600}
+.names{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px 18px;margin:14px 0}
+.names figure img{width:302px}
+.names figcaption{max-width:none}
+.cu{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;margin:14px 0}
+.cu figure img{width:360px}
+.chan{display:grid;grid-template-columns:90px 1fr;gap:4px 14px;max-width:820px;margin:8px 0 14px}
+.chan dt{color:var(--text);font-weight:600}
+.chan dd{margin:0;color:var(--dim)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.cols ul{margin:4px 0 0;padding-left:18px}
+.cols li{margin:3px 0}
+.box{border:1px solid var(--line);background:var(--panel);padding:10px 14px;margin:14px 0;max-width:820px}
+.box p:last-child{margin:0}
+@media (max-width:760px){.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>TALKING TO CLAUDE</h1>
+<p>This round covers proposals in the feed, a name for the channel where claude and you talk, claude's cursor, its first message, and a sweep for UI that had fallen behind the current look. Section 1 and the fixes in section 6 are live in the game. The rest are options with codes, so you can mix and match.</p>
+<div class="box"><p><b>Picks wanted:</b> a name for "Chat" (<span class="code">NM</span>), which extra Desk items to build (<span class="code">DK</span>), claude's cursor (<span class="code">CU</span>, also switchable in the game), and the first message (<span class="code">IN</span>).</p></div>
+
+<h2>1 · Proposals live in the feed <span class="live">● live</span></h2>
+<p>A proposal is now an item in the feed, built from the same row as the log: who, icon, text, time. It shows the site (a place link: hover lights it, click goes there), the parts, the cost, and what it does to light and fill (warnings in red). Approve or reject it with the buttons, or with <kbd>Enter</kbd> / <kbd>Del</kbd> from anywhere. A thin bar counts down to the auto-approve.</p>
+<p>While a proposal waits, it sticks to the top or bottom edge of the feed, so chatter can't scroll it away. Once answered, it folds to one line with the verdict: approved by you, auto-approved, rejected or withdrawn. Click the line to open it again. Proposals show under All, Log and Chat; under Band they show only while they wait. With the panel collapsed, the rail's claude button shows a <b>?</b> until you answer. The floating paper card is gone, and so are the separate "Proposed… / approved" log lines; the item records both.</p>
+<div class="row">
+  <figure><img src="talk/feed-pending.png" width="302" alt="A waiting proposal in the feed"><figcaption><b>Waiting.</b> Sticky until answered; the countdown runs along its bottom edge.</figcaption></figure>
+  <figure><img src="talk/feed-folded.png" width="302" alt="An answered proposal folded to one line"><figcaption><b>Answered.</b> One line with the verdict; click it to open.</figcaption></figure>
+  <figure><img src="talk/desk-light.png" width="302" alt="The feed in the light tone"><figcaption><b>Light tone.</b> All of it is tokens, so the light chrome needed no extra rules.</figcaption></figure>
+  <figure><img src="talk/rail-ask.png" width="60" alt="The collapsed rail with a question badge"><figcaption><b>Rail.</b> Collapsed, claude's button asks.</figcaption></figure>
+</div>
+
+<h2>2 · What to call "Chat"</h2>
+<p>The feed has three kinds of thing in it. It helps to say what separates them:</p>
+<dl class="chan">
+  <dt>Log</dt><dd>What happened to the world, by anyone. Third person, past tense, terse; a record.</dd>
+  <dt>"Chat"</dt><dd>What's said <i>to you</i>, or <i>by you</i>: your messages, replies, proposals waiting for a yes, questions. Second person. Any agent can speak here, not only claude.</dd>
+  <dt>Band</dt><dd>The machines talking among themselves. Ambient, mostly untranslated; you overhear it, nobody is asking you anything.</dd>
+</dl>
+<p>So the line between "Chat" and Band is who it's addressed to, not whether it's speech. "Chat" undersells that and reads as speech, the same as Band. Some names:</p>
+<div class="names">
+  <figure><img src="talk/name-chat.png" alt="Chat"><figcaption><b>NM1 · Chat</b>: now. Reads as "talking", which Band also is.</figcaption></figure>
+  <figure><img src="talk/name-talk.png" alt="Talk"><figcaption><b>NM2 · Talk</b>: plain and friendly, but still about speech rather than who it's for.</figcaption></figure>
+  <figure><img src="talk/name-desk.png" alt="Desk"><figcaption><b>NM3 · Desk</b> (my pick): where things land for you to answer or sign; proposals are paperwork. Works with many agents, and it is clearly not Band.</figcaption></figure>
+  <figure><img src="talk/name-asks.png" alt="Asks"><figcaption><b>NM4 · Asks</b>: names the content (requests both ways). Odd for plain replies.</figcaption></figure>
+  <figure><img src="talk/name-office.png" alt="Office"><figcaption><b>NM5 · Office</b>: the site office, where the foremen bring plans. Fits the setting; a little long.</figcaption></figure>
+  <figure><img src="talk/name-inbox.png" alt="Inbox"><figcaption><b>NM6 · Inbox</b>: "what needs you". Clear, but software-flavoured.</figcaption></figure>
+</div>
+
+<h2>3 · What belongs on the Desk</h2>
+<p>The Desk filter in the real game, with some <b>mocked</b> items placed into the real feed (marked below) beside a live proposal. The idea: anything that wants your attention, or says something to you, lands here as a row of the same kind, and nothing else does.</p>
+<div class="row">
+  <figure><img src="talk/desk.png" width="302" alt="The Desk channel with mocked items"><figcaption>Desk filter. Top to bottom: your message with its pinned place, a question, another agent, your reply, a job reporting progress, then a live proposal.</figcaption></figure>
+  <div style="flex:1;min-width:280px">
+    <ul>
+      <li><span class="code">DK1</span> <b>Your messages carry their context</b> (live): the pinned place rides along above the text.</li>
+      <li><span class="code">DK2</span> <b>Questions with quick replies</b> (mock): claude offers the real choices as buttons (C6 / C9 / Neither) and links each one to its place. One click answers it, so you don't have to type.</li>
+      <li><span class="code">DK3</span> <b>Other agents</b> (mock): a "warden" that watches loads speaks with its own mark and colour. Room for several agents without a second panel.</li>
+      <li><span class="code">DK4</span> <b>Jobs that report in place</b> (mock): an approved proposal keeps its row and shows progress (building 14/24) instead of being echoed line by line. The log keeps the per-part record.</li>
+      <li><span class="code">DK5</span> <b>Proposals</b> (live): section 1.</li>
+    </ul>
+    <p style="margin-top:12px">Not on the Desk: per-part placements (Log), survey chatter and bots (Band). Pausing proposals (the ⏸ in the header) silences DK5 without hiding the rest.</p>
+  </div>
+</div>
+
+<h2>4 · Claude's cursor</h2>
+<p>All six are in the game now. Choose one in the world menu (click the SPALL wordmark) under Interface; the choice is remembered. Shown at 3× in the real scene, gazing at a proposal. The shapes get a dark rim so they read on any wall. With a name tag (CU1, CU3) the tag now carries the level ("claude · ↑ L10"), so the canvas plate steps aside and there's one label, not two.</p>
+<div class="cu">
+  <figure><img src="talk/cu1.png" alt="CU1"><figcaption><b>CU1 · Arrow + name</b>: what it was. Reads as "a cursor"; the tag does the identity.</figcaption></figure>
+  <figure><img src="talk/cu2.png" alt="CU2"><figcaption><b>CU2 · Spark</b>: claude's mark as the cursor itself; no tag. Sits on the point it marks.</figcaption></figure>
+  <figure><img src="talk/cu3.png" alt="CU3"><figcaption><b>CU3 · Spark + name</b>: the mark, plus the tag for anyone who doesn't know it.</figcaption></figure>
+  <figure><img src="talk/cu4.png" alt="CU4"><figcaption><b>CU4 · Arrow, spark heel</b>: still a pointer, signed with the spark.</figcaption></figure>
+  <figure><img src="talk/cu5.png" alt="CU5"><figcaption><b>CU5 · Crab</b>: the pixel crab from the panel header, walking the stack.</figcaption></figure>
+  <figure><img src="talk/cu6.png" alt="CU6"><figcaption><b>CU6 · Turning spark</b> (my pick): the spark at rest; while claude works it turns through + ✱ ×, like the CLI's spinner.</figcaption></figure>
+</div>
+<div class="row"><figure><img src="talk/cu6-working.png" alt="CU6 frames while building"><figcaption style="max-width:none"><b>CU6 while building</b>: four frames, about 0.2 s apart.</figcaption></figure></div>
+
+<h2>5 · Claude's first message</h2>
+<p>"I'm the coral cursor…" is gone. <span class="code">IN1</span> is live; the others are mocks.</p>
+<div class="row">
+  <figure><img src="talk/in1.png" width="302" alt="IN1"><figcaption><b>IN1 · On site</b> (live): in claude's voice, what it does and how to point.</figcaption></figure>
+  <figure><img src="talk/in3.png" width="302" alt="IN3"><figcaption><b>IN3 · What I can do</b>: the four things as chips, then how to point. Terse, a little menu-like.</figcaption></figure>
+  <figure><img src="talk/in2-top.png" width="302" alt="IN2 feed"><img src="talk/in2-input.png" width="302" alt="IN2 input"><figcaption><b>IN2 · Say nothing</b>: no first message; the hint lives in the input's placeholder.</figcaption></figure>
+</div>
+
+<h2>6 · Keeping old UI in step <span class="live">● live</span></h2>
+<p>Things drift when each piece picks its own colours. The stylesheet's header now names the parts new UI is built from, and the build checks for colours that bypass them:</p>
+<ul>
+  <li><b>Colours are tokens.</b> The tone blocks give the chrome tokens (ink, dim, faint, field, hover, tip). Role tokens are defined once with their light-tone inks: <code>--agent-t</code>, <code>--you-t</code>, <code>--warn</code>, <code>--folk</code> and so on. The canvas has the same in one place, <code>ROLE</code> in <code>10_util.js</code>.</li>
+  <li><b>Surfaces:</b> <code>.pn</code> panel, <code>.bar</code>, <code>.ttl</code> title strip, and the new <code>.float</code> for anything hovering over the stage (tooltips, toasts, speech).</li>
+  <li><b>Controls:</b> <code>.btn</code> (now with <code>.go</code> for the primary action), <code>.sgc</code>, <code>.tgl</code>, <code>.sl</code>, <code>.stp</code>, <code>kbd</code>, <code>.chip</code>.</li>
+  <li><b>Feed items share one row</b>: who · icon · text · time, for log rows, messages and proposals. Times always show.</li>
+  <li><code>build.sh</code> lists any colour written straight into a CSS rule. A deliberate one carries a <code>raw-colour</code> comment saying why. It is clean now.</li>
+</ul>
+<div class="cols">
+  <div>
+    <p style="margin:12px 0 0"><b>Fixed this round</b> (from a survey of every surface, dark and light):</p>
+    <ul>
+      <li>The paper proposal card is now the feed item.</li>
+      <li>The toast, claude's speech and the stage tooltip use the shared <code>.float</code> surface; they were cream paper and old cool greys.</li>
+      <li>Chat bubbles became message rows with times.</li>
+      <li>Moved to tokens:
+        <ul>
+          <li>the off-level tag, chips, rail badge and catalog tags;</li>
+          <li>help bubbles and the toggle's lit state;</li>
+          <li>the light-tone overrides.</li>
+        </ul>
+      </li>
+      <li>The page behind the app follows the tone: no black band under a light, narrow layout.</li>
+      <li><b>Keys popover (bug):</b> once opened it never hid, and its right column was cut off. Both fixed, and the keys are now key caps.</li>
+      <li>Band folk lines show their time, like log rows.</li>
+      <li>Segmented buttons no longer wrap ("ON CLICK").</li>
+      <li>Scene labels (strata, CUT, the plumb-line plate, hover) use the chrome's warm greys and accent, not cool greys and a second amber.</li>
+      <li>Small fixes:
+        <ul>
+          <li>The world menu no longer says "wires study · sheet 02".</li>
+          <li>The light popover's keys are key caps.</li>
+          <li>The panel's state text is readable.</li>
+          <li>Place links look the same everywhere.</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div>
+    <p style="margin:12px 0 0"><b>Still open</b>:</p>
+    <ul>
+      <li><b>Band:</b> its pixel lines draw their time only when opened (canvas, <code>88_band.js</code>). Fix this together with the band's own work.</li>
+      <li><b>Loading screen:</b> it paints dark even if you saved the light tone, because it runs before any script.</li>
+      <li><b>Colours:</b>
+        <ul>
+          <li>Wire hover amber (<code>#f0b43c</code>, <code>62_wires.js</code>) is a hair brighter than the accent.</li>
+          <li>Plan-view pin plates are cool blues; that may be on purpose for the paper plan.</li>
+        </ul>
+      </li>
+      <li><b>Missing shared pieces:</b>
+        <ul>
+          <li>One close button: the catalog uses a text ×, the flyouts a pixel ×.</li>
+          <li>Corner radii vary across controls (key 2, slider 3, button 4, segmented 5, toggle pill), next to square pixel frames.</li>
+        </ul>
+      </li>
+      <li><b>Talk, point and sketch build:</b> its voice turn is a cyan-outlined box (the old bubble look). Three colours in its own CSS bypass the tokens; its build now lists them.</li>
+      <li><b>Dev overlays:</b> the sheets in <code>97</code>–<code>99</code> still say "STRATUM BUILDING SET". They're console-only and not reachable from the UI.</li>
+    </ul>
+  </div>
+</div>
+</main>
+</body>
+</html>

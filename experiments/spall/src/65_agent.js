@@ -104,9 +104,8 @@ function proposeSite(site, kind, pieces, name, note) {
   setAgentState('propose', 'awaiting approval');
   const xs = pieces.map(p => p.x), ys = pieces.map(p => p.y), zs = pieces.map(p => p.z);
   AGENT.gaze = { x0: Math.min(...xs), y0: Math.min(...ys), x1: Math.max(...xs) + 1, y1: Math.max(...ys) + 1, z0: Math.min(...zs), z1: Math.max(...zs) + 1 };
-  showCard(j);
+  showCard(j);   // the proposal is its own item in the feed, so no log line
   agentSay(`Proposal ${pad2(j.no)}: ${name} at ${lvCode(site.z)}. Ghost is down — approve?`, 9);
-  log('claude', `Proposed ${name} at (${site.x},${site.y},${lvCode(site.z)}) · ¤${j.m.cost} · +${j.m.res} residents`, 'sys', { ic: 'propose', s: `propose ${name} · ¤${j.m.cost} · +${j.m.res}`, at: [site.x, site.y, site.z] });
   sfx.ghost();
 }
 function phaseSpeech(j, ph) {
@@ -166,7 +165,7 @@ function setAgentOn(v) {
   try { localStorage.setItem('stratum.agent', S.agentOn ? '1' : '0'); } catch (e) { /* storage unavailable: the switch just isn't remembered */ }
   resize();
 }
-function rejectQuiet(j) { j.status = 'rejected'; hideCard(); AGENT.job = null; }
+function rejectQuiet(j) { j.status = 'rejected'; settleProposal(j, 'gone'); hideCard(); AGENT.job = null; }
 function agentUpdate(dt) {
   const A = AGENT, k = REDUCED ? 1 : 1 - Math.exp(-dt * 3.4);
   A.x += (A.tx - A.x) * k; A.y += (A.ty - A.y) * k; A.z += (A.tz - A.z) * k;
@@ -229,12 +228,42 @@ function agentUpdate(dt) {
 
 // ---------------------------------------------------------------- drawing
 const ARROW = ['X.........', 'XX........', 'XWX.......', 'XWWX......', 'XWWWX.....', 'XWWWWX....', 'XWWWWWX...', 'XWWWWWWX..', 'XWWWWWWWX.', 'XWWWWXXXXX', 'XWXXWWX...', 'XX..XWWX..', 'X....XWX..', '.....XX...'];
-let ARROWC = null;
 function arrowSprite() {
   const c = mk(10, 14), g = c.getContext('2d');
-  ARROW.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === 'X') R_(g, x, y, 1, 1, '#2a0f06'); if (ch === 'W') R_(g, x, y, 1, 1, x <= 2 ? '#ffb08f' : '#ff7a52'); }));
+  ARROW.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === 'X') R_(g, x, y, 1, 1, ROLE.agentInk); if (ch === 'W') R_(g, x, y, 1, 1, x <= 2 ? ROLE.agentHi : ROLE.agent); }));
   return c;
 }
+// claude's cursor (CU in UICFG): 1 the arrow and a name tag, 2 the spark, 3 the spark and a name tag, 4 the arrow
+// with a spark at its heel, 5 the pixel crab, 6 the spark, turning while claude works (like the CLI's spinner).
+// Shapes get a dark rim so they read on any wall; centred ones sit on the point they mark, the arrow points at it.
+const SPARK = ['....#....', '.#..#..#.', '..#.#.#..', '...###...', '#########', '...###...', '..#.#.#..', '.#..#..#.', '....#....'];
+const SPARK_TURN = [['....#....', '....#....', '....#....', '...###...', '#########', '...###...', '....#....', '....#....', '....#....'], SPARK,
+  ['#.......#', '.#.....#.', '..#...#..', '...###...', '...###...', '...###...', '..#...#..', '.#.....#.', '#.......#'], SPARK];
+const SPARK_S = ['#.#.#', '.###.', '#####', '.###.', '#.#.#'];
+const CU = { 1: { tag: true }, 2: {}, 3: { tag: true }, 4: {}, 5: {}, 6: {} };
+const CURS = new Map();
+function rimSprite(rows, ox = 1, oy = 1, c) {   // rows of '#' in claude's colour, a rim round them, lit from the top left
+  const h = rows.length, w = Math.max(...rows.map(r => r.length));
+  if (!c) c = mk(w + 2, h + 2);
+  const g = c.getContext('2d'), on = (x, y) => y >= 0 && y < h && rows[y][x] === '#';
+  for (let y = -1; y <= h; y++) for (let x = -1; x <= w; x++) {
+    if (on(x, y)) R_(g, ox + x, oy + y, 1, 1, (x + y) * 2 < (w + h) / 2 ? ROLE.agentHi : ROLE.agent);
+    else if (on(x - 1, y) || on(x + 1, y) || on(x, y - 1) || on(x, y + 1)) R_(g, ox + x, oy + y, 1, 1, ROLE.agentInk);
+  }
+  return c;
+}
+const CU_NAMES = { 1: 'arrow + name', 2: 'spark', 3: 'spark + name', 4: 'arrow, spark heel', 5: 'crab', 6: 'spark, turns while working' };
+function cursorSprite(t, cu = UICFG.CU) {
+  const busy = AGENT.state !== 'idle';
+  const k = cu === 6 && busy && !REDUCED ? 60 + ((t * 5) | 0) % 4 : cu;
+  let s = CURS.get(k); if (s) return s;
+  if (cu === 1) s = { c: arrowSprite(), ax: 0, ay: 0 };
+  else if (cu === 4) { const c = mk(14, 16); c.getContext('2d').drawImage(arrowSprite(), 0, 0); rimSprite(SPARK_S, 8, 10, c); s = { c, ax: 0, ay: 0 }; }
+  else if (cu === 5) { const c = rimSprite(GLYPH.clawd); s = { c, ax: -6, ay: -5 }; }
+  else { const c = rimSprite(k >= 60 ? SPARK_TURN[k - 60] : SPARK); s = { c, ax: -5, ay: -5 }; }
+  CURS.set(k, s); return s;
+}
+function drawCursor(ctx, X, Y, t) { const s = cursorSprite(t); ctx.drawImage(s.c, X + s.ax, Y + s.ay); }
 function gazeBoxIso(ctx, gz, col, eo) {
   isoQuad(ctx, gz.x0, gz.y0, gz.x1, gz.y1, gz.z0 + 0.02, col, [3, 2], eo);
   isoQuad(ctx, gz.x0, gz.y0, gz.x1, gz.y1, gz.z1, col, [1, 2], eo);
@@ -242,32 +271,31 @@ function gazeBoxIso(ctx, gz, col, eo) {
 }
 function drawAgentIso(ctx, t, sliced, ex) {
   if (WIRES.agentOff) return;
-  if (!ARROWC) ARROWC = arrowSprite();
   const A = AGENT, bob = REDUCED ? 0 : Math.sin(t * 2.3) * 0.05;
   const [bx, by] = projIso(A.x, A.y, A.z + bob);
   const off = sliced && A.level > S.level;
   if (A.gaze) {
     const gz = A.gaze, gAbove = sliced && gz.z0 > S.level;
-    const col = gAbove ? 'rgba(255,122,82,0.4)' : '#ff7a52';
+    const col = gAbove ? 'rgba(255,122,82,0.4)' : ROLE.agent;
     gazeBoxIso(ctx, gz, col, ex ? explodeOff(gz.z0) : 0);
     const c = projIso((gz.x0 + gz.x1) / 2, (gz.y0 + gz.y1) / 2, gz.z0 + 0.5);
     pline(ctx, bx, by, c[0], c[1], gAbove ? 'rgba(255,122,82,0.35)' : 'rgba(255,122,82,0.85)', [2, 2]);
-    if (!REDUCED && Math.sin(t * 9) > 0) R_(ctx, Math.round(c[0]) - 1, Math.round(c[1]) - 1, 3, 3, '#ff7a52');
+    if (!REDUCED && Math.sin(t * 9) > 0) R_(ctx, Math.round(c[0]) - 1, Math.round(c[1]) - 1, 3, 3, ROLE.agent);
   }
   let X = Math.round(bx), Y = Math.round(by);
   const xl = Math.round(S.safeL / S.zoom) + 4, xr = Math.round((S.cssW - S.safeR) / S.zoom) - 70;
   const inView = X >= xl - 4 && Y >= 0 && X < xr + 60 && Y < S.bh - 20;
   if (!inView) { X = clamp(X, xl, Math.max(xl, xr)); Y = clamp(Y, 4, S.bh - 34); }
   ctx.globalAlpha = off ? 0.5 : 1;
-  ctx.drawImage(ARROWC, X, Y);
+  drawCursor(ctx, X, Y, t);
   ctx.globalAlpha = 1;
-  if (!inView) plate(ctx, 'OFF VIEW ' + lvCode(A.level), X + 12, Y, '#ff7a52', '#2a0f06');
-  else if (sliced && A.level !== S.level) plate(ctx, (A.level > S.level ? '↑ ' : '↓ ') + lvCode(A.level), X + 12, Y + 12, '#ff7a52', '#2a0f06');
+  if (CU[UICFG.CU].tag) { /* the name tag says where claude is */ }
+  else if (!inView) plate(ctx, 'OFF VIEW ' + lvCode(A.level), X + 12, Y, ROLE.agent, ROLE.agentInk);
+  else if (sliced && A.level !== S.level) plate(ctx, (A.level > S.level ? '↑ ' : '↓ ') + lvCode(A.level), X + 12, Y + 12, ROLE.agent, ROLE.agentInk);
   A.screen = [X, Y, inView, off || (sliced && A.level !== S.level)];
 }
 function drawAgentPlan(ctx, t) {
   if (WIRES.agentOff) return;
-  if (!ARROWC) ARROWC = arrowSprite();
   const A = AGENT, [bx, by] = projPlan(A.x, A.y), off = A.level !== S.level;
   if (A.gaze && A.gaze.z0 <= S.level && A.gaze.z1 > S.level) {
     const a = projPlan(A.gaze.x0, A.gaze.y0), b = projPlan(A.gaze.x1, A.gaze.y1);
@@ -276,23 +304,22 @@ function drawAgentPlan(ctx, t) {
     for (let y = y0; y < y1; y += 2) { R_(ctx, x0, y, 1, 1, '#d4502a'); R_(ctx, x1 - 1, y, 1, 1, '#d4502a'); }
   }
   const X = Math.round(bx), Y = Math.round(by);
-  ctx.globalAlpha = off ? 0.55 : 1; ctx.drawImage(ARROWC, X, Y); ctx.globalAlpha = 1;
-  if (off) plate(ctx, (A.level > S.level ? '↑ ' : '↓ ') + lvCode(A.level), X + 12, Y + 12, '#ff7a52', '#2a0f06');
+  ctx.globalAlpha = off ? 0.55 : 1; drawCursor(ctx, X, Y, t); ctx.globalAlpha = 1;
+  if (off && !CU[UICFG.CU].tag) plate(ctx, (A.level > S.level ? '↑ ' : '↓ ') + lvCode(A.level), X + 12, Y + 12, ROLE.agent, ROLE.agentInk);
   A.screen = [X, Y, true, off];
 }
 function drawAgentSec(ctx, t) {
   if (WIRES.agentOff) return;
-  if (!ARROWC) ARROWC = arrowSprite();
   const A = AGENT, [bx, by] = projSec(A.x, A.y, A.z), d = Math.abs(secDepth(A.x, A.y));
   if (A.gaze) {
     const a = projSec(A.gaze.x0, A.gaze.y0, A.gaze.z1), b = projSec(A.gaze.x1, A.gaze.y1, A.gaze.z0);
     const x0 = Math.round(Math.min(a[0], b[0])), x1 = Math.round(Math.max(a[0], b[0])), y0 = Math.round(a[1]), y1 = Math.round(b[1]);
-    const col = d < 3 ? '#ff7a52' : 'rgba(255,122,82,0.45)';
+    const col = d < 3 ? ROLE.agent : 'rgba(255,122,82,0.45)';
     for (let x = x0; x < x1; x += 2) { R_(ctx, x, y0, 1, 1, col); R_(ctx, x, y1 - 1, 1, 1, col); }
     for (let y = y0; y < y1; y += 2) { R_(ctx, x0, y, 1, 1, col); R_(ctx, x1 - 1, y, 1, 1, col); }
   }
   const X = Math.round(bx), Y = Math.round(by);
-  ctx.globalAlpha = d < 3 ? 1 : 0.5; ctx.drawImage(ARROWC, X, Y); ctx.globalAlpha = 1;
-  if (d >= 3) plate(ctx, (secDepth(A.x, A.y) > 0 ? 'BEHIND ' : 'IN FRONT ') + Math.round(d), X + 12, Y + 12, '#ff7a52', '#2a0f06');
+  ctx.globalAlpha = d < 3 ? 1 : 0.5; drawCursor(ctx, X, Y, t); ctx.globalAlpha = 1;
+  if (d >= 3) plate(ctx, (secDepth(A.x, A.y) > 0 ? 'BEHIND ' : 'IN FRONT ') + Math.round(d), X + 12, Y + 12, ROLE.agent, ROLE.agentInk);
   A.screen = [X, Y, true, d >= 3];
 }

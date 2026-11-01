@@ -99,6 +99,9 @@ function ptext(g, s, x, y, col, shadow, sc) {
   }
   return cx - x;
 }
+// the role colours for canvas drawing (the chrome's are the CSS tokens --agent, --you, --accent)
+const ROLE = { agent: '#ff7a52', agentHi: '#ffb08f', agentInk: '#2a0f06', you: '#5fd3f2', accent: '#e8a83c', accentInk: '#1b1305',
+  plate: '#1c1b18', plateInk: '#d9d2c2', plateRim: '#4f4a41' };   // plate*: a neutral label in the scene, the dark chrome's warm greys
 const ptextW = (s, sc) => (String(s).length * 4 - 1) * (sc || 1);
 function plate(g, s, x, y, bg, fg, border) {   // pixel label on a plate
   const w = ptextW(s) + 4;

@@ -5,4 +5,10 @@ cd "$(dirname "$0")"
 awk '/^<script>$/{f=1;next} /^<\/script>$/{f=0} f' index.html > test/_script.js
 node --check test/_script.js && echo "syntax ok"
 { printf '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>window.__errs=[];window.addEventListener("error",function(e){window.__errs.push(e.message+" @"+e.lineno+":"+e.colno);});</script></head><body style="margin:0">\n'; cat index.html; cat test/hook.html; printf '</body></html>\n'; } > test/test.html
+# style check: colours belong in the token blocks at the top of the stylesheet (see its header). List any written
+# into a rule; neutral black/white shadows are fine, and a deliberate one carries a raw-colour comment.
+awk '/<style>/{f=1} /<\/style>/{f=0} f{print FILENAME":"FNR": "$0}' src/00_head.html |
+  grep -v -E ': (:root|body[^{]*\{--| +--)|raw-colour' |
+  sed -E 's/rgba\((0,0,0|255,255,255),[.0-9]+\)//g' |
+  grep -E '\{[^}]*(#[0-9a-fA-F]{3,8}\b|rgba?\()' | cut -c1-140 | sed 's/^/colour outside the tokens: /'
 wc -c index.html

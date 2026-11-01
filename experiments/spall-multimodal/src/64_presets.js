@@ -231,6 +231,7 @@ function setupWorldMenu() {
     else if (b.dataset.load) { close(); loadSlot(+b.dataset.load); }
     else if (b.dataset.seed) { close(); S.seed += 1; loadPreset(S.preset || 'voids'); }
     else if (b.dataset.tone) { setUiTone(b.dataset.tone === 'dark'); syncWorldMenu(); }
+    else if (b.dataset.cursor) { setCursorStyle(+b.dataset.cursor); syncWorldMenu(); }
     else if (b.dataset.keys) { close(); openKeys(); }
     else return;
     sfx.click();
@@ -241,7 +242,7 @@ function syncWorldMenu() {
   const pop = $('worldPop'); if (!pop) return;
   const when = t => { const d = new Date(t); return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' ' + d.toTimeString().slice(0, 5); };
   const dark = UICFG.MT === 10 || UICFG.MT === 16;
-  pop.innerHTML = `<div class="lp-h ttl"><span>Spall</span><span class="lp-dim">wires study · sheet 02 · seed ${S.seed}</span></div>
+  pop.innerHTML = `<div class="lp-h ttl"><span>Spall</span><span class="lp-dim">seed ${S.seed}</span></div>
     <div class="lp-sub">Presets <span class="lp-dim">replace the scene</span></div>` +
     PRESETS.map(p => `<div class="lp-row"><button type="button" class="btn" data-preset="${p.id}" aria-pressed="${S.preset === p.id}">${p.name}</button><span class="lp-note">${p.note}</span></div>`).join('') +
     `<div class="lp-sub">Save slots <span class="lp-dim">in this browser</span></div>` +
@@ -250,5 +251,6 @@ function syncWorldMenu() {
     `<div class="lp-row"><button type="button" class="btn" data-seed="1">New seed</button><span class="lp-note">regenerate the current preset</span></div>
     <div class="lp-sub">Interface</div>
     <div class="lp-row"><span class="sgc" role="radiogroup" aria-label="Interface tone" style="--n:2;--i:${dark ? 1 : 0}"><button type="button" class="${dark ? '' : 'on'}" data-tone="light" role="radio" aria-checked="${!dark}">Light</button><button type="button" class="${dark ? 'on' : ''}" data-tone="dark" role="radio" aria-checked="${dark}">Dark</button><i class="ind"></i></span><span class="lp-note">the chrome only; the scene keeps its time of day</span></div>
+    <div class="lp-row"><span class="sgc" role="radiogroup" aria-label="claude's cursor" style="--n:6;--i:${UICFG.CU - 1}">${[1, 2, 3, 4, 5, 6].map(k => { const c = cursorSprite(0, k).c; return `<button type="button" class="${UICFG.CU === k ? 'on' : ''}" data-cursor="${k}" role="radio" aria-checked="${UICFG.CU === k}" data-tip="CU${k} · ${CU_NAMES[k]}" aria-label="${CU_NAMES[k]}"><img src="${c.toDataURL()}" width="${c.width}" height="${c.height}" alt="" style="image-rendering:pixelated"></button>`; }).join('')}<i class="ind"></i></span><span class="lp-note">claude’s cursor</span></div>
     <div class="lp-row"><button type="button" class="btn" data-keys="1">Keys</button><span class="lp-note">every shortcut</span></div>`;
 }

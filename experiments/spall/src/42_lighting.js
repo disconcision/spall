@@ -275,5 +275,5 @@ function syncLightPanel() {
   pop.innerHTML = `<div class="lp-h ttl"><span>Lighting</span><span class="lp-sw" data-lk="on" role="switch" aria-checked="${LIT.on}" aria-label="Lighting on/off">${LIT.on ? 'on' : 'off'}<span class="tgl ${LIT.on ? 'on' : ''}"></span></span></div>` +
     `<span class="sgc ${off ? 'dis' : ''}" role="radiogroup" aria-label="Time of day" style="--n:4;--i:${ti}">${LIGHT_TIMES.map(t => `<button type="button" class="${LIT.sun === t ? 'on' : ''}" data-t="${t}" data-tip="${t[0].toUpperCase() + t.slice(1)}" role="radio" aria-checked="${LIT.sun === t}" aria-label="${t}">${glyph(t)}</button>`).join('')}<i class="ind"></i></span>` +
     `<div class="rows">` + LIGHT_PARTS.map(([k, name, , pk]) => `<div class="row ${LIT[k] && !off ? 'on' : ''}"><span class="rt" data-lk="${k}">${glyph(k)}<span>${name}</span></span>${pk ? slHTML(pk, off || !LIT[k]) : '<span></span>'}<span data-lk="${k}" role="switch" aria-checked="${LIT[k]}" aria-label="${name}"><span class="tgl ${LIT[k] ? 'on' : ''} ${off ? 'dis' : ''}"></span></span></div>`).join('') +
-    `</div><div class="foot"><span>I on/off · T time</span><button type="button" class="btn sm" data-lreset="1">Reset</button></div>`;
+    `</div><div class="foot"><span><kbd>I</kbd> on/off · <kbd>T</kbd> time</span><button type="button" class="btn sm" data-lreset="1">Reset</button></div>`;
 }

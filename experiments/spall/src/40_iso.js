@@ -432,7 +432,7 @@ function drawStratumAnnot(ctx, s) {
   const label = (z0 === z1 ? lvCode(z0) : lvCode(z0) + '-' + lvCode(z1)) + ' ' + name;
   const lx = left[0] - 14 - ptextW(label) - 4;
   pline(ctx, left[0] - 2, left[1], left[0] - 13, left[1], hov ? '#e8a83c' : '#8d877b');
-  plate(ctx, label, lx, left[1] - 4, hov ? '#e8a83c' : '#1a1b1d', hov ? '#1b1305' : '#d8d0bf', hov ? null : '#44474c');
+  plate(ctx, label, lx, left[1] - 4, hov ? ROLE.accent : ROLE.plate, hov ? ROLE.accentInk : ROLE.plateInk, hov ? null : ROLE.plateRim);
 }
 
 function drawAfterWorld(ctx, t, sliced, ex) {
@@ -453,7 +453,7 @@ function drawAfterWorld(ctx, t, sliced, ex) {
     } else if (sliced) {
       const c = isoQuad(ctx, 0, 0, W, D, L + HT / LH, 'rgba(232,168,60,0.55)', [5, 3]);
       const left = c.reduce((m, p) => p[0] < m[0] ? p : m, c[0]), lab = 'CUT ' + lvCode(L) + ' ' + LEVELS[L].name, lw = ptextW(lab) + 4;
-      plate(ctx, lab, clamp(Math.round(left[0]) - 8 - lw, Math.round(S.safeL / S.zoom) + 2, S.bw - lw - 4), clamp(Math.round(left[1]) - 4, 4, S.bh - 30), '#e8a83c', '#1b1305');
+      plate(ctx, lab, clamp(Math.round(left[0]) - 8 - lw, Math.round(S.safeL / S.zoom) + 2, S.bw - lw - 4), clamp(Math.round(left[1]) - 4, 4, S.bh - 30), ROLE.accent, ROLE.accentInk);
     }
   }
   drawSteam(ctx, t, ex ? NL : (sliced ? L : NL));
@@ -473,7 +473,7 @@ function drawHoverIso(ctx, t, sliced, ex) {
   const eo = ex ? explodeOff(h.z) : 0;
   const tt = h.t;
   const hh = tt ? (CUTTABLE[tt] && sliced && !h.top ? HT / LH : TI[tt].slab ? 0.25 : 1) : 0.02;
-  const col = h.top ? '#d8d0bf' : '#f0b43c';
+  const col = h.top ? ROLE.plateInk : ROLE.accent;
   isoQuad(ctx, h.x, h.y, h.x + 1, h.y + 1, h.z + hh, col, null, eo);
   if (!tt && sliced && !ex) {   // plumb line to what you actually see below
     for (let z = h.z - 1; z >= 0; z--) {
@@ -483,7 +483,7 @@ function drawHoverIso(ctx, t, sliced, ex) {
       const p = projIso(h.x + 0.5, h.y + 0.5, h.z), q = projIso(h.x + 0.5, h.y + 0.5, z + ht);
       pline(ctx, p[0], p[1], q[0], q[1], 'rgba(240,180,60,0.8)', [2, 1]);
       isoQuad(ctx, h.x + 0.2, h.y + 0.2, h.x + 0.8, h.y + 0.8, z + ht, 'rgba(240,180,60,0.7)');
-      plate(ctx, lvCode(z), q[0] + 4, q[1] - 3, '#1a1b1d', '#f0b43c', '#5a4a2a');
+      plate(ctx, lvCode(z), q[0] + 4, q[1] - 3, ROLE.plate, ROLE.accent, ROLE.plateRim);
       break;
     }
   }

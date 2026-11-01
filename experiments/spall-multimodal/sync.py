@@ -27,8 +27,8 @@ def hooks():
         'src/00_head.html': [
             ('</style>', css + '</style>'),
             ('<title>Spall</title>', '<title>Spall · talk, point, sketch</title>'),
-            ('<div id="toast" hidden></div>',
-             '<div id="toast" hidden></div>\n      <div id="cap" hidden><span class="who">you</span><span class="fin"></span><i class="int"></i><span class="lat"></span></div>'),
+            ('<div id="toast" class="float" hidden></div>',
+             '<div id="toast" class="float" hidden></div>\n      <div id="cap" hidden><span class="who">you</span><span class="fin"></span><i class="int"></i><span class="lat"></span></div>'),
             # the mic goes after the send button: setupUI fills the form's first button with the send glyph
             ('<form id="chatf" autocomplete="off"><input id="chatIn"',
              '<div id="micEng">speech <select aria-label="Speech engine"></select><i class="st"></i>'

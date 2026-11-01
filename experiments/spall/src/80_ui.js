@@ -12,7 +12,7 @@ const BUILD_TOOLS = ['stack', 'bridge', 'garden', 'well'];
 // MT tone (10 dark, 11 light; the UI light/dark switch flips these) · PX chrome pixel · BV bevel · OL outline ·
 // DT title dither · TX type · WF wordmark · LG logo · TB top bar · KH key hints · FO flyout · LT light popover ·
 // SL slider · SG segmented · BT button · BB status bar · SC sidebar collapse
-const UICFG = { MT: 10, PX: 1, BV: 1, OL: 1, DT: 1, TX: 1, WF: 24, LG: 2, TB: 3, KH: 2, FO: 2, LT: 1, SL: 3, SG: 1, BT: 2, BB: 3, SC: 1 };
+const UICFG = { CU: 1, MT: 10, PX: 1, BV: 1, OL: 1, DT: 1, TX: 1, WF: 24, LG: 2, TB: 3, KH: 2, FO: 2, LT: 1, SL: 3, SG: 1, BT: 2, BB: 3, SC: 1 };
 const UI = { tb: 1, open: new Set(), fo: null, hueOpen: false, hue: [null, null, null, null], sel: { select: 'inspect', build: 'stack', wires: 'cable', units: 'u0' },
   lvx: true, feed: 'all', unread: 0, help: false, helpP: null, helpSig: '', hoverPanel: null, logo: 0, modeFold: false, grabbing: false, lvSeen: false };
 const store = { get(k, d) { try { const v = localStorage.getItem('spall.' + k); return v == null ? d : v; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('spall.' + k, v); } catch (e) { /* storage unavailable */ } } };
@@ -117,6 +117,7 @@ function applyChrome() {
   st.setProperty('--p', p + 'px'); st.setProperty('--px9', fr.url); st.setProperty('--bs', fr.b); st.setProperty('--pb', fr.b * p + 'px');
   st.setProperty('--dtitle', pxDither(+c.DT, T.t, 1, p)); st.setProperty('--dith', pxDither(1, T.x[0], T.x[1], p));
   st.setProperty('--tbh', (34 + 3 * p) + 'px');
+  document.documentElement.style.background = getComputedStyle(b).getPropertyValue('--bg').trim();   // the page behind the app follows the tone too
   const dark = c.MT === 10 || c.MT === 16, bt = $('bUiTone');
   document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
   if (bt) { bt.innerHTML = glyph(dark ? 'noon' : 'night'); bt.dataset.tip = dark ? 'Interface: switch to light' : 'Interface: switch to dark'; }
@@ -617,18 +618,23 @@ function setupLog() {
   const el = $('feed');
   el.addEventListener('click', e => {
     const a = e.target.closest('.at'); if (a) { logGo(a, 'go'); return; }
+    const pb = e.target.closest('[data-pr]');
+    if (pb) { const j = CARDJOB; if (j && pb.closest('.pr') === j.li) { if (pb.dataset.pr === 'ok') approveJob(j, false); else rejectJob(j); } return; }
+    const pr = e.target.closest('.pr'); if (pr) { if (!pr.classList.contains('pending')) pr.classList.toggle('open'); return; }
     const g = e.target.closest('.lg.grp'); if (g && !e.target.closest('.sub')) g.classList.toggle('open');
   });
   el.addEventListener('keydown', e => { const a = e.target.closest && e.target.closest('.at'); if (a && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); logGo(a, 'go'); } });
   el.addEventListener('mouseover', e => { const a = e.target.closest('.at'); if (a) logGo(a, 'hover'); });
   el.addEventListener('mouseout', e => { const a = e.target.closest('.at'); if (a) logGo(a, 'off'); });
 }
-function addMsg(who, text, ctx) {
-  const li = document.createElement('li');
-  li.className = 'm ' + (who === 'me' ? 'me' : 'ai');
-  if (ctx) { const s = document.createElement('span'); s.className = 'ctx'; s.textContent = ctx; li.appendChild(s); }
-  if (who !== 'me') li.insertAdjacentHTML('beforeend', `<span class="who" title="claude">${glyph('clawd', 1)}</span>`);
-  li.appendChild(document.createTextNode(text));
+// a message: the log's row in the reading size (html only for our own markup, never for typed text)
+function addMsg(who, text, ctx, html) {
+  const li = document.createElement('li'), me = who === 'me';
+  li.className = 'm ' + (me ? 'me' : 'ai');
+  li.innerHTML = `<span class="who" title="${me ? 'you' : 'claude'}">${glyph(LOGWHO[me ? 'you' : 'claude'], 1)}</span><span class="tx"></span><time>${fmtTime(S.time)}</time>`;
+  const tx = li.querySelector('.tx');
+  if (ctx) { const s = document.createElement('span'); s.className = 'ctx'; s.textContent = ctx; tx.appendChild(s); }
+  if (html) tx.insertAdjacentHTML('beforeend', html); else tx.appendChild(document.createTextNode(text));
   feedAppend(li);
 }
 function setFeed(f) {
@@ -651,25 +657,40 @@ function setSidebar(open) {
   resize();
 }
 function toast(text) { const t = $('toast'); t.textContent = text; t.hidden = false; toastT = S.time + 2.6; }
+// ---------- proposals: an item in the feed that asks. It stays in view (sticky) until answered, then folds to one
+// line with the verdict (click to open it again). Enter and Del answer the open one from anywhere.
+const PR_V = { ok: 'approved by you', auto: 'auto-approved', no: 'rejected', gone: 'withdrawn' };
 function showCard(j) {
-  CARDJOB = j; $('card').hidden = false;
-  const ph = [0, 0, 0], zs = j.pieces.map(p => p.z);
+  hideCard(); CARDJOB = j;
+  const ph = [0, 0, 0], zs = j.pieces.map(p => p.z), m = j.m, z0 = Math.min(...zs), z1 = Math.max(...zs);
   j.pieces.forEach(p => { if (p.state !== 'blocked') ph[p.ph]++; });
-  const blocked = j.pieces.filter(p => p.state === 'blocked').length;
-  $('cNo').textContent = 'Proposal ' + pad2(j.no);
-  $('cBy').textContent = 'by ' + OWN[j.owner].name; $('cBy').className = 'by' + (j.owner === 'you' ? ' you' : '');
-  $('cTitle').textContent = j.name;
-  $('cSite').textContent = `(${j.site.x},${j.site.y}) · ${lvCode(Math.min(...zs))}–${lvCode(Math.max(...zs))}`;
-  $('cParts').textContent = `${ph[0]} structure · ${ph[1]} infill · ${ph[2]} fit-out${blocked ? ' · ' + blocked + ' blocked' : ''}`;
-  $('cCost').textContent = '¤ ' + j.m.cost.toLocaleString('en-US');
-  $('cRes').textContent = j.m.res ? '+' + j.m.res + ' households' : '—';
-  const drop = j.m.before - j.m.after;
-  $('cLight').textContent = j.m.probeZ >= 0 ? `${lvCode(j.m.probeZ)}: ${Math.round(j.m.before * 100)}% → ${Math.round(j.m.after * 100)}% sky` : '—';
-  $('cLight').className = drop > 0.12 ? 'warn' : '';
-  $('cFill').textContent = j.m.zf != null ? `${lvCode(j.m.zf)}: ${Math.round(j.m.fb * 100)}% → ${Math.round(j.m.fa * 100)}% (cap 50%)` : '—';
-  $('cFill').className = j.m.fa > 0.5 ? 'warn' : '';
+  const blocked = j.pieces.filter(p => p.state === 'blocked').length, pct = v => Math.round(v * 100) + '%';
+  const row = (k, v, warn) => `<dt>${k}</dt><dd${warn ? ' class="warn"' : ''}>${v}</dd>`;
+  const li = document.createElement('li'); li.className = 'pr pending ' + j.owner; j.li = li;
+  li.innerHTML = `<div class="prh"><span class="who">${glyph(LOGWHO[j.owner], 1)}</span><span class="ic">${logIcon({ ic: 'propose' })}</span>` +
+    `<span class="hd"><b>Proposal ${pad2(j.no)}</b>${logEsc(j.name)} <span class="v"></span></span><time>${fmtTime(S.time)}</time></div><dl>` +
+    row('site', logAt([j.site.x, j.site.y, z0]) + (z1 > z0 ? '–' + lvCode(z1) : '')) +
+    row('parts', `${ph[0]} structure · ${ph[1]} infill · ${ph[2]} fit-out${blocked ? ' · ' + blocked + ' blocked' : ''}`) +
+    row('cost', '¤ ' + m.cost.toLocaleString('en-US') + (m.res ? ` · +${m.res} households` : '')) +
+    row('light', m.probeZ >= 0 ? `${lvCode(m.probeZ)} ${pct(m.before)} → ${pct(m.after)} sky` : '—', m.before - m.after > 0.12) +
+    row('fill', m.zf != null ? `${lvCode(m.zf)} ${pct(m.fb)} → ${pct(m.fa)} (cap 50%)` : '—', m.fa > 0.5) +
+    `</dl><div class="pra"><button type="button" class="btn sm go" data-pr="ok">Approve <kbd>⏎</kbd></button><button type="button" class="btn sm" data-pr="no">Reject <kbd>Del</kbd></button><span class="auto"></span></div><i class="prt"></i>`;
+  feedAppend(li); railAsk();
 }
-function hideCard() { CARDJOB = null; $('card').hidden = true; }
+function settleProposal(j, v) {
+  const li = j.li; if (!li || !li.classList.contains('pending')) return;
+  li.classList.remove('pending'); li.classList.add(v === 'auto' ? 'ok' : v);
+  li.querySelector('.v').textContent = '· ' + PR_V[v];
+  li.querySelector('.pra').remove(); li.querySelector('.prt').remove();
+}
+function hideCard() { if (CARDJOB) settleProposal(CARDJOB, 'gone'); CARDJOB = null; railAsk(); }
+function setCursorStyle(k) { UICFG.CU = clamp(k, 1, 6); store.set('cursor', UICFG.CU); }
+// collapsed panel: the rail's claude button asks too
+function railAsk() {
+  const b = document.querySelector('.sb-rail .rb.cl'); if (!b) return;
+  b.classList.toggle('ask', !!CARDJOB);
+  b.dataset.tip = CARDJOB ? `claude: proposal ${pad2(CARDJOB.no)} is waiting (Enter approves, Del rejects)` : 'claude';
+}
 function renderChips() {
   const el = $('chips'); el.innerHTML = '';
   S.pins.forEach((p, k) => {
@@ -752,8 +773,8 @@ function updateAgentDom() {
   const A = AGENT, sc = A.screen, tag = $('agentTag'), bub = $('bubble');
   if (!sc) { tag.style.transform = bub.style.transform = 'translate(-9999px,0)'; return; }
   const X = sc[0] * S.zoom, Y = sc[1] * S.zoom, off = !!sc[3];
-  tag.classList.toggle('off', off);
-  const label = 'claude' + (off ? ' · ' + lvCode(A.level) : '');
+  tag.classList.toggle('off', off); tag.classList.toggle('none', !CU[UICFG.CU].tag);
+  const label = 'claude' + (!sc[2] ? ' · off view ' + lvCode(A.level) : off ? ' · ' + (A.level > S.level ? '↑ ' : A.level < S.level ? '↓ ' : '') + lvCode(A.level) : '');
   if (tag.textContent !== label) tag.textContent = label;
   tag.style.transform = `translate(${Math.round(clamp(X + 11 * S.zoom, S.safeL + 2, S.cssW - S.safeR - tag.offsetWidth - 4))}px,${Math.round(Math.min(Y + 13 * S.zoom, S.cssH - 44))}px)`;
   if (S.time < A.speechT) {
@@ -768,7 +789,11 @@ let helpAcc = 0;
 function uiTick() {
   if (stripDirty) updateStrip();
   updateStatus();
-  if (CARDJOB) { const r = clamp((CARDJOB.approveAt - S.time) / 8, 0, 1); $('cTimer').style.width = (r * 100).toFixed(1) + '%'; }
+  if (CARDJOB && CARDJOB.li) {
+    const li = CARDJOB.li, left = CARDJOB.approveAt - S.time, n = Math.max(0, Math.ceil(left));
+    li.querySelector('.prt').style.width = `calc(${(clamp(left / 8, 0, 1) * 100).toFixed(1)}% - var(--p))`;
+    if (li._n !== n) { li._n = n; li.querySelector('.auto').textContent = n ? `auto ${n} s` : ''; }
+  }
   if (toastT && S.time > toastT) { $('toast').hidden = true; toastT = 0; }
   if (UI.help && ++helpAcc % 3 === 0) layoutHelp();
 }
@@ -785,14 +810,18 @@ const KEYS = [
   ['Wires', [['L Y K H', 'cable · tie · post · girder'], ['Shift-drag', 'tie with any tool'], ['J', 'jolt'], ['⌥-click', 'remove'], ['⌘-drag', 'slack'], ['⌘Z · ⌘⇧Z', 'undo · redo']]],
   ['Agent + views', [['Alt-click · long-press', 'point for claude'], ['Enter · Del', 'approve · reject'], ['\\', 'claude panel'], [', . · X', 'section: move · axis'], ['?', 'help bubbles']]]
 ];
+// a key list as keys: '⌥-click' → ⌥ as a key, '-click' as words; words stay words
+const KEYLIKE = /^([A-Z0-9]|[\[\]\\`,.?+−-]|1–4|PgUp|PgDn|Enter|Del|Esc|Shift|⌘Z|⌘⇧Z)$/;
+const keysHTML = s => s.split(' · ').map(g => g.split(' ').map(w => { const m = /^(Shift|Alt|⌥|⌘)-(.+)$/.exec(w); return `<span class="kw">${m ? `<kbd>${m[1]}</kbd>-${m[2]}` : KEYLIKE.test(w) ? `<kbd>${logEsc(w)}</kbd>` : logEsc(w)}</span>`; }).join(' ')).join(' · ');
 function openKeys() {
   let pop = $('keysPop');
-  if (!pop) { pop = document.createElement('div'); pop.id = 'keysPop'; pop.className = 'popm pn'; pop.hidden = true; document.body.appendChild(pop); pop.innerHTML = `<div class="lp-h ttl"><span>Keys</span><span class="lp-dim">Esc closes</span></div>` + KEYS.map(([h, rows]) => `<div><h4>${h}</h4>${rows.map(r => `<div class="kr"><b>${r[0]}</b>${r[1]}</div>`).join('')}</div>`).join(''); document.addEventListener('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target)) pop.hidden = true; }); }
+  if (!pop) { pop = document.createElement('div'); pop.id = 'keysPop'; pop.className = 'popm pn'; pop.hidden = true; document.body.appendChild(pop); pop.innerHTML = `<div class="lp-h ttl"><span>Keys</span><span class="lp-dim">Esc closes</span></div>` + KEYS.map(([h, rows]) => `<div><h4>${h}</h4>${rows.map(r => `<div class="kr"><b>${keysHTML(r[0])}</b>${r[1]}</div>`).join('')}</div>`).join(''); document.addEventListener('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target)) pop.hidden = true; }); }
   pop.hidden = false; pop.style.left = Math.max(8, (innerWidth - pop.offsetWidth) / 2) + 'px'; pop.style.top = Math.max(50, (innerHeight - pop.offsetHeight) / 2) + 'px';
 }
 
 function setupUI() {
   const tone = store.get('tone', 'dark'); UICFG.MT = tone === 'dark' ? 10 : 11;
+  UICFG.CU = clamp(+store.get('cursor', 1) || 1, 1, 6);
   UI.logo = clamp(+store.get('logo', 0) || 0, 0, LOGOS.length - 1); UICFG.LG = LOGOS[UI.logo];
   UI.tb = clamp(+store.get('tools', 1), 0, 2);
   UI.lvx = store.get('levels', innerWidth < 860 ? 'c' : 'x') === 'x';
@@ -843,8 +872,6 @@ function setupUI() {
   $('bUiTone').onclick = () => setUiTone(UICFG.MT !== 10);
   $('bHelp').onclick = () => toggleHelp();
   $('zoomStep').addEventListener('click', e => { const b = e.target.closest('[data-zoom]'); if (b) { setZoom(S.zoom + +b.dataset.zoom); sfx.click(); updateStatus(); } });
-  $('bApprove').onclick = () => { if (CARDJOB) approveJob(CARDJOB, false); };
-  $('bReject').onclick = () => { if (CARDJOB) rejectJob(CARDJOB); };
   $('sbFold').onclick = () => setSidebar(false);
   $('sbMute').onclick = () => setProposalsMuted(!S.propMute);
   setProposalsMuted(store.get('propMute', '0') === '1', true);
@@ -857,6 +884,6 @@ function setupUI() {
   if (store.get('side', 'open') === 'rail') document.body.classList.add('sb-off');
   addEventListener('resize', () => { sizeLevels(); renderToolLayer(); UI.helpSig = ''; layoutHelp(); });
   syncSliders();
-  addMsg('ai', "I'm the coral cursor. I survey bays, drop a ghost with a proposal card, and build only once it's approved (auto after 8 s). Pin a spot with Alt-click, then ask for a garden, bridge, housing or a light well.");
+  addMsg('ai', '', null, 'On site. I walk the stack looking for bays worth building in. When one checks out I ghost a plan and ask you here before any drones fly. <kbd>⌥</kbd>-click to point me somewhere.');
   setTool('inspect');
 }

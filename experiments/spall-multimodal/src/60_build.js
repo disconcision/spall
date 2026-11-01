@@ -193,15 +193,13 @@ function finishJob(j) {
 }
 function approveJob(j, auto) {
   if (j.status !== 'proposed') return;
-  j.status = 'building'; hideCard();
-  log(j.owner, `Proposal ${String(j.no).padStart(2, '0')} ${auto ? 'auto-approved' : 'approved by you'}`, 'sys', { ic: 'ok', s: `proposal ${String(j.no).padStart(2, '0')} ${auto ? 'auto-approved' : 'approved by you'}` });
+  j.status = 'building'; settleProposal(j, auto ? 'auto' : 'ok'); hideCard();   // the proposal's item in the feed keeps the verdict
   sfx.approve();
   if (j.owner === 'claude') agentApproved(j);
 }
 function rejectJob(j) {
   if (j.status !== 'proposed') return;
-  j.status = 'rejected'; hideCard();
-  log('you', `Rejected proposal ${String(j.no).padStart(2, '0')}`, 'sys', { ic: 'no', s: `reject proposal ${String(j.no).padStart(2, '0')}` });
+  j.status = 'rejected'; settleProposal(j, 'no'); hideCard();
   sfx.reject();
   if (j.owner === 'claude') agentRejected(j);
 }
@@ -334,7 +332,7 @@ function drawBuildSec(ctx, t) {
       cellBox(p.x, p.y, p.z, OWN[j.owner].col, rgba(OWN[j.owner].col, 0.3));
     }
   }
-  if (S.hover) cellBox(S.hover.x, S.hover.y, S.hover.z, '#f0b43c');
+  if (S.hover) cellBox(S.hover.x, S.hover.y, S.hover.z, ROLE.accent);
   for (const d of DRONES) { const [bx, by] = projSec(d.pos[0], d.pos[1], d.pos[2]); R_(ctx, Math.round(bx) - 1, Math.round(by) - 1, 3, 2, OWN[d.j.owner].col); }
   S.pins.forEach((p, k) => { if (Math.abs(secDepth(p.x + 0.5, p.y + 0.5)) > 0.5) return; const [bx, by] = projSec(p.x + 0.5, p.y + 0.5, p.z + 1); plate(ctx, String(k + 1), Math.round(bx) - 3, Math.round(by) - 9, '#5fd3f2', '#04222b'); });
   drawAgentSec(ctx, t);
