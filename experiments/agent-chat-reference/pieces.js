@@ -62,7 +62,7 @@ function rocks(tree, o) {
       if (Array.isArray(e)) { n.ch.push(norm(e, depth + 1, n)); continue; }
       const L = { k: 't', depth: depth + 1, parent: n };
       if (typeof e === 'string') { L.t = e; L.w = tokW(e); }
-      else if (e.hole != null) { L.hole = e.hole; L.by = e.by; L.w = Math.max(9, ptextW(e.hole) + 6); }
+      else if (e.hole != null) { L.hole = e.hole; L.by = e.by; L.p = e.p; L.col = e.col; L.w = Math.max(9, ptextW(e.hole) + 6); }
       else if (e.slider) { L.slider = e.slider; L.w = ptextW(e.slider[0]) + 3 + 15 + 3 + ptextW(e.slider[1]); }
       else if (e.check) { L.check = e.check; L.w = 6 + ptextW(e.check[0]); }
       else if (e.fold != null) { L.fold = e.fold; L.w = ptextW('…' + e.fold) + 4; }
@@ -161,9 +161,10 @@ function rocks(tree, o) {
       // a slot: dark well with corner brackets; a claimed one shows a sub-agent's progress along the bottom
       const x0 = L.x - 1, x1 = L.x + w, y0 = y - 1, y1 = y + 5;
       R(g, x0, y0, w + 2, 7, L.by ? '#262139' : '#120f1b');
-      for (const [cx, cy, dx, dy] of [[x0, y0, 1, 1], [x1, y0, -1, 1], [x0, y1, 1, -1], [x1, y1, -1, 1 - 2]]) { R(g, cx, cy, 1, 1, ROLE.H); R(g, cx + dx, cy, 1, 1, ROLE.H); R(g, cx, cy + dy, 1, 1, ROLE.H); }
-      if (L.by) { R(g, x0 + 2, y1, w - 2, 1, '#3a3356'); R(g, x0 + 2, y1, (w - 2) * 0.6 | 0, 1, '#c9bff2'); }
-      ptext(g, L.hole || '?', L.x + ((w - ptextW(L.hole || '?')) >> 1), y, L.by ? '#c9bff2' : ROLE.H);
+      const hc = L.col || ROLE.H;   // bracket colour: violet, or whoever holds the hole now
+      for (const [cx, cy, dx, dy] of [[x0, y0, 1, 1], [x1, y0, -1, 1], [x0, y1, 1, -1], [x1, y1, -1, 1 - 2]]) { R(g, cx, cy, 1, 1, hc); R(g, cx + dx, cy, 1, 1, hc); R(g, cx, cy + dy, 1, 1, hc); }
+      if (L.by) { R(g, x0 + 2, y1, w - 2, 1, '#3a3356'); R(g, x0 + 2, y1, (w - 2) * (L.p != null ? L.p : 0.6) | 0, 1, '#c9bff2'); }
+      ptext(g, L.hole || '?', L.x + ((w - ptextW(L.hole || '?')) >> 1), y, L.by ? '#c9bff2' : hc);
     } else if (L.slider) {
       let xx = L.x + ptext(g, L.slider[0], L.x, y, ROLE.V) + 2;
       R(g, xx, y + 2, 15, 1, '#57506f'); R(g, xx, y + 2, 9, 1, ROLE.H); R(g, xx + 8, y, 3, 5, C.tie); R(g, xx + 9, y + 1, 1, 3, ROLE.H);
