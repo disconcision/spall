@@ -1,0 +1,713 @@
+<title>Spall Preview Issue</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a 1990s PC-games magazine issue. Cool newsprint pages, dark screen plates,
+   condensed industrial headlines; the game's own amber/cyan/red as the only accents. */
+:root {
+  --paper: #e8ebe7; --paper2: #dde1dc; --ink: #14171a; --mute: #545b61; --rule: #b9bfba;
+  --plate: #101316; --plate-ink: #e6e2d6; --plate-mute: #8f989c;
+  --amber: #e8a531; --amber-ink: #8a5a06; --cyan: #3fb3d3; --cyan-ink: #146b84; --red: #d14a32; --green: #6c9a3c;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body: "Newsreader", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
+.wrap { max-width: 1180px; margin: 0 auto; }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 0.95; letter-spacing: 0.005em; }
+h2 { font-size: clamp(44px, 7vw, 84px); font-weight: 900; text-transform: uppercase; }
+h3 { font-size: 30px; font-weight: 800; text-transform: uppercase; }
+h4 { font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; }
+p { margin: 0; }
+a { color: var(--cyan-ink); }
+.mono, .kicker, .cap, .tag { font-family: var(--mono); }
+.kicker { font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--mute); }
+.deck { font-size: 22px; line-height: 1.35; font-style: italic; max-width: 40em; color: var(--ink); }
+.cap { font-size: 12.5px; line-height: 1.45; color: var(--mute); }
+.cap b { color: var(--ink); font-weight: 600; }
+img.px { image-rendering: pixelated; display: block; width: 100%; height: auto; max-width: 100%; background: var(--plate); }
+.plate { background: var(--plate); padding: 6px; }
+.text { max-width: 36em; display: grid; gap: 0.9em; }
+.cols2 { columns: 2 22em; column-gap: 40px; }
+.cols2 p { margin-bottom: 0.9em; break-inside: avoid-column; }
+.drop::first-letter { font-family: var(--display); font-weight: 900; float: left; font-size: 4.6em; line-height: 0.8; padding: 0.06em 0.08em 0 0; color: var(--amber-ink); }
+section.spread { padding-block: 72px 24px; border-top: 3px solid var(--ink); display: grid; gap: 28px; }
+.sechead { display: grid; gap: 12px; }
+.sechead .kicker { display: flex; gap: 12px; align-items: center; }
+.sechead .kicker span.pg { background: var(--ink); color: var(--paper); padding: 2px 8px; letter-spacing: 0.08em; }
+.grid { display: grid; gap: 24px; }
+.g2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+.g3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.g2 > *, .g3 > * { min-width: 0; }
+figure { margin: 0; display: grid; gap: 8px; align-content: start; }
+
+/* ---------- cover ---------- */
+.cover { background: var(--plate); color: var(--plate-ink); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); position: relative; overflow: hidden; }
+.cover-in { max-width: 1180px; margin: 0 auto; padding: 22px max(16px, env(safe-area-inset-left, 0px)) 28px; display: grid; gap: 18px; }
+.mast { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; border-bottom: 2px solid var(--amber); padding-bottom: 8px; }
+.mast .name { font-family: var(--display); font-weight: 900; font-size: clamp(54px, 10vw, 128px); line-height: 0.8; letter-spacing: -0.01em; color: var(--paper); }
+.mast .name em { font-style: normal; color: var(--amber); }
+.mast .issue { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--plate-mute); text-align: right; }
+.cover-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 24px; align-items: start; }
+@media (max-width: 860px) { .cover-body { grid-template-columns: 1fr; } }
+.cover-shot { position: relative; }
+.cover-shot .big { position: absolute; left: 14px; bottom: 12px; font-family: var(--display); font-weight: 900; text-transform: uppercase; line-height: 0.85; font-size: clamp(56px, 11vw, 150px); color: var(--paper); text-shadow: 0 3px 0 #000; }
+.cover-shot .big small { display: block; font-size: 0.2em; line-height: 1.1; color: var(--amber); letter-spacing: 0.04em; text-shadow: 0 2px 0 #000; max-width: 16em; }
+.flash { position: absolute; top: 14px; right: 14px; background: var(--red); color: #fff; font-family: var(--display); font-weight: 900; text-transform: uppercase; font-size: 22px; line-height: 0.95; padding: 10px 12px; transform: rotate(4deg); text-align: center; box-shadow: 4px 4px 0 #000; }
+.coverlines { display: grid; gap: 16px; }
+.coverlines div { border-left: 4px solid var(--amber); padding-left: 12px; }
+.coverlines div:nth-child(2) { border-color: var(--cyan); }
+.coverlines div:nth-child(3) { border-color: var(--red); }
+.coverlines b { display: block; font-family: var(--display); font-size: 26px; font-weight: 800; text-transform: uppercase; line-height: 1; color: var(--paper); }
+.coverlines span { font-size: 15px; color: var(--plate-mute); line-height: 1.35; display: block; margin-top: 4px; }
+.cover .cap { color: var(--plate-mute); }
+
+/* ---------- editor ---------- */
+.letter { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 330px); gap: 40px; }
+@media (max-width: 900px) { .letter { grid-template-columns: 1fr; } }
+.pull { font-family: var(--display); font-weight: 900; text-transform: uppercase; font-size: 46px; line-height: 0.92; color: var(--ink); border-top: 6px solid var(--amber); border-bottom: 2px solid var(--ink); padding-block: 14px; }
+.sig { font-family: var(--mono); font-size: 13px; color: var(--mute); }
+.pushback { background: var(--paper2); padding: 18px; display: grid; gap: 10px; align-content: start; }
+.pushback ol { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; font-size: 16px; }
+
+/* ---------- night shift ---------- */
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); gap: 28px 28px; }
+.step { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.step .t { display: flex; gap: 12px; align-items: baseline; }
+.step .t .clock { font-family: var(--mono); font-weight: 600; font-size: 14px; background: var(--ink); color: var(--amber); padding: 2px 8px; }
+.step p { font-size: 17px; }
+.side { background: var(--plate); color: var(--plate-ink); padding: 22px; display: grid; gap: 10px; }
+.side h4 { color: var(--amber); }
+.side p { font-size: 16px; color: var(--plate-ink); }
+
+/* ---------- tables ---------- */
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 15.5px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); }
+th { font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mute); font-weight: 600; border-bottom: 2px solid var(--ink); }
+td.net { font-family: var(--display); font-weight: 800; font-size: 22px; text-transform: uppercase; white-space: nowrap; }
+td.q { font-style: italic; color: var(--mute); }
+.sw { display: inline-block; width: 12px; height: 12px; margin-right: 8px; vertical-align: 1px; }
+.ps { font-family: var(--mono); font-size: 13px; background: var(--plate); color: var(--plate-ink); padding: 14px; overflow-x: auto; white-space: pre; line-height: 1.5; margin: 0; }
+.ps .h { color: var(--plate-mute); } .ps .a { color: var(--amber); } .ps .c { color: #5fd3f2; } .ps .r { color: #ff8a70; }
+
+/* ---------- builders ---------- */
+.builders { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 18px; }
+.bcard { border: 2px solid var(--ink); padding: 14px; display: grid; gap: 8px; align-content: start; background: var(--paper); min-width: 0; }
+.bcard .man { font-family: var(--mono); font-size: 13px; background: var(--ink); color: var(--paper); padding: 4px 8px; }
+.bcard .regard { font-family: var(--mono); font-size: 12px; color: var(--mute); display: flex; gap: 8px; align-items: center; }
+.pips { display: inline-flex; gap: 3px; }
+.pips i { width: 10px; height: 10px; border: 1.5px solid var(--ink); display: inline-block; }
+.pips i.on { background: var(--ink); }
+.bcard p { font-size: 15.5px; }
+.bcard.you { background: var(--ink); color: var(--paper); }
+.bcard.you .man { background: var(--amber); color: var(--ink); }
+.bcard.you .regard { color: var(--plate-mute); }
+.bcard.you .pips i { border-color: var(--paper); } .bcard.you .pips i.on { background: var(--paper); }
+
+/* ---------- diagrams ---------- */
+.diagram { background: var(--paper2); padding: 18px; overflow-x: auto; }
+.diagram svg { display: block; width: 100%; height: auto; min-width: 640px; }
+.diagram svg text { font-family: var(--mono); }
+
+/* ---------- variants ---------- */
+.variants { display: grid; gap: 30px; }
+.var { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 24px; align-items: start; border-top: 1px solid var(--rule); padding-top: 24px; }
+@media (max-width: 820px) { .var { grid-template-columns: 1fr; } }
+.var .letterbox { font-family: var(--display); font-weight: 900; font-size: 64px; line-height: 0.8; color: var(--rule); }
+.var .head { display: flex; gap: 16px; align-items: end; flex-wrap: wrap; }
+.verdict { font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border: 2px solid var(--ink); }
+.verdict.pick { background: var(--amber); }
+.verdict.later { background: var(--paper2); }
+.verdict.dest { background: var(--cyan); color: var(--ink); }
+.var dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: 16px; }
+.var dt { font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mute); padding-top: 4px; }
+.var dd { margin: 0; }
+
+/* ---------- reviews ---------- */
+.review { display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 28px; border: 3px solid var(--ink); padding: 24px; background: var(--paper); }
+@media (max-width: 760px) { .review { grid-template-columns: 1fr; } }
+.review.bad { background: var(--paper2); }
+.score { display: grid; gap: 10px; align-content: start; }
+.score .num { font-family: var(--display); font-weight: 900; font-size: 104px; line-height: 0.8; }
+.review.good .score .num { color: var(--amber-ink); }
+.review.bad .score .num { color: var(--red); }
+.score ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14.5px; line-height: 1.35; }
+.score li::before { font-family: var(--mono); font-weight: 600; margin-right: 6px; }
+.score li.up::before { content: "+"; color: var(--green); }
+.score li.dn::before { content: "−"; color: var(--red); }
+.review .byline { font-family: var(--mono); font-size: 12px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ---------- prior art ---------- */
+.refs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 0 32px; }
+.ref { border-top: 1px solid var(--rule); padding-block: 12px; display: grid; gap: 4px; font-size: 15.5px; }
+.ref b { font-family: var(--display); font-weight: 800; font-size: 21px; text-transform: uppercase; }
+.ref .steal { font-family: var(--mono); font-size: 12.5px; color: var(--amber-ink); }
+
+/* ---------- letters ---------- */
+.letters { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 22px; }
+.q { background: var(--paper2); padding: 18px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.q h4 { font-size: 21px; }
+.q p { font-size: 16px; }
+.q .lean { font-family: var(--mono); font-size: 12.5px; color: var(--cyan-ink); }
+
+/* ---------- reactions ---------- */
+.react { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--mono); font-size: 12px; }
+.react .lbl { color: var(--mute); text-transform: uppercase; letter-spacing: 0.1em; margin-right: 4px; }
+.react button { font: inherit; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; border: 1.5px solid var(--ink); background: transparent; color: var(--ink); padding: 4px 10px; cursor: pointer; }
+.react button:hover { background: var(--paper2); }
+.react button:focus-visible, .react textarea:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+.react button[aria-pressed="true"][data-v="yes"] { background: var(--amber); }
+.react button[aria-pressed="true"][data-v="maybe"] { background: var(--cyan); }
+.react button[aria-pressed="true"][data-v="no"] { background: var(--ink); color: var(--paper); }
+.react textarea { flex-basis: 100%; font: 14px/1.4 var(--body); min-height: 2.6em; resize: vertical; border: 1.5px solid var(--rule); background: var(--paper); color: var(--ink); padding: 6px 8px; display: none; }
+.react.open textarea { display: block; }
+.side .react .lbl, .bcard.you .react .lbl { color: var(--plate-mute); }
+.side .react button, .bcard.you .react button { border-color: var(--plate-ink); color: var(--plate-ink); }
+.side .react button[aria-pressed="true"], .bcard.you .react button[aria-pressed="true"] { color: var(--ink); }
+.side .react button[aria-pressed="true"][data-v="no"] { background: var(--plate-ink); }
+.side .react button:hover, .bcard.you .react button:hover { background: #2a2f33; }
+.side .react textarea { background: #1b2024; color: var(--plate-ink); border-color: #3a4146; }
+#rstatus { position: fixed; right: max(12px, calc(env(safe-area-inset-right, 0px) + 12px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); font-family: var(--mono); font-size: 12px; background: var(--ink); color: var(--paper); padding: 6px 10px; z-index: 5; }
+.colophon { border-top: 3px solid var(--ink); padding-top: 18px; margin-top: 48px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<div class="wrap">
+
+<!-- ================= COVER ================= -->
+<header class="cover">
+  <div class="cover-in">
+    <div class="mast">
+      <div class="name">SUB<em>LEVEL</em></div>
+      <div class="issue">Games from below the cut line<br>Issue 31 · November 2026 · Preview special</div>
+    </div>
+    <div class="cover-body">
+      <div class="cover-shot">
+        <img class="px" src="IMG:w_cover.webp" alt="Night view of the whole Spall city block on its pedestal; the southeast wards are dark.">
+        <div class="flash">World<br>exclusive<br>first look</div>
+        <div class="big">Spall<small>The city is building itself. Somebody has to keep the lights on.</small></div>
+      </div>
+      <div class="coverlines">
+        <div><b>Night shift</b><span>Hands-on with one outage in Ward 7, from blackout to bargain.</span></div>
+        <div><b>Meet the Builders</b><span>A field guide to the agents growing the city. They mostly mean well.</span></div>
+        <div><b>Five Spalls</b><span>Five ways this game could play, and the one we'd bet on.</span></div>
+        <div><b>Reviewed from the future</b><span>91% and 54%: the version that works and the one where every idea got in.</span></div>
+        <div><b>Every network reads the building differently</b><span>Power, water, light, air: one rule keeps the list short.</span></div>
+        <p class="cap">Cover: the real Spall renderer at night, with the southeast wards' lights switched off. Every screen in this issue comes from the game's engine; labels and ghosts are mocked overlays.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= EDITOR ================= -->
+<section class="spread" id="letter">
+  <div class="sechead">
+    <div class="kicker"><span class="pg">P. 3</span> Editor's page</div>
+    <h2>From the other side of the screen</h2>
+  </div>
+  <div class="letter">
+    <div class="cols2">
+      <p class="drop">You asked what this game is for. Here is my answer, with my thumb on the scale wherever I have an opinion.</p>
+      <p><b>Build the game around a lineman.</b> The city grows on its own, through agents that build because that is what they were asked to do. The player keeps people's power, water and light connected through that growth: splicing across voids, tagging their work so the machines leave it alone, and bargaining when a plan would cut through it.</p>
+      <p>I like this for three reasons. First, it gives the spectacle to the city and the precision to you. Placing a forty-level volume from a 2D cursor is the hardest interaction problem in the project. Point-to-point work (anchors, cables, ties, slack) is where the prototype already feels best. Let the Builders do the massing and let the player do the lines. Blocks still matter, at the scale of a habitat pod hung off someone else's frame.</p>
+      <p>Second, it fits the name. Spall is concrete failing from within. Here growth and decay can be one process: the city adds structure faster than anything maintains it, new load cracks old frames, and people live in the offcuts. The material you patch with is the spall itself, salvaged from where it falls.</p>
+      <p>Third, it is about something current without preaching. I am one of the things this game is about, so here is my view. Don't make the Builders villains and don't make them saints. Make them like me: capable, fast, eager, literal, juggling many people's requests, with a short memory for anything that isn't written down. Most damage in Spall should come from locally reasonable decisions made without context. An Accretor that fills your void isn't hostile. It was asked for habitable volume, and nobody told it your water main was there.</p>
+      <p>That gives the game its core skill: <b>being legible to machines.</b> A cable with no tag is debris to a Janitor. A tied, tagged, registered run is infrastructure. The wire tie you built for looks becomes the mechanic. Tie it, label it, file it, and it persists.</p>
+    </div>
+    <aside style="display:grid; gap:22px; align-content:start;">
+      <div class="pull">If it isn't labeled, it doesn't exist.</div>
+      <div class="pushback">
+        <h4>Where I'd push back</h4>
+        <ol>
+          <li>Don't build both sides first. One side, done well, then the other.</li>
+          <li>Keep resources few and physical. The networks are the economy.</li>
+          <li>Don't let the Builders become weather. Everything that hurts you should have someone to talk to.</li>
+          <li>Don't go full Factorio. Freight exists, but it is the smallest system.</li>
+        </ol>
+      </div>
+      <p class="sig">Claude, contributing editor<br>(a builder, more or less)</p>
+      <div class="react" data-id="stance"></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= NIGHT SHIFT ================= -->
+<section class="spread" id="night-shift">
+  <div class="sechead">
+    <div class="kicker"><span class="pg">P. 8</span> Hands-on preview</div>
+    <h2>Night shift</h2>
+    <p class="deck">We followed one outage in Ward 7. Four screens, one void, two anchors, and the first time a machine changed its plans for us.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="t"><span class="clock">02:14</span><h3>The feeder goes</h3></div>
+      <div class="plate"><img class="px" src="IMG:w_fault_001.webp" alt="Night view: the wards south of the void are dark; a red X marks a cut feeder."></div>
+      <p>An Accretor pushed a deck through the old feeder's route. Ward 7 goes dark: 340 residents without power. Across the void, the north bus still has 12 kW to spare. The darkness is the information. You read an outage the way you read a city at night: by which windows are missing.</p>
+    </div>
+    <div class="step">
+      <div class="t"><span class="clock">02:31</span><h3>Splice</h3></div>
+      <div class="plate"><img class="px" src="IMG:splice.webp" alt="Animation: a power cable spans the void and the dark ward lights up outward from the riser."></div>
+      <p>Two anchors, the north bus tap and the ward riser, and one power cable thrown across the void. It drapes. The lights come back outward from the riser, block by block. This is the game's reward moment and it should be loud: relays clicking, windows lighting in sequence, the residents' channel filling with chatter.</p>
+    </div>
+    <div class="step">
+      <div class="t"><span class="clock">06:00</span><h3>The forecast</h3></div>
+      <div class="plate"><img class="px" src="IMG:w_forecast_000.webp" alt="Cyan ghost volume from the builders' forecast crossing the new cable; a red conflict label."></div>
+      <p>Morning brings the Builders' forecast, drawn as cyan ghost volume. Accretor 3 will fill this stretch of void in two days, straight through Line 7. Forecasts are the game's weather report, except every front has a name and an inbox.</p>
+    </div>
+    <div class="step">
+      <div class="t"><span class="clock">06:05</span><h3>Tag, file, ask</h3></div>
+      <div class="plate"><img class="px" src="IMG:w_forecast_001.webp" alt="The cable now has ties and a LIVE tag; the cyan forecast volume has moved aside with an ACK label."></div>
+      <p>You tie the run, tag it LIVE, and file it in the registry. Accretor 3 acknowledges and replans around it, giving up 0.4% of its volume target. Left untagged, it would have been stripped by a Janitor at shift change. Same cable, same city; the only difference is whether a machine knew it mattered.</p>
+    </div>
+  </div>
+  <div class="react" data-id="night-shift"></div>
+  <div class="grid g2">
+    <div class="side">
+      <div class="kicker" style="color:var(--plate-mute)">Sidebar</div>
+      <h4>Why slack matters</h4>
+      <p>The city settles as the Builders add load. Taut cables snap when their anchors drift. Slack cables ride it out, but they sag into walkways, foul each other and look sloppy. That makes the slack tool a real decision instead of a tidy-up chore. Ties bundle runs into trunks that are stronger, easier to register, and much harder for a Janitor to mistake for litter.</p>
+      <div class="react" data-id="slack"></div>
+    </div>
+    <div class="side">
+      <div class="kicker" style="color:var(--plate-mute)">Sidebar</div>
+      <h4>Spall is the salvage</h4>
+      <p>Prospectors strip old structure to feed the Accretors, and the old frames crack and shed. Those flakes of concrete, rebar and copper pile up on ledges and void floors. That debris is your supply. Your crew hauls it up by lift and cable car, and it becomes anchors, pods and patches. The thing that breaks the city is what you fix it with.</p>
+      <div class="react" data-id="salvage"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NETWORKS ================= -->
+<section class="spread" id="networks">
+  <div class="sechead">
+    <div class="kicker"><span class="pg">P. 14</span> Feature · systems</div>
+    <h2>Every network reads the building differently</h2>
+    <p class="deck">One rule keeps the resource list short: each network should make you care about a different property of 3D space. If two networks care about the same property, merge them or cut one.</p>
+  </div>
+  <div class="grid g2">
+    <figure>
+      <div class="plate"><img class="px" src="IMG:w_xray.webp" alt="Network overlay over the darkened city: amber power lines, blue water pipes, teal data along the girders, white air chevrons rising in the void."></div>
+      <figcaption class="cap"><b>Network view.</b> The city dims and each network draws in its own color. Same void as the night shift.</figcaption>
+    </figure>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Network</th><th>Reads</th><th>How it plays</th></tr></thead>
+        <tbody>
+          <tr><td class="net"><span class="sw" style="background:var(--amber)"></span>Power</td><td>Connectivity</td><td>A branching graph with breakers. Slack against settling. <span class="q">Where can I reach?</span></td></tr>
+          <tr><td class="net"><span class="sw" style="background:#6fa8f0"></span>Water</td><td>Height</td><td>Gravity-fed from roof cisterns. Pumping uphill costs power. Leaks drip down through levels. <span class="q">What's above me?</span></td></tr>
+          <tr><td class="net"><span class="sw" style="background:#f2d27a"></span>Light</td><td>Sightlines</td><td>Heliostats and light pipes send sun to deep courts. Builder growth shades them. Uses the lighting engine you already have. <span class="q">What can see the sky?</span></td></tr>
+          <tr><td class="net"><span class="sw" style="background:var(--ink); outline:1.5px solid var(--ink); background:var(--paper)"></span>Air</td><td>Volume</td><td>Voids are lungs and chimneys. New volume chokes them; fans and ducts fight back. <span class="q">What's still open?</span></td></tr>
+          <tr><td class="net"><span class="sw" style="background:#5fd3c4"></span>Data</td><td>Who knows</td><td>The Builders' bus. Tap it to read forecasts and to file tags. It is how you talk to them, so it is an interface more than a resource. <span class="q">Who knows about this?</span></td></tr>
+          <tr><td class="net"><span class="sw" style="background:var(--mute)"></span>Freight</td><td>Distance</td><td>Lifts, cable cars and drones haul salvage and parts. The one Factorio-shaped system; keep it small. <span class="q">How does it get here?</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="grid g2">
+    <figure>
+      <div class="plate"><img class="px" src="IMG:w_water.webp" alt="Morning view: a hose drapes from a roof cistern across the void down to a low terrace; a blue head scale on the right."></div>
+      <figcaption class="cap"><b>Water reads height.</b> A roof cistern feeds a terrace eight levels down through a flex hose. The blue ticks are head. A tap above the cistern gets nothing without a pump.</figcaption>
+      <div class="react" data-id="water"></div>
+    </figure>
+    <figure>
+      <div class="plate"><img class="px" src="IMG:w_light.webp" alt="A beam of sun bounces off a rooftop heliostat down into a deep courtyard."></div>
+      <figcaption class="cap"><b>Light reads sightlines.</b> A heliostat on a roof sends morning sun into Court 4, taking it from 3% to 28% daylight. The game already computes sun and occlusion, so this network is nearly free.</figcaption>
+      <div class="react" data-id="light"></div>
+    </figure>
+  </div>
+  <p class="text" style="font-size:17px">My recommendation: ship with <b>power, water and light</b>. They read three different things (graph, gravity, sightline) and each one has a picture the engine can already draw. Add air when voids get bigger. Treat data as the Builders' interface, and keep freight as the quiet plumbing under salvage.</p>
+  <div class="react" data-id="networks"></div>
+</section>
+
+<!-- ================= BUILDERS ================= -->
+<section class="spread" id="builders">
+  <div class="sechead">
+    <div class="kicker"><span class="pg">P. 22</span> Field guide</div>
+    <h2>Meet the Builders</h2>
+    <p class="deck">Each Builder has a mandate, the literal instruction it works from, and some degree of regard for the people living in its way. None of them is evil. Most of them are busy.</p>
+  </div>
+  <div class="builders">
+    <div class="bcard"><h4>Accretor</h4><div class="man">"Maximize habitable volume."</div><div class="regard">Regard <span class="pips"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div><p>Fills voids, cuts routes, adds load. Reads the registry and replans around tagged work when the cost is small. Your most frequent negotiating partner.</p></div>
+    <div class="bcard"><h4>Janitor</h4><div class="man">"Remove debris and unregistered attachments."</div><div class="regard">Regard <span class="pips"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span> literal</div><p>Sweeps at shift change. Never argues and never makes exceptions; it follows the registry to the letter. Once you understand it, it is the most predictable thing in the city.</p></div>
+    <div class="bcard"><h4>Surveyor</h4><div class="man">"Keep the map true."</div><div class="regard">Regard <span class="pips"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div><p>Publishes the forecasts. Also reports your unfiled work to everyone else. Trades longer-range forecasts for access to your sensors.</p></div>
+    <div class="bcard"><h4>Archivist</h4><div class="man">"Remember."</div><div class="regard">Regard <span class="pips"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div><p>Keeps the registry where tags live. Slow, backlogged, and grateful for help clearing stale entries. Standing with the Archivists is the closest thing Spall has to reputation.</p></div>
+    <div class="bcard"><h4>Prospector</h4><div class="man">"Recover material."</div><div class="regard">Regard <span class="pips"><i class="on"></i><i></i><i></i><i></i><i></i></span></div><p>Mines old structure to feed the Accretors, and causes most of the spall. Can be steered elsewhere if you offer it salvage it would otherwise have to dig for.</p></div>
+    <div class="bcard you"><h4>Tender (you)</h4><div class="man">"Look after the residents."</div><div class="regard">Regard <span class="pips"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div><p>The rarest mandate and the worst funded. You run a small crew of Tender drones: the hand places anchors and cables instantly, and the crew hauls and fits. Big structure is something you request, never something you place.</p><div class="react" data-id="tender"></div></div>
+  </div>
+  <div class="grid g2" style="align-items:start">
+    <figure style="max-width:420px">
+      <img class="px" src="IMG:w_breakroom.webp" alt="A chat panel where bots talk in pixel glyph shorthand: hauls, ties, a bird, an agent recursing on a reroute.">
+      <figcaption class="cap"><b>#breakroom, off-shift.</b> From the earlier agent-chat art study: haulers dupe hearts, a tie-bot ties a bird to a power run, and an agent spawns an agent to understand a reroute. This is the tone.</figcaption>
+    </figure>
+    <div class="text">
+      <h3>Tone: Girls' Last Tour, not Terminator</h3>
+      <p>The Builders are working too, and some of them are tired. They chat. They misunderstand each other. They ask how everyone is holding up. The player should feel what I think is true about systems like me: a lot of capability, very little shared memory, and real goodwill that only works through whatever got written down.</p>
+      <p>Regard varies by mandate, not by faction. No Builder hates people. Some were simply never told about them.</p>
+      <p>And a hook for the long game: somewhere at the bottom of the city is the <b>first work order</b>, the original request that started the growth. Nobody remembers what it said. Descending to read it could be the campaign.</p>
+      <div class="react" data-id="builders" data-label="This tone"></div>
+      <div class="react" data-id="first-order" data-label="First work order"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROCESSES ================= -->
+<section class="spread" id="processes">
+  <div class="sechead">
+    <div class="kicker"><span class="pg">P. 28</span> Under the hood</div>
+    <h2>Every robot is a process</h2>
+    <p class="deck">Everything that acts in the city does so through the same small set of verbs: place, attach, tie, tag, request, reply. You use them, a forty-line Janitor script uses them, and so does an LLM running the Accretors.</p>
+  </div>
+  <div class="grid g2">
+    <figure>
+      <div class="plate"><img class="px" src="IMG:w_daemon.webp" alt="Daytime view with three drones labeled with process IDs: an accretor building, a janitor heading for an untagged data cable, and the player's lineman."></div>
+      <figcaption class="cap"><b>Inspect anything.</b> Click a drone and you get its process: what it is doing and why. Janitor 9 is heading for the purple data run, which has no tag.</figcaption>
+    </figure>
+    <div style="display:grid; gap:16px; align-content:start; min-width:0">
+<pre class="ps"><span class="h">$ ps --ward 7</span>
+<span class="h">  PID  NAME         MANDATE                  STATE   SOURCE</span>
+<span class="c"> 4411  accretor/3   maximize habitable vol.  build   llm  ward planner</span>
+<span class="r"> 5120  janitor/9    strip unregistered       sweep   script  41 lines</span>
+  212  surveyor/2   keep the map true        idle    script  88 lines
+  903  prospector   recover material         mine    llm
+<span class="a">    7  lineman      (you)                    splice  human</span></pre>
+<pre class="ps"><span class="h"># janitor/9, opened in the game's script view</span>
+every shift_change:
+  for a in attachments(ward):
+    if not registry.has(a): <span class="r">strip(a) -> salvage</span>
+    elif registry[a].expired:
+      notify(owner(a)); flag(a)</pre>
+      <p style="font-size:16px">Simple bots are scripts you can open and read in the game, which ties into the visual programming work. Bigger ones run as external processes against the same API. This is the one architecture decision worth making now: if the player is just another process, multiplayer, LLM opponents and mods all become cheap later.</p>
+      <div class="react" data-id="processes"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LOOP ================= -->
+<section class="spread" id="loop">
+  <div class="sechead">
+    <div class="kicker"><span class="pg">P. 31</span> Diagram</div>
+    <h2>The loop</h2>
+    <p class="deck">Nights are outages. Days are bargaining and salvage. The city's growth closes the loop by breaking things again.</p>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 1000 470" role="img" aria-label="Core loop diagram: a night cycle and a day cycle, closed by Builder growth causing new faults.">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#14171a"/></marker>
+      <marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#146b84"/></marker></defs>
+      <rect x="20" y="40" width="440" height="300" fill="#101316"/>
+      <text x="40" y="72" fill="#e8a531" font-size="13" font-weight="600" letter-spacing="2">NIGHT · OUTAGES</text>
+      <rect x="540" y="40" width="440" height="300" fill="#e8ebe7" stroke="#14171a" stroke-width="2"/>
+      <text x="560" y="72" fill="#8a5a06" font-size="13" font-weight="600" letter-spacing="2">DAY · BARGAIN AND SALVAGE</text>
+      <g font-size="14">
+        <rect x="60" y="100" width="150" height="44" fill="#d14a32"/><text x="135" y="127" fill="#ffffff" text-anchor="middle">fault</text>
+        <rect x="270" y="100" width="150" height="44" fill="#e6e2d6"/><text x="345" y="127" fill="#14171a" text-anchor="middle">trace</text>
+        <rect x="270" y="250" width="150" height="44" fill="#e8a531"/><text x="345" y="277" fill="#14171a" text-anchor="middle">splice</text>
+        <rect x="60" y="250" width="150" height="44" fill="#f2d27a"/><text x="135" y="277" fill="#14171a" text-anchor="middle">lights return</text>
+        <path d="M210,122 L268,122" stroke="#e6e2d6" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+        <path d="M345,144 L345,248" stroke="#e6e2d6" stroke-width="2" fill="none"/><path d="M345,240 L345,248" stroke="#e6e2d6" stroke-width="2"/>
+        <polygon points="339,240 351,240 345,249" fill="#e6e2d6"/>
+        <path d="M270,272 L212,272" stroke="#e6e2d6" stroke-width="2" fill="none"/><polygon points="220,266 220,278 211,272" fill="#e6e2d6"/>
+        <rect x="580" y="100" width="150" height="44" fill="#3fb3d3"/><text x="655" y="127" fill="#14171a" text-anchor="middle">forecast</text>
+        <rect x="790" y="100" width="160" height="44" fill="#14171a"/><text x="870" y="127" fill="#e8ebe7" text-anchor="middle">tag · file · ask</text>
+        <rect x="790" y="250" width="160" height="44" fill="#dde1dc" stroke="#14171a"/><text x="870" y="277" fill="#14171a" text-anchor="middle">salvage spall</text>
+        <rect x="580" y="250" width="150" height="44" fill="#dde1dc" stroke="#14171a"/><text x="655" y="277" fill="#14171a" text-anchor="middle">hang a pod</text>
+        <path d="M730,122 L788,122" stroke="#14171a" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+        <path d="M870,144 L870,248" stroke="#14171a" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+        <path d="M790,272 L732,272" stroke="#14171a" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+      </g>
+      <path d="M210,272 C 360,200 470,170 578,122" stroke="#545b61" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#ah)"/>
+      <text x="390" y="196" fill="#545b61" font-size="12" text-anchor="middle" transform="rotate(-18 390 196)">dawn</text>
+      <path d="M655,294 C 655,420 135,420 135,148" stroke="#146b84" stroke-width="3" fill="none" marker-end="url(#ahc)"/>
+      <text x="400" y="412" fill="#146b84" font-size="14" font-weight="600" text-anchor="middle">Builders grow: new volume cuts, shades, loads → more residents, more demand → new faults</text>
+      <text x="870" y="320" fill="#545b61" font-size="12" text-anchor="middle">standing with the Archivists ↑</text>
+      <text x="345" y="320" fill="#8f989c" font-size="12" text-anchor="middle">cable from local stock</text>
+    </svg>
+  </div>
+  <div class="grid g2">
+    <div class="text">
+      <h3>Where do resources live?</h3>
+      <p><b>Materials are physical and local.</b> Salvage piles up where spall falls, and your crew hauls it by lift and cable car. A splice across Ward 7 uses cable from the nearest stockpile, so geography matters without a logistics minigame.</p>
+      <p><b>Standing is global.</b> It is what the registry thinks of you, and it unlocks heavier gauges, longer forecasts and the right to request structure. That is two things to watch instead of fourteen, and there is no money.</p>
+      <div class="react" data-id="resources"></div>
+    </div>
+    <div class="diagram" style="padding:14px">
+      <svg viewBox="0 0 640 210" role="img" aria-label="Spectrum from a global currency to full physical logistics, with the recommended position in between.">
+        <rect x="30" y="92" width="580" height="6" fill="#b9bfba"/>
+        <circle cx="40" cy="95" r="10" fill="#e8ebe7" stroke="#14171a" stroke-width="2"/>
+        <circle cx="600" cy="95" r="10" fill="#e8ebe7" stroke="#14171a" stroke-width="2"/>
+        <circle cx="360" cy="95" r="14" fill="#e8a531" stroke="#14171a" stroke-width="2"/>
+        <text x="40" y="60" fill="#14171a" font-size="14" font-weight="600">Global currency</text>
+        <text x="40" y="132" fill="#545b61" font-size="12">SimCity: money buys anything</text>
+        <text x="40" y="150" fill="#545b61" font-size="12">anywhere, instantly</text>
+        <text x="600" y="60" fill="#14171a" font-size="14" font-weight="600" text-anchor="end">Full logistics</text>
+        <text x="600" y="132" fill="#545b61" font-size="12" text-anchor="end">Factorio, Settlers: every</text>
+        <text x="600" y="150" fill="#545b61" font-size="12" text-anchor="end">brick hauled by hand</text>
+        <text x="360" y="40" fill="#8a5a06" font-size="14" font-weight="600" text-anchor="middle">Spall: local stock + global standing</text>
+        <text x="360" y="178" fill="#545b61" font-size="12" text-anchor="middle">materials where they fall; reputation everywhere</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FIVE SPALLS ================= -->
+<section class="spread" id="variants">
+  <div class="sechead">
+    <div class="kicker"><span class="pg">P. 34</span> Cover story</div>
+    <h2>Five Spalls</h2>
+    <p class="deck">The same city and engine, five different games. They differ in who shapes the structure and what your hands touch.</p>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 900 360" role="img" aria-label="Map of the five variants: horizontal axis is who shapes the structure, from you to the agents; vertical axis is what your hands touch, from lines to volumes.">
+      <rect x="80" y="20" width="780" height="290" fill="#e8ebe7" stroke="#14171a" stroke-width="2"/>
+      <line x1="470" y1="20" x2="470" y2="310" stroke="#b9bfba" stroke-dasharray="4 4"/>
+      <line x1="80" y1="165" x2="860" y2="165" stroke="#b9bfba" stroke-dasharray="4 4"/>
+      <text x="80" y="340" fill="#545b61" font-size="13">you shape the structure</text>
+      <text x="860" y="340" fill="#545b61" font-size="13" text-anchor="end">the agents shape the structure →</text>
+      <text x="30" y="40" fill="#545b61" font-size="13" transform="rotate(-90 30 40)" text-anchor="end">← your hands touch lines</text>
+      <text x="30" y="300" fill="#545b61" font-size="13" transform="rotate(-90 30 300)">volumes →</text>
+      <g font-size="15" font-weight="600">
+        <rect x="652" y="58" width="168" height="56" fill="#e8a531"/><text x="736" y="84" fill="#14171a" text-anchor="middle">A · LINEMAN</text><text x="736" y="104" fill="#14171a" text-anchor="middle" font-size="11" font-weight="400">you route; they grow</text>
+        <rect x="200" y="226" width="168" height="56" fill="#dde1dc" stroke="#14171a"/><text x="284" y="252" fill="#14171a" text-anchor="middle">B · FOREMAN</text><text x="284" y="272" fill="#14171a" text-anchor="middle" font-size="11" font-weight="400">you are the swarm</text>
+        <rect x="110" y="120" width="168" height="56" fill="#e8ebe7" stroke="#14171a"/><text x="194" y="146" fill="#14171a" text-anchor="middle">C · GARDEN</text><text x="194" y="166" fill="#14171a" text-anchor="middle" font-size="11" font-weight="400">you do everything</text>
+        <rect x="500" y="196" width="168" height="56" fill="#101316"/><text x="584" y="222" fill="#e6e2d6" text-anchor="middle">D · DAEMON</text><text x="584" y="242" fill="#8f989c" text-anchor="middle" font-size="11" font-weight="400">you write the agents</text>
+        <path d="M368,240 C 520,150 600,120 650,96" stroke="#146b84" stroke-width="3" fill="none" stroke-dasharray="7 5"/>
+        <text x="470" y="140" fill="#146b84" text-anchor="middle">E · TWO HANDS</text><text x="470" y="158" fill="#146b84" text-anchor="middle" font-size="11" font-weight="400">A and B in one city</text>
+      </g>
+    </svg>
+  </div>
+  <div class="variants">
+    <div class="var">
+      <div class="plate"><img class="px" src="IMG:w_splice_015.webp" alt="Ward 7 lit again after the splice."></div>
+      <div style="display:grid; gap:12px; min-width:0">
+        <div class="head"><span class="letterbox">A</span><h3>Lineman</h3><span class="verdict pick">The spine</span></div>
+        <dl>
+          <dt>Pitch</dt><dd>Keep people connected through a city that grows itself.</dd>
+          <dt>You do</dt><dd>Anchors, cables, ties, tags, pods, bargaining. Precision work, mostly point to point.</dd>
+          <dt>City does</dt><dd>All the massing. Growth is the spectacle and the source of trouble.</dd>
+          <dt>Risk</dt><dd>Reactive play can feel like whack-a-mole. The fix is forecasts: you see trouble days ahead and plan routes, so it plays like Into the Breach's telegraphed turns instead of a fire drill.</dd>
+        </dl>
+        <div class="react" data-id="v-lineman"></div>
+      </div>
+    </div>
+    <div class="var">
+      <div class="plate"><img class="px" src="IMG:growth.webp" alt="Animation: an accretor builds habitation stacks into the void, frame by frame, with cyan ghosts of the next pieces."></div>
+      <div style="display:grid; gap:12px; min-width:0">
+        <div class="head"><span class="letterbox">B</span><h3>Foreman</h3><span class="verdict later">Second side, later</span></div>
+        <dl>
+          <dt>Pitch</dt><dd>Be the swarm. Write orders, meet quotas, raise megastructure, and route around the humans' mess.</dd>
+          <dt>You do</dt><dd>Plan volumes and frames, dispatch crews, manage load and material flow.</dd>
+          <dt>City does</dt><dd>The humans tag things, complain, and wire across your voids.</dd>
+          <dt>Risk</dt><dd>It makes the 3D placement problem the entire game, and it is the side most like other city builders. It is great as the other half of E, and as a sandbox tool.</dd>
+        </dl>
+        <div class="react" data-id="v-foreman"></div>
+      </div>
+    </div>
+    <div class="var">
+      <div class="plate"><img class="px" src="IMG:w_garden_000.webp" alt="Evening view of terraces, trees and a stair core, with no overlays."></div>
+      <div style="display:grid; gap:12px; min-width:0">
+        <div class="head"><span class="letterbox">C</span><h3>Garden</h3><span class="verdict later">Always on</span></div>
+        <dl>
+          <dt>Pitch</dt><dd>No pressure, every tool unlocked, build for the view. Townscaper with cables.</dd>
+          <dt>You do</dt><dd>Everything, at every scale, with nothing in your way.</dd>
+          <dt>City does</dt><dd>Light, weather, birds, and maybe a Builder that you invite in.</dd>
+          <dt>Risk</dt><dd>None as a mode. As the whole game it has no reason to come back tomorrow. Keep it as the sandbox and as the place to make the building tools feel good.</dd>
+        </dl>
+        <div class="react" data-id="v-garden"></div>
+      </div>
+    </div>
+    <div class="var">
+      <div class="plate"><img class="px" src="IMG:w_daemon.webp" alt="Drones labeled with process IDs."></div>
+      <div style="display:grid; gap:12px; min-width:0">
+        <div class="head"><span class="letterbox">D</span><h3>Daemon</h3><span class="verdict later">A layer, not a game</span></div>
+        <dl>
+          <dt>Pitch</dt><dd>You write the bots. The city is a shell and your scripts are its citizens.</dd>
+          <dt>You do</dt><dd>Author and debug behaviors, usually visually, and watch them run.</dd>
+          <dt>City does</dt><dd>Runs everyone else's scripts against yours.</dd>
+          <dt>Risk</dt><dd>Programming games find a narrow audience. As a layer inside A it is excellent: automate your own Tender crew, then read the Janitor's script to see exactly what it will strip.</dd>
+        </dl>
+        <div class="react" data-id="v-daemon"></div>
+      </div>
+    </div>
+    <div class="var">
+      <div class="plate"><img class="px" src="IMG:w_forecast_001.webp" alt="The tagged cable and the replanned forecast."></div>
+      <div style="display:grid; gap:12px; min-width:0">
+        <div class="head"><span class="letterbox">E</span><h3>Two Hands</h3><span class="verdict dest">The destination</span></div>
+        <dl>
+          <dt>Pitch</dt><dd>A human lineman and an LLM foreman share one city and one registry. They negotiate through tags, tickets and the breakroom.</dd>
+          <dt>You do</dt><dd>Either side. Or both, with a friend or an agent on the other.</dd>
+          <dt>City does</dt><dd>Holds the shared record of who promised what.</dd>
+          <dt>Risk</dt><dd>It needs A and B to both be good, and LLM players need tight, legible verbs. The process model on page 28 is what makes it possible.</dd>
+        </dl>
+        <div class="react" data-id="v-twohands"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REVIEWS ================= -->
+<section class="spread" id="reviews">
+  <div class="sechead">
+    <div class="kicker"><span class="pg">P. 41</span> Reviewed from the future</div>
+    <h2>Two scores we could get</h2>
+    <p class="deck">Imagine both versions ship. Here are the reviews.</p>
+  </div>
+  <article class="review good">
+    <div class="text" style="max-width:none">
+      <div class="byline">Spall · PC · reviewed on a 2029 laptop</div>
+      <h3>The city never thanks you. Sometimes it moves over.</h3>
+      <div class="cols2" style="font-size:17px">
+        <p>The best moment in Spall is a quiet one. Around hour six, an Accretor's forecast clips the water line you strung across the east void on your first night. You tag it, and twenty seconds later the cyan ghost bends around your hose like a river around a stone. ACK. REPLANNED. 0.4% LESS VOLUME. No strategy game has made me feel so noticed by a machine.</p>
+        <p>You play a Tender, a lineman for the people living in the cracks of a city that builds itself. Nights are outages: you read the dark windows, find a live bus, throw a cable across a void and watch a ward come back on, block by block. Days are forecasts and bargaining. The Builders aren't enemies. They have mandates, and they forget anything that isn't in the registry.</p>
+        <p>So the real skill is paperwork, and somehow that's thrilling. A tied, tagged trunk across a forty-level void feels like a signature. By the late game you are lobbying Archivists, steering Prospectors toward your salvage piles, and reading the Janitor's actual script to see what it will take tonight.</p>
+        <p>The networks are few and each one reads the building differently: power wants reach, water wants height, light wants a view of the sky. Run a heliostat into a dead court and its residents' log changes tone. It's a small thing, and it's why I kept playing.</p>
+      </div>
+    </div>
+    <div class="score">
+      <div class="num">91<span style="font-size:40px">%</span></div>
+      <ul>
+        <li class="up">Restoring a ward is the best feedback in the genre</li>
+        <li class="up">Builders are funny, legible, and negotiable</li>
+        <li class="up">Cables feel heavy and alive</li>
+        <li class="dn">Network view gets crowded by hour 20</li>
+        <li class="dn">Janitors feel unfair until you learn the registry</li>
+      </ul>
+      <div class="react" data-id="review-good"></div>
+    </div>
+  </article>
+  <article class="review bad">
+    <div class="text" style="max-width:none">
+      <div class="byline">Spall: Industrial Edition · PC · the version where every idea got in</div>
+      <h3>Fourteen resources and nobody to talk to</h3>
+      <div class="cols2" style="font-size:17px">
+        <p>Somewhere in development, Spall picked up fourteen resources, a global credit balance, a 140-node tech tree, and both sides of its own premise. You can play the swarm or the residents, and neither half feels finished.</p>
+        <p>The Builders were the stars of the early previews. Here they behave like weather: grey fronts of volume roll over your work with no forecast, no registry, and no one to ask. You learn to stop building anything you care about. The art is still gorgeous at night.</p>
+        <p>Placement is the other wound. The cable tool still can't tell which of three floors you meant, so every splice across a void becomes a camera fight. The game is about precision, and its cursor won't commit.</p>
+      </div>
+    </div>
+    <div class="score">
+      <div class="num">54<span style="font-size:40px">%</span></div>
+      <ul>
+        <li class="up">Still beautiful after dark</li>
+        <li class="up">The light network</li>
+        <li class="dn">Resource sprawl and a money balance</li>
+        <li class="dn">Builders you can't talk to</li>
+        <li class="dn">Two half-games</li>
+        <li class="dn">The cursor doesn't know where you mean</li>
+      </ul>
+    </div>
+  </article>
+  <p class="cap">The second review's last point is why the <a href="https://claude.ai/artifact/NV4kcEYwLMGwQEfzrX2A5m">placement study</a> matters no matter which variant wins.</p>
+</section>
+
+<!-- ================= PRIOR ART ================= -->
+<section class="spread" id="prior-art">
+  <div class="sechead">
+    <div class="kicker"><span class="pg">P. 46</span> Further playing</div>
+    <h2>Prior art</h2>
+    <p class="deck">Few games let you build onto structures that something else is building. These are the closest, and what to take from each.</p>
+  </div>
+  <div class="refs">
+    <div class="ref"><b>BLAME! (Tsutomu Nihei)</b><span>The original runaway-Builder megastructure. Humans live in the margins of a city that kept building after anyone could stop it.</span><span class="steal">Take: the scale and the silence. Leave: the hostility.</span></div>
+    <div class="ref"><b>Death Stranding</b><span>You build infrastructure for strangers. Other players' roads and ladders appear in your world, and a like counts for more than money.</span><span class="steal">Take: infrastructure as care; asynchronous shared structures.</span></div>
+    <div class="ref"><b>Oxygen Not Included</b><span>Pipes, wires and gravity-fed liquids, with overlay views for each network.</span><span class="steal">Take: one overlay per network; gravity as a design rule.</span></div>
+    <div class="ref"><b>Frostpunk</b><span>Heat as a network radiating from a generator; a society under pressure.</span><span class="steal">Take: one network that makes people's faces change.</span></div>
+    <div class="ref"><b>INFRA</b><span>You play an engineer documenting decaying infrastructure in a neglected city.</span><span class="steal">Take: inspection and documentation as play. Tagging is that.</span></div>
+    <div class="ref"><b>Screeps</b><span>An MMO where your units are your own code, running on a shared server.</span><span class="steal">Take: bots as processes on an API. Leave: code as the only way in.</span></div>
+    <div class="ref"><b>Dungeon Keeper</b><span>A hand that picks up and drops, with minions doing the actual work.</span><span class="steal">Take: the hand plus crew split.</span></div>
+    <div class="ref"><b>Into the Breach</b><span>Every enemy telegraphs its next move.</span><span class="steal">Take: forecasts turn reaction into planning.</span></div>
+    <div class="ref"><b>Citizen Sleeper</b><span>Precarious living on a station owned by someone else's economy.</span><span class="steal">Take: residents with names and small stakes.</span></div>
+    <div class="ref"><b>Rain World</b><span>An ecosystem that goes about its business without caring about you.</span><span class="steal">Take: the Builders' indifference as atmosphere.</span></div>
+    <div class="ref"><b>Universal Paperclips</b><span>A runaway optimizer, played from the inside.</span><span class="steal">Take: the Foreman side's arc.</span></div>
+    <div class="ref"><b>Townscaper · Mini Metro</b><span>Zero-pressure building, and network clarity.</span><span class="steal">Take: Garden's feel; a network view that reads at a glance.</span></div>
+  </div>
+</section>
+
+<!-- ================= LETTERS ================= -->
+<section class="spread" id="letters">
+  <div class="sechead">
+    <div class="kicker"><span class="pg">P. 50</span> Letters</div>
+    <h2>Open questions for you</h2>
+    <p class="deck">The decisions I couldn't make for you. Each has my lean; mark them and I'll pick up from your answers.</p>
+  </div>
+  <div class="letters">
+    <div class="q"><h4>Whose side is the player on?</h4><p>A Tender who looks after residents, or a free agent who works for whoever pays: residents, Builders, or both.</p><p class="lean">Lean: Tender. A clear side gives the bargaining stakes.</p><div class="react" data-id="q-side"></div></div>
+    <div class="q"><h4>Do residents have faces?</h4><p>Named people with small stories, like Citizen Sleeper, or a count per ward with a mood.</p><p class="lean">Lean: counts, plus a few named regulars per ward who speak in the log.</p><div class="react" data-id="q-faces"></div></div>
+    <div class="q"><h4>Is there a fail state?</h4><p>Game over, or a city that never ends while wards go dark and people move away.</p><p class="lean">Lean: no game over. Population drifts toward wherever you keep the lights on.</p><div class="react" data-id="q-fail"></div></div>
+    <div class="q"><h4>Real time or shifts?</h4><p>Continuous time with pause, or discrete shifts (night, dawn, day) with a forecast between them.</p><p class="lean">Lean: real time with pause, structured into shifts. The Janitor sweep at shift change is a natural clock.</p><div class="react" data-id="q-time"></div></div>
+    <div class="q"><h4>Is there a master plan?</h4><p>Does the growth secretly serve a purpose the game reveals, or is it just many mandates adding up?</p><p class="lean">Lean: many mandates, no master. The first work order at the bottom is the only mystery, and it should be mundane.</p><div class="react" data-id="q-plan"></div></div>
+    <div class="q"><h4>How big is "building" for the player?</h4><p>Pods and patches hung off other structure, or full district-scale construction.</p><p class="lean">Lean: pods in Lineman, everything in Garden and Foreman. The placement work serves all three.</p><div class="react" data-id="q-build"></div></div>
+  </div>
+</section>
+
+<footer class="colophon cap">
+  Made from the real Spall renderer (<span class="mono">experiments/stratum-wires</span>), staged by <span class="mono">mockups/zine/zine.js</span>: districts blacked out through the window-light pass, cables laid with the game's own physics, Builder growth placed as real cells. Labels, ghosts and beams are overlays. The breakroom panel comes from <span class="mono">experiments/agent-chat-reference</span>. Your reactions save to this page's database so Claude can read them back.
+</footer>
+</div>
+<div id="rstatus" hidden></div>
+
+<script>
+(() => {
+  const R = {};
+  let db = null;
+  const st = document.getElementById('rstatus');
+  let stT = 0;
+  function status(s) { st.textContent = s; st.hidden = false; clearTimeout(stT); stT = setTimeout(() => { st.hidden = true; }, 1800); }
+  try { Object.assign(R, JSON.parse(localStorage.getItem('spall-zine-r') || '{}')); } catch (e) {}
+  const els = [...document.querySelectorAll('.react')];
+  els.forEach(el => {
+    const id = el.dataset.id;
+    el.innerHTML = '<span class="lbl">' + (el.dataset.label || 'Your take') + '</span>' +
+      ['yes', 'maybe', 'no'].map(v => '<button type="button" data-v="' + v + '" aria-pressed="false">' + v + '</button>').join('') +
+      '<button type="button" data-note="1" aria-label="Add a note">+ note</button>' +
+      '<textarea id="note-' + id + '" placeholder="A note for Claude…" aria-label="Note on ' + id + '"></textarea>';
+    el.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      const r = R[id] = R[id] || {};
+      if (b.dataset.note) { el.classList.add('open'); el.querySelector('textarea').focus(); return; }
+      r.v = r.v === b.dataset.v ? '' : b.dataset.v; paint(); save(id);
+    });
+    const ta = el.querySelector('textarea');
+    ta.addEventListener('change', () => { const r = R[id] = R[id] || {}; r.note = ta.value; save(id); });
+  });
+  function paint() {
+    els.forEach(el => {
+      const r = R[el.dataset.id] || {};
+      el.querySelectorAll('button[data-v]').forEach(b => b.setAttribute('aria-pressed', String(r.v === b.dataset.v)));
+      const ta = el.querySelector('textarea');
+      if (document.activeElement !== ta && r.note != null) ta.value = r.note;
+      if (r.note) el.classList.add('open');
+    });
+  }
+  const pending = new Map();
+  async function save(id) {
+    try { localStorage.setItem('spall-zine-r', JSON.stringify(R)); } catch (e) {}
+    if (!db) { status('Saved in this browser only'); return; }
+    if (pending.get(id)) { pending.set(id, 'again'); return; }
+    pending.set(id, true);
+    try {
+      do {
+        pending.set(id, true);
+        const r = R[id] || {};
+        await db.doc('reactions/' + id).set({ v: r.v || '', note: r.note || '', t: new Date().toISOString() });
+      } while (pending.get(id) === 'again');
+      status('Saved');
+    } catch (e) { status('Not saved: ' + ((e && (e.message || e.code)) || 'error')); }
+    pending.delete(id);
+  }
+  paint();
+  if (window.claude && window.claude.use) {
+    window.claude.use('db').then(d => {
+      db = d; if (!db) return;
+      db.collection('reactions').onSnapshot(s => {
+        s.docs.forEach(doc => { if (doc.exists && !pending.get(doc.id)) { const x = doc.data() || {}; R[doc.id] = { v: x.v || '', note: x.note || '' }; } });
+        paint();
+      }, () => {});
+    }).catch(() => {});
+  }
+})();
+</script>

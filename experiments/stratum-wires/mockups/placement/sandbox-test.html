@@ -1,0 +1,14 @@
+<!doctype html><meta charset="utf-8"><title>sandbox test</title>
+<style>
+body{background:#0e0f11;color:#e6dfcf;font:13px "IBM Plex Sans",sans-serif;margin:20px}
+.sb{background:#0a0b0c;border:1px solid #2a2a27;padding:12px;display:flex;flex-direction:column;gap:8px;max-width:760px}
+.sb-bar{display:flex;flex-wrap:wrap;gap:8px}.sb-grp{display:flex}
+.sb button{font:600 12px monospace;text-transform:uppercase;color:#e6dfcf;background:#232428;border:1px solid #3a3b3f;padding:5px 9px;cursor:pointer}
+.sb button[aria-pressed=true]{background:#e8a83c;color:#1b1305}.sb button:disabled{opacity:.4}
+.sb-cut{font:600 13px monospace;color:#e8a83c;padding:0 8px;align-self:center}
+.sb-wrap{position:relative}.sb canvas{width:100%;display:block;image-rendering:pixelated}
+.sb-chip{position:absolute;pointer-events:none;background:#e8a83c;color:#1b1305;font:600 11px monospace;padding:1px 5px;white-space:nowrap}.sb-chip.bad{background:#e2573f;color:#fff}
+.sb-status{color:#a39c8e;min-height:2.8em}
+</style>
+<div id="s1" data-sandbox='{"scene":"void","tool":"block"}'></div>
+<script src="sandbox.js"></script>
