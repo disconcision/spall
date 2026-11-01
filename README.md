@@ -18,6 +18,7 @@ Then open http://127.0.0.1:5190/stratum-wires/stratum.html. The game is plain Ja
 |---|---|
 | `experiments/stratum-wires/` | **The current prototype.** Physics cables with sliding ties, girders, posts, demolish, live lighting (sun, sky, occlusion, mist, shafts), birds, a 64×64×30 world, presets and save slots. |
 | `experiments/stratum-wires/mockups/` | Concept pages: `ui.html` (UI chrome concepts with a code mixer), `hires.html` (1× vs 2× fidelity), `light.html` (lighting studies), `index.html` (cable looks). |
+| `experiments/spall-3d/` | A 3D study: the current prototype drawn by WebGL with a free orbit camera and smooth zoom (press 3). Same sprites, same cables, cable tools work from any angle. `README.md` has the findings. |
 | `experiments/stratum-multimodal/` | A fork with talk, point and sketch input. Voice via Web Speech; pixel ink anchored in 3D; one timeline. `notes.html` has the findings. |
 | `experiments/agent-chat-reference/` | Art reference: a sidebar full of agents and bots talking, some in symbolic languages. |
 | `experiments/megastructure-layers/` | The original layer-view prototype, the touchstone for the look. |

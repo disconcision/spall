@@ -2282,7 +2282,7 @@ window.lightMock = lightMock; window.fidelityMock = fidelityMock; window.clearOv
 const LIT = {
   on: true,
   sunOn: true, sky: true, ao: true,   // baked into the level images (changing them relights)
-  mist: true, shafts: true, bloom: true, mistA: 0.035, shaftK: 1, bloomK: 1,   // drawn per frame
+  mist: true, shafts: true, bloom: true, well: true, mistA: 0.035, shaftK: 1, bloomK: 1, wellK: 1,   // drawn per frame
   sun: 'noon',                        // 'morning' | 'noon' | 'evening' | 'night'
   tkey: '', skey: '', tr: null, skyV: null, sunSoft: null, sunHard: null, sv: null,
   shaftC: null, shKey: '', bloomC: null, blKey: ''
@@ -2516,8 +2516,8 @@ function toggleLight(v) {
 }
 // the settings popover (LT1): what is baked into the levels (relights) and what is drawn per frame.
 // Built with the shared chrome controls (groove toggles, groove sliders, segmented times; see 80_ui.js).
-const LIGHT_PARTS = [['sunOn', 'Sun & shadows', 1], ['sky', 'Sky light', 1], ['ao', 'Occlusion', 1], ['mist', 'Mist', 0, 'mistA', 0, 0.08, 0.005], ['shafts', 'Shafts', 0, 'shaftK', 0, 2, 0.1], ['bloom', 'Night glow', 0, 'bloomK', 0, 2, 0.1]];
-const LIGHT_DEFAULTS = { sunOn: true, sky: true, ao: true, mist: true, shafts: true, bloom: true, mistA: 0.035, shaftK: 1, bloomK: 1 };
+const LIGHT_PARTS = [['sunOn', 'Sun & shadows', 1], ['sky', 'Sky light', 1], ['ao', 'Occlusion', 1], ['mist', 'Mist', 0, 'mistA', 0, 0.08, 0.005], ['shafts', 'Shafts', 0, 'shaftK', 0, 2, 0.1], ['bloom', 'Night glow', 0, 'bloomK', 0, 2, 0.1], ['well', 'Well light', 0, 'wellK', 0, 4, 0.1]];
+const LIGHT_DEFAULTS = { sunOn: true, sky: true, ao: true, mist: true, shafts: true, bloom: true, mistA: 0.035, shaftK: 1, bloomK: 1, well: true, wellK: 1 };
 let relightT = 0;
 function setupLightPanel() {
   const pop = document.createElement('div'); pop.id = 'lightPop'; pop.className = 'popm pn'; pop.hidden = true;
@@ -2995,20 +2995,22 @@ function drawSteam(ctx, t, maxZ) {
     ctx.fillRect(Math.round(bx) - (sz >> 1), Math.round(by) - (sz >> 1), sz, sz);
   }
 }
+// the beam's strength is the lighting panel's Well light slider (1 = as designed)
+const wellBeam = () => { const k = LIT.well ? LIT.wellK : 0, night = S.tod === 'night'; return k ? [night ? [160, 190, 200] : S.tod === 'dusk' ? [255, 196, 120] : [255, 246, 220], Math.min(0.6, (night ? 0.035 : S.tod === 'dusk' ? 0.06 : 0.07) * k), k] : null; };
 function drawWellLight(ctx, t, maxZ) {
-  const night = S.tod === 'night';
+  const night = S.tod === 'night', wb = wellBeam(); if (!wb) return;
   for (const w of WORLD.wells) {
     const topH = Math.min(NL, maxZ + 1), botH = 0.35;
     const pts = [[w.x, w.y], [w.x + w.s, w.y], [w.x + w.s, w.y + w.s], [w.x, w.y + w.s]];
     const T0 = pts.map(p => projIso(p[0], p[1], topH)), B0 = pts.map(p => projIso(p[0], p[1], botH));
     const xl = Math.min(...T0.map(p => p[0])), xr = Math.max(...T0.map(p => p[0]));
     const ytop = Math.min(...T0.map(p => p[1])), ybot = Math.max(...B0.map(p => p[1]));
-    ctx.fillStyle = night ? 'rgba(160,190,200,0.035)' : S.tod === 'dusk' ? 'rgba(255,196,120,0.06)' : 'rgba(255,246,220,0.07)';
+    ctx.fillStyle = `rgba(${wb[0].join(',')},${wb[1].toFixed(3)})`;
     for (let x = Math.round(xl); x < xr; x += 2) ctx.fillRect(x, Math.round(ytop), 1, Math.round(ybot - ytop));
     if (!night) for (const m of MOTES) {
       if (m.w !== w || m.z > maxZ + 1) continue;
       const [bx, by] = projIso(m.x, m.y, m.z);
-      if ((Math.sin(t * 3 + m.ph * 5) + 1) > 0.8) { ctx.fillStyle = 'rgba(255,240,205,0.8)'; ctx.fillRect(Math.round(bx), Math.round(by), 1, 1); }
+      if ((Math.sin(t * 3 + m.ph * 5) + 1) > 0.8) { ctx.fillStyle = `rgba(255,240,205,${Math.min(1, 0.8 * Math.sqrt(wb[2])).toFixed(2)})`; ctx.fillRect(Math.round(bx), Math.round(by), 1, 1); }
     }
   }
 }
@@ -5720,6 +5722,7 @@ const GLYPH = {
   ao: ['#########','#++++....','#++......','#+.......','#+.......','#........','#........','#........','#........'],
   mist: ['.........','.##...##.','#..###..#','.........','.##...##.','#..###..#','.........','.##...##.','#..###..#'],
   shafts: ['#..#..#..','.#..#..#.','..#..#..#','...#..#..','....#..#.','.....#..#','......#..','.......#.','........#'],
+  well: ['#.......#','#.+...+.#','#...+...#','#.+...+.#','#...+...#','#.+...+.#','#...+...#','#.+...+.#','#########'],
   bloom: ['....+....','..+.#.+..','...###...','+.#####.+','.+#####+.','+.#####.+','...###...','..+.#.+..','....+....'],
   L7: ['+.+.+.+.+.+.+','.............','+...........+','.............','aaaaaaaaaaaaa','#############','#+#+#+#+#+#+#','#############','#++++##+++++#','#############'],
   LGB: ["ttt..............ttt", "...tt....w.....tt...", ".....t...Ww...t.....", "......tttWwttt......", "vvvvvvvvvWwvvvvvvvvv", "......oooWwooo......", ".....o...Ww...o.....", "...oo.....k....oo...", "ooo..............ooo"],
@@ -6089,7 +6092,8 @@ const SLD = {
   vol: { lo: 0, hi: 1, get: () => AUD.vol, set: v => { AUD.vol = v; applyVol(); } },
   mistA: { lo: 0, hi: 0.08, get: () => LIT.mistA, set: v => { LIT.mistA = Math.round(v / 0.005) * 0.005; } },
   shaftK: { lo: 0, hi: 2, get: () => LIT.shaftK, set: v => { LIT.shaftK = Math.round(v * 10) / 10; } },
-  bloomK: { lo: 0, hi: 2, get: () => LIT.bloomK, set: v => { LIT.bloomK = Math.round(v * 10) / 10; } }
+  bloomK: { lo: 0, hi: 2, get: () => LIT.bloomK, set: v => { LIT.bloomK = Math.round(v * 10) / 10; } },
+  wellK: { lo: 0, hi: 4, get: () => LIT.wellK, set: v => { LIT.wellK = Math.round(v * 10) / 10; } }
 };
 function slHTML(k, dis) { const s = SLD[k], v = clamp((s.get() - s.lo) / (s.hi - s.lo), 0, 1); return `<span class="sl ${dis ? 'dis' : ''}" data-sl="${k}" tabindex="${dis ? -1 : 0}" role="slider" aria-valuenow="${Math.round(v * 100)}" aria-valuemin="0" aria-valuemax="100" style="--v:${v.toFixed(3)}"><span class="tr"><i class="fl"></i></span><i class="th"></i></span>`; }
 function syncSliders() { document.querySelectorAll('.sl[data-sl]').forEach(el => { const s = SLD[el.dataset.sl]; if (!s) return; const v = clamp((s.get() - s.lo) / (s.hi - s.lo), 0, 1); el.style.setProperty('--v', v.toFixed(3)); el.setAttribute('aria-valuenow', Math.round(v * 100)); }); }
@@ -8231,6 +8235,7 @@ const PXS = 8 * Math.SQRT2;       // art px per cell width at the default view
 const G3 = {
   on: false, gl: null, cv: null, wcv: null, wg: null, hud: null,
   az: 45, el: 30, T: [32, 32, 6], zf: 2, filter: 'sharp', snap: true, texel: 0, grow: 0, splat: 0, splatK: 1,
+  ce: true, ceT: 0, ceW: 1, ss: 1, artCut: false,
   anim: null, drag: null, last: 0,
   lv: [], cuts: new Map(), dirty: new Set(), built: false,
   A: null, EA: null, tex: {}, prog: {}, fbo: null, size: [0, 0], litKey: '', skyKey: '',
@@ -8262,9 +8267,9 @@ function g3Proj(V, x, y, z) { const P = w3([x, y, z]); return [dot3(P, V.R) * PX
 // ---------- sprite atlases ----------
 function mkAtlas(size) { const c = mk(size, size), g = c.getContext('2d', { willReadFrequently: true }); return { c, g, size, x: 0, y: 0, rowH: 0, map: new Map(), dirty: true, full: false }; }
 function atlasAlloc(A, w, h) {
-  if (A.x + w > A.size) { A.x = 0; A.y += A.rowH + 1; A.rowH = 0; }
+  if (A.x + w > A.size) { A.x = 0; A.y += A.rowH + 2; A.rowH = 0; }
   if (A.y + h > A.size) { A.full = true; return null; }
-  const r = [A.x, A.y]; A.x += w + 1; A.rowH = Math.max(A.rowH, h); A.dirty = true; return r;
+  const r = [A.x, A.y]; A.x += w + 2; A.rowH = Math.max(A.rowH, h); A.dirty = true; return r;
 }
 const NEUTRAL = { t: h => h, l: h => h, r: h => h, ta: (h, a) => rgba(h, a), la: (h, a) => rgba(h, a), ra: (h, a) => rgba(h, a) };
 const SCR = { c: null, g: null, c2: null, g2: null };
@@ -8308,7 +8313,8 @@ function sprRail(t, vv, bit) {
   const v1 = (vv & ~30) | ((15 & ~bit) << 1);
   return g3Sprite('e' + t + ':' + v1, t, (g, E) => DRAW[t](g, v1, E, NEUTRAL, 0, 0, t), (g, E) => noRails(() => DRAW[t](g, v1, E, NEUTRAL, 0, 0, t)));
 }
-// a cut block's art without its one-pixel outline: the outline is drawn as real lines (see cutEdges)
+// a cut block's art without its one-pixel outline: the outline is drawn as real lines (see cutEdges).
+// L puts it back in the art (G3.artCut), as the first 3D build had it, for comparison
 const noCutline = fn => { const d = diaEdge; diaEdge = (g, x, y, w, which, c) => { if (c !== CUTLINE || w !== 16) d(g, x, y, w, which, c); }; try { fn(); } finally { diaEdge = d; } };
 function sprCut(t, vv, mask) { return g3Sprite('c' + t + ':' + vv + ':' + mask, t, (g, E) => noCutline(() => DRAW[t](g, vv, E, NEUTRAL, 1, mask, t))); }
 // lit windows etc. for one cell, in sprite space (only cells with something lit get an entry)
@@ -8385,10 +8391,15 @@ function cellPlanes(B, t, i, x, y, z, cut) {
   };
   const upCovers = () => { if (cut || z + 1 >= NL) return false; const n = cells[idx(x, y, z + 1)]; return n && boxH(n, 0) > 0; };
   const solid = t === T.EARTH || t === T.ROCK || t === T.OLD || t === T.CORE || t === T.LIFT;
-  const F = m && solid ? sprCut(t, vv, mask) : sprFull(t, vv, m, mask);
+  // a lift shaft keeps its outline in the art: it sits round the shaft's own ring, and as a real line it doubled it
+  const F = m && solid && t !== T.LIFT && !G3.artCut ? sprCut(t, vv, mask) : sprFull(t, vv, m, mask);
   switch (t) {
     case T.EARTH: case T.ROCK: case T.OLD: case T.CORE: case T.LIFT:
-      if (m) cutEdges(B, x, y, z + h1, t === T.LIFT ? 15 : 15 & ~mask);
+      // (no line along a lift shaft either: the shaft's own art ring already marks that edge)
+      if (m && t !== T.LIFT && !G3.artCut) {
+        const lift = (dx, dy) => cells[idx(x + dx, y + dy, z)] === T.LIFT;
+        cutEdges(B, x, y, z + h1, 15 & ~mask & ~((lift(0, -1) ? 1 : 0) | (lift(-1, 0) ? 2 : 0) | (lift(1, 0) ? 4 : 0) | (lift(0, 1) ? 8 : 0)));
+      }
       boxP(B, c, 0, 0, 0, 1, 1, h1, F, emi, { cull: cull(h1), noTop: !m && upCovers() }); return;
     case T.WATER: boxP(B, c, 0, 0, 0, 1, 1, 4 / 12, F, [hash3(x, y, z) & 0x7fffff, 0], { cull: cull(4 / 12), flags: 2 }); return;
     case T.STREET: case T.WALK: case T.TERRACE:
@@ -8502,12 +8513,13 @@ void main() {
 const VS_BILL = `#version 300 es
 precision highp float;
 layout(location=0) in vec2 a_corner; layout(location=1) in vec3 a_anchor; layout(location=2) in vec4 a_rect; layout(location=3) in vec4 a_bm;
-uniform vec3 u_R, u_U, u_C; uniform float u_s, u_LZ; uniform vec2 u_off, u_size, u_dr;
+uniform vec3 u_R, u_U, u_C; uniform float u_s, u_LZ, u_ss; uniform vec2 u_off, u_size, u_dr;
 out vec2 v_loc; out vec3 v_pos; flat out vec4 v_rect; flat out vec4 v_bm;
 void main() {
   vec3 w = vec3(a_anchor.xy, a_anchor.z * u_LZ);
-  vec2 ap = floor(vec2(dot(w, u_R) * u_s + u_off.x, -dot(w, u_U) * u_s + u_off.y) + 0.5);
-  vec2 loc = a_corner * a_rect.zw, d = loc - a_bm.xy, px = ap + d;
+  // snapped to whole art pixels; u_ss screen pixels to an art pixel when supersampling (A)
+  vec2 ap = floor(vec2(dot(w, u_R) * u_s + u_off.x, -dot(w, u_U) * u_s + u_off.y) / u_ss + 0.5) * u_ss;
+  vec2 loc = a_corner * a_rect.zw, d = (loc - a_bm.xy) * u_ss, px = ap + d;
   // lit as the top of its cell (a sprite's own shading already carries its form)
   vec3 wp = w + (u_R * d.x - u_U * d.y) / u_s;
   v_pos = vec3(a_anchor.xy, max(a_anchor.z + 0.5, wp.z / u_LZ));
@@ -8520,7 +8532,8 @@ precision highp float; precision highp int; precision highp sampler3D;
 uniform sampler2D u_atlas, u_emi; uniform sampler3D u_sky, u_tr, u_sun3;
 uniform vec3 u_R, u_C, u_toneT, u_toneL, u_toneR, u_sv, u_sunCol, u_sunShade, u_mist, u_dk;
 uniform float u_LQ[7], u_cutTop, u_mistA, u_mistCap, u_LZ, u_time;
-uniform int u_lit, u_sun, u_skyOn, u_ao, u_cutL, u_pass, u_texel, u_wt, u_cons;
+uniform int u_lit, u_sun, u_skyOn, u_ao, u_cutL, u_pass, u_texel, u_wt, u_cons, u_ce;
+uniform float u_ceT, u_ceW;
 uniform vec4 u_wcyc[8];
 layout(location=0) out vec4 o_col; layout(location=1) out vec4 o_dep; layout(location=2) out vec4 o_em;
 const int LNX = ${W * 2}, LNY = ${D * 2}, LNZ = ${NL * 4};
@@ -8568,8 +8581,137 @@ void emit(vec3 col, float a, vec3 p) {
   else { o_col = vec4(col * a, a); o_dep = vec4(0.0); o_em = vec4(0.0); }
 }
 `;
+// cleanEdge (D): torcado's edge-directed sampler (MIT, gist.github.com/torcado194/e2794f5a4b22049ac0a41f972d14c329),
+// with 2:1 slopes and cleanup on. It reads the art's 45° and 2:1 staircases as the straight
+// edges they stand for and samples those, so a line whose pixels only touch at corners stays
+// joined when the plane is turned. Ported to return which neighbouring art pixel to show (it
+// always shows one of the art's own pixels), so the emissive lookup follows it.
+// Everything it decides from the art (which slope, which way it leans, which neighbour) depends
+// only on an art pixel and which quarter of it is sampled, so that is worked out once per atlas
+// pixel when the atlas changes (CE_PRE, into G3.tex.ceq: 7 bits for each of the three slices, one
+// channel per quarter); a scene pixel only measures its distance to the lines that picked.
+const CE_RULES = `
+uint ceAtU(ivec2 t) { uvec4 q = uvec4(ceAt(t) * 255.0 + 0.5); return q.r | q.g << 8 | q.b << 16 | q.a << 24; }
+vec4 ceUn(uint a) { return vec4(uvec4(a, a >> 8, a >> 16, a >> 24) & 255u) / 255.0; }
+bool sim(uint a, uint b) { return a == b || (a >> 24 == 0u && b >> 24 == 0u); }
+bool sim3(uint a, uint b, uint c) { return sim(a, b) && sim(b, c); }
+bool sim4(uint a, uint b, uint c, uint d) { return sim(a, b) && sim(b, c) && sim(c, d); }
+bool higher(uint a, uint b) {
+  if (sim(a, b)) return false;
+  if (a >> 24 == b >> 24) return distance(ceUn(a).rgb, vec3(1.0)) < distance(ceUn(b).rgb, vec3(1.0));
+  return a >> 24 > b >> 24;
+}
+float cd(uint a, uint b) { return distance(ceUn(a), ceUn(b)); }
+// one slice's decision: bits 0-2 the case (0 none, 1 lower shallow 2:1, 2 forward steep 2:1, 3 45°,
+// 4 / 5 far corner of a shallow / steep slant), 3 flip, 4 and 5 the extra lines, 6 the other neighbour
+uint sliceCode(uint ub, uint u, uint uf, uint uff, uint b, uint c, uint f, uint ff, uint db, uint d, uint df, uint dff, uint ddb, uint dd, uint ddf) {
+  float distAgainst = 4.0 * cd(f, d) + cd(uf, c) + cd(c, db) + cd(ff, df) + cd(df, dd);
+  float distTowards = 4.0 * cd(c, df) + cd(u, f) + cd(f, dff) + cd(b, d) + cd(d, ddf);
+  bool should = distAgainst < distTowards || (distAgainst < distTowards + 0.001 && !higher(c, f));
+  if (sim4(f, d, b, u) && sim4(uf, df, db, ub) && !sim(c, f)) should = false;   // checkerboard
+  if (!should) return 0u;
+  bool flip = false; uint rs = cd(c, f) <= cd(c, d) ? 0u : 64u;
+  if (sim3(f, d, db) && !sim3(f, d, b) && !sim(uf, db)) {   // lower shallow 2:1
+    if (!(sim(c, df) && higher(c, f))) { if (higher(c, f)) flip = true; if (sim(u, f) && !sim(c, df) && !higher(c, u)) flip = true; }
+    bool e = !flip && sim(c, uf) && !(sim3(c, uf, uff) && !sim3(c, uf, ff) && !sim(d, uff));
+    return 1u | (flip ? 8u : 0u) | (e ? 16u : 0u) | rs;
+  } else if (sim3(uf, f, d) && !sim3(u, f, d) && !sim(uf, db)) {   // forward steep 2:1
+    if (!(sim(c, df) && higher(c, d))) { if (higher(c, d)) flip = true; if (sim(b, d) && !sim(c, df) && !higher(c, d)) flip = true; }
+    bool e = !flip && sim(c, db) && !(sim3(c, db, ddb) && !sim3(c, db, dd) && !sim(f, ddb));
+    return 2u | (flip ? 8u : 0u) | (e ? 16u : 0u) | rs;
+  } else if (sim(f, d)) {   // 45°
+    if (sim(c, df) && higher(c, f)) { if (!sim(c, dd) && !sim(c, ff)) flip = true; }
+    else { if (higher(c, f)) flip = true; if (!sim(c, b) && sim4(b, f, d, u)) flip = true; }
+    if (((sim(f, db) && sim3(u, f, df)) || (sim(uf, d) && sim3(b, d, df))) && !sim(c, df)) flip = true;
+    bool e1 = !flip && sim3(c, uf, uff) && !sim3(c, uf, ff) && !sim(d, uff);
+    bool e2 = !flip && sim3(ddb, db, c) && !sim3(dd, db, c) && !sim(ddb, f);
+    return 3u | (flip ? 8u : 0u) | (e1 ? 16u : 0u) | (e2 ? 32u : 0u) | rs;
+  } else if (sim3(ff, df, d) && !sim3(ff, df, c) && !sim(uff, d)) {   // far corner of a shallow slant
+    if (!(sim(f, dff) && higher(f, ff))) { if (higher(f, ff)) flip = true; if (sim(uf, ff) && !sim(f, dff) && !higher(f, uf)) flip = true; }
+    return 4u | (flip ? 8u : 0u) | (cd(f, ff) <= cd(f, df) ? 0u : 64u);
+  } else if (sim3(f, df, dd) && !sim3(c, df, dd) && !sim(f, ddb)) {   // far corner of a steep slant
+    if (!(sim(d, ddf) && higher(d, dd))) { if (higher(d, dd)) flip = true; if (sim(db, dd) && !sim(d, ddf) && !higher(d, dd)) flip = true; }
+    return 5u | (flip ? 8u : 0u) | (cd(d, df) <= cd(d, dd) ? 0u : 64u);
+  }
+  return 0u;
+}
+// the three slices of one quarter (pointDir s) of art pixel tc
+uint quarterCode(ivec2 tc, ivec2 s) {
+  uint uub = ceAtU(tc + ivec2(-1, -2) * s), uu = ceAtU(tc + ivec2(0, -2) * s), uuf = ceAtU(tc + ivec2(1, -2) * s);
+  uint ubb = ceAtU(tc + ivec2(-2, -1) * s), ub = ceAtU(tc + ivec2(-1, -1) * s), u = ceAtU(tc + ivec2(0, -1) * s), uf = ceAtU(tc + ivec2(1, -1) * s), uff = ceAtU(tc + ivec2(2, -1) * s);
+  uint bb = ceAtU(tc + ivec2(-2, 0) * s), b = ceAtU(tc + ivec2(-1, 0) * s), c = ceAtU(tc), f = ceAtU(tc + ivec2(1, 0) * s), ff = ceAtU(tc + ivec2(2, 0) * s);
+  uint dbb = ceAtU(tc + ivec2(-2, 1) * s), db = ceAtU(tc + ivec2(-1, 1) * s), d = ceAtU(tc + ivec2(0, 1) * s), df = ceAtU(tc + ivec2(1, 1) * s), dff = ceAtU(tc + ivec2(2, 1) * s);
+  uint ddb = ceAtU(tc + ivec2(-1, 2) * s), dd = ceAtU(tc + ivec2(0, 2) * s), ddf = ceAtU(tc + ivec2(1, 2) * s);
+  return sliceCode(ub, u, uf, uff, b, c, f, ff, db, d, df, dff, ddb, dd, ddf)
+    | sliceCode(uf, u, ub, ubb, f, c, b, bb, df, d, db, dbb, ddf, dd, ddb) << 7
+    | sliceCode(db, d, df, dff, b, c, f, ff, ub, u, uf, uff, uub, uu, uuf) << 14;
+}
+`;
+// one pass over the atlas: each pixel's four quarters. Sprites sit 2 px apart (atlasAlloc), so a
+// sprite's neighbourhood reads its own empty margin, as the old per-sprite bounds check did
+const FS_CEPRE = `#version 300 es
+precision highp float; precision highp int;
+uniform sampler2D u_atlas;
+layout(location=0) out uvec4 o;
+vec4 ceAt(ivec2 t) { ivec2 n = textureSize(u_atlas, 0); return (t.x < 0 || t.y < 0 || t.x >= n.x || t.y >= n.y) ? vec4(0.0) : texelFetch(u_atlas, t, 0); }
+` + CE_RULES + `
+void main() {
+  ivec2 tc = ivec2(gl_FragCoord.xy); uint c0 = ceAtU(tc);
+  // every slice shows f or d of its own call (or a far corner, which needs one of them to differ
+  // from c); with all four neighbours like c, nothing can change
+  if (sim(c0, ceAtU(tc + ivec2(1, 0))) && sim(c0, ceAtU(tc - ivec2(1, 0))) && sim(c0, ceAtU(tc + ivec2(0, 1))) && sim(c0, ceAtU(tc - ivec2(0, 1)))) { o = uvec4(0u); return; }
+  o = uvec4(quarterCode(tc, ivec2(-1, -1)), quarterCode(tc, ivec2(1, -1)), quarterCode(tc, ivec2(-1, 1)), quarterCode(tc, ivec2(1, 1)));
+}`;
+const CLEAN_EDGE = `
+vec4 ceAt(ivec2 t) { return (t.x < 0 || t.y < 0 || t.x >= int(v_spr.w) || t.y >= 20 + int(v_spr.z)) ? vec4(0.0) : texelFetch(u_atlas, ivec2(v_spr.xy) + t, 0); }
+// distance (in art pixels) from q to the line A–B, positive towards the corner, in a frame turned so
+// the sampled quarter lies at +x +y: torcado's distToLine with the quarter's own direction folded
+// out, so every line is a constant and the test is a multiply-add (flip: the other side, lw + it)
+float ln(vec2 q, vec2 A, vec2 B) { vec2 l = B - A; return (l.y * (A.x - q.x) - l.x * (A.y - q.y)) / length(l); }
+// xy: the neighbour shown, in this slice's frame (f = (1,0), d = (0,1), ff, df, dd); z > 0 if any
+vec3 sliceDist(uint k, vec2 q) {
+  uint cs = k & 7u; if (cs == 0u) return vec3(-1.0);
+  bool flip = (k & 8u) != 0u, e1 = (k & 16u) != 0u, e2 = (k & 32u) != 0u, rs = (k & 64u) != 0u;
+  float lw = clamp(u_ceW, 0.45, 1.142), dist;
+  vec3 FD = rs ? vec3(0.0, 1.0, 1.0) : vec3(1.0, 0.0, 1.0);
+  if (cs == 1u) {   // lower shallow 2:1
+    dist = flip ? lw + ln(q, vec2(1.5, -1.0), vec2(-0.5, 0.0)) : ln(q, vec2(1.5, 0.0), vec2(-0.5, 1.0));
+    if (e1) dist = min(dist, ln(q, vec2(2.0, -1.0), vec2(0.0, 1.0)));
+  } else if (cs == 2u) {   // forward steep 2:1
+    dist = flip ? lw + ln(q, vec2(0.0, -0.5), vec2(-1.0, 1.5)) : ln(q, vec2(1.0, -0.5), vec2(0.0, 1.5));
+    if (e1) dist = min(dist, ln(q, vec2(1.0, 0.0), vec2(-1.0, 2.0)));
+  } else if (cs == 3u) {   // 45°
+    dist = flip ? lw + ln(q, vec2(1.0, -1.0), vec2(-1.0, 1.0)) : ln(q, vec2(1.0, 0.0), vec2(0.0, 1.0));
+    if (e1) dist = max(dist, ln(q, vec2(1.5, 0.0), vec2(-0.5, 1.0)));
+    if (e2) dist = max(dist, ln(q, vec2(1.0, -0.5), vec2(0.0, 1.5)));
+  } else if (cs == 4u) {   // far corner of a shallow slant
+    dist = flip ? lw + ln(q, vec2(2.5, -1.0), vec2(0.5, 0.0)) : ln(q, vec2(2.5, 0.0), vec2(0.5, 1.0));
+    FD = rs ? vec3(1.0, 1.0, 1.0) : vec3(2.0, 0.0, 1.0);
+  } else {   // far corner of a steep slant
+    dist = flip ? lw + ln(q, vec2(0.0, 0.5), vec2(-1.0, 2.5)) : ln(q, vec2(1.0, 0.5), vec2(0.0, 2.5));
+    FD = rs ? vec3(0.0, 2.0, 1.0) : vec3(1.0, 1.0, 1.0);
+  }
+  return dist - lw / 2.0 <= 0.0 ? FD : vec3(-1.0);
+}
+ivec2 cleanEdge(vec2 P, ivec2 tc) {
+  vec2 local = fract(P), pointDir = vec2(local.x < 0.5 ? -1.0 : 1.0, local.y < 0.5 ? -1.0 : 1.0);
+  uvec4 q4 = texelFetch(u_ceq, ivec2(v_spr.xy) + tc, 0);
+  uint k = local.y < 0.5 ? (local.x < 0.5 ? q4.x : q4.y) : (local.x < 0.5 ? q4.z : q4.w);
+  if (k == 0u) return tc;
+  vec2 q = (local - 0.5) * pointDir, o = vec2(0.0);
+  vec3 r = sliceDist(k & 127u, q);
+  if (r.z > 0.0) o = r.xy;
+  r = sliceDist((k >> 7) & 127u, q * vec2(-1.0, 1.0));
+  if (r.z > 0.0) o = r.xy * vec2(-1.0, 1.0);
+  r = sliceDist((k >> 14) & 127u, q * vec2(1.0, -1.0));
+  if (r.z > 0.0) o = r.xy * vec2(1.0, -1.0);
+  return tc + ivec2(o) * ivec2(pointDir);
+}
+`;
 const FS_SCENE = FS_COMMON + `
 in vec3 v_pos; flat in vec3 v_cell; flat in vec4 v_spr; flat in vec2 v_emi; flat in vec3 v_misc;
+uniform highp usampler2D u_ceq;
+` + CLEAN_EDGE + `
 void main() {
   int axis = int(v_misc.y), fl = int(v_misc.z);
   bool own = (fl & 1) != 0, water = (fl & 2) != 0;
@@ -8589,7 +8731,8 @@ void main() {
   vec2 dx = vec2(dFdx(X), dFdx(Y)), dy = vec2(dFdy(X), dFdy(Y));
   ivec2 tc = ivec2(floor(X), floor(Y));
   if (tc.x < 0 || tc.y < 0 || tc.x >= int(v_spr.w) || tc.y >= 20 + int(v_spr.z)) discard;
-  vec4 c = texelFetch(u_atlas, ivec2(v_spr.xy) + tc, 0);
+  if (u_ce == 1) tc = cleanEdge(vec2(X, Y), tc);
+  vec4 c = ceAt(tc);
   // conservative mode: where this pixel's footprint covers more than one sprite pixel and the
   // centre misses, take an opaque one from inside the footprint, so one-pixel lines (rails,
   // posts, lattice) never drop out on a foreshortened plane
@@ -8760,6 +8903,16 @@ void main() {
   ivec2 p = ivec2(gl_FragCoord.xy) * 2, m = textureSize(u_src, 0) - 1;
   o = (texelFetch(u_src, min(p, m), 0) + texelFetch(u_src, min(p + ivec2(1, 0), m), 0) + texelFetch(u_src, min(p + ivec2(0, 1), m), 0) + texelFetch(u_src, min(p + ivec2(1, 1), m), 0)) * 0.25;
 }`;
+// supersampling (A): the scene drawn at u_k× into its own target, each art pixel the mean of its
+// k×k samples (colour is premultiplied, so the sky shows through edges as it should)
+const FS_SSDOWN = `#version 300 es
+precision highp float;
+uniform sampler2D u_src; uniform int u_k; out vec4 o;
+void main() {
+  ivec2 p = ivec2(gl_FragCoord.xy) * u_k; vec4 s = vec4(0.0);
+  for (int j = 0; j < 4; j++) for (int i = 0; i < 4; i++) if (i < u_k && j < u_k) s += texelFetch(u_src, p + ivec2(i, j), 0);
+  o = s / float(u_k * u_k);
+}`;
 const FS_BLUR = `#version 300 es
 precision highp float;
 uniform sampler2D u_src; uniform ivec2 u_dir; uniform float u_sigma; out vec4 o;
@@ -8829,18 +8982,22 @@ function g3Init() {
   if (!gl) { log('sys', '3D view: WebGL2 is not available here', 'sys'); return false; }
   G3.cv = cv; G3.gl = gl;
   gl.getExtension('EXT_color_buffer_float');
-  G3.prog.scene = glProg(gl, VS_SCENE, FS_SCENE);
+  // with cleanEdge compiled in, or left out: its code slows every pixel a little even when it is off
+  G3.prog.sceneCE = glProg(gl, VS_SCENE, FS_SCENE);
+  G3.prog.scene = glProg(gl, VS_SCENE, FS_SCENE.replace('if (u_ce == 1) tc = cleanEdge(vec2(X, Y), tc);', ''));
   G3.prog.bill = glProg(gl, VS_BILL, FS_BILL);
   G3.prog.out = glProg(gl, VS_FULL, FS_OUT);
   G3.prog.beam = glProg(gl, VS_BEAM, FS_BEAM);
   G3.prog.splat = glProg(gl, VS_SPLAT, FS_SPLAT);
+  G3.prog.cepre = glProg(gl, VS_FULL, FS_CEPRE);
   G3.beamVao = gl.createVertexArray(); gl.bindVertexArray(G3.beamVao);
   G3.beamBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, G3.beamBuf); gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
   gl.bindVertexArray(null);
-  for (const [k, fs] of [['down', FS_DOWN], ['blur', FS_BLUR], ['shaft', FS_SHAFT], ['shblur', FS_SHBLUR]]) G3.prog[k] = glProg(gl, VS_FULL, fs);
+  for (const [k, fs] of [['down', FS_DOWN], ['ssdown', FS_SSDOWN], ['blur', FS_BLUR], ['shaft', FS_SHAFT], ['shblur', FS_SHBLUR]]) G3.prog[k] = glProg(gl, VS_FULL, fs);
   G3.A = mkAtlas(4096); G3.EA = mkAtlas(2048);
-  for (const k of ['atlas', 'emi', 'scene', 'dep', 'wire', 'sky', 'em', 'bA', 'bT', 'shA']) G3.tex[k] = glTex(gl);
+  for (const k of ['atlas', 'emi', 'scene', 'dep', 'wire', 'sky', 'em', 'bA', 'bT', 'shA', 'ss']) G3.tex[k] = glTex(gl);
   for (const k of ['b2', 'b6', 'shB']) G3.tex[k] = glTex(gl, gl.LINEAR);
+  G3.tex.ceq = glTex(gl); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32UI, 1, 1, 0, gl.RGBA_INTEGER, gl.UNSIGNED_INT, null);
   G3.pfbo = gl.createFramebuffer();
   G3.quadBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, G3.quadBuf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]), gl.STATIC_DRAW);
   G3.wcv = mk(4, 4); G3.wg = G3.wcv.getContext('2d');
@@ -8895,6 +9052,7 @@ function g3Sync() {
   for (const [A, k] of [[G3.A, 'atlas'], [G3.EA, 'emi']]) if (A.dirty) {
     gl.bindTexture(gl.TEXTURE_2D, G3.tex[k]); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, A.c); A.dirty = false;
+    if (k === 'atlas') G3.ceStale = true;
   }
   if (LIT.on) {
     g3LightVol();
@@ -9030,10 +9188,24 @@ function g3Target(V) {
   G3.depBytes = new Uint8Array(w * h * 4); G3.fd = new Float32Array(w * h);
   G3.wcv.width = w; G3.wcv.height = h;
 }
+// cleanEdge's decisions for every pixel of the used part of the atlas (see CLEAN_EDGE), brought
+// up to date when the atlas changes and cleanEdge is on. The atlas only grows at its end, so only
+// rows from the last row then being filled are redone
+function g3CeTable() {
+  const gl = G3.gl, A = G3.A, h = Math.min(A.size, Math.ceil((A.y + A.rowH + 2) / 128) * 128), t0 = performance.now();
+  gl.bindTexture(gl.TEXTURE_2D, G3.tex.ceq);
+  if (G3.ceqH !== h || G3.ceqA !== A) { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32UI, A.size, h, 0, gl.RGBA_INTEGER, gl.UNSIGNED_INT, null); G3.ceqH = h; G3.ceqA = A; G3.ceqY = 0; }
+  gl.bindFramebuffer(gl.FRAMEBUFFER, G3.pfbo); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, G3.tex.ceq, 0);
+  gl.drawBuffers([gl.COLOR_ATTACHMENT0]); gl.viewport(0, G3.ceqY, A.size, h - G3.ceqY); gl.disable(gl.DEPTH_TEST); gl.disable(gl.BLEND); gl.bindVertexArray(null);
+  const P = G3.prog.cepre; gl.useProgram(P.p);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, G3.tex.atlas); gl.uniform1i(P.U.u_atlas, 0);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  G3.ceqY = A.y; G3.ceStale = false; G3.stats.ceTable = (performance.now() - t0).toFixed(1);
+}
 function setCommon(gl, P, V) {
   const U = P.U, sun = litSun(), tod = TODS[S.tod];
   gl.uniform3fv(U.u_R, V.R); gl.uniform3fv(U.u_U, V.U); gl.uniform3fv(U.u_C, V.C);
-  gl.uniform1f(U.u_s, PXS); gl.uniform1f(U.u_LZ, LZ); gl.uniform2fv(U.u_off, V.off); gl.uniform2f(U.u_size, V.Wt, V.Ht); gl.uniform2f(U.u_dr, V.d0, V.d1);
+  gl.uniform1f(U.u_s, PXS * (V.ss || 1)); gl.uniform1f(U.u_LZ, LZ); gl.uniform2fv(U.u_off, V.off); gl.uniform2f(U.u_size, V.Wt, V.Ht); gl.uniform2f(U.u_dr, V.d0, V.d1);
   gl.uniform3fv(U.u_toneT, tod.t); gl.uniform3fv(U.u_toneL, tod.l); gl.uniform3fv(U.u_toneR, tod.r);
   gl.uniform1fv(U.u_LQ, LQ);
   gl.uniform1i(U.u_lit, LIT.on ? 1 : 0); gl.uniform1i(U.u_skyOn, LIT.sky ? 1 : 0); gl.uniform1i(U.u_ao, LIT.ao ? 1 : 0);
@@ -9044,6 +9216,7 @@ function setCommon(gl, P, V) {
   const mOn = mistOn(), mc = mOn ? mistRGB() : [14, 11, 9];
   gl.uniform3f(U.u_mist, mc[0] / 255, mc[1] / 255, mc[2] / 255); gl.uniform1f(U.u_mistA, mOn ? LIT.mistA : (S.shade ? 0.1 : 0)); gl.uniform1f(U.u_mistCap, mOn ? MIST_LEVELS : 99);
   gl.uniform3f(U.u_dk, V.K, V.dk0, V.dk1 - V.dk0); gl.uniform1i(U.u_texel, G3.texel); gl.uniform1i(U.u_cons, G3.cons ? 1 : 0);
+  gl.uniform1i(U.u_ce, G3.ce ? 1 : 0); gl.uniform1f(U.u_ceT, G3.ceT); gl.uniform1f(U.u_ceW, G3.ceW); gl.uniform1f(U.u_ss, V.ss || 1);
   if (U.u_wcyc) {
     if (G3.wcycTod !== S.tod) { G3.wcyc = new Float32Array(32); WATERCYC[S.tod].forEach((c, k) => { if (c) { const [r, g, b] = rgbOf(c); G3.wcyc.set([r / 255, g / 255, b / 255, 1], k * 4); } }); G3.wcycTod = S.tod; }
     gl.uniform4fv(U.u_wcyc, G3.wcyc); gl.uniform1i(U.u_wt, Math.floor(S.time * 5));
@@ -9054,6 +9227,7 @@ function setCommon(gl, P, V) {
   gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_3D, G3.tex.sky3 || null); gl.uniform1i(U.u_sky, 2);
   gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_3D, G3.tex.tr || null); gl.uniform1i(U.u_tr, 3);
   gl.activeTexture(gl.TEXTURE4); gl.bindTexture(gl.TEXTURE_3D, G3.tex.sun3 || null); gl.uniform1i(U.u_sun3, 4);
+  if (U.u_ceq) { gl.activeTexture(gl.TEXTURE5); gl.bindTexture(gl.TEXTURE_2D, G3.tex.ceq); gl.uniform1i(U.u_ceq, 5); }
 }
 function g3Levels() {
   const L = S.level, sliced = L < NL - 1, floor = S.floor >= 0 ? S.floor : 0, out = [];
@@ -9066,8 +9240,8 @@ function g3Levels() {
 // hold Z: today's renderer (plain planes, no thin lines), for flipping back and forth at one angle
 function g3Render() {
   if (!G3.peek) return g3Render0();
-  const sv = [G3.splat, G3.cons]; G3.splat = 0; G3.cons = false;
-  try { g3Render0(); } finally { [G3.splat, G3.cons] = sv; }
+  const sv = [G3.splat, G3.cons, G3.ce, G3.ss]; G3.splat = 0; G3.cons = false; G3.ce = false; G3.ss = 1;
+  try { g3Render0(); } finally { [G3.splat, G3.cons, G3.ce, G3.ss] = sv; }
 }
 function g3Render0() {
   const gl = G3.gl, now = performance.now(), dt = G3.last ? Math.min(0.05, (now - G3.last) / 1000) : 0; G3.last = now;
@@ -9076,6 +9250,7 @@ function g3Render0() {
   const cw = Math.round(cssW * dpr), ch = Math.round(cssH * dpr);
   if (G3.cv.width !== cw || G3.cv.height !== ch) { G3.cv.width = cw; G3.cv.height = ch; G3.cv.style.width = cssW + 'px'; G3.cv.style.height = cssH + 'px'; }
   g3Sync();
+  if (G3.ce && G3.ceStale) g3CeTable();
   const V = g3View(); G3.V = V; g3Target(V);
   const t0 = performance.now();
   // scene
@@ -9084,25 +9259,15 @@ function g3Render0() {
   gl.clearColor(0, 0, 0, 0); gl.clearDepth(1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL); gl.disable(gl.CULL_FACE);
   const levels = g3Levels();
-  for (const pass of [0, 1]) {
-    if (pass === 1) { gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.depthMask(false); gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.NONE, gl.NONE]); }
-    let P = G3.prog.scene;
-    // splat 1: the planes as usual, then every art pixel as a one-pixel point a hair in front,
-    // so no pixel of a rail or lattice is ever skipped. splat 2: points alone, sized to cover
-    if (G3.splat !== 2) {
-      gl.useProgram(P.p); setCommon(gl, P, V); gl.uniform1i(P.U.u_pass, pass);
-      for (const L of levels) if (L.nq) { gl.bindVertexArray(L.vao); gl.drawElements(gl.TRIANGLES, L.nq * 6, gl.UNSIGNED_INT, 0); }
-    }
-    if (G3.splat && (G3.splat === 2 || pass === 0)) {   // half-transparent pixels: the planes' blend only, or they'd double
-      P = G3.prog.splat; gl.useProgram(P.p); setCommon(gl, P, V); gl.uniform1i(P.U.u_pass, pass);
-      gl.uniform3fv(P.U.u_psz, G3.splat === 2 ? splatSizes(V) : [1, 1, 1]); gl.uniform1f(P.U.u_zb, G3.splat === 2 ? 0 : 2e-5);
-      for (const L of levels) if (L.nq) { gl.bindVertexArray(L.svao); gl.drawArraysInstanced(gl.POINTS, 0, 16 * SPLAT_H, L.nq); }
-    }
-    P = G3.prog.bill; gl.useProgram(P.p); setCommon(gl, P, V); gl.uniform1i(P.U.u_pass, pass);
-    for (const L of levels) if (L.nb) { gl.bindVertexArray(L.bvao); gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, L.nb); }
-  }
+  g3Scene(V, levels, G3.splat);
+  // supersampled colour (A): the art-pixel pass above still gives the depth, the glow and the
+  // cables' depth test; only the colour is replaced by the mean of ss×ss samples
+  if (G3.ss > 1) g3SuperScene(V, levels);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, G3.fbo); gl.viewport(0, 0, V.Wt, V.Ht);
+  gl.enable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.depthMask(false); gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.NONE, gl.NONE]);
   g3Beams(V);
   gl.disable(gl.BLEND); gl.depthMask(true); gl.bindVertexArray(null);
+  gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1, gl.COLOR_ATTACHMENT2]);
   // the depth the cable code tests against
   gl.readBuffer(gl.COLOR_ATTACHMENT1);
   gl.readPixels(0, 0, V.Wt, V.Ht, gl.RGBA, gl.UNSIGNED_BYTE, G3.depBytes);
@@ -9134,6 +9299,51 @@ function g3Render0() {
   gl.drawArrays(gl.TRIANGLES, 0, 3);
   G3.stats.gpu = (t1 - t0).toFixed(1); G3.stats.wires = (t2 - t1).toFixed(1);
   g3Hud();
+}
+function g3Scene(V, levels, splat) {
+  const gl = G3.gl;
+  for (const pass of [0, 1]) {
+    if (pass === 1) { gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.depthMask(false); gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.NONE, gl.NONE]); }
+    let P = G3.ce ? G3.prog.sceneCE : G3.prog.scene;
+    // splat 1: the planes as usual, then every art pixel as a one-pixel point a hair in front,
+    // so no pixel of a rail or lattice is ever skipped. splat 2: points alone, sized to cover
+    if (splat !== 2) {
+      gl.useProgram(P.p); setCommon(gl, P, V); gl.uniform1i(P.U.u_pass, pass);
+      for (const L of levels) if (L.nq) { gl.bindVertexArray(L.vao); gl.drawElements(gl.TRIANGLES, L.nq * 6, gl.UNSIGNED_INT, 0); }
+    }
+    if (splat && (splat === 2 || pass === 0)) {   // half-transparent pixels: the planes' blend only, or they'd double
+      P = G3.prog.splat; gl.useProgram(P.p); setCommon(gl, P, V); gl.uniform1i(P.U.u_pass, pass);
+      gl.uniform3fv(P.U.u_psz, splat === 2 ? splatSizes(V) : [1, 1, 1]); gl.uniform1f(P.U.u_zb, splat === 2 ? 0 : 2e-5);
+      for (const L of levels) if (L.nq) { gl.bindVertexArray(L.svao); gl.drawArraysInstanced(gl.POINTS, 0, 16 * SPLAT_H, L.nq); }
+    }
+    P = G3.prog.bill; gl.useProgram(P.p); setCommon(gl, P, V); gl.uniform1i(P.U.u_pass, pass);
+    for (const L of levels) if (L.nb) { gl.bindVertexArray(L.bvao); gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, L.nb); }
+  }
+  gl.disable(gl.BLEND); gl.depthMask(true);
+}
+function g3SuperScene(V, levels) {
+  const gl = G3.gl, k = G3.ss, w = V.Wt * k, h = V.Ht * k;
+  if (!G3.ssfbo) { G3.ssfbo = gl.createFramebuffer(); G3.ssrb = gl.createRenderbuffer(); G3.ssdfbo = gl.createFramebuffer(); G3.sssize = [0, 0]; }
+  if (G3.sssize[0] !== w || G3.sssize[1] !== h) {
+    G3.sssize = [w, h];
+    gl.bindTexture(gl.TEXTURE_2D, G3.tex.ss); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, G3.ssrb); gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, w, h);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, G3.ssfbo);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, G3.tex.ss, 0);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, G3.ssrb);
+  }
+  gl.bindFramebuffer(gl.FRAMEBUFFER, G3.ssfbo); gl.viewport(0, 0, w, h);
+  gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.NONE, gl.NONE]);
+  gl.clearColor(0, 0, 0, 0); gl.clearDepth(1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
+  g3Scene({ ...V, off: [V.off[0] * k, V.off[1] * k], Wt: w, Ht: h, ss: k }, levels, 0);
+  // the mean of each k×k block, over the art-pixel pass's colour
+  gl.bindFramebuffer(gl.FRAMEBUFFER, G3.ssdfbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, G3.tex.scene, 0);
+  gl.drawBuffers([gl.COLOR_ATTACHMENT0]); gl.viewport(0, 0, V.Wt, V.Ht); gl.disable(gl.DEPTH_TEST);
+  const P = G3.prog.ssdown; gl.useProgram(P.p); gl.bindVertexArray(null);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, G3.tex.ss); gl.uniform1i(P.U.u_src, 0); gl.uniform1i(P.U.u_k, k);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
 }
 function g3Beams(V) {
   const wb = wellBeam(); if (!wb || !WORLD.wells.length) return;
@@ -9223,15 +9433,26 @@ function ovRect(g, X, Y, w, h, D, col) {   // a rect, pixel by pixel, where noth
   for (let y = Y; y < Y + h; y++) if (y >= 0 && y < Ht) for (let x = X; x < X + w; x++) if (x >= 0 && x < Wt && fd[y * Wt + x] <= D + 0.12) g.fillRect(x, y, 1, 1);
 }
 const ovSees = (X, Y, D, tol) => { const V = G3.V; return X >= 0 && Y >= 0 && X < V.Wt && Y < V.Ht && G3.fd[Y * V.Wt + X] <= D + tol; };
-// a world segment as a one-pixel line; `test` hides the pixels behind the scene
+// how much the depth of a level surface changes across one art pixel on screen
+function flatDepthPerPx(V) {
+  if (V.dpx !== undefined) return V.dpx;
+  const o = g3Proj(V, 0, 0, 0), px = g3Proj(V, 1, 0, 0), py = g3Proj(V, 0, 1, 0), kx = dkAt(V, 1, 0, 0) - dkAt(V, 0, 0, 0), ky = dkAt(V, 0, 1, 0) - dkAt(V, 0, 0, 0);
+  const a = px[0] - o[0], b = py[0] - o[0], c = px[1] - o[1], d = py[1] - o[1], det = a * d - b * c;
+  return V.dpx = Math.hypot((kx * d - ky * c) / det, (ky * a - kx * b) / det);
+}
+// a world segment as a one-pixel line; `test` hides the pixels behind the scene. A line on a level
+// surface (the cut outline) lands up to a pixel off the surface's own pixels, so the test allows
+// that much depth: at a fixed 0.12 about half the outline failed by a hair at most angles
+const DOTTED = [2, 1];
 function ovLine(g, V, a, b, col, dash, test) {
   const A = g3Proj(V, a[0], a[1], a[2]), B = g3Proj(V, b[0], b[1], b[2]), Da = dkAt(V, a[0], a[1], a[2]), Db = dkAt(V, b[0], b[1], b[2]);
-  let x0 = Math.round(A[0]), y0 = Math.round(A[1]); const x1 = Math.round(B[0]), y1 = Math.round(B[1]);
+  let x0 = Math.floor(A[0]), y0 = Math.floor(A[1]); const x1 = Math.floor(B[0]), y1 = Math.floor(B[1]);
+  const tol = 0.12 + 1.5 * flatDepthPerPx(V);
   const dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1, n = Math.max(dx, -dy) || 1;
   const fd = G3.fd, Wt = V.Wt, Ht = V.Ht; let err = dx + dy;
   g.fillStyle = col;
   for (let k = 0; k < 8000; k++) {
-    if ((!dash || (k % dash[0]) < dash[1]) && x0 >= 0 && y0 >= 0 && x0 < Wt && y0 < Ht && (!test || fd[y0 * Wt + x0] <= Da + (Db - Da) * k / n + 0.12)) g.fillRect(x0, y0, 1, 1);
+    if ((!dash || (k % dash[0]) < dash[1]) && x0 >= 0 && y0 >= 0 && x0 < Wt && y0 < Ht && (!test || fd[y0 * Wt + x0] <= Da + (Db - Da) * k / n + tol)) g.fillRect(x0, y0, 1, 1);
     if (x0 === x1 && y0 === y1) break;
     const e2 = 2 * err; if (e2 >= dy) { err += dy; x0 += sx; } if (e2 <= dx) { err += dx; y0 += sy; }
   }
@@ -9243,8 +9464,13 @@ function ovBox(g, V, x0, y0, z0, x1, y1, z1, col, dash) {
 }
 function g3Overlay(g, V, levels) {
   const t = S.time, L = S.level, sliced = L < NL - 1, topZ = sliced ? L : NL - 1, floor = S.floor >= 0 ? S.floor : 0, night = S.tod === 'night';
-  // the cut: real one-pixel outlines round the cut solids
-  for (const lv of levels) if (lv.lines) for (const s of lv.lines) ovLine(g, V, [s[0], s[1], s[2]], [s[3], s[4], s[2]], CUTLINE, null, true);
+  // the cut: real one-pixel outlines round the cut solids. As in the 2D art, the edges facing the
+  // viewer are solid and the far ones dotted (each run is inset from the side it outlines, so the
+  // fraction of its fixed coordinate says which way that side faces)
+  for (const lv of levels) if (lv.lines) for (const s of lv.lines) {
+    const ax = s[0] === s[3] ? 0 : 1, f = ax ? s[1] : s[0], out = f - Math.floor(f) < 0.5 ? -1 : 1;
+    ovLine(g, V, [s[0], s[1], s[2]], [s[3], s[4], s[2]], CUTLINE, out * V.C[ax] < 0 ? DOTTED : null, true);
+  }
   // dust in the well light (by day)
   const wb = wellBeam();
   if (wb && !night) for (const m of MOTES) {
@@ -9448,9 +9674,9 @@ function setG3(on) {
 }
 function g3Hud() {
   const s = G3.stats;
-  if (G3.peek) { G3.hud.textContent = 'PLANES (holding Z)  az ' + Math.round(wrap360(G3.az)) + '°  tilt ' + Math.round(G3.el) + '°'; return; }
-  G3.hud.textContent = `3D VIEW  az ${Math.round(wrap360(G3.az))}°  tilt ${Math.round(G3.el)}°  zoom ${G3.zf.toFixed(2)}×  ${G3.filter}  ${G3.texel ? 'face texels' : 'projected'}${G3.cons ? '  conservative' : ''}${G3.splat ? (G3.splat === 1 ? '  planes + points' : '  points ' + splatSizes(G3.V).join('/')) : ''}${G3.snap ? '  snap' : ''}\n` +
-    `drag orbit · drag a cable to move it · right-drag/scroll pan · pinch zoom · Q/E turn · W/S tilt · 9 top · 0 iso · N filter · M texels · K thin lines · U splats · hold Z planes · O snap · 3 2D\n` +
+  if (G3.peek) { G3.hud.textContent = 'PLAIN (holding Z)  az ' + Math.round(wrap360(G3.az)) + '°  tilt ' + Math.round(G3.el) + '°'; return; }
+  G3.hud.textContent = `3D VIEW  az ${Math.round(wrap360(G3.az))}°  tilt ${Math.round(G3.el)}°  zoom ${G3.zf.toFixed(2)}×  ${G3.filter}  ${G3.texel ? 'face texels' : 'projected'}${G3.cons ? '  conservative' : ''}${G3.ce ? '  cleanEdge' : ''}${G3.ss > 1 ? '  AA ' + G3.ss + '×' : ''}${G3.artCut ? '  outline in art' : ''}${G3.splat ? (G3.splat === 1 ? '  planes + points' : '  points ' + splatSizes(G3.V).join('/')) : ''}${G3.snap ? '  snap' : ''}\n` +
+    `drag orbit · drag a cable to move it · right-drag/scroll pan · pinch zoom · Q/E turn · W/S tilt · 9 top · 0 iso · N filter · M texels · D cleanEdge · A anti-alias · L cut outline · K thin lines · U splats · hold Z plain · O snap · 3 2D\n` +
     `gpu ${s.gpu}ms · wires ${s.wires}ms · build ${s.build || '-'}`;
 }
 window.addEventListener('keydown', e => {
@@ -9473,6 +9699,9 @@ window.addEventListener('keydown', e => {
   else if (k === 'm') G3.texel = 1 - G3.texel;
   else if (k === 'k') G3.cons = !G3.cons;
   else if (k === 'u') G3.splat = (G3.splat + 1) % 3;
+  else if (k === 'd') G3.ce = !G3.ce;
+  else if (k === 'a') G3.ss = G3.ss % 4 + 1;
+  else if (k === 'l') { G3.artCut = !G3.artCut; for (const c of G3.cuts.values()) freeLevel(c); G3.cuts.clear(); }
   else if (k === 'z') { if (!G3.peek) { G3.peek = true; render(); } }
   else used = false;
   if (used) { e.preventDefault(); e.stopImmediatePropagation(); }
