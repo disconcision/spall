@@ -27,7 +27,7 @@ try {
   ws.addEventListener('message', e => { const m = JSON.parse(e.data); if (m.id && pending.has(m.id)) { const p = pending.get(m.id); pending.delete(m.id); m.error ? p.rej(new Error(m.error.message)) : p.res(m.result); } if (m.method === 'Runtime.exceptionThrown') console.log('page error:', JSON.stringify(m.params.exceptionDetails.exception && m.params.exceptionDetails.exception.description)); });
   await send('Page.enable'); await send('Runtime.enable');
   await send('Emulation.setDeviceMetricsOverride', { width: 1500, height: 950, deviceScaleFactor: 1, mobile: false });
-  await send('Page.navigate', { url: 'http://127.0.0.1:5190/stratum-wires/test/test.html' });
+  await send('Page.navigate', { url: 'http://127.0.0.1:5190/spall/test/test.html' });
   await sleep(1500);
   await ev('new Promise(r => { const t = () => window.__booted ? window.__booted.then(r) : setTimeout(t, 100); t(); })');
   await ev(readFileSync(join(here, 'zine.js'), 'utf8'));

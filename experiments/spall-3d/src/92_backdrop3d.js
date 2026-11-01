@@ -1,5 +1,5 @@
 // ==========================================================================
-// The backdrop (stratum-wires/src/93_backdrop.js) through the 3D camera: the
+// The backdrop (spall/src/93_backdrop.js) through the 3D camera: the
 // same world drawn from this view's basis, uploaded as the sky texture.
 // ==========================================================================
 const g3SkyFlat = g3Sky;

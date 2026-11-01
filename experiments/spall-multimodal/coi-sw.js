@@ -1,7 +1,7 @@
 // Cross-origin isolation for this folder only. Moonshine's in-page speech engine runs threaded
 // WebAssembly, which needs SharedArrayBuffer, which browsers expose only to pages served with
 // COOP + COEP headers. The shared dev server (python http.server) can't send them, so this worker
-// adds them to page loads under /stratum-multimodal/. COEP "credentialless" keeps no-cors loads
+// adds them to page loads under /spall-multimodal/. COEP "credentialless" keeps no-cors loads
 // such as the Google Fonts stylesheet working.
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));

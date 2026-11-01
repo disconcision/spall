@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bring this fork up to date with the game (../stratum-wires), then build.
+"""Bring this fork up to date with the main build (../spall), then build.
 
 The fork is the game plus src/67_sense.js (talk, point, sketch) and src/67_sense.css. This copies
 every other source file from the game as it is now (its working tree, committed or not), puts the
@@ -11,7 +11,7 @@ usage: ./sync.py            (from anywhere)
 import os, re, shutil, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-GAME = os.path.join(HERE, '..', 'stratum-wires')
+GAME = os.path.join(HERE, '..', 'spall')
 OWN = {'67_sense.js', '67_sense.css'}
 
 # the mic as pixels in the text colour: X solid, W faint

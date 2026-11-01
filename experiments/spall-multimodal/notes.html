@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Stratum Multimodal Notes</title>
+<title>Spall · talk, point, sketch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -61,7 +61,7 @@ pre{background:var(--panel);border:1px solid var(--line);padding:10px 12px;overf
 <body>
 <main>
 <h1>Talk · point · <span>sketch</span></h1>
-<div class="sub">Stratum, sheet 03 · multimodal input study · 27 Oct 2026, Moonshine added 28 Oct · prototype: <a href="stratum.html">stratum.html</a> (fork of stratum-wires; new module <code>src/67_sense.js</code>)</div>
+<div class="sub">Spall · multimodal input study · 27 Oct 2026, Moonshine added 28 Oct, synced with main 31 Oct · build: <a href="./">spall-multimodal</a> (the main build plus <code>src/67_sense.js</code>; <a href="../">all builds and studies</a>)</div>
 
 <div class="tldr"><ul>
 <li><b>Working:</b> pixel ink anchored in the 3D city (painted on surfaces, or floating as arrows). Strokes stay put through pan, zoom, all four rotations and the cut.</li>
@@ -256,7 +256,7 @@ pre{background:var(--panel);border:1px solid var(--line);padding:10px 12px;overf
 <li>A floating arrow's arch is fixed in the view it was drawn in. Section view doesn't show ink.</li>
 <li>Turn hand-off reuses the scripted claude's keyword parser. The interesting next step is a real dispatcher reading <code>turnJSON()</code>.</li>
 </ul>
-<div class="foot">Code: <code>experiments/stratum-multimodal/src/67_sense.js</code> and <code>67_sense.css</code>; everything else is the game. <code>./sync.py</code> copies the game's current sources from <code>stratum-wires</code> (its working tree, so work not yet committed comes too), adds the sense files to the build, and applies the hooks in <code>00_head.html</code>, <code>80_ui.js</code>, <code>85_input.js</code> and <code>90_main.js</code>. It stops and names the anchor if the game moved one. Last synced 2026-10-31, with the band. Moonshine adds <code>coi-sw.js</code>. Test hooks: <code>STRATUM.simSpeech(text)</code>, <code>STRATUM.speakClip(url)</code> (a recorded clip into Moonshine, never the mic), <code>STRATUM.streamJSON()</code>, <code>STRATUM.worldAt(bx, by)</code>.</div>
+<div class="foot">Code: <code>experiments/spall-multimodal/src/67_sense.js</code> and <code>67_sense.css</code>; everything else is the game. <code>./sync.py</code> copies the game's current sources from <code>spall</code> (the main build) (its working tree, so work not yet committed comes too), adds the sense files to the build, and applies the hooks in <code>00_head.html</code>, <code>80_ui.js</code>, <code>85_input.js</code> and <code>90_main.js</code>. It stops and names the anchor if the game moved one. Last synced 2026-10-31, with the band. Moonshine adds <code>coi-sw.js</code>. Test hooks: <code>STRATUM.simSpeech(text)</code>, <code>STRATUM.speakClip(url)</code> (a recorded clip into Moonshine, never the mic), <code>STRATUM.streamJSON()</code>, <code>STRATUM.worldAt(bx, by)</code>.</div>
 </main>
 </body>
 </html>

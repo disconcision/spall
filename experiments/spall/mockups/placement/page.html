@@ -295,7 +295,7 @@ tr.win td { background: rgba(232,168,60,.07); }
   <p>What it costs: more on screen near the pointer (site dots, a chip), a rule players have to learn (the band), and a new object type (anchors as first-class things with hosts, which also need to follow a host that's moved or demolished). What it buys: every cable end you place is a thing you saw before you let go.</p>
 
   <h2>Experiments to run next</h2>
-  <p>Each is small and lands in <code>stratum-wires</code> on its own. The first four are the ones I'd do this week.</p>
+  <p>Each is small and lands in <code>spall</code> on its own. The first four are the ones I'd do this week.</p>
   <div class="exp">
     <div><b>One pick function for cables, girders and posts.</b><span class="why">Replace <code>wireAnchor</code>, <code>gridPointAt</code> and <code>screenAtZ</code> with <code>pickSite(bx, by, tool)</code>: tiers, the band, a visibility test against the level images, hover dots and a kind chip. The test: can you predict where an end will land before you press?</span></div>
     <div><b>Anchors on girders, walls and undersides.</b><span class="why">Let cable ends land on girders (hanging) and on +u/+v wall faces. Promote <code>WIRES.mounts</code> to real anchors with a host reference and a glyph per host type.</span></div>
@@ -315,6 +315,6 @@ tr.win td { background: rgba(232,168,60,.07); }
     <li>Should an anchor have a capacity (one hose, or four data wires) so that fan-outs come out in a fixed, predictable order?</li>
   </ul>
 
-  <p class="files">Shots are real frames from <code>stratum-wires</code> with overlays drawn on its canvas: <code>experiments/stratum-wires/mockups/placement/</code> (<code>pl.js</code> scenes, <code>shoot.mjs</code>, <code>sandbox.js</code>, <code>build.py</code>). Not committed.</p>
+  <p class="files">Shots are real frames from <code>spall</code> with overlays drawn on its canvas: <code>experiments/spall/mockups/placement/</code> (<code>pl.js</code> scenes, <code>shoot.mjs</code>, <code>sandbox.js</code>, <code>build.py</code>). Not committed.</p>
 </div>
 <script>{{toy}}</script>

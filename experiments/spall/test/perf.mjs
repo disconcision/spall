@@ -1,6 +1,6 @@
 // Perf harness (headless Chrome): boot timeline and CPU profile, steady frame times in cut and
 // exploded, and the frame times of the switches between them (keys 2 and 1), with a profile each.
-// usage: SETTLE=7000 node test/perf.mjs http://127.0.0.1:5190/stratum-wires/stratum.html outdir [w h]
+// usage: SETTLE=7000 node test/perf.mjs http://127.0.0.1:5190/spall/ outdir [w h]
 // SETTLE: ms to wait after boot before measuring (the cables sleep about 7 s in). Node >= 22.
 import { spawn } from 'node:child_process';
 import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs';

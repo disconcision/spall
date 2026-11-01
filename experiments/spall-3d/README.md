@@ -1,11 +1,11 @@
 # spall-3d: the current prototype in real 3D
 
-A study: can Spall go fully 3D, with a free orbit camera and smooth zoom, and still look like itself? This folder is the current prototype (`../stratum-wires/src`, unchanged) plus two modules. `src/91_gl3d.js` adds a WebGL2 view of the same world, and `src/92_backdrop3d.js` draws the prototype's backdrop (`../stratum-wires/src/93_backdrop.js`) through the 3D camera. Press **3** to switch between the 2D and 3D views.
+A study: can Spall go fully 3D, with a free orbit camera and smooth zoom, and still look like itself? This folder is the main build (`../spall/src`, unchanged, in the order `../spall/build.sh` lists it) plus two modules. `src/91_gl3d.js` adds a WebGL2 view of the same world, and `src/92_backdrop3d.js` draws the prototype's backdrop (`../spall/src/93_backdrop.js`) through the 3D camera. Press **3** to switch between the 2D and 3D views.
 
 ```bash
-./build.sh            # -> spall3d.html and test/test.html
+./build.sh            # -> index.html and test/test.html
 python3 -m http.server 5190 --bind 127.0.0.1 --directory ..
-# open http://127.0.0.1:5190/spall-3d/spall3d.html and press 3
+# open http://127.0.0.1:5190/spall-3d/ and press 3
 ```
 
 ## Controls (3D view)
