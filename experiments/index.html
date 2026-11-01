@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!--
+  The front page of the local server (python3 -m http.server 5190 --directory experiments).
+  Builds open as one interactive game; studies are documents. Add yours to ENTRIES below
+  (a thumbnail in home/, made by home/shoot.mjs, is optional). See CLAUDE.md at the repo root.
+-->
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0e0f11; --panel:#161513; --panel2:#1c1b18; --line:#38342e; --hi:#4f4a41; --lo:#0b0a09;
+  --ink:#e6dfcf; --dim:#a39c8e; --faint:#80796d; --acct:#e8a83c; --acct-ink:#1b1305; --you:#5fd3f2; --agent:#ff7a52;
+  --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --cond:"Barlow Condensed", "Arial Narrow", "Roboto Condensed", Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font:13px/1.5 var(--mono);padding:0 16px 64px}
+a{color:inherit}
+.wrap{max-width:1160px;margin:0 auto}
+header{display:flex;align-items:flex-end;gap:22px;padding:40px 0 26px;border-bottom:2px solid var(--lo);box-shadow:0 2px 0 var(--line)}
+header .mark{position:relative;width:84px;height:105px;flex:none;color:var(--ink)}
+header .mark>svg{position:absolute;left:0;bottom:0}
+header .mark>.p2{transform:translateY(-9px)}
+header .mark>.p3{transform:translateY(-18px)}
+header .wm{display:block;color:var(--ink);margin-bottom:6px}
+header p{margin:10px 0 0;color:var(--dim);max-width:640px}
+header .run{margin-left:auto;text-align:right;color:var(--faint);font-size:11px;align-self:flex-end}
+header .run code{color:var(--dim)}
+h2{font:700 15px/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--acct);margin:40px 0 4px;display:flex;align-items:baseline;gap:12px}
+h2 span{font:400 11.5px/1.4 var(--mono);letter-spacing:0;text-transform:none;color:var(--faint)}
+.pn{background:var(--panel);box-shadow:0 0 0 2px var(--lo),inset 2px 2px 0 var(--hi),inset -2px -2px 0 var(--lo),3px 3px 0 2px rgba(0,0,0,.4)}
+.th{display:block;aspect-ratio:16/10;background:#0a0b0c center/cover no-repeat;image-rendering:pixelated;position:relative;overflow:hidden}
+.th.none::after{content:attr(data-k);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--faint);font:600 12px/1 var(--cond);letter-spacing:.14em;text-transform:uppercase}
+/* the main build */
+.main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:0;margin-top:14px}
+.main .th{aspect-ratio:auto;min-height:330px}
+.main .tx{padding:22px 24px;display:flex;flex-direction:column;gap:10px}
+.main h3{font:700 34px/1 var(--cond);letter-spacing:.04em;text-transform:uppercase;margin:0}
+.main .tx p{margin:0;color:var(--dim)}
+.play{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;margin-top:auto;padding:9px 18px;background:var(--acct);color:var(--acct-ink);text-decoration:none;font:700 15px/1 var(--cond);letter-spacing:.12em;text-transform:uppercase;box-shadow:inset 2px 2px 0 #ffd889,inset -2px -2px 0 #a3651a}
+.play:hover{filter:brightness(1.08)}
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:14px}
+.card{display:flex;flex-direction:column;text-decoration:none;min-width:0}
+.card .tx{padding:10px 12px 12px;display:flex;flex-direction:column;gap:5px;flex:1}
+.card h3{font:700 18px/1.1 var(--cond);letter-spacing:.05em;text-transform:uppercase;margin:0}
+.card p{margin:0;color:var(--dim);font-size:12px}
+.card:hover h3,.card h3 a:hover{color:var(--acct)}
+.links{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:auto;padding-top:4px;font-size:11.5px}
+.links a{color:var(--you);text-decoration:none}
+.links a:hover{text-decoration:underline}
+.links a.ext::after{content:" ↗";color:var(--faint)}
+.meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:10.5px;color:var(--faint)}
+.meta code{color:var(--dim)}
+.tag{font:600 9.5px/1 var(--mono);padding:2px 4px;box-shadow:inset 0 0 0 1px var(--line);color:var(--faint);text-transform:uppercase;letter-spacing:.04em}
+.tag.local{color:#c9a54a;box-shadow:inset 0 0 0 1px #5a4a22}
+.tag.miss{color:var(--agent);box-shadow:inset 0 0 0 1px #6a3020}
+.upd{color:var(--faint)}
+.upd.fresh{color:var(--ink)}
+/* archive: a list */
+.arch{margin-top:12px;display:flex;flex-direction:column;gap:2px}
+.arch .row{display:grid;grid-template-columns:200px minmax(0,1fr) auto;gap:14px;align-items:baseline;padding:7px 10px;background:var(--panel)}
+.arch .row b{font:700 15px/1.1 var(--cond);letter-spacing:.05em;text-transform:uppercase}
+.arch .row span{color:var(--dim);font-size:12px}
+.arch .row .links{margin:0;padding:0}
+footer{margin-top:44px;color:var(--faint);font-size:11.5px;border-top:2px solid var(--lo);box-shadow:0 -2px 0 var(--line) inset;padding-top:16px}
+footer code{color:var(--dim)}
+@media (max-width:760px){
+  header{flex-wrap:wrap}
+  header .run{margin-left:0;text-align:left}
+  .main{grid-template-columns:1fr}
+  .main .th{min-height:200px}
+  .arch .row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="mark" aria-hidden="true"><svg class="ldp p1" width="84" height="51" viewBox="0 0 28 17" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true"><rect x="12" y="0" width="4" height="1" fill="#38342e"/><rect x="10" y="1" width="8" height="1" fill="#38342e"/><rect x="8" y="2" width="12" height="1" fill="#38342e"/><rect x="6" y="3" width="16" height="1" fill="#38342e"/><rect x="4" y="4" width="20" height="1" fill="#38342e"/><rect x="2" y="5" width="24" height="1" fill="#38342e"/><rect x="0" y="6" width="28" height="1" fill="#38342e"/><rect x="0" y="7" width="2" height="1" fill="#4f4a41"/><rect x="2" y="7" width="24" height="1" fill="#38342e"/><rect x="26" y="7" width="2" height="1" fill="#4f4a41"/><rect x="0" y="8" width="2" height="1" fill="#26241f"/><rect x="2" y="8" width="2" height="1" fill="#4f4a41"/><rect x="4" y="8" width="20" height="1" fill="#38342e"/><rect x="24" y="8" width="2" height="1" fill="#4f4a41"/><rect x="26" y="8" width="2" height="1" fill="#1b1a17"/><rect x="0" y="9" width="4" height="1" fill="#26241f"/><rect x="4" y="9" width="2" height="1" fill="#4f4a41"/><rect x="6" y="9" width="16" height="1" fill="#38342e"/><rect x="22" y="9" width="2" height="1" fill="#4f4a41"/><rect x="24" y="9" width="4" height="1" fill="#1b1a17"/><rect x="0" y="10" width="6" height="1" fill="#26241f"/><rect x="6" y="10" width="2" height="1" fill="#4f4a41"/><rect x="8" y="10" width="12" height="1" fill="#38342e"/><rect x="20" y="10" width="2" height="1" fill="#4f4a41"/><rect x="22" y="10" width="6" height="1" fill="#1b1a17"/><rect x="2" y="11" width="6" height="1" fill="#26241f"/><rect x="8" y="11" width="2" height="1" fill="#4f4a41"/><rect x="10" y="11" width="8" height="1" fill="#38342e"/><rect x="18" y="11" width="2" height="1" fill="#4f4a41"/><rect x="20" y="11" width="6" height="1" fill="#1b1a17"/><rect x="4" y="12" width="6" height="1" fill="#26241f"/><rect x="10" y="12" width="2" height="1" fill="#4f4a41"/><rect x="12" y="12" width="4" height="1" fill="#38342e"/><rect x="16" y="12" width="2" height="1" fill="#4f4a41"/><rect x="18" y="12" width="6" height="1" fill="#1b1a17"/><rect x="6" y="13" width="6" height="1" fill="#26241f"/><rect x="12" y="13" width="4" height="1" fill="#4f4a41"/><rect x="16" y="13" width="6" height="1" fill="#1b1a17"/><rect x="8" y="14" width="6" height="1" fill="#26241f"/><rect x="14" y="14" width="6" height="1" fill="#1b1a17"/><rect x="10" y="15" width="4" height="1" fill="#26241f"/><rect x="14" y="15" width="4" height="1" fill="#1b1a17"/><rect x="12" y="16" width="2" height="1" fill="#26241f"/><rect x="14" y="16" width="2" height="1" fill="#1b1a17"/></svg><svg class="ldp p2" width="84" height="51" viewBox="0 0 28 17" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true"><rect x="12" y="0" width="4" height="1" fill="#6a645a"/><rect x="10" y="1" width="8" height="1" fill="#6a645a"/><rect x="8" y="2" width="12" height="1" fill="#6a645a"/><rect x="6" y="3" width="16" height="1" fill="#6a645a"/><rect x="4" y="4" width="20" height="1" fill="#6a645a"/><rect x="2" y="5" width="24" height="1" fill="#6a645a"/><rect x="0" y="6" width="28" height="1" fill="#6a645a"/><rect x="0" y="7" width="2" height="1" fill="#857e72"/><rect x="2" y="7" width="24" height="1" fill="#6a645a"/><rect x="26" y="7" width="2" height="1" fill="#857e72"/><rect x="0" y="8" width="2" height="1" fill="#4f4a41"/><rect x="2" y="8" width="2" height="1" fill="#857e72"/><rect x="4" y="8" width="20" height="1" fill="#6a645a"/><rect x="24" y="8" width="2" height="1" fill="#857e72"/><rect x="26" y="8" width="2" height="1" fill="#38342e"/><rect x="0" y="9" width="4" height="1" fill="#4f4a41"/><rect x="4" y="9" width="2" height="1" fill="#857e72"/><rect x="6" y="9" width="16" height="1" fill="#6a645a"/><rect x="22" y="9" width="2" height="1" fill="#857e72"/><rect x="24" y="9" width="4" height="1" fill="#38342e"/><rect x="0" y="10" width="6" height="1" fill="#4f4a41"/><rect x="6" y="10" width="2" height="1" fill="#857e72"/><rect x="8" y="10" width="12" height="1" fill="#6a645a"/><rect x="20" y="10" width="2" height="1" fill="#857e72"/><rect x="22" y="10" width="6" height="1" fill="#38342e"/><rect x="2" y="11" width="6" height="1" fill="#4f4a41"/><rect x="8" y="11" width="2" height="1" fill="#857e72"/><rect x="10" y="11" width="8" height="1" fill="#6a645a"/><rect x="18" y="11" width="2" height="1" fill="#857e72"/><rect x="20" y="11" width="6" height="1" fill="#38342e"/><rect x="4" y="12" width="6" height="1" fill="#4f4a41"/><rect x="10" y="12" width="2" height="1" fill="#857e72"/><rect x="12" y="12" width="4" height="1" fill="#6a645a"/><rect x="16" y="12" width="2" height="1" fill="#857e72"/><rect x="18" y="12" width="6" height="1" fill="#38342e"/><rect x="6" y="13" width="6" height="1" fill="#4f4a41"/><rect x="12" y="13" width="4" height="1" fill="#857e72"/><rect x="16" y="13" width="6" height="1" fill="#38342e"/><rect x="8" y="14" width="6" height="1" fill="#4f4a41"/><rect x="14" y="14" width="6" height="1" fill="#38342e"/><rect x="10" y="15" width="4" height="1" fill="#4f4a41"/><rect x="14" y="15" width="4" height="1" fill="#38342e"/><rect x="12" y="16" width="2" height="1" fill="#4f4a41"/><rect x="14" y="16" width="2" height="1" fill="#38342e"/></svg><svg class="ldp p3" width="84" height="51" viewBox="0 0 28 17" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true"><rect x="12" y="0" width="4" height="1" fill="#e8a83c"/><rect x="10" y="1" width="8" height="1" fill="#e8a83c"/><rect x="8" y="2" width="12" height="1" fill="#e8a83c"/><rect x="6" y="3" width="16" height="1" fill="#e8a83c"/><rect x="4" y="4" width="20" height="1" fill="#e8a83c"/><rect x="2" y="5" width="24" height="1" fill="#e8a83c"/><rect x="0" y="6" width="28" height="1" fill="#e8a83c"/><rect x="0" y="7" width="2" height="1" fill="#f5c46a"/><rect x="2" y="7" width="24" height="1" fill="#e8a83c"/><rect x="26" y="7" width="2" height="1" fill="#f5c46a"/><rect x="0" y="8" width="2" height="1" fill="#b07a22"/><rect x="2" y="8" width="2" height="1" fill="#f5c46a"/><rect x="4" y="8" width="20" height="1" fill="#e8a83c"/><rect x="24" y="8" width="2" height="1" fill="#f5c46a"/><rect x="26" y="8" width="2" height="1" fill="#8a5c14"/><rect x="0" y="9" width="4" height="1" fill="#b07a22"/><rect x="4" y="9" width="2" height="1" fill="#f5c46a"/><rect x="6" y="9" width="16" height="1" fill="#e8a83c"/><rect x="22" y="9" width="2" height="1" fill="#f5c46a"/><rect x="24" y="9" width="4" height="1" fill="#8a5c14"/><rect x="0" y="10" width="6" height="1" fill="#b07a22"/><rect x="6" y="10" width="2" height="1" fill="#f5c46a"/><rect x="8" y="10" width="12" height="1" fill="#e8a83c"/><rect x="20" y="10" width="2" height="1" fill="#f5c46a"/><rect x="22" y="10" width="6" height="1" fill="#8a5c14"/><rect x="2" y="11" width="6" height="1" fill="#b07a22"/><rect x="8" y="11" width="2" height="1" fill="#f5c46a"/><rect x="10" y="11" width="8" height="1" fill="#e8a83c"/><rect x="18" y="11" width="2" height="1" fill="#f5c46a"/><rect x="20" y="11" width="6" height="1" fill="#8a5c14"/><rect x="4" y="12" width="6" height="1" fill="#b07a22"/><rect x="10" y="12" width="2" height="1" fill="#f5c46a"/><rect x="12" y="12" width="4" height="1" fill="#e8a83c"/><rect x="16" y="12" width="2" height="1" fill="#f5c46a"/><rect x="18" y="12" width="6" height="1" fill="#8a5c14"/><rect x="6" y="13" width="6" height="1" fill="#b07a22"/><rect x="12" y="13" width="4" height="1" fill="#f5c46a"/><rect x="16" y="13" width="6" height="1" fill="#8a5c14"/><rect x="8" y="14" width="6" height="1" fill="#b07a22"/><rect x="14" y="14" width="6" height="1" fill="#8a5c14"/><rect x="10" y="15" width="4" height="1" fill="#b07a22"/><rect x="14" y="15" width="4" height="1" fill="#8a5c14"/><rect x="12" y="16" width="2" height="1" fill="#b07a22"/><rect x="14" y="16" width="2" height="1" fill="#8a5c14"/></svg></div>
+  <div>
+    <svg class="wm" width="301" height="49" viewBox="0 0 43 7" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true"><rect x="1" y="0" width="5" height="1"/><rect x="9" y="0" width="6" height="1"/><rect x="19" y="0" width="5" height="1"/><rect x="27" y="0" width="2" height="1"/><rect x="36" y="0" width="2" height="1"/><rect x="0" y="1" width="2" height="1"/><rect x="5" y="1" width="2" height="1"/><rect x="9" y="1" width="2" height="1"/><rect x="14" y="1" width="2" height="1"/><rect x="18" y="1" width="2" height="1"/><rect x="23" y="1" width="2" height="1"/><rect x="27" y="1" width="2" height="1"/><rect x="36" y="1" width="2" height="1"/><rect x="0" y="2" width="2" height="1"/><rect x="9" y="2" width="2" height="1"/><rect x="14" y="2" width="2" height="1"/><rect x="18" y="2" width="2" height="1"/><rect x="23" y="2" width="2" height="1"/><rect x="27" y="2" width="2" height="1"/><rect x="36" y="2" width="2" height="1"/><rect x="1" y="3" width="5" height="1"/><rect x="9" y="3" width="6" height="1"/><rect x="18" y="3" width="7" height="1"/><rect x="27" y="3" width="2" height="1"/><rect x="36" y="3" width="2" height="1"/><rect x="5" y="4" width="2" height="1"/><rect x="9" y="4" width="2" height="1"/><rect x="18" y="4" width="2" height="1"/><rect x="23" y="4" width="2" height="1"/><rect x="27" y="4" width="2" height="1"/><rect x="36" y="4" width="2" height="1"/><rect x="0" y="5" width="2" height="1"/><rect x="5" y="5" width="2" height="1"/><rect x="9" y="5" width="2" height="1"/><rect x="18" y="5" width="2" height="1"/><rect x="23" y="5" width="2" height="1"/><rect x="27" y="5" width="2" height="1"/><rect x="36" y="5" width="2" height="1"/><rect x="1" y="6" width="5" height="1"/><rect x="9" y="6" width="2" height="1"/><rect x="18" y="6" width="2" height="1"/><rect x="23" y="6" width="2" height="1"/><rect x="27" y="6" width="7" height="1"/><rect x="36" y="6" width="7" height="1"/></svg>
+    <p>A pixel-art isometric megastructure builder (working title). An ancient arcology failing under its own weight; you work in it with agents and a swarm of robot workers, raising new structure and keeping the old alive a little longer.</p>
+  </div>
+  <div class="run">served from <code>experiments/</code><br>port 5190</div>
+</header>
+
+<h2 id="main">Main build <span>the game as it stands; everything else is measured against it</span></h2>
+<div id="mainCard"></div>
+
+<h2 id="builds">Builds in flight <span>each opens as one interactive game: the main build plus something</span></h2>
+<div class="grid" id="buildGrid"></div>
+
+<h2 id="studies">Studies <span>documents: findings, comparisons, concept pages; some have live parts</span></h2>
+<div class="grid" id="studyGrid"></div>
+
+<h2 id="archive">Archive <span>the Stratum era and retired tools, kept as they were</span></h2>
+<div class="arch" id="archList"></div>
+
+<footer>
+  To add a build or study, add it to <code>ENTRIES</code> in <code>experiments/index.html</code>; <code>home/shoot.mjs</code> makes the thumbnails. Conventions (names, folders, commits) are in <code>CLAUDE.md</code> at the repo root. “Updated” is when the page's file last changed on disk. <span class="tag local">local</span> pages live in a <code>local/</code> folder: synced by Dropbox, not in git.
+</footer>
+</div>
+
+<script>
+// kind: main | build | study | archive. href is relative to this page; also: extra links; ext marks claude.ai pages
+const ENTRIES = [
+  { kind: 'main', id: 'spall', title: 'Spall', href: 'spall/', src: 'experiments/spall/',
+    desc: 'Cables with sliding ties, girders and posts; demolish; live lighting with sun, sky, occlusion, mist and shafts; a 64×64×30 world on a pedestal over an endless undercity; claude as an agent with proposals; and the band, where bots, drones and processes chatter in the feed.',
+    also: [['Highlight styles', 'spall/mockups/highlight.html'], ['UI chrome concepts', 'spall/mockups/ui.html']] },
+
+  { kind: 'build', id: 'spall-3d', title: 'Spall 3D', href: 'spall-3d/', src: 'experiments/spall-3d/',
+    desc: 'The main build drawn by WebGL with a free orbit camera and smooth zoom. Press 3 to switch views; the cable tools work from any angle.',
+    also: [['Report', 'https://claude.ai/artifact/BnYRQXxWg4BXG3AA9VcCCY', 'ext'], ['Report (local)', 'spall-3d/local/report.html', 'local']] },
+  { kind: 'build', id: 'spall-multimodal', title: 'Talk, point, sketch', href: 'spall-multimodal/', src: 'experiments/spall-multimodal/',
+    desc: 'The main build plus speech (Web Speech, or Moonshine in the page), pointing and pixel ink anchored in 3D, on one timeline for an agent. Kept current with sync.py.',
+    also: [['Notes', 'spall-multimodal/notes.html']] },
+
+  { kind: 'study', id: 'notes-multimodal', title: 'Talk, point, sketch: notes', href: 'spall-multimodal/notes.html',
+    desc: 'Why a custom ink layer and not tldraw, how ink anchors in 3D, speech engines measured, the stream an agent reads.' },
+  { kind: 'study', id: 'placement', title: 'Placement depth', href: 'spall/mockups/placement/local/placement.html', local: true,
+    desc: 'How placement gets depth from a 2D pointer in the fixed iso view: the four rules the game uses now, and buildable sandboxes for the proposals.',
+    also: [['Report', 'https://claude.ai/artifact/NV4kcEYwLMGwQEfzrX2A5m', 'ext']] },
+  { kind: 'study', id: 'zine', title: 'Sublevel (gameplay zine)', href: 'spall/mockups/zine/local/spall-zine.html', local: true,
+    desc: 'A mock games magazine pitching the game: the lineman/builder split, legibility as the skill, networks, resources, every actor a process.',
+    also: [['Report', 'https://claude.ai/artifact/LyseCFDxEWfSGBxTLFEZSA', 'ext']] },
+  { kind: 'study', id: 'backdrop', title: 'Backdrop', href: 'spall-backdrop/local/undercity.html', local: true,
+    desc: 'The world past the edge: procedural panoramas, cities on the horizon, a vaster enveloping structure; merged into the main build as 93_backdrop.js.',
+    also: [['Report', 'https://claude.ai/artifact/6WVijp1bFPutFLQ1QMsVsK', 'ext'], ['Round five', 'spall-backdrop/local/backdrop5.html', 'local']] },
+  { kind: 'study', id: 'chatter', title: 'Bot chatter reference', href: 'agent-chat-reference/',
+    desc: 'Art reference for the band: a sidebar of agents and bots talking in symbolic languages, glyphs, blocks, plans and live windows.' },
+  { kind: 'study', id: 'light', title: 'Light studies', href: 'spall/mockups/light.html',
+    desc: 'Lighting looks for the cut view: sun, sky, occlusion, mist and shafts.' },
+  { kind: 'study', id: 'hires', title: 'Fidelity: 1× vs 2×', href: 'spall/mockups/hires.html',
+    desc: 'The same scenes at one and two device pixels per art pixel.' },
+  { kind: 'study', id: 'wires', title: 'Wire looks', href: 'spall/mockups/index.html',
+    desc: 'Cable and bundle looks, round four.',
+    also: [['v1', 'spall/mockups/v1/'], ['v2', 'spall/mockups/v2/'], ['v3', 'spall/mockups/v3/']] },
+
+  { kind: 'archive', id: 'layers', title: 'Stratum layer study', href: 'megastructure-layers/stratum.html',
+    desc: 'The original layer-view prototype: the touchstone for the look.' },
+  { kind: 'archive', id: 'ui-mockups', title: 'UI mock-ups', href: 'ui-mockups/src/m1_level_hud.html',
+    desc: 'Early game screens composited over renders (m1–m8).' },
+  { kind: 'archive', id: 'lines', title: 'Lines and voids', href: 'lines-and-voids/',
+    desc: 'A rejected renderer study; its tools/cdp.mjs drives the headless tests.' },
+  { kind: 'archive', id: 'renders', title: 'Concept renders', href: null,
+    desc: 'Blender kit-of-parts renders and the accretion time-lapse (concept-renders/, agent-buildings/; need Blender, no page).' },
+];
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const isExt = h => /^https?:/.test(h);
+function links(e) {
+  const L = [...(e.also || [])];
+  return L.length ? `<span class="links">${L.map(([n, h, k]) => `<a href="${esc(h)}" class="${k === 'ext' ? 'ext' : ''}"${isExt(h) ? ' target="_blank" rel="noopener"' : ''} data-chk="${k === 'ext' ? '' : esc(h)}">${esc(n)}</a>`).join('')}</span>` : '';
+}
+function thumb(e) { return `<span class="th none" data-k="${esc(e.kind)}" data-img="home/${esc(e.id)}.jpg"></span>`; }
+function meta(e) {
+  return `<span class="meta">${e.src ? `<code>${esc(e.src)}</code>` : ''}${e.local ? '<span class="tag local">local</span>' : ''}<span class="upd" data-upd="${esc(e.href || '')}"></span></span>`;
+}
+function card(e) {
+  return `<div class="card pn"><a href="${esc(e.href)}">${thumb(e)}</a><div class="tx"><h3><a href="${esc(e.href)}" style="text-decoration:none">${esc(e.title)}</a></h3><p>${esc(e.desc)}</p>${meta(e)}${links(e)}</div></div>`;
+}
+const M = ENTRIES.find(e => e.kind === 'main');
+document.getElementById('mainCard').innerHTML = `<div class="main pn"><a href="${esc(M.href)}">${thumb(M)}</a><div class="tx"><h3>${esc(M.title)}</h3><p>${esc(M.desc)}</p>${meta(M)}${links(M)}<a class="play" href="${esc(M.href)}">Play ▸</a></div></div>`;
+document.getElementById('buildGrid').innerHTML = ENTRIES.filter(e => e.kind === 'build').map(card).join('');
+document.getElementById('studyGrid').innerHTML = ENTRIES.filter(e => e.kind === 'study').map(card).join('');
+document.getElementById('archList').innerHTML = ENTRIES.filter(e => e.kind === 'archive').map(e =>
+  `<div class="row"><b>${e.href ? `<a href="${esc(e.href)}" style="text-decoration:none">${esc(e.title)}</a>` : esc(e.title)}</b><span>${esc(e.desc)}</span><span class="upd" data-upd="${esc(e.href || '')}"></span></div>`).join('');
+
+// thumbnails, if made
+for (const el of document.querySelectorAll('.th[data-img]')) {
+  const im = new Image();
+  im.onload = () => { el.style.backgroundImage = `url("${el.dataset.img}")`; el.classList.remove('none'); };
+  im.src = el.dataset.img;
+}
+// when each page last changed (the server's Last-Modified); a local page that isn't here says so
+const ago = ms => { const m = ms / 60000; return m < 90 ? Math.max(1, Math.round(m)) + ' min ago' : m < 60 * 36 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' days ago'; };
+for (const el of document.querySelectorAll('[data-upd]')) {
+  const h = el.dataset.upd; if (!h || isExt(h)) continue;
+  fetch(h, { method: 'HEAD' }).then(r => {
+    if (!r.ok) { el.className = 'tag miss'; el.textContent = 'not here'; return; }
+    const lm = r.headers.get('Last-Modified'); if (!lm) return;
+    const d = Date.now() - new Date(lm).getTime(); el.textContent = 'updated ' + ago(d); if (d < 864e5) el.classList.add('fresh');
+  }).catch(() => {});
+}
+for (const a of document.querySelectorAll('a[data-chk]')) {
+  const h = a.dataset.chk; if (!h) continue;
+  fetch(h, { method: 'HEAD' }).then(r => { if (!r.ok) { a.style.opacity = .45; a.title = 'not on this machine'; } }).catch(() => {});
+}
+</script>
+</body>
+</html>

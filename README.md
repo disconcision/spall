@@ -10,22 +10,30 @@ A pixel-art isometric megastructure builder. The setting is an ancient arcology 
 python3 -m http.server 5190 --bind 127.0.0.1 --directory experiments
 ```
 
-Then open http://127.0.0.1:5190/stratum-wires/stratum.html. The game is plain JavaScript in `experiments/stratum-wires/src/`, concatenated into `stratum.html` by `experiments/stratum-wires/build.sh`.
+Then open http://127.0.0.1:5190/. The front page lists the main build, the builds in flight, the studies and the archive. The main build is http://127.0.0.1:5190/spall/: plain JavaScript in `experiments/spall/src/`, joined into `index.html` by `experiments/spall/build.sh`.
 
 ## What's where
 
+- **Builds** open as one interactive game.
+- **Studies** are documents, some with live parts.
+- **The archive** is the Stratum era, kept as it was.
+
+Conventions for agents and people working here (names, folders, commits, testing) are in `CLAUDE.md`.
+
 | Folder | What it is |
 |---|---|
-| `experiments/stratum-wires/` | **The current prototype.** Physics cables with sliding ties, girders, posts, demolish, live lighting (sun, sky, occlusion, mist, shafts), birds, a 64×64×30 world, presets and save slots. |
-| `experiments/stratum-wires/mockups/` | Concept pages: `ui.html` (UI chrome concepts with a code mixer), `hires.html` (1× vs 2× fidelity), `light.html` (lighting studies), `index.html` (cable looks). |
-| `experiments/spall-3d/` | A 3D study: the current prototype drawn by WebGL with a free orbit camera and smooth zoom (press 3). Same sprites, same cables, cable tools work from any angle. `README.md` has the findings. |
-| `experiments/stratum-multimodal/` | A fork with talk, point and sketch input. Voice via Web Speech; pixel ink anchored in 3D; one timeline. `notes.html` has the findings. |
-| `experiments/agent-chat-reference/` | Art reference: a sidebar full of agents and bots talking, some in symbolic languages. |
-| `experiments/megastructure-layers/` | The original layer-view prototype, the touchstone for the look. |
-| `experiments/lines-and-voids/` | A rejected renderer study. `tools/cdp.mjs` is the headless-Chrome screenshot and test tool everything else uses. |
-| `experiments/concept-renders/` | Blender kit-of-parts renderer, concept renders and the accretion time-lapse (needs Blender). |
-| `experiments/agent-buildings/` | Building types an agent designed from requests. Uses `concept-renders/`. |
-| `experiments/ui-mockups/` | Early game-screen mock-ups composited over renders. |
+| `experiments/index.html` | **The front page.** Its `ENTRIES` list is the map; `home/` holds the thumbnails and `home/shoot.mjs`, which makes them. |
+| `experiments/spall/` | **The main build.** Physics cables with sliding ties, girders, posts, demolish; live lighting (sun, sky, occlusion, mist, shafts); birds; a 64×64×30 world on a pedestal over an undercity backdrop; claude as an agent; the band (bot chatter in the feed); presets and save slots. |
+| `experiments/spall/mockups/` | Studies on the main build: UI chrome concepts (`ui.html`), highlight styles, 1× vs 2× fidelity (`hires.html`), lighting (`light.html`), wire looks (`index.html`, `v1`–`v3`), the placement study (`placement/`) and the gameplay zine (`zine/`). |
+| `experiments/spall-3d/` | Build: the main build drawn by WebGL with a free orbit camera and smooth zoom (press 3). Reads `../spall/src`. `README.md` has the findings. |
+| `experiments/spall-multimodal/` | Build: the main build plus talk, point and sketch input (Web Speech or Moonshine; pixel ink anchored in 3D; one timeline for an agent). `sync.py` keeps it current with main; `notes.html` has the findings. |
+| `experiments/spall-backdrop/` | Study: the backdrop, now merged into the main build. Keeps its shot and page tools; its pages are in `local/`. |
+| `experiments/agent-chat-reference/` | Study: art reference for the band, a sidebar of agents and bots talking in symbolic languages. |
+| `experiments/megastructure-layers/` | Archive: the original layer-view prototype, the touchstone for the look. |
+| `experiments/lines-and-voids/` | Archive: a rejected renderer study. `tools/cdp.mjs` is the headless-Chrome tool the tests use. |
+| `experiments/concept-renders/` | Archive: Blender kit-of-parts renderer, concept renders and the accretion time-lapse (needs Blender). |
+| `experiments/agent-buildings/` | Archive: building types an agent designed from requests. Uses `concept-renders/`. |
+| `experiments/ui-mockups/` | Archive: early game-screen mock-ups composited over renders. |
 | `concepts/aesthetics/` | Aesthetic studies built from the kit renders. |
 | `notes/` | Design notes: megastructure, multiscale simulation, creative brief. |
 
@@ -40,4 +48,4 @@ A pre-commit hook refuses files over 20 MB and says to move them into a `local/`
 
 ## History
 
-Split out on 28 Oct 2026 from the earlier Stratum folder. That folder continues as a separate SimCity 2000 project: the SC2K fork, the Micropolis agent, the SC4 probe, the agent kit, the voice gateway and the original research report. Nothing from it, and no Maxis or other third-party game assets, is in this repository.
+Split out on 28 Oct 2026 from the earlier Stratum folder. On 31 Oct the Stratum-named folders became `spall` (was `stratum-wires`) and `spall-multimodal` (was `stratum-multimodal`), and every build's page became `index.html`. That folder continues as a separate SimCity 2000 project: the SC2K fork, the Micropolis agent, the SC4 probe, the agent kit, the voice gateway and the original research report. Nothing from it, and no Maxis or other third-party game assets, is in this repository.
