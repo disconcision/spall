@@ -137,7 +137,7 @@ header.tb{position:relative;z-index:10;display:flex;align-items:stretch;height:v
 .float{background:var(--tipbg);color:var(--ink);box-shadow:0 0 0 var(--p) var(--pxo),inset var(--p) var(--p) 0 var(--pxl),calc(2*var(--p)) calc(2*var(--p)) 0 0 rgba(0,0,0,.4)}
 
 /* ---- the stage ---- */
-main{display:grid;grid-template-columns:minmax(0,1fr) var(--sbw);min-height:0}
+main{display:grid;grid-template-columns:minmax(0,1fr) var(--sbw);grid-template-rows:minmax(0,1fr) auto;min-height:0}
 body.sb-off{--sbw:36px}
 #viewwrap{position:relative;min-width:0;min-height:0;background:var(--stage)}
 #stage{position:absolute;inset:0;overflow:hidden;touch-action:none;background:var(--stage);cursor:crosshair}
@@ -278,8 +278,8 @@ body[data-mt="11"] .tool[aria-pressed="true"],body[data-mt="15"] .tool[aria-pres
 .lvc.near #levels .row.above .nl,.lvc.near #levels .row.out .nl{opacity:.45}
 .lvc .lv-win{overflow:visible;clip-path:inset(0 0 0 -400px);-webkit-mask-image:none;mask-image:none}
 
-/* ---- status bar (BB3: current tool's keys, zoom stepper) ---- */
-#status{position:absolute;left:0;right:0;bottom:0;display:flex;gap:10px;align-items:center;height:28px;padding:var(--p) 8px 0;font-size:11px;z-index:5;white-space:nowrap;overflow:hidden;background:var(--pxf);box-shadow:inset 0 var(--p) 0 var(--pxo),inset 0 calc(2*var(--p)) 0 var(--pxl);color:var(--ink)}
+/* ---- status bar (BB3: current tool's keys, zoom stepper): the full width, under the stage and the sidebar ---- */
+#status{grid-column:1/-1;position:relative;display:flex;gap:10px;align-items:center;height:28px;padding:var(--p) 8px 0;font-size:11px;z-index:5;white-space:nowrap;overflow:hidden;background:var(--pxf);box-shadow:inset 0 var(--p) 0 var(--pxo),inset 0 calc(2*var(--p)) 0 var(--pxl);color:var(--ink)}
 #slice{font:700 12px/1 var(--cond);letter-spacing:.1em;text-transform:uppercase;padding:3px 6px;color:var(--dim);flex:none}
 #slice.on{background:var(--accent);color:var(--accent-ink);box-shadow:var(--onsh)}
 #hover{color:var(--ink);overflow:hidden;text-overflow:ellipsis;flex:1;min-width:40px}
@@ -290,7 +290,7 @@ body[data-mt="11"] .tool[aria-pressed="true"],body[data-mt="15"] .tool[aria-pres
 #viewinfo{color:var(--faint);font-size:10.5px}
 
 /* ---- toast ---- */
-#toast{position:absolute;left:50%;bottom:40px;transform:translateX(-50%);padding:5px 10px;font-size:11px;z-index:9;max-width:80%}
+#toast{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);padding:5px 10px;font-size:11px;z-index:9;max-width:80%}
 #toast[hidden]{display:none}
 
 /* ---- agent sidebar (decided: unified feed + filter; collapses to the slim rail) ---- */
@@ -526,7 +526,9 @@ body.noagent main{grid-template-columns:minmax(0,1fr)}
   .tb .fill{display:none}
   .tb .b.mode .lb{display:none}
   .tb .b.mode{padding:0 9px}
-  main{display:block}
+  main{display:flex;flex-direction:column}
+  #status{order:1}
+  aside#side{order:2}
   #viewwrap{height:66vh;min-height:340px}
   aside#side{height:auto;min-height:300px;border-left:0;border-top:var(--p) solid var(--pxo)}
   body.sb-off aside#side{min-height:0}
@@ -660,7 +662,6 @@ body[data-mt="11"],body[data-mt="15"]{--ink-you:#1279a0}
       </div>
       <div id="toast" class="float" hidden></div>
       <div id="cap" hidden><span class="who">you</span><span class="fin"></span><i class="int"></i><span class="lat"></span></div>
-      <div id="status" aria-live="polite"><span id="slice" class="on">Slice L4</span><span id="hover"></span><span id="hints"></span><span id="viewinfo"></span><span class="stp" id="zoomStep" data-tip="Zoom" data-key="+ −"><button type="button" data-zoom="-1" aria-label="Zoom out">−</button><b id="zoomv">×2</b><button type="button" data-zoom="1" aria-label="Zoom in">+</button></span></div>
     </section>
     <nav id="tools" class="pn" aria-label="Tools"></nav>
     <section id="strip" class="pn" aria-label="Levels">
@@ -687,6 +688,7 @@ body[data-mt="11"],body[data-mt="15"]{--ink-you:#1279a0}
       <form id="chatf" autocomplete="off"><input id="chatIn" placeholder="Ask claude to build…" aria-label="Message to agent"><button type="submit" aria-label="Send"></button><button type="button" id="bMic" aria-pressed="false" aria-label="Talk" data-tip="Talk: click for an open mic, or hold Space"><svg width="9" height="12" viewBox="0 0 9 12" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true"><rect x="2" y="0" width="1" height="1"/><rect x="3" y="0" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/><rect x="6" y="0" width="1" height="1"/><rect x="1" y="1" width="1" height="1"/><rect x="2" y="1" width="1" height="1" opacity=".3"/><rect x="3" y="1" width="1" height="1" opacity=".3"/><rect x="4" y="1" width="1" height="1" opacity=".3"/><rect x="5" y="1" width="1" height="1" opacity=".3"/><rect x="6" y="1" width="1" height="1" opacity=".3"/><rect x="7" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1" opacity=".3"/><rect x="3" y="2" width="1" height="1" opacity=".3"/><rect x="4" y="2" width="1" height="1" opacity=".3"/><rect x="5" y="2" width="1" height="1" opacity=".3"/><rect x="6" y="2" width="1" height="1" opacity=".3"/><rect x="7" y="2" width="1" height="1"/><rect x="1" y="3" width="1" height="1"/><rect x="2" y="3" width="1" height="1" opacity=".3"/><rect x="3" y="3" width="1" height="1" opacity=".3"/><rect x="4" y="3" width="1" height="1" opacity=".3"/><rect x="5" y="3" width="1" height="1" opacity=".3"/><rect x="6" y="3" width="1" height="1" opacity=".3"/><rect x="7" y="3" width="1" height="1"/><rect x="1" y="4" width="1" height="1"/><rect x="2" y="4" width="1" height="1" opacity=".3"/><rect x="3" y="4" width="1" height="1" opacity=".3"/><rect x="4" y="4" width="1" height="1" opacity=".3"/><rect x="5" y="4" width="1" height="1" opacity=".3"/><rect x="6" y="4" width="1" height="1" opacity=".3"/><rect x="7" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1" opacity=".3"/><rect x="4" y="5" width="1" height="1" opacity=".3"/><rect x="5" y="5" width="1" height="1" opacity=".3"/><rect x="6" y="5" width="1" height="1"/><rect x="8" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="8" y="6" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="3" y="8" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/><rect x="5" y="8" width="1" height="1"/><rect x="6" y="8" width="1" height="1"/><rect x="4" y="9" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="2" y="11" width="1" height="1"/><rect x="3" y="11" width="1" height="1"/><rect x="4" y="11" width="1" height="1"/><rect x="5" y="11" width="1" height="1"/><rect x="6" y="11" width="1" height="1"/></svg><i id="micLv"></i></button></form>
     </div>
   </aside>
+  <div id="status" aria-live="polite"><span id="slice" class="on">Slice L4</span><span id="hover"></span><span id="hints"></span><span id="viewinfo"></span><span class="stp" id="zoomStep" data-tip="Zoom" data-key="+ −"><button type="button" data-zoom="-1" aria-label="Zoom out">−</button><b id="zoomv">×2</b><button type="button" data-zoom="1" aria-label="Zoom in">+</button></span></div>
 </main>
 </div>
 <div id="ctip" class="float" role="tooltip"></div>
@@ -7221,7 +7223,7 @@ function buildStrip() {
 }
 function sizeLevels() {
   const st = $('strip'), vw = $('viewwrap'); if (!st || !vw) return;
-  const avail = vw.clientHeight - 8 - 40 - (UI.lvx ? 56 : 0) - 13 - 12 - 8 - 34;
+  const avail = vw.clientHeight - 8 - 40 - (UI.lvx ? 56 : 0) - 13 - 12 - 8 - 8;
   const v = Math.max(96, Math.min(NL * 16 + 8, avail)) + 'px';
   if (st.style.getPropertyValue('--lvh') !== v) { st.style.setProperty('--lvh', v); stripDirty = true; UI.lvSeen = false; }
 }
@@ -7859,7 +7861,7 @@ function rotate(d) {
   markAllDirty(); sfx.click();
 }
 function setZoom(z) { z = clamp(z, 1, 5); if (z === S.zoom) return; S.zoom = z; if (S.mode === 'cut') S.isoZoom = z; planDirty = true; secDirty = true; resize(); }
-function fitZoomFor(w, h) { return Math.max(1, Math.min(4, Math.floor(Math.min((S.cssW - 8) / w, (S.cssH - 34) / h)))); }
+function fitZoomFor(w, h) { return Math.max(1, Math.min(4, Math.floor(Math.min((S.cssW - 8) / w, (S.cssH - 8) / h)))); }
 function cycleTod() {
   if (LIT.on) { setLightTime(LIGHT_TIMES[(LIGHT_TIMES.indexOf(LIT.sun) + 1) % LIGHT_TIMES.length]); sfx.click(); return; }
   const o = ['day', 'dusk', 'night']; setTod(o[(o.indexOf(S.tod) + 1) % 3]);

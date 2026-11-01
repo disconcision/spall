@@ -335,7 +335,7 @@ function buildStrip() {
 }
 function sizeLevels() {
   const st = $('strip'), vw = $('viewwrap'); if (!st || !vw) return;
-  const avail = vw.clientHeight - 8 - 40 - (UI.lvx ? 56 : 0) - 13 - 12 - 8 - 34;
+  const avail = vw.clientHeight - 8 - 40 - (UI.lvx ? 56 : 0) - 13 - 12 - 8 - 8;
   const v = Math.max(96, Math.min(NL * 16 + 8, avail)) + 'px';
   if (st.style.getPropertyValue('--lvh') !== v) { st.style.setProperty('--lvh', v); stripDirty = true; UI.lvSeen = false; }
 }

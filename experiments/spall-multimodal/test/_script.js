@@ -6527,7 +6527,7 @@ function buildStrip() {
 }
 function sizeLevels() {
   const st = $('strip'), vw = $('viewwrap'); if (!st || !vw) return;
-  const avail = vw.clientHeight - 8 - 40 - (UI.lvx ? 56 : 0) - 13 - 12 - 8 - 34;
+  const avail = vw.clientHeight - 8 - 40 - (UI.lvx ? 56 : 0) - 13 - 12 - 8 - 8;
   const v = Math.max(96, Math.min(NL * 16 + 8, avail)) + 'px';
   if (st.style.getPropertyValue('--lvh') !== v) { st.style.setProperty('--lvh', v); stripDirty = true; UI.lvSeen = false; }
 }
@@ -7165,7 +7165,7 @@ function rotate(d) {
   markAllDirty(); sfx.click();
 }
 function setZoom(z) { z = clamp(z, 1, 5); if (z === S.zoom) return; S.zoom = z; if (S.mode === 'cut') S.isoZoom = z; planDirty = true; secDirty = true; resize(); }
-function fitZoomFor(w, h) { return Math.max(1, Math.min(4, Math.floor(Math.min((S.cssW - 8) / w, (S.cssH - 34) / h)))); }
+function fitZoomFor(w, h) { return Math.max(1, Math.min(4, Math.floor(Math.min((S.cssW - 8) / w, (S.cssH - 8) / h)))); }
 function cycleTod() {
   if (LIT.on) { setLightTime(LIGHT_TIMES[(LIGHT_TIMES.indexOf(LIT.sun) + 1) % LIGHT_TIMES.length]); sfx.click(); return; }
   const o = ['day', 'dusk', 'night']; setTod(o[(o.indexOf(S.tod) + 1) % 3]);
