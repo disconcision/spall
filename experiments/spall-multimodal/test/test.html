@@ -56,7 +56,7 @@ body[data-bv="1"]{--bsh:inset var(--p) var(--p) 0 var(--pxl),inset calc(-1*var(-
 body[data-bv="2"]{--bsh:inset var(--p) var(--p) 0 var(--pxL),inset calc(-1*var(--p)) calc(-1*var(--p)) 0 var(--pxo),inset calc(2*var(--p)) calc(2*var(--p)) 0 var(--pxm),inset calc(-2*var(--p)) calc(-2*var(--p)) 0 var(--pxd);
   --press:inset var(--p) var(--p) 0 var(--pxo),inset calc(-1*var(--p)) calc(-1*var(--p)) 0 var(--pxL);--barsh:inset 0 var(--p) 0 var(--pxL),inset 0 calc(-1*var(--p)) 0 var(--pxo),inset 0 calc(-2*var(--p)) 0 var(--pxd)}
 body[data-bv="3"]{--bsh:inset 0 0 0 var(--p) var(--pxd);--press:inset 0 0 0 var(--p) var(--pxo);--barsh:inset 0 calc(-1*var(--p)) 0 var(--pxd)}
-body{--onsh:inset var(--p) var(--p) 0 #ffd889,inset calc(-1*var(--p)) calc(-1*var(--p)) 0 #a3651a}
+body{--on-hi:#ffd889;--on-lo:#a3651a;--onsh:inset var(--p) var(--p) 0 var(--on-hi),inset calc(-1*var(--p)) calc(-1*var(--p)) 0 var(--on-lo)}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--text)}
 body{font:12px/1.35 var(--mono);overflow:hidden}
@@ -91,8 +91,16 @@ header.tb{position:relative;z-index:10;display:flex;align-items:stretch;height:v
 .tb .b[aria-pressed="true"]{background:var(--pxf) var(--dith);box-shadow:var(--press);color:var(--acct)}
 .tb .split{display:flex;align-items:stretch}
 .tb .b.caret{width:18px;padding:0;color:var(--faint)}
+/* pixel corners (TC, FC; cornerCSS() in 80_ui.js): the cut pixels' edge colours follow each state's bevel */
+.tb .b,.tb .vol{--cn-a:var(--pxl);--cn-b:var(--pxd)}
+.tb .b[aria-pressed="true"]{--cn-a:var(--pxd);--cn-b:var(--pxl)}
+.tb .b.mode[aria-selected="true"]{--cn-a:var(--on-hi);--cn-b:var(--on-lo)}
+#chatf{--cn-a:var(--pxo);--cn-b:var(--pxl)}
+/* top bar relief (TE): 1 no top highlight, the buttons reach the top; 2 flat, one dark line under it */
+body[data-te="1"] header.tb{padding-top:0;box-shadow:inset 0 calc(-1*var(--p)) 0 var(--pxo),inset 0 calc(-2*var(--p)) 0 var(--pxd)}
+body[data-te="2"] header.tb{padding-top:0;box-shadow:inset 0 calc(-1*var(--p)) 0 var(--pxo)}
 .tb .b.caret.open{color:var(--acct)}
-.tb .vol{display:flex;align-items:center;padding:0 10px;background:var(--pxb);box-shadow:var(--bsh)}
+.tb .vol{position:relative;display:flex;align-items:center;padding:0 10px;background:var(--pxb);box-shadow:var(--bsh)}
 .tb .vol .sl{--slw:62px}
 .tb .b#bHelp .hq{width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;box-shadow:inset 0 0 0 1px var(--afl);font:700 10px/1 var(--mono);text-transform:none;letter-spacing:0}
 .tb .b#bHelp[aria-pressed="true"] .hq{background:var(--accent);color:var(--accent-ink);box-shadow:none}
@@ -282,7 +290,7 @@ body[data-mt="11"] .tool[aria-pressed="true"],body[data-mt="15"] .tool[aria-pres
 /* ---- status bar (BB3: current tool's keys, zoom stepper): the full width, under the stage and the sidebar ---- */
 #status{grid-column:1/-1;position:relative;display:flex;gap:10px;align-items:center;height:28px;padding:var(--p) 8px 0;font-size:11px;z-index:5;white-space:nowrap;overflow:hidden;background:var(--pxf);box-shadow:inset 0 var(--p) 0 var(--pxo),inset 0 calc(2*var(--p)) 0 var(--pxl);color:var(--ink)}
 #slice{font:700 12px/1 var(--cond);letter-spacing:.1em;text-transform:uppercase;padding:3px 6px;color:var(--dim);flex:none}
-#slice.on{background:var(--accent);color:var(--accent-ink);box-shadow:var(--onsh)}
+#slice.on{background:var(--accent);color:var(--accent-ink)}   /* a label, not a button: flat */
 #hover{color:var(--ink);overflow:hidden;text-overflow:ellipsis;flex:1;min-width:40px}
 #hover b{color:var(--acct);font-weight:600}
 #hints{display:flex;gap:12px;color:var(--faint);font-size:10.5px;overflow:hidden}
@@ -452,7 +460,7 @@ body[data-mt="11"] #bandPop .row .ic,body[data-mt="15"] #bandPop .row .ic{filter
 #suggMenu li:hover,#suggMenu li.on{background:var(--hov);color:var(--ink)}
 #suggMenu .sh{padding:2px 9px 3px;color:var(--faint);font-size:9.5px;cursor:default}
 #suggMenu .sh:hover{background:none;color:var(--faint)}
-#chatf{display:flex;align-items:center;margin:4px 10px 10px;background:var(--field);box-shadow:inset var(--p) var(--p) 0 var(--pxo),inset calc(-1*var(--p)) calc(-1*var(--p)) 0 var(--pxl)}
+#chatf{position:relative;display:flex;align-items:center;height:30px;margin:4px 10px 10px;background:var(--field);box-shadow:inset var(--p) var(--p) 0 var(--pxo),inset calc(-1*var(--p)) calc(-1*var(--p)) 0 var(--pxl)}
 #chatf input{flex:1;min-width:0;background:transparent;border:0;outline:none;padding:7px 8px;font-size:11px;color:var(--ink)}
 #chatf input::placeholder{color:var(--faint)}
 #chatf button{width:30px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--faint)}
@@ -6901,7 +6909,7 @@ const BUILD_TOOLS = ['stack', 'bridge', 'garden', 'well'];
 // MT tone (10 dark, 11 light; the UI light/dark switch flips these) · PX chrome pixel · BV bevel · OL outline ·
 // DT title dither · TX type · WF wordmark · LG logo · TB top bar · KH key hints · FO flyout · LT light popover ·
 // SL slider · SG segmented · BT button · BB status bar · SC sidebar collapse
-const UICFG = { CU: 1, MT: 10, PX: 1, BV: 1, OL: 1, DT: 1, TX: 1, WF: 24, LG: 2, TB: 3, KH: 2, FO: 2, LT: 1, SL: 3, SG: 1, BT: 2, BB: 3, SC: 1 };
+const UICFG = { CU: 1, TC: 0, TE: 0, FC: 0, MT: 10, PX: 1, BV: 1, OL: 1, DT: 1, TX: 1, WF: 24, LG: 2, TB: 3, KH: 2, FO: 2, LT: 1, SL: 3, SG: 1, BT: 2, BB: 3, SC: 1 };
 const UI = { tb: 1, open: new Set(), fo: null, hueOpen: false, hue: [null, null, null, null], sel: { select: 'inspect', build: 'stack', wires: 'cable', units: 'u0' },
   lvx: true, feed: 'all', unread: 0, help: false, helpP: null, helpSig: '', hoverPanel: null, logo: 0, modeFold: false, grabbing: false, lvSeen: false };
 const store = { get(k, d) { try { const v = localStorage.getItem('spall.' + k); return v == null ? d : v; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('spall.' + k, v); } catch (e) { /* storage unavailable */ } } };
@@ -7013,6 +7021,44 @@ function applyChrome() {
   if ($('worldPop') && !$('worldPop').hidden) syncWorldMenu();
 }
 // the interface light/dark switch: the chrome only, never the scene's time of day
+// pixel corners: a shape is the pixels cut from each row at a corner, top row first. The cut follows the
+// element's outline (clip-path), and the pixels newly on the edge take the bevel's colours (--cn-a on the top and
+// left, --cn-b on the bottom and right), so the highlight runs round the corner instead of stopping at it.
+const CORNERS = { r1: [1], r2: [2, 1], r3: [3, 1], r4: [4, 2, 1, 1], c3: [3, 2, 1] };
+const CORNER_USE = { TC: { 1: 'r1', 2: 'r2', 3: 'c3' }, FC: { 1: 'r2', 2: 'c3', 3: 'r4' } };
+function cornerCSS(sel, cuts) {
+  const P = v => `calc(${v} * var(--p))`, n = cuts.length, c = k => k < n ? cuts[k] : 0;
+  // the top-left corner, clockwise from the left edge to the top edge, as pixel offsets; the others are mirrors of it
+  const L = [[0, n]]; for (let k = n - 1; k >= 0; k--) L.push([c(k), k + 1], [c(k), k]);
+  const at = (v, flip) => flip ? `calc(100% - ${v} * var(--p))` : P(v), m = (pts, fx, fy) => pts.map(([x, y]) => `${at(x, fx)} ${at(y, fy)}`);
+  const poly = [...m(L, 0, 0), ...m([...L].reverse(), 1, 0), ...m(L, 1, 1), ...m([...L].reverse(), 0, 1)];
+  // the pixels the cut exposes, in a top-left corner (not row 0 or column 0: the straight bevel lines cover those)
+  const inside = (x, y) => x >= 0 && y >= 0 && x >= c(y), px = [];
+  for (let y = 1; y <= n; y++) for (let x = 1; x < Math.max(1, c(y - 1)) + 1; x++) {
+    if (!inside(x, y)) continue;
+    const up = !inside(x, y - 1), left = !inside(x - 1, y);
+    if (up || left) px.push([x, y, up, left]);
+  }
+  const lay = [];
+  for (const [fx, fy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) for (const [x, y, up, left] of px) {
+    // which bevel colour: top-left light, bottom-right dark; on the other two corners, the side the cut faces
+    let a = !fx && !fy ? 'a' : fx && fy ? 'b' : fx ? (up && (!left || y < x) ? 'a' : 'b') : (left && (!up || x < y) ? 'a' : 'b');
+    if (fx && !fy && up && left && x === y) a = 'b';
+    if (!fx && fy && up && left && x === y) a = 'a';
+    lay.push(`linear-gradient(var(--cn-${a}),var(--cn-${a})) ${fx ? 'right' : 'left'} ${P(x)} ${fy ? 'bottom' : 'top'} ${P(y)} / var(--p) var(--p) no-repeat`);
+  }
+  return `${sel}{clip-path:polygon(${poly.join(',')})}\n` +
+    (lay.length ? `${sel.split(',').map(x => x + '::after').join(',')}{content:"";position:absolute;inset:0;pointer-events:none;background:${lay.join(',')}}\n` : '');
+}
+function applyCorners() {
+  let css = '';
+  for (const [code, use] of Object.entries(CORNER_USE)) for (const [v, shape] of Object.entries(use)) {
+    const sel = code === 'TC' ? `body[data-tc="${v}"] .tb .b,body[data-tc="${v}"] .tb .vol` : `body[data-fc="${v}"] #chatf`;
+    css += cornerCSS(sel, CORNERS[shape]);
+  }
+  let st = $('cornerCSS'); if (!st) { st = document.createElement('style'); st.id = 'cornerCSS'; document.head.appendChild(st); }
+  st.textContent = css;
+}
 function setUiTone(dark) { UICFG.MT = dark ? 10 : 11; store.set('tone', dark ? 'dark' : 'light'); applyChrome(); UI.helpSig = ''; }
 
 // ---------- tool icons and option swatches (drawn once, used as images) ----------
@@ -7743,6 +7789,8 @@ function openKeys() {
 function setupUI() {
   const tone = store.get('tone', 'dark'); UICFG.MT = tone === 'dark' ? 10 : 11;
   UICFG.CU = clamp(+store.get('cu', 3) || 3, 1, 6);
+  for (const c of (new URLSearchParams(location.search).get('ui') || '').split(',')) { const m = /^([A-Z]{2})(\d+)$/.exec(c.trim()); if (m && m[1] in UICFG) UICFG[m[1]] = +m[2]; }   // ?ui=TC2,TE1,FC1 tries a mix
+  applyCorners();
   UI.logo = clamp(+store.get('logo', 0) || 0, 0, LOGOS.length - 1); UICFG.LG = LOGOS[UI.logo];
   UI.tb = clamp(+store.get('tools', 1), 0, 2);
   UI.lvx = store.get('levels', innerWidth < 860 ? 'c' : 'x') === 'x';

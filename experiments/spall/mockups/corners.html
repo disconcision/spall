@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spall · Corners and Relief</title>
+<style>
+:root{--bg:#0e0f11;--panel:#16171a;--line:#2c2e32;--text:#e6dfcf;--dim:#a39c8e;--faint:#80796d;--accent:#e8a83c;--ok:#a3c46c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:13px/1.5 "IBM Plex Mono",ui-monospace,Menlo,monospace}
+main{max-width:1280px;margin:0 auto;padding:24px 16px 56px}
+h1{font:700 22px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;margin:0 0 10px}
+h2{font:700 14px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;margin:40px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+h2 .live{font-size:10px;letter-spacing:.1em;color:var(--ok);margin-left:8px;vertical-align:2px}
+h3{font:600 12px/1.2 ui-monospace,Menlo,monospace;color:var(--dim);margin:22px 0 6px;letter-spacing:.06em}
+p,li{color:var(--dim);max-width:860px}
+p{margin:0 0 12px}
+b{color:var(--text);font-weight:600}
+code{color:var(--text)}
+a{color:var(--accent)}
+.code{color:var(--accent);font-weight:600}
+img{display:block;image-rendering:pixelated;max-width:100%;height:auto;border:1px solid var(--line)}
+.v{margin:8px 0 12px}
+.v .lab{font-size:11px;color:var(--faint);margin-bottom:4px}
+.v .lab b{color:var(--accent)}
+.tone{display:inline-flex;gap:0;margin:4px 0 10px;border:1px solid var(--line)}
+.tone button{font:inherit;font-size:11px;color:var(--dim);background:none;border:0;padding:4px 12px;cursor:pointer}
+.tone button.on{background:var(--panel);color:var(--text)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.wins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+figure{margin:0}
+figcaption{font-size:11px;color:var(--faint);margin-top:6px}
+figcaption b{color:var(--accent)}
+.box{border:1px solid var(--line);background:var(--panel);padding:10px 14px;margin:14px 0;max-width:860px}
+.box p:last-child{margin:0}
+@media (max-width:800px){.two,.wins{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>CORNERS AND RELIEF</h1>
+<p>Rounder corners for the raised and sunken parts of the chrome, and less relief on the top bar. Everything below is a screenshot of the real game (pixel crops at 2×). The variants are codes in the game. To try a mix, open the game with <code>?ui=</code> and the codes, for example <a href="../?ui=TC2,TE1,FC1">../?ui=TC2,TE1,FC1</a>. A link like that changes only that visit; nothing is saved.</p>
+<p>The corners are cut in whole game pixels, and the pixels the cut exposes take the bevel's colours. So the highlight runs round the corner instead of stopping where the square was clipped. The sizes:</p>
+<ul>
+  <li><b>1 pixel</b> off each corner;</li>
+  <li><b>3 pixels</b> (2 + 1): a small pixel-art round;</li>
+  <li><b>6 pixels</b> (3 + 2 + 1): a 45° chamfer, the cut corners of the band's little windows;</li>
+  <li><b>8 pixels</b> (4 + 2 + 1 + 1): a larger round.</li>
+</ul>
+<div class="box"><p><b>My pick:</b> <a href="../?ui=TC2,TE1,FC1">TC2 + TE1 + FC1</a>, the 3-pixel round on the top bar and the field, with the top bar's upper highlight gone. It reads as one family, and the cuts are small enough to stay crisp at 1× zoom. The chamfer (<a href="../?ui=TC3,TE1,FC2">TC3 + TE1 + FC2</a>) ties the chrome to the band's windows, but on a row of buttons it notches each join.</p></div>
+
+<h2>1 · The slice label <span class="live">● live</span></h2>
+<p>It was drawn with the same raised bevel as a pressed button, but it's a label. Now it's a flat amber tag.</p>
+<div class="v"><div class="lab">before</div><img src="corners/slice-before.png" width="840" alt="The slice label raised like a button"></div>
+<div class="v"><div class="lab">now</div><img src="corners/slice-after.png" width="840" alt="The slice label as a flat amber tag"></div>
+
+<h2>2 · Top-bar buttons and relief</h2>
+<p>Corners, <span class="code">TC</span>:</p>
+<ul>
+  <li><b>TC0</b> square (now);</li>
+  <li><b>TC1</b> 1 pixel;</li>
+  <li><b>TC2</b> 3 pixels;</li>
+  <li><b>TC3</b> the 6-pixel chamfer.</li>
+</ul>
+<p>Relief, <span class="code">TE</span>:</p>
+<ul>
+  <li><b>TE0</b> now: a light line along the top and a dark edge underneath;</li>
+  <li><b>TE1</b> the top highlight is gone and the buttons run up to the top of the window, with the bottom edge kept;</li>
+  <li><b>TE2</b> flat, with a single dark line underneath.</li>
+</ul>
+<p>Between rounded buttons, the cut corners show the bar behind them.</p>
+<div class="tone" id="tone"><button type="button" class="on" data-t="dark">dark</button><button type="button" data-t="light">light</button></div>
+<div id="tb"></div>
+
+<h2>3 · The field</h2>
+<p>The "Ask claude to build…" well, <span class="code">FC</span>:</p>
+<ul>
+  <li><b>FC0</b> square (now);</li>
+  <li><b>FC1</b> 3 pixels;</li>
+  <li><b>FC2</b> the 6-pixel chamfer, as on the band's windows;</li>
+  <li><b>FC3</b> the larger 8-pixel round.</li>
+</ul>
+<p>A well is lit the other way round to a button (dark top-left, light bottom-right), and the corner pixels follow that.</p>
+<div class="two">
+  <div id="fcDark"></div><div id="fcLight"></div>
+</div>
+
+<h2>4 · Together</h2>
+<div class="wins">
+  <figure><img src="corners/win-now.png" width="1400" alt="Now"><figcaption><b>Now</b>: TC0 TE0 FC0.</figcaption></figure>
+  <figure><img src="corners/win-round.png" width="1400" alt="Round"><figcaption><b>Round</b> (my pick): TC2 TE1 FC1 · <a href="../?ui=TC2,TE1,FC1">try it</a></figcaption></figure>
+  <figure><img src="corners/win-chamfer.png" width="1400" alt="Chamfer"><figcaption><b>Chamfer</b>, like the band's windows: TC3 TE1 FC2 · <a href="../?ui=TC3,TE1,FC2">try it</a></figcaption></figure>
+  <figure><img src="corners/win-flat.png" width="1400" alt="Flat bar"><figcaption><b>Flat bar, rounder field</b>: TC2 TE2 FC3 · <a href="../?ui=TC2,TE2,FC3">try it</a></figcaption></figure>
+  <figure><img src="corners/win-round-light.png" width="1400" alt="Round, light tone"><figcaption><b>Round, light tone</b>: TC2 TE1 FC1.</figcaption></figure>
+</div>
+<p style="margin-top:16px">The small controls still use smooth CSS corners: the buttons in the feed, the segmented filters, the zoom stepper and the sliders. If the top bar goes pixel-round, those should probably follow so the corners match everywhere. That's the next step if you pick one of these.</p>
+</main>
+<script>
+const TC = ['TC0 · square (now)', 'TC1 · 1 pixel', 'TC2 · 3 pixels', 'TC3 · 6-pixel chamfer'];
+const TE = ['TE0 · relief now', 'TE1 · no top highlight, buttons reach the top', 'TE2 · flat, one dark line under'];
+const FC = ['FC0 · square (now)', 'FC1 · 3 pixels', 'FC2 · 6-pixel chamfer', 'FC3 · 8-pixel round'];
+function tb(t) {
+  document.getElementById('tb').innerHTML = TE.map((te, e) => `<h3>${te}</h3>` + TC.map((tc, c) =>
+    `<div class="v"><div class="lab"><b>${tc.split(' · ')[0]}</b> ${tc.split(' · ')[1]} · <a href="../?ui=TC${c},TE${e}">try</a></div><img src="corners/tb-${t}-te${e}-tc${c}.png" width="1240" alt="${te}, ${tc}"></div>`).join('')).join('');
+}
+const fc = (id, t) => document.getElementById(id).innerHTML = `<h3>${t}</h3>` + FC.map((f, k) => `<div class="v"><div class="lab"><b>${f.split(' · ')[0]}</b> ${f.split(' · ')[1]}</div><img src="corners/fc-${t}-${k}.png" width="604" alt="${f}, ${t}"></div>`).join('');
+tb('dark'); fc('fcDark', 'dark'); fc('fcLight', 'light');
+document.getElementById('tone').addEventListener('click', e => { const b = e.target.closest('[data-t]'); if (!b) return; document.querySelectorAll('#tone button').forEach(x => x.classList.toggle('on', x === b)); tb(b.dataset.t); });
+</script>
+</body>
+</html>

@@ -12,7 +12,7 @@ const BUILD_TOOLS = ['stack', 'bridge', 'garden', 'well'];
 // MT tone (10 dark, 11 light; the UI light/dark switch flips these) · PX chrome pixel · BV bevel · OL outline ·
 // DT title dither · TX type · WF wordmark · LG logo · TB top bar · KH key hints · FO flyout · LT light popover ·
 // SL slider · SG segmented · BT button · BB status bar · SC sidebar collapse
-const UICFG = { CU: 1, MT: 10, PX: 1, BV: 1, OL: 1, DT: 1, TX: 1, WF: 24, LG: 2, TB: 3, KH: 2, FO: 2, LT: 1, SL: 3, SG: 1, BT: 2, BB: 3, SC: 1 };
+const UICFG = { CU: 1, TC: 0, TE: 0, FC: 0, MT: 10, PX: 1, BV: 1, OL: 1, DT: 1, TX: 1, WF: 24, LG: 2, TB: 3, KH: 2, FO: 2, LT: 1, SL: 3, SG: 1, BT: 2, BB: 3, SC: 1 };
 const UI = { tb: 1, open: new Set(), fo: null, hueOpen: false, hue: [null, null, null, null], sel: { select: 'inspect', build: 'stack', wires: 'cable', units: 'u0' },
   lvx: true, feed: 'all', unread: 0, help: false, helpP: null, helpSig: '', hoverPanel: null, logo: 0, modeFold: false, grabbing: false, lvSeen: false };
 const store = { get(k, d) { try { const v = localStorage.getItem('spall.' + k); return v == null ? d : v; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('spall.' + k, v); } catch (e) { /* storage unavailable */ } } };
@@ -124,6 +124,44 @@ function applyChrome() {
   if ($('worldPop') && !$('worldPop').hidden) syncWorldMenu();
 }
 // the interface light/dark switch: the chrome only, never the scene's time of day
+// pixel corners: a shape is the pixels cut from each row at a corner, top row first. The cut follows the
+// element's outline (clip-path), and the pixels newly on the edge take the bevel's colours (--cn-a on the top and
+// left, --cn-b on the bottom and right), so the highlight runs round the corner instead of stopping at it.
+const CORNERS = { r1: [1], r2: [2, 1], r3: [3, 1], r4: [4, 2, 1, 1], c3: [3, 2, 1] };
+const CORNER_USE = { TC: { 1: 'r1', 2: 'r2', 3: 'c3' }, FC: { 1: 'r2', 2: 'c3', 3: 'r4' } };
+function cornerCSS(sel, cuts) {
+  const P = v => `calc(${v} * var(--p))`, n = cuts.length, c = k => k < n ? cuts[k] : 0;
+  // the top-left corner, clockwise from the left edge to the top edge, as pixel offsets; the others are mirrors of it
+  const L = [[0, n]]; for (let k = n - 1; k >= 0; k--) L.push([c(k), k + 1], [c(k), k]);
+  const at = (v, flip) => flip ? `calc(100% - ${v} * var(--p))` : P(v), m = (pts, fx, fy) => pts.map(([x, y]) => `${at(x, fx)} ${at(y, fy)}`);
+  const poly = [...m(L, 0, 0), ...m([...L].reverse(), 1, 0), ...m(L, 1, 1), ...m([...L].reverse(), 0, 1)];
+  // the pixels the cut exposes, in a top-left corner (not row 0 or column 0: the straight bevel lines cover those)
+  const inside = (x, y) => x >= 0 && y >= 0 && x >= c(y), px = [];
+  for (let y = 1; y <= n; y++) for (let x = 1; x < Math.max(1, c(y - 1)) + 1; x++) {
+    if (!inside(x, y)) continue;
+    const up = !inside(x, y - 1), left = !inside(x - 1, y);
+    if (up || left) px.push([x, y, up, left]);
+  }
+  const lay = [];
+  for (const [fx, fy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) for (const [x, y, up, left] of px) {
+    // which bevel colour: top-left light, bottom-right dark; on the other two corners, the side the cut faces
+    let a = !fx && !fy ? 'a' : fx && fy ? 'b' : fx ? (up && (!left || y < x) ? 'a' : 'b') : (left && (!up || x < y) ? 'a' : 'b');
+    if (fx && !fy && up && left && x === y) a = 'b';
+    if (!fx && fy && up && left && x === y) a = 'a';
+    lay.push(`linear-gradient(var(--cn-${a}),var(--cn-${a})) ${fx ? 'right' : 'left'} ${P(x)} ${fy ? 'bottom' : 'top'} ${P(y)} / var(--p) var(--p) no-repeat`);
+  }
+  return `${sel}{clip-path:polygon(${poly.join(',')})}\n` +
+    (lay.length ? `${sel.split(',').map(x => x + '::after').join(',')}{content:"";position:absolute;inset:0;pointer-events:none;background:${lay.join(',')}}\n` : '');
+}
+function applyCorners() {
+  let css = '';
+  for (const [code, use] of Object.entries(CORNER_USE)) for (const [v, shape] of Object.entries(use)) {
+    const sel = code === 'TC' ? `body[data-tc="${v}"] .tb .b,body[data-tc="${v}"] .tb .vol` : `body[data-fc="${v}"] #chatf`;
+    css += cornerCSS(sel, CORNERS[shape]);
+  }
+  let st = $('cornerCSS'); if (!st) { st = document.createElement('style'); st.id = 'cornerCSS'; document.head.appendChild(st); }
+  st.textContent = css;
+}
 function setUiTone(dark) { UICFG.MT = dark ? 10 : 11; store.set('tone', dark ? 'dark' : 'light'); applyChrome(); UI.helpSig = ''; }
 
 // ---------- tool icons and option swatches (drawn once, used as images) ----------
@@ -854,6 +892,8 @@ function openKeys() {
 function setupUI() {
   const tone = store.get('tone', 'dark'); UICFG.MT = tone === 'dark' ? 10 : 11;
   UICFG.CU = clamp(+store.get('cu', 3) || 3, 1, 6);
+  for (const c of (new URLSearchParams(location.search).get('ui') || '').split(',')) { const m = /^([A-Z]{2})(\d+)$/.exec(c.trim()); if (m && m[1] in UICFG) UICFG[m[1]] = +m[2]; }   // ?ui=TC2,TE1,FC1 tries a mix
+  applyCorners();
   UI.logo = clamp(+store.get('logo', 0) || 0, 0, LOGOS.length - 1); UICFG.LG = LOGOS[UI.logo];
   UI.tb = clamp(+store.get('tools', 1), 0, 2);
   UI.lvx = store.get('levels', innerWidth < 860 ? 'c' : 'x') === 'x';
